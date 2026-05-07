@@ -275,7 +275,7 @@ const NoteEditor = ({
       </div>
 
       {(updates.length > 0 || showNewUpdate) && (
-        <div className="w-full flex flex-col pr-12 border-t-2 border-slate-100 pt-6">
+        <div className="w-full flex flex-col border-t-2 border-slate-100 pt-6">
           {showNewUpdate && (
             <div ref={newUpdateRef}>
               <UpdateEditor

@@ -42,10 +42,6 @@ export const NoteMultiSelect = ({
 
   return (
     <div className="flex flex-row flex-wrap gap-2 items-center">
-      {selectedNotes.length === 0 && (
-        <p className="text-xs text-slate-400 pt-0.5">No note selected</p>
-      )}
-
       {selectedNotes.map((note) => (
         <button
           key={note.id}
@@ -67,7 +63,9 @@ export const NoteMultiSelect = ({
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <div>
-            <Button variant="ghost" size="sm" colour={colour} iconName="plus" />
+            <Button variant="ghost" size="sm" colour={colour} iconName="plus">
+              {selectedNotes.length === 0 ? <>Add note</> : undefined}
+            </Button>
           </div>
         </DropdownMenu.Trigger>
 

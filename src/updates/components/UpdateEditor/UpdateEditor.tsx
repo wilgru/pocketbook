@@ -132,7 +132,7 @@ export const UpdateEditor = ({
   if (isEditing) {
     return (
       <div className="relative">
-        <div className="rounded-2xl p-4 my-2 flex flex-col gap-3 bg-white border border-slate-200">
+        <div className="rounded-2xl p-4 my-2 flex flex-col gap-3 bg-white border border-slate-100">
           <div className="flex items-center justify-between flex-wrap gap-2 border-b-2 pb-3 border-slate-100">
             <div className="flex items-center gap-3 flex-wrap">
               {dateStr && (
@@ -230,16 +230,16 @@ export const UpdateEditor = ({
   return (
     <div
       className={cn(
-        "rounded-2xl p-4 my-2 flex flex-col gap-3 transition-colors",
+        "rounded-2xl p-4 my-2 flex flex-col gap-3 transition-colors border shadow",
         tintClasses.card,
-        tintClasses.cardBorder,
+        tintClasses.border,
       )}
     >
       {(dateStr || (showNotes && (editedUpdate.notes ?? []).length > 0)) && (
         <>
           <div className="flex flex-wrap gap-2 items-center">
             {dateStr && (
-              <span className="text-xs text-slate-500 shrink-0">{dateStr}</span>
+              <span className="text-xs text-slate-700 shrink-0">{dateStr}</span>
             )}
             {showNotes &&
               ((editedUpdate.notes ?? []) as Note[]).map((note) => (
@@ -263,7 +263,7 @@ export const UpdateEditor = ({
                 </button>
               ))}
           </div>
-          <div className={cn("border-t", tintClasses.toolbarDivider)} />
+          <div className={cn("border-t-2", tintClasses.border)} />
         </>
       )}
 
