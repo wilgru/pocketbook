@@ -2,12 +2,14 @@ import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { quillEditorStateAtom } from "src/common/atoms/quillEditorStateAtom";
+import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
 import { NoteLinkPill } from "src/common/components/NoteLinkPill/NoteLinkPill";
 import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToolbar/QuillFormattingToolbar";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { groupNotes } from "src/notes/utils/groupNotes";
+import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
 import { NotesList } from "../NotesList/NotesList";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note, NotesGroup } from "src/notes/Note.type";
@@ -45,6 +47,7 @@ export const NotesLayout = ({
     toolbarFormatting,
     colour: quillColour,
   } = useAtomValue(quillEditorStateAtom);
+  const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
 
   const noteGroups = useMemo<NotesGroup[]>(() => {
     if (!notes || notes.length === 0) {
@@ -118,6 +121,13 @@ export const NotesLayout = ({
           )}
         </div>
 
+        {/* isTaskFocused and isQuillFocused are mutually exclusive so each toolbar is
+            positioned at the same absolute location and only one is ever shown at a time. */}
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
+          <FloatingToolbar visible={isTaskFocused}>
+            <TaskFloatingToolbar />
+          </FloatingToolbar>
+        </div>
         <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
           <FloatingToolbar visible={isQuillFocused}>
             <QuillFormattingToolbar
