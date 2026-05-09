@@ -83,7 +83,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col items-center">
+    <div className="h-full w-full min-h-0 flex flex-col items-center overflow-hidden">
       <Toolbar
         iconName="bookmark"
         colour={colours.red}

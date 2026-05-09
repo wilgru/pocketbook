@@ -97,7 +97,7 @@ export default function TagComponent() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col items-center">
+    <div className="h-full w-full min-h-0 flex flex-col items-center overflow-hidden">
       <Toolbar
         iconName={tag.icon}
         title={tag.name}

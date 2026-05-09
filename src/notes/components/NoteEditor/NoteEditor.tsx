@@ -151,7 +151,7 @@ const NoteEditor = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 h-fit w-full max-w-[1000px] px-12 pt-6 pb-28">
+    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-12 pt-6">
       <div className="w-full flex flex-col gap-2 justify-between border-b-2 border-slate-100 pb-4">
         <textarea
           ref={titleRef}
@@ -305,6 +305,8 @@ const NoteEditor = ({
           )}
         </div>
       )}
+
+      <div aria-hidden="true" className="h-40 w-full shrink-0" />
     </div>
   );
 };
