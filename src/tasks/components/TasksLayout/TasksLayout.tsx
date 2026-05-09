@@ -47,8 +47,8 @@ export const TasksLayout = ({
 
   const groupedTasks = useMemo(() => groupTasks(tasks, "note"), [tasks]);
 
-  // When the toolbar plus button is clicked and there's no "no note" group yet,
-  // synthesise one so the TasksSection can render the new-task editor.
+  // When the toolbar plus button is clicked and there's no "No Note" group yet,
+  // synthesise one so TasksSection can receive the trigger and create a task.
   const effectiveGroups = useMemo(() => {
     const hasNoNoteGroup = groupedTasks.some(
       (g) => g.relevantTaskData.note === null,
@@ -91,9 +91,7 @@ export const TasksLayout = ({
           {header}
         </PageHeader>
 
-        {effectiveGroups.length === 0 && (
-          <EmptyState text="No tasks yet" />
-        )}
+        {effectiveGroups.length === 0 && <EmptyState text="No tasks yet" />}
 
         {effectiveGroups.map((group, index) => (
           <Fragment key={group.relevantTaskData.note?.id ?? "no-note"}>
@@ -123,7 +121,7 @@ export const TasksLayout = ({
         </div>
       )}
 
-      <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex justify-center pointer-events-none z-30">
         <FloatingToolbar visible={isTaskFocused}>
           <TaskFloatingToolbar />
         </FloatingToolbar>

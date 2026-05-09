@@ -24,6 +24,8 @@ import type { Task } from "src/tasks/Task.type";
 type TaskEditorProps = {
   task?: Partial<Task>;
   onSave?: () => void;
+  onCreate?: (task: Task) => void;
+  onFocusLost?: () => void;
   colour?: Colour;
 };
 
@@ -47,6 +49,8 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
 export const TaskEditor = ({
   task,
   onSave,
+  onCreate,
+  onFocusLost,
   colour = colours.orange,
 }: TaskEditorProps) => {
   const { createTask } = useCreateTask();
@@ -69,20 +73,22 @@ export const TaskEditor = ({
 
   // Ref that always points to the latest save implementation so the debounced
   // function never closes over stale state.
-  const saveRef = useRef<() => void>();
-  saveRef.current = () => {
-    if (!editedTask.title && !editedTask.description) {
-      deleteTask({ taskId: editedTask.id });
+  const saveRef = useRef<() => void | Promise<void>>();
+  saveRef.current = async () => {
+    if (!editedTask.title && !editedTask.description && !editedTask.id) {
       return;
     }
 
     if (editedTask.id) {
       updateTask({ taskId: editedTask.id, updateTaskData: editedTask });
+      onSave?.();
     } else {
-      createTask({ createTaskData: editedTask });
+      const newTask = await createTask({ createTaskData: editedTask });
+      if (newTask) {
+        setEditedTask((prev) => ({ ...prev, id: newTask.id }));
+        onCreate?.(newTask);
+      }
     }
-
-    onSave?.();
   };
 
   // Stable debounced save – created once and reused across renders.
@@ -253,6 +259,7 @@ export const TaskEditor = ({
           !isDatePickerOpen
         ) {
           setIsFocused(false);
+          onFocusLost?.();
         }
       }}
     >

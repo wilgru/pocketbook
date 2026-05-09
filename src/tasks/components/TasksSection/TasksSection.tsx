@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "src/common/components/Button/Button";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
+import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import type { Colour } from "src/colours/Colour.type";
 import type { TasksGroup } from "src/tasks/Task.type";
 
@@ -19,17 +20,42 @@ export const TasksSection = ({
   noNoteEditorTrigger,
 }: TasksSectionProps) => {
   const [isTitleHovered, setIsTitleHovered] = useState(false);
-  const [isAddingTask, setIsAddingTask] = useState(false);
+  const { createTask } = useCreateTask();
   const { pocketbookId } = useCurrentPocketbookId();
-
-  // Open the new-task editor whenever the toolbar plus button fires.
-  useEffect(() => {
-    if (noNoteEditorTrigger && noNoteEditorTrigger > 0) {
-      setIsAddingTask(true);
-    }
-  }, [noNoteEditorTrigger]);
+  const handledToolbarTriggerRef = useRef(0);
 
   const note = taskGroup.relevantTaskData.note;
+
+  const onCreateTask = useCallback(async () => {
+    await createTask({
+      createTaskData: {
+        note: note ?? null,
+        title: "",
+        isFlagged: false,
+        link: null,
+        links: [],
+        description: "",
+        dueDate: null,
+        completedDate: null,
+        cancelledDate: null,
+      },
+    });
+  }, [createTask, note]);
+
+  // Create a new no-note task whenever the toolbar plus button fires.
+  useEffect(() => {
+    if (!noNoteEditorTrigger || noNoteEditorTrigger <= 0) {
+      return;
+    }
+
+    if (handledToolbarTriggerRef.current === noNoteEditorTrigger) {
+      return;
+    }
+
+    handledToolbarTriggerRef.current = noNoteEditorTrigger;
+    onCreateTask();
+  }, [noNoteEditorTrigger, onCreateTask]);
+
   const isNoNote = !note;
 
   if (isNoNote) {
@@ -51,12 +77,12 @@ export const TasksSection = ({
                 size="sm"
                 iconName="plus"
                 colour={colour}
-                onClick={() => setIsAddingTask(true)}
+                onClick={() => onCreateTask()}
               />
             )}
           </div>
 
-          {taskGroup.tasks.length === 0 && !isAddingTask && (
+          {taskGroup.tasks.length === 0 && (
             <div className="w-full p-3 flex flex-col gap-3 items-center">
               <p className="text-slate-500">No task yet</p>
 
@@ -66,7 +92,7 @@ export const TasksSection = ({
                   size="sm"
                   className="w-full"
                   iconName="plusSquare"
-                  onClick={() => setIsAddingTask(true)}
+                  onClick={() => onCreateTask()}
                 >
                   Create your first task
                 </Button>
@@ -78,18 +104,9 @@ export const TasksSection = ({
             <TaskEditor
               key={task.id}
               task={task}
-              onSave={() => {}}
               colour={colour}
             />
           ))}
-
-          {isAddingTask && (
-            <TaskEditor
-              task={{ note: null }}
-              onSave={() => setIsAddingTask(false)}
-              colour={colour}
-            />
-          )}
         </div>
       </section>
     );
@@ -111,7 +128,7 @@ export const TasksSection = ({
               size="sm"
               iconName="plus"
               colour={colour}
-              onClick={() => setIsAddingTask(true)}
+              onClick={() => onCreateTask()}
             />
 
             {pocketbookId && (
@@ -137,18 +154,9 @@ export const TasksSection = ({
           <TaskEditor
             key={task.id}
             task={task}
-            onSave={() => {}}
             colour={colour}
           />
         ))}
-
-        {isAddingTask && (
-          <TaskEditor
-            task={{ note }}
-            onSave={() => setIsAddingTask(false)}
-            colour={colour}
-          />
-        )}
       </div>
     </section>
   );
