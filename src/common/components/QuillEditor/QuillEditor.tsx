@@ -99,25 +99,38 @@ const QuillEditor = ({
         );
 
         onSelectedFormattingChangeRef.current?.(selectionFormatting);
+      }
+    };
 
-        if (!isFocusedRef.current) {
-          isFocusedRef.current = true;
-          onFocusRef.current?.();
-        }
-      } else {
-        if (isFocusedRef.current) {
-          isFocusedRef.current = false;
-          onBlurRef.current?.();
-        }
+    // Use native DOM focus/blur events instead of Quill's selection-change to
+    // detect focus transitions. In Chromium (and Electron), the contenteditable
+    // element's DOM selection is preserved after blur, which causes
+    // selection-change(null) to never fire — leaving isFocusedRef stuck at
+    // true and the toolbar permanently hidden after a note switch.
+    const handleEditorFocus = () => {
+      if (!isFocusedRef.current) {
+        isFocusedRef.current = true;
+        onFocusRef.current?.();
+      }
+    };
+
+    const handleEditorBlur = () => {
+      if (isFocusedRef.current) {
+        isFocusedRef.current = false;
+        onBlurRef.current?.();
       }
     };
 
     quillEditor.on("text-change", handleTextChange);
     quillEditor.on("selection-change", handleSelectionChange);
+    quillEditor.root.addEventListener("focus", handleEditorFocus);
+    quillEditor.root.addEventListener("blur", handleEditorBlur);
 
     return () => {
       quillEditor?.off("text-change", handleTextChange);
       quillEditor?.off("selection-change", handleSelectionChange);
+      quillEditor.root.removeEventListener("focus", handleEditorFocus);
+      quillEditor.root.removeEventListener("blur", handleEditorBlur);
     };
   }, [quillEditor]);
 
