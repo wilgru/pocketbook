@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import debounce from "debounce";
@@ -11,6 +12,7 @@ import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { QuillEditor } from "src/common/components/QuillEditor/QuillEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
+import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteLinksModal } from "src/notes/components/NoteLinksModal/NoteLinksModal";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
@@ -227,17 +229,33 @@ const NoteEditor = ({
             iconName="bookmark"
           />
 
-          <Button
-            size="sm"
-            variant="ghost"
-            colour={colours.red}
-            onClick={onDeleteNote}
-            iconName="trash"
-          />
-
           <p className="text-slate-500 text-xs">
             {editedNote.created.format("D MMMM YYYY, hh:mm a")}
           </p>
+
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger
+              className={`ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5 hover:${colour.textPill} hover:${colour.backgroundPill}`}
+              aria-label="Open note actions"
+            >
+              <Icon iconName="dotsThreeOutline" size="xs" />
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className="w-40 flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 drop-shadow"
+                side="bottom"
+                align="start"
+                sideOffset={6}
+              >
+                <DropdownMenu.Item
+                  onSelect={() => void onDeleteNote()}
+                  className="leading-none text-sm p-2 outline-none rounded-xl cursor-pointer transition-colors hover:bg-red-100"
+                >
+                  Delete
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
       </div>
 

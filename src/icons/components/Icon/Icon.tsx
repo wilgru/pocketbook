@@ -35,6 +35,7 @@ import {
   WarningCircle,
   CaretUp,
   CaretDown,
+  DotsThreeOutline,
 } from "@phosphor-icons/react";
 import { ChatCenteredText } from "@phosphor-icons/react/dist/ssr";
 import { icons } from "src/icons/icons.constant";
@@ -145,6 +146,8 @@ const Icon = ({
       return <CaretUp {...iconProps} />;
     case "caretDown":
       return <CaretDown {...iconProps} />;
+    case "dotsThreeOutline":
+      return <DotsThreeOutline {...iconProps} weight="fill" />;
     default:
       return <></>;
   }
