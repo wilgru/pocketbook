@@ -5,7 +5,6 @@ import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { QuillEditor } from "src/common/components/QuillEditor/QuillEditor";
 import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToolbar/QuillFormattingToolbar";
-import QuillViewer from "src/common/components/QuillViewer/QuillViewer";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
@@ -24,7 +23,6 @@ type UpdateEditorProps = {
   update: Partial<Update>;
   colour?: Colour;
   showNotes?: boolean;
-  dateDisplay?: "date" | "time";
   autoFocus?: boolean;
   onCancel?: () => void;
   onCreated?: () => void;
@@ -51,7 +49,6 @@ export const UpdateEditor = ({
   update,
   colour,
   showNotes = true,
-  dateDisplay = "time",
   autoFocus = false,
   onCancel,
   onCreated,
@@ -132,29 +129,67 @@ export const UpdateEditor = ({
   };
 
   const dateStr = editedUpdate.created
-    ? dateDisplay === "date"
-      ? editedUpdate.created.format("MMM D, YYYY h:mm a")
-      : editedUpdate.created.format("h:mm a")
+    ? editedUpdate.created.format("D MMM YYYY, h:mm a")
     : null;
 
-  if (isEditing) {
-    return (
-      <div className="relative">
-        <div className="rounded-2xl p-4 my-2 flex flex-col gap-3 bg-white border border-slate-100 shadow-md">
-          <div className="flex items-center justify-between flex-wrap gap-2 border-b-2 pb-3 border-slate-100">
-            <div className="flex items-center gap-3 flex-wrap">
-              {dateStr && (
-                <span className="text-xs text-slate-700 shrink-0">
-                  {dateStr}
-                </span>
-              )}
+  return (
+    <div className="relative">
+      <div
+        className={cn(
+          "rounded-2xl p-4 my-2 flex flex-col gap-3 border transition-shadow",
+          isEditing
+            ? "bg-white border-slate-100 shadow-md"
+            : cn(
+                "shadow hover:shadow-md",
+                tintClasses.card,
+                tintClasses.border,
+              ),
+        )}
+      >
+        <div
+          className={cn(
+            "flex items-center justify-between flex-wrap gap-2 border-b-2 pb-3 ",
+            isEditing ? "border-slate-100" : tintClasses.border,
+          )}
+        >
+          <div className="flex items-center justify-start gap-3 flex-wrap">
+            {dateStr && (
+              <span className="text-xs text-slate-700 shrink-0">{dateStr}</span>
+            )}
+
+            {showNotes &&
+              !isEditing &&
+              (editedUpdate.notes ?? []).map((note) => (
+                <button
+                  key={note.id}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    navigate({
+                      to: `/${pocketbookId ?? ""}/notes`,
+                      search: { noteId: note.id },
+                    });
+                  }}
+                  className={cn(
+                    "flex items-center gap-1 pl-2 pr-1 py-1 text-xs rounded-full transition-colors",
+                    tintClasses.notePill,
+                  )}
+                >
+                  {note.title ?? "Untitled Note"}
+
+                  <Icon iconName="arrowCircleRight" size="sm" />
+                </button>
+              ))}
+
+            {isEditing && (
               <NoteMultiSelect
                 selectedNotes={(editedUpdate.notes ?? []) as Note[]}
                 colour={resolvedColour}
                 onChange={(notes) => onUpdateField({ notes })}
               />
-            </div>
+            )}
+          </div>
 
+          {isEditing && (
             <div className="flex gap-1.5 items-center">
               <Toggle
                 isToggled={editedUpdate.isWaypoint ?? false}
@@ -194,25 +229,30 @@ export const UpdateEditor = ({
                 />
               ))}
             </div>
-          </div>
+          )}
+        </div>
 
+        {isEditing && (
           <QuillFormattingToolbar
             toolbarId={toolbarId}
             toolbarFormatting={toolbarFormatting}
             colour={resolvedColour}
           />
+        )}
 
-          <QuillEditor
-            toolbarId={toolbarId}
-            value={editedUpdate.content}
-            colour={resolvedColour}
-            autoFocus={autoFocus}
-            onChange={(delta) => onUpdateField({ content: delta })}
-            onSelectedFormattingChange={(formatting) =>
-              setToolbarFormatting(formatting)
-            }
-          />
+        <QuillEditor
+          toolbarId={toolbarId}
+          value={editedUpdate.content}
+          colour={resolvedColour}
+          onFocus={() => setIsEditing(true)}
+          autoFocus={autoFocus}
+          onChange={(delta) => onUpdateField({ content: delta })}
+          onSelectedFormattingChange={(formatting) =>
+            setToolbarFormatting(formatting)
+          }
+        />
 
+        {isEditing && (
           <div className="flex items-center justify-between flex-wrap gap-2">
             <Button
               size="sm"
@@ -243,55 +283,8 @@ export const UpdateEditor = ({
               </Button>
             </div>
           </div>
-        </div>
+        )}
       </div>
-    );
-  }
-
-  return (
-    <div
-      className={cn(
-        "rounded-2xl p-4 my-2 flex flex-col gap-3 transition-shadow border shadow hover:shadow-md",
-        tintClasses.card,
-        tintClasses.border,
-      )}
-    >
-      {(dateStr || (showNotes && (editedUpdate.notes ?? []).length > 0)) && (
-        <>
-          <div className="flex flex-wrap gap-2 items-center">
-            {dateStr && (
-              <span className="text-xs text-slate-700 shrink-0">{dateStr}</span>
-            )}
-            {showNotes &&
-              ((editedUpdate.notes ?? []) as Note[]).map((note) => (
-                <button
-                  key={note.id}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    navigate({
-                      to: `/${pocketbookId ?? ""}/notes`,
-                      search: { noteId: note.id },
-                    });
-                  }}
-                  className={cn(
-                    "flex items-center gap-1 pl-2 pr-1 py-1 text-xs rounded-full transition-colors",
-                    tintClasses.notePill,
-                  )}
-                >
-                  {note.title ?? "Untitled Note"}
-
-                  <Icon iconName="arrowCircleRight" size="sm" />
-                </button>
-              ))}
-          </div>
-          <div className={cn("border-t-2", tintClasses.border)} />
-        </>
-      )}
-
-      <QuillViewer
-        content={editedUpdate.content ?? new Delta()}
-        onClick={() => setIsEditing(true)}
-      />
     </div>
   );
 };

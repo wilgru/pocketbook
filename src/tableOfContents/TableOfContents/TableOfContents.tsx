@@ -31,7 +31,7 @@ const TableOfContentsListItem = ({
         className={cn(
           "text-sm py-1 px-3 cursor-pointer rounded-full transition-colors flex items-center gap-2 max-w-full",
           item.italic && "italic",
-          colour.backgroundPillInverted,
+          colour.backgroundGlow,
           colour.textPillInverted,
         )}
       >
@@ -76,7 +76,7 @@ export default function TableOfContents({
         <h2
           className={cn(
             "font-title text-lg pt-1 px-3 overflow-x-hidden whitespace-nowrap overflow-ellipsis cursor-pointer rounded-full overflow-clip transition-color",
-            colour.backgroundPillInverted,
+            colour.backgroundGlow,
             colour.textPillInverted,
           )}
         >

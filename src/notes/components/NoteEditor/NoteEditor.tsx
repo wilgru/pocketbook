@@ -296,7 +296,6 @@ const NoteEditor = ({
                 update={{ notes: [editedNote], tint: null }}
                 colour={colour}
                 showNotes={false}
-                dateDisplay="date"
                 autoFocus={true}
                 onCancel={() => setShowNewUpdate(false)}
                 onCreated={() => setShowNewUpdate(false)}
@@ -312,7 +311,6 @@ const NoteEditor = ({
                   update={upd}
                   colour={colour}
                   showNotes={false}
-                  dateDisplay="date"
                 />
               ))}
             </div>
