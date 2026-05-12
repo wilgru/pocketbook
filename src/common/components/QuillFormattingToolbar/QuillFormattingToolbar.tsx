@@ -27,7 +27,11 @@ export const QuillFormattingToolbar = ({
   colour,
 }: QuillFormattingToolbarProps) => {
   return (
-    <div className="w-full h-fit" id={toolbarId}>
+    <div
+      className="w-full h-fit"
+      id={toolbarId}
+      onMouseDown={(e) => e.preventDefault()}
+    >
       <ToggleGroup.Root
         className="font-medium text-sm flex"
         type="multiple"

@@ -14,7 +14,7 @@ export const createToggleHandler =
       selection.length,
     );
 
-    quill.format(format, selectionFormatting[format] ? false : true);
+    quill.format(format, selectionFormatting[format] ? false : true, "user");
   };
 
 export const createListHandler =
@@ -32,11 +32,11 @@ export const createListHandler =
     );
 
     if (value === false) {
-      quill.format("list", false);
+      quill.format("list", false, "user");
       return;
     }
 
-    quill.format("list", selectionFormatting.list === value ? false : value);
+    quill.format("list", selectionFormatting.list === value ? false : value, "user");
   };
 
 export const createLinkHandler = (getQuill: () => Quill) => () => {
@@ -53,7 +53,7 @@ export const createLinkHandler = (getQuill: () => Quill) => () => {
   );
 
   if (selectionFormatting.link) {
-    quill.format("link", false);
+    quill.format("link", false, "user");
   } else {
     const url = prompt("Enter URL:");
 
@@ -66,7 +66,7 @@ export const createLinkHandler = (getQuill: () => Quill) => () => {
       } catch {
         return;
       }
-      quill.format("link", url);
+      quill.format("link", url, "user");
     }
   }
 };
