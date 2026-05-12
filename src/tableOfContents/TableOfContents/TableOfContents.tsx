@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
+import type { ReactNode } from "react";
 import type { Colour } from "src/colours/Colour.type";
 import type { TableOfContentsItem } from "src/tableOfContents/TableOfContentsItem.type";
 
@@ -62,7 +63,7 @@ type TableOfContentsProps = {
   activeItemNavigationId: string;
   onJumpTo: (id: string) => void;
   colour?: Colour;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export default function TableOfContents({
@@ -75,7 +76,10 @@ export default function TableOfContents({
   let previousGroup: string | undefined;
 
   return (
-    <nav className="w-56 m-4 pl-2 pb-2 max-h-[calc(100vh-2rem)] overflow-y-auto opacity-60 hover:opacity-100 transition-opacity">
+    <nav
+      aria-label={`${title} table of contents`}
+      className="w-56 m-4 pl-2 pb-2 max-h-[calc(100vh-2rem)] overflow-y-auto opacity-60 hover:opacity-100 transition-opacity"
+    >
       <div className="sticky top-0 z-10 bg-white pb-2">
         <h2
           className={cn(

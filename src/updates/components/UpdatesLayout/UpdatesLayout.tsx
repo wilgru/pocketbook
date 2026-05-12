@@ -22,6 +22,11 @@ type UpdatesLayoutProps = {
   onCreateNew?: () => void;
 };
 
+const getGroupDate = (group: { updates: Update[] }): Dayjs | null => {
+  const firstUpdate = group.updates[0];
+  return firstUpdate ? firstUpdate.created.startOf("day") : null;
+};
+
 export const UpdatesLayout = ({
   updates,
   colour = colours.orange,
@@ -40,12 +45,13 @@ export const UpdatesLayout = ({
 
   const tableOfContentItems = useMemo(() => {
     return groupedUpdates.map((group) => {
-      const groupDate = group.updates[0]?.created;
-      const month = groupDate?.format("MMMM") ?? "";
-      const day = groupDate?.format("D") ?? group.title;
-      const year = groupDate?.format("YYYY") ?? "";
-      const sectionTitle = groupDate ? `${day} ${month}` : group.title;
-      const sectionGroup = groupDate ? `${month} ${year}` : undefined;
+      const groupDate = getGroupDate(group);
+      const sectionTitle = groupDate
+        ? `${groupDate.format("D")} ${groupDate.format("MMMM")}`
+        : group.title;
+      const sectionGroup = groupDate
+        ? `${groupDate.format("MMMM")} ${groupDate.format("YYYY")}`
+        : undefined;
 
       return {
         title: sectionTitle,
@@ -64,7 +70,7 @@ export const UpdatesLayout = ({
   const dateByNavigationId = useMemo(() => {
     return new Map(
       groupedUpdates
-        .map((group) => [group.title, group.updates[0]?.created.startOf("day")])
+        .map((group) => [group.title, getGroupDate(group)])
         .filter((entry): entry is [string, Dayjs] => Boolean(entry[1])),
     );
   }, [groupedUpdates]);
@@ -72,10 +78,7 @@ export const UpdatesLayout = ({
   const navigationIdByDate = useMemo(() => {
     return new Map(
       groupedUpdates
-        .map((group) => [
-          group.updates[0]?.created.startOf("day").format("YYYY-MM-DD"),
-          group.title,
-        ])
+        .map((group) => [getGroupDate(group)?.format("YYYY-MM-DD"), group.title])
         .filter((entry): entry is [string, string] => Boolean(entry[0])),
     );
   }, [groupedUpdates]);
@@ -83,7 +86,7 @@ export const UpdatesLayout = ({
   const availableDateKeys = useMemo(() => {
     return new Set(
       groupedUpdates
-        .map((group) => group.updates[0]?.created.startOf("day").format("YYYY-MM-DD"))
+        .map((group) => getGroupDate(group)?.format("YYYY-MM-DD"))
         .filter(Boolean),
     );
   }, [groupedUpdates]);
@@ -92,7 +95,7 @@ export const UpdatesLayout = ({
     return groupedUpdates.reduce<
       Record<string, Array<{ colourClassName: string; count: number }>>
     >((acc, group) => {
-      const dateKey = group.updates[0]?.created.startOf("day").format("YYYY-MM-DD");
+      const dateKey = getGroupDate(group)?.format("YYYY-MM-DD");
       if (!dateKey) return acc;
 
       const dotCountByColour = group.updates

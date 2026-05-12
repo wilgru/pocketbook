@@ -36,6 +36,7 @@ const MONTH_NAMES = [
   "November",
   "December",
 ];
+const MAX_VISIBLE_DOTS = 4;
 
 export const Calendar = ({
   colour = colours.orange,
@@ -154,13 +155,18 @@ export const Calendar = ({
                 dotIndicator.colourClassName,
               ),
             ) ?? [];
+          const dateLabel = calendarDay.day.format("MMMM D, YYYY");
+          const ariaLabel =
+            dotsForDay.length > 0
+              ? `${dateLabel}, ${dotsForDay.length} waypoint marker${dotsForDay.length === 1 ? "" : "s"}`
+              : dateLabel;
 
           return (
             <button
               key={index}
               type="button"
               disabled={isDisabled}
-              aria-label={calendarDay.day.format("MMMM D, YYYY")}
+              aria-label={ariaLabel}
               onClick={() => onSelectDate?.(calendarDay.day)}
               className={cn(
                 "h-9 w-full text-xs rounded-lg cursor-pointer select-none transition-colors flex flex-col items-center justify-center gap-0.5",
@@ -180,13 +186,16 @@ export const Calendar = ({
               )}
             >
               <span>{calendarDay.day.date()}</span>
-              <span className="min-h-1.5 flex items-center justify-center gap-0.5">
-                {dotsForDay.slice(0, 4).map((dotClassName, dotIndex) => (
-                  <span
-                    key={`${dayKey}-${dotClassName}-${dotIndex}`}
-                    className={cn("w-1 h-1 rounded-full", dotClassName)}
-                  />
-                ))}
+              <span className="min-h-2 flex items-center justify-center gap-0.5">
+                {dotsForDay
+                  .slice(0, MAX_VISIBLE_DOTS)
+                  .map((dotClassName, dotIndex) => (
+                    <span
+                      key={`${dayKey}-${dotClassName}-${dotIndex}`}
+                      role="presentation"
+                      className={cn("w-1 h-1 rounded-full", dotClassName)}
+                    />
+                  ))}
               </span>
             </button>
           );
