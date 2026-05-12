@@ -147,9 +147,7 @@ export const Calendar = ({
 
         {calendarDays.map((calendarDay, index) => {
           const isSelected =
-            showSelectedDate &&
-            selectedDate &&
-            calendarDay.day.isSame(selectedDate, "day");
+            showSelectedDate && selectedDate?.isSame(calendarDay.day, "day");
           const isToday = calendarDay.day.isSame(today, "day");
           const isDisabled = isDateDisabled?.(calendarDay.day) ?? false;
           const dayKey = calendarDay.day.format("YYYY-MM-DD");
