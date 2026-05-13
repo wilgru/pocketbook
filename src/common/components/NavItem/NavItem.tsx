@@ -5,6 +5,8 @@ import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
 
+type NavItemSize = "md" | "sm";
+
 type NavItemProps = {
   iconName?: string;
   colour?: Colour;
@@ -12,7 +14,17 @@ type NavItemProps = {
   title: string;
   preview?: string | number;
   to: string;
+  size?: NavItemSize;
+  params?: Record<string, string>;
+  search?: Record<string, string>;
+  activeOptions?: { exact?: boolean; includeSearch?: boolean };
 };
+
+const sizeStyles: Record<NavItemSize, { text: string; iconSize: "xs" | "sm" }> =
+  {
+    md: { text: "text-sm", iconSize: "sm" },
+    sm: { text: "text-xs", iconSize: "xs" },
+  };
 
 export const NavItem = ({
   iconName,
@@ -21,19 +33,28 @@ export const NavItem = ({
   title,
   preview,
   to,
+  size = "md",
+  params,
+  search,
+  activeOptions,
 }: NavItemProps) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const { text, iconSize } = sizeStyles[size];
 
   return (
     <Link
       to={to}
+      params={params}
+      search={search}
+      activeOptions={activeOptions}
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       activeProps={{
         className: cn(colour.textPill, colour.backgroundPill),
       }}
       className={cn(
-        "flex justify-between items-center gap-2 px-2 py-1 rounded-full text-sm transition-colors min-w-0",
+        "flex justify-between items-center gap-2 px-2 py-1 rounded-full transition-colors min-w-0",
+        text,
         isHovered && colour.textPill,
         isHovered && colour.backgroundPill,
       )}
@@ -55,7 +76,7 @@ export const NavItem = ({
                     ? colour.textPill
                     : "text-slate-500",
                 )}
-                size="sm"
+                size={iconSize}
                 weight={isHovered || isActive ? "fill" : "regular"}
               />
             )}

@@ -1,8 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { cn } from "src/common/utils/cn";
-import { Icon } from "src/icons/components/Icon/Icon";
+import { NavItem } from "src/common/components/NavItem/NavItem";
 import { useGetNotes } from "src/notes/hooks/useGetNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 
@@ -23,64 +20,20 @@ export const SidebarBookmarkSection = () => {
 
         <div className="flex flex-col gap-1 mt-1">
           {notes.map((note) => (
-            <BookmarkNavItem
+            <NavItem
               key={note.id}
-              title={note.title ?? "Untitled"}
-              pocketbookId={pocketbookId}
-              noteId={note.id}
+              size="sm"
+              iconName="bookmark"
+              colour={colours.red}
+              title={note.title || "Untitled Note"}
+              to="/$pocketbookId/bookmarked"
+              params={{ pocketbookId }}
+              search={{ noteId: note.id }}
+              activeOptions={{ exact: true, includeSearch: true }}
             />
           ))}
         </div>
       </div>
     </section>
-  );
-};
-
-const BookmarkNavItem = ({
-  title,
-  pocketbookId,
-  noteId,
-}: {
-  title: string;
-  pocketbookId: string;
-  noteId: string;
-}) => {
-  const colour = colours.red;
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <Link
-      to={`/$pocketbookId/bookmarked`}
-      params={{ pocketbookId }}
-      search={{ noteId }}
-      activeOptions={{ exact: true, includeSearch: true }}
-      onMouseOver={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      activeProps={{
-        className: cn(colour.textPill, colour.backgroundPill),
-      }}
-      className={cn(
-        "flex justify-between items-center gap-2 px-2 py-1 rounded-full text-sm transition-colors min-w-0",
-        isHovered && colour.textPill,
-        isHovered && colour.backgroundPill,
-      )}
-    >
-      {({ isActive }: { isActive: boolean }) => (
-        <div
-          className={cn(
-            "flex items-center gap-2 min-w-0",
-            (isHovered || isActive) && colour.textPill,
-          )}
-        >
-          <Icon
-            iconName="bookmark"
-            className={cn(colour.textPill, "flex-shrink-0")}
-            size="sm"
-            weight={isHovered || isActive ? "fill" : "regular"}
-          />
-          <p className="truncate">{title === "" ? "Untitled Note" : title}</p>
-        </div>
-      )}
-    </Link>
   );
 };
