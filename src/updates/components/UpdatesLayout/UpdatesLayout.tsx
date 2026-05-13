@@ -116,8 +116,8 @@ export const UpdatesLayout = ({
   }, [groupedUpdates]);
 
   return (
-    <div className="h-full max-w-[1000px] w-full min-w-0 px-4 pb-16 flex gap-4 items-center justify-evenly">
-      <div className="h-full w-full px-4 py-12 flex flex-col gap-14 overflow-y-scroll">
+    <div className="flex-1 min-h-0 w-full min-w-0 px-4 flex gap-4 items-center justify-evenly overflow-hidden">
+      <div className="h-full w-full max-w-[800px] px-4 py-12 flex flex-col gap-14 overflow-y-auto">
         <PageHeader colour={colour} badges={badges}>
           <div className="flex gap-3 items-end">
             <Icon

@@ -9,8 +9,8 @@ type UpdatesSectionProps = {
 
 export const UpdatesSection = ({ group, colour }: UpdatesSectionProps) => {
   return (
-    <section id={group.title} className="w-full flex flex-col">
-      <h2 className="font-title text-3xl mb-4">{group.title}</h2>
+    <section id={group.title} className="w-full flex flex-col gap-2">
+      <h2 className="font-title text-3xl">{group.title}</h2>
 
       <div className="flex flex-col relative">
         {group.updates.map((upd) => (
