@@ -27,7 +27,7 @@ export const useUpdateUpdate = (): UseUpdateUpdateResponse => {
   }: UpdateUpdateProps): Promise<Update | undefined> => {
     const response = await window.api.updateUpdate({
       updateId,
-      content: updateData.content ? JSON.stringify(updateData.content) : null,
+      content: updateData.content ?? null,
       tint: updateData.tint ?? null,
       isWaypoint: updateData.isWaypoint ?? false,
       noteIds: updateData.notes?.map((n) => n.id) ?? [],

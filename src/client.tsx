@@ -1,6 +1,5 @@
 import { RouterProvider } from "@tanstack/react-router";
 import "src/index.css";
-import "quill/dist/quill.core.css";
 import { StrictMode, startTransition } from "react";
 import { createRoot } from "react-dom/client";
 import { getRouter } from "src/router";

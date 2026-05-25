@@ -28,7 +28,7 @@ export const useUpdateNote = (): UseUpdateNoteResponse => {
     const response = await window.api.updateNote({
       noteId,
       title: updateNoteData.title,
-      content: JSON.stringify(updateNoteData.content),
+      content: updateNoteData.content,
       isBookmarked: updateNoteData.isBookmarked,
       tagIds,
       links: JSON.stringify(updateNoteData.links),
