@@ -1,5 +1,5 @@
 import { $createCodeNode, $isCodeNode } from "@lexical/code";
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { $isLinkNode, $toggleLink, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import {
   $isListItemNode,
   $isListNode,
@@ -9,10 +9,12 @@ import {
 } from "@lexical/list";
 import { $createQuoteNode, $isQuoteNode } from "@lexical/rich-text";
 import {
+  type BaseSelection,
   type ElementNode,
   $createParagraphNode,
   $getSelection,
   $isRangeSelection,
+  $setSelection,
   FORMAT_TEXT_COMMAND,
   type LexicalEditor,
   type LexicalNode,
@@ -136,6 +138,8 @@ const isSelectionInList = (
 export const executeLexicalToolbarAction = (
   editor: LexicalEditor | null,
   value: string,
+  url?: string,
+  savedSelection?: BaseSelection | null,
 ): void => {
   if (!editor) {
     return;
@@ -179,8 +183,6 @@ export const executeLexicalToolbarAction = (
         return;
       }
 
-      const url = prompt("Enter URL:");
-
       if (!url) {
         return;
       }
@@ -195,7 +197,13 @@ export const executeLexicalToolbarAction = (
         return;
       }
 
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
+      editor.update(() => {
+        if (savedSelection) {
+          $setSelection(savedSelection);
+        }
+        $toggleLink(url);
+      });
+      editor.focus();
       return;
     }
     default:

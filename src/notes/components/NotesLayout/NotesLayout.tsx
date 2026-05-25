@@ -138,6 +138,7 @@ export const NotesLayout = ({
               toolbarFormatting={toolbarFormatting}
               editor={editor}
               colour={editorColour ?? colour}
+              isEditorFocused={isEditorFocused}
             />
           </FloatingToolbar>
         </div>

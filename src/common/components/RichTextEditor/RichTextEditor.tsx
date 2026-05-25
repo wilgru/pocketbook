@@ -12,6 +12,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -280,6 +281,7 @@ export const RichTextEditor = ({
     >
       <LexicalComposer initialConfig={initialConfig}>
         <HistoryPlugin />
+        <LinkPlugin />
         <ListPlugin />
         <MarkdownShortcutPlugin transformers={CUSTOM_TRANSFORMERS} />
         <TabIndentationPlugin
