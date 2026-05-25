@@ -58,7 +58,7 @@ const createWindow = () => {
   const isWindows = process.platform === "win32";
 
   mainWindow = new BrowserWindow({
-    width: isDev ? 2400 : 1200,
+    width: isDev ? 2300 : 1200,
     height: 800,
     title: "Pocketbook",
     titleBarStyle: "hidden",
