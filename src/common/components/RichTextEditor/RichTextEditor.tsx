@@ -1,14 +1,28 @@
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
+import {
+  HEADING,
+  TRANSFORMERS,
+  type ElementTransformer,
+} from "@lexical/markdown";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { QuoteNode } from "@lexical/rich-text";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
+import {
+  $createHeadingNode,
+  $isHeadingNode,
+  HeadingNode,
+  QuoteNode,
+  type HeadingTagType,
+} from "@lexical/rich-text";
 import {
   SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_LOW,
@@ -45,8 +59,39 @@ type RichTextSurfaceProps = {
   onEditorChange?: (editor: LexicalEditor | null) => void;
 };
 
+const HEADING_H1_H2: ElementTransformer = {
+  ...HEADING,
+  regExp: /^(#{1,2})\s/,
+  export: (node, exportChildren) => {
+    if (!$isHeadingNode(node)) {
+      return null;
+    }
+    const level = Number(node.getTag().slice(1));
+    if (level > 2) {
+      return null;
+    }
+    return "#".repeat(level) + " " + exportChildren(node);
+  },
+  replace: (parentNode, children, match) => {
+    const tag = ("h" + match[1].length) as HeadingTagType;
+    const node = $createHeadingNode(tag);
+    node.append(...children);
+    parentNode.replace(node);
+    node.select(0, node.getChildrenSize());
+  },
+};
+
+const CUSTOM_TRANSFORMERS = [
+  HEADING_H1_H2,
+  ...TRANSFORMERS.filter((t) => t !== HEADING),
+];
+
 const theme = {
   paragraph: "editor-paragraph",
+  heading: {
+    h1: "editor-heading-h1",
+    h2: "editor-heading-h2",
+  },
   quote: "editor-quote",
   text: {
     bold: "editor-text-bold",
@@ -67,7 +112,15 @@ const theme = {
   },
 };
 
-const nodes = [CodeNode, LinkNode, ListNode, ListItemNode, QuoteNode];
+const nodes = [
+  CodeNode,
+  HeadingNode,
+  HorizontalRuleNode,
+  LinkNode,
+  ListNode,
+  ListItemNode,
+  QuoteNode,
+];
 
 const Placeholder = () => null;
 
@@ -228,6 +281,10 @@ export const RichTextEditor = ({
       <LexicalComposer initialConfig={initialConfig}>
         <HistoryPlugin />
         <ListPlugin />
+        <MarkdownShortcutPlugin transformers={CUSTOM_TRANSFORMERS} />
+        <TabIndentationPlugin
+          $canIndent={(node) => node instanceof ListItemNode}
+        />
         <LexicalEditorBridge
           value={value}
           readOnly={readOnly}
