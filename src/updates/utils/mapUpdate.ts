@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
-import Delta from "quill-delta";
+import { normalizeLexicalContent } from "src/common/utils/lexicalContent";
 import type { Note } from "src/notes/Note.type";
 import type { Update, UpdateTint } from "src/updates/Update.type";
 import type { UpdateSchema } from "src/updates/updates.schema";
@@ -17,9 +17,7 @@ export const mapUpdate = (
 ): Update => {
   return {
     id: update.id,
-    content: update.content
-      ? new Delta(JSON.parse(update.content))
-      : new Delta(),
+    content: normalizeLexicalContent(update.content),
     tint: (update.tint as UpdateTint | null) ?? null,
     isWaypoint: update.isWaypoint,
     notes: options.notes ?? [],

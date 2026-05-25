@@ -2,7 +2,7 @@ import { Bookmark, ChatCenteredText } from "@phosphor-icons/react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import QuillViewer from "src/common/components/QuillViewer/QuillViewer";
+import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { cn } from "src/common/utils/cn";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
@@ -53,7 +53,7 @@ export const StickyNoteListItem = ({
           )}
         >
           <div className="max-h-28 overflow-hidden pointer-events-none">
-            <QuillViewer smallViewer content={note.content} />
+            <RichTextEditor readOnly size="sm" value={note.content} />
           </div>
 
           <div className="flex items-center gap-1">

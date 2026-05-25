@@ -1,12 +1,12 @@
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
-import { quillEditorStateAtom } from "src/common/atoms/quillEditorStateAtom";
+import { noteEditorStateAtom } from "src/common/atoms/noteEditorStateAtom";
 import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
+import { FormattingToolbar } from "src/common/components/FormattingToolbar/FormattingToolbar";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
-import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToolbar/QuillFormattingToolbar";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
@@ -43,10 +43,11 @@ export const NotesLayout = ({
   onCreateNote,
 }: NotesLayoutProps) => {
   const {
-    isQuillFocused,
+    isEditorFocused,
+    editor,
     toolbarFormatting,
-    colour: quillColour,
-  } = useAtomValue(quillEditorStateAtom);
+    colour: editorColour,
+  } = useAtomValue(noteEditorStateAtom);
   const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
 
   const noteGroups = useMemo<NotesGroup[]>(() => {
@@ -112,7 +113,11 @@ export const NotesLayout = ({
       <div className="h-full flex-1 relative flex flex-col min-w-0">
         <div className="flex-1 min-h-0 overflow-y-scroll flex justify-center">
           {selectedNote ? (
-            <NoteEditor note={selectedNote} colour={colour} />
+            <NoteEditor
+              key={selectedNote.id}
+              note={selectedNote}
+              colour={colour}
+            />
           ) : (
             <div className="h-full w-full flex flex-col justify-center items-center text-center">
               <h1 className="text-gray-400 text-lg">No note selected</h1>
@@ -120,7 +125,7 @@ export const NotesLayout = ({
           )}
         </div>
 
-        {/* isTaskFocused and isQuillFocused are mutually exclusive so each toolbar is
+        {/* isTaskFocused and isEditorFocused are mutually exclusive so each toolbar is
             positioned at the same absolute location and only one is ever shown at a time. */}
         <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
           <FloatingToolbar visible={isTaskFocused}>
@@ -128,11 +133,11 @@ export const NotesLayout = ({
           </FloatingToolbar>
         </div>
         <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-          <FloatingToolbar visible={isQuillFocused}>
-            <QuillFormattingToolbar
-              toolbarId="toolbar"
+          <FloatingToolbar visible={isEditorFocused}>
+            <FormattingToolbar
               toolbarFormatting={toolbarFormatting}
-              colour={quillColour ?? colour}
+              editor={editor}
+              colour={editorColour ?? colour}
             />
           </FloatingToolbar>
         </div>

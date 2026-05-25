@@ -31,7 +31,7 @@ export const useCreateNote = (): UseCreateNoteResponse => {
   }: CreateNoteProps): Promise<Note | undefined> => {
     const response = await window.api.createNote({
       title: createNoteData.title,
-      content: JSON.stringify(createNoteData.content),
+      content: createNoteData.content,
       isBookmarked: createNoteData.isBookmarked,
       tagIds: createNoteData.tags.map((tag) => tag.id),
       links: JSON.stringify(createNoteData.links),

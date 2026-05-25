@@ -39,107 +39,113 @@ body {
   -webkit-app-region: no-drag;
 }
 
-#quill-editor .ql-editor,
-#quill-viewer .ql-editor,
-#quill-viewer-small .ql-editor {
+.rich-text .editor-input {
   padding: 0;
 }
 
-#quill-editor p,
-#quill-viewer p,
-#quill-viewer-small p {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+.rich-text .editor-text-bold {
+  font-weight: bold;
 }
 
-#quill-editor p,
-#quill-viewer p {
-  font-size: 16px;
+.rich-text .editor-text-italic {
+  font-style: italic;
 }
 
-#quill-editor ul,
-#quill-viewer ul {
-  padding-left: 0;
+.rich-text .editor-text-underline {
+  text-decoration: underline;
 }
 
-#quill-editor ul li::before,
-#quill-viewer ul li::before,
-#quill-viewer-small ul li::before {
-  font-size: 16px;
-  margin-left: 2px;
-  margin-right: 2px;
-  text-align: center;
-  color: #cbd5e1; /* slate-300. Tailwind v4 will let you use var(--color-slate-300) */
+.rich-text .editor-text-strikethrough {
+  text-decoration: line-through;
 }
 
-#quill-editor ul li,
-#quill-viewer ul li {
-  font-size: 16px;
-  /* padding-left: 0; */
+.rich-text .editor-text-underline.editor-text-strikethrough {
+  text-decoration: underline line-through;
 }
 
-#quill-editor ol,
-#quill-viewer ol,
-#quill-viewer-small ol {
-  padding-left: 0;
-}
-
-#quill-editor ol li,
-#quill-viewer ol li {
-  font-size: 16px;
-}
-
-#quill-editor blockquote,
-#quill-viewer blockquote,
-#quill-viewer-small blockquote {
-  border-left: 2px solid #cbd5e1; /* slate-300. Tailwind v4 will let you use var(--color-slate-300) */
-  padding-left: 4px;
-}
-
-#quill-editor blockquote,
-#quill-viewer blockquote {
-  font-size: 16px;
-}
-
-#quill-editor pre,
-#quill-viewer pre,
-#quill-viewer-small pre,
-code {
+.rich-text .editor-text-code {
   font-family:
     "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier,
     monospace;
-  background-color: #f1f5f9; /* slate-100. Tailwind v4 will let you use var(--color-slate-100) */
-  padding: 4px;
-  border-radius: 8px;
+  background-color: #f1f5f9;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.875em;
 }
 
-#quill-editor pre,
-#quill-viewer pre,
-code {
+.rich-text p {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.35;
+  margin-bottom: 0.7em;
+}
+
+.rich-text p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.rich-text ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.rich-text ul ul {
+  list-style-type: circle;
+}
+
+.rich-text ul ul ul {
+  list-style-type: square;
+}
+
+.rich-text ul li,
+.rich-text ol li {
+  font-size: 16px;
+}
+
+.rich-text blockquote {
+  border-left: 2px solid #cbd5e1;
+  padding-left: 4px;
+  font-size: 16px;
+}
+
+.rich-text code {
+  font-family:
+    "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier,
+    monospace;
+  background-color: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
   font-size: 14px;
 }
 
-#quill-editor pre,
-#quill-viewer pre,
-#quill-viewer-small pre {
-  padding: 4px 8px;
-}
-
-#quill-editor a,
-#quill-viewer a,
-#quill-viewer-small a {
-  color: var(--ql-link-color, #f97316); /* falls back to orange-500 */
+.rich-text .editor-link,
+.rich-text a {
+  color: var(--link-color, #f97316);
   text-decoration: underline;
   cursor: pointer;
 }
 
-#quill-editor .ql-editor.ql-blank::before,
-#quill-viewer .ql-editor.ql-blank::before,
-#quill-viewer-small .ql-editor.ql-blank::before {
-  left: unset;
-  right: unset;
-  color: #94a3b8; /* slate-400. Tailwind v4 will let you use var(--color-slate-400) */
-  font-style: unset;
-  font-size: 16px;
+.rich-text.rich-text-sm p {
+  font-size: 12px;
+  margin-bottom: 0.4em;
+}
+
+.rich-text.rich-text-sm ul li,
+.rich-text.rich-text-sm ol li {
+  font-size: 12px;
+}
+
+.rich-text.rich-text-sm blockquote {
+  font-size: 12px;
+}
+
+.rich-text.rich-text-sm code {
+  font-size: 11px;
 }
 
 /* 

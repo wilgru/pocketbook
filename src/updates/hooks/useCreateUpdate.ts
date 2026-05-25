@@ -28,9 +28,7 @@ export const useCreateUpdate = (): UseCreateUpdateResponse => {
     createUpdateData,
   }: CreateUpdateProps): Promise<Update | undefined> => {
     const response = await window.api.createUpdate({
-      content: createUpdateData.content
-        ? JSON.stringify(createUpdateData.content)
-        : null,
+      content: createUpdateData.content ?? null,
       tint: createUpdateData.tint,
       isWaypoint: createUpdateData.isWaypoint ?? false,
       noteIds: createUpdateData.notes.map((n) => n.id),

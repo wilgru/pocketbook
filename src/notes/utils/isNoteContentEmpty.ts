@@ -1,7 +1,5 @@
-import type Delta from "quill-delta";
+import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
 
-export const isNoteContentEmpty = (NoteContent: Delta): boolean => {
-  return (
-    !NoteContent.length() || !NoteContent.ops.some((op) => op.insert !== "\n")
-  );
+export const isNoteContentEmpty = (noteContent: string): boolean => {
+  return getPlainTextFromLexicalContent(noteContent).trim().length === 0;
 };
