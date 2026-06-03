@@ -269,6 +269,7 @@ const NoteEditor = ({
       <div className="flex flex-col gap-5 w-full h-full">
         <RichTextEditor
           className="w-full px-1"
+          size="lg"
           value={editedNote.content}
           colour={colour}
           onChange={(delta) => onUpdateNote({ content: delta })}
