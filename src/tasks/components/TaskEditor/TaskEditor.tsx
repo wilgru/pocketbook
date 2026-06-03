@@ -17,6 +17,7 @@ import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { useDeleteTask } from "src/tasks/hooks/useDeleteTask";
 import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
 import type { Dayjs } from "dayjs";
+import type { MouseEvent } from "react";
 import type { Colour } from "src/colours/Colour.type";
 import type { Link } from "src/common/types/Link.type";
 import type { Task } from "src/tasks/Task.type";
@@ -248,6 +249,10 @@ export const TaskEditor = ({
     }
   };
 
+  const handleCircleMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
   const onSaveLinks = (links: Link[]) => {
     onUpdateTask({ links });
   };
@@ -279,7 +284,11 @@ export const TaskEditor = ({
         }
       }}
     >
-      <button className="pt-px pl-px" onClick={handleCircleClick}>
+      <button
+        className="pt-px pl-px"
+        onMouseDown={handleCircleMouseDown}
+        onClick={handleCircleClick}
+      >
         <Icon
           iconName={
             isCompleted ? "checkCircle" : isCancelled ? "xCircle" : "circle"
