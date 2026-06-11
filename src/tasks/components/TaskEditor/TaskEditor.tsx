@@ -75,6 +75,10 @@ export const TaskEditor = ({
 
   // Timer for distinguishing single vs double click on the status circle
   const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clickSnapshotRef = useRef<{
+    wasCompleted: boolean;
+    wasCancelled: boolean;
+  } | null>(null);
   const hasAutoFocusedRef = useRef(false);
 
   // Ref that always points to the latest save implementation so the debounced
@@ -126,6 +130,7 @@ export const TaskEditor = ({
       if (clickTimerRef.current) {
         clearTimeout(clickTimerRef.current);
       }
+      clickSnapshotRef.current = null;
     };
   }, []);
 
@@ -224,27 +229,35 @@ export const TaskEditor = ({
   }, [setTaskEditorState]);
 
   const handleCircleClick = () => {
+    const previousState = {
+      wasCompleted: !!editedTask.completedDate,
+      wasCancelled: !!editedTask.cancelledDate,
+    };
+
     if (clickTimerRef.current) {
       // Second click within threshold – treat as double click: toggle cancelled
       clearTimeout(clickTimerRef.current);
       clickTimerRef.current = null;
-      const isCancelled = !!editedTask.cancelledDate;
-      if (isCancelled) {
+      const wasCancelled = !!clickSnapshotRef.current?.wasCancelled;
+      clickSnapshotRef.current = null;
+      if (wasCancelled) {
         onUpdateTask({ completedDate: null, cancelledDate: null });
       } else {
         onUpdateTask({ completedDate: null, cancelledDate: dayjs() });
       }
     } else {
-      // First click – wait to see if a second click follows
+      // First click: apply completion state immediately.
+      if (previousState.wasCompleted || previousState.wasCancelled) {
+        onUpdateTask({ completedDate: null, cancelledDate: null });
+      } else {
+        onUpdateTask({ completedDate: dayjs() });
+      }
+
+      // Keep a short window to support double-click cancel toggle.
+      clickSnapshotRef.current = previousState;
       clickTimerRef.current = setTimeout(() => {
         clickTimerRef.current = null;
-        // Single click: toggle done (also clears cancelled if set)
-        const isCompleted = !!editedTask.completedDate;
-        if (isCompleted || !!editedTask.cancelledDate) {
-          onUpdateTask({ completedDate: null, cancelledDate: null });
-        } else {
-          onUpdateTask({ completedDate: dayjs() });
-        }
+        clickSnapshotRef.current = null;
       }, 300);
     }
   };
