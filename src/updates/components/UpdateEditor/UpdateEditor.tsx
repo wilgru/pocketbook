@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import Delta from "quill-delta";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
@@ -7,7 +8,6 @@ import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToo
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { NoteLink } from "src/notes/components/NoteLink/NoteLink";
 import { NoteMultiSelect } from "src/notes/components/NoteMultiSelect/NoteMultiSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
@@ -53,7 +53,8 @@ export const UpdateEditor = ({
   onCancel,
   onCreated,
 }: UpdateEditorProps) => {
-  const { currentPocketbook } = useCurrentPocketbook();
+  const { pocketbookId, currentPocketbook } = useCurrentPocketbook();
+  const navigate = useNavigate();
 
   const { createUpdate } = useCreateUpdate();
   const { updateUpdate } = useUpdateUpdate();
@@ -222,7 +223,24 @@ export const UpdateEditor = ({
 
               {showNotes &&
                 (editedUpdate.notes ?? []).map((note) => (
-                  <NoteLink key={note.id} note={note as Note} />
+                  <button
+                    key={note.id}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate({
+                        to: `/${pocketbookId ?? ""}/notes`,
+                        search: { noteId: note.id },
+                      });
+                    }}
+                    className={cn(
+                      "flex items-center gap-1 pl-2 pr-1 py-1 text-xs rounded-full transition-colors",
+                      tintClasses.notePill,
+                    )}
+                  >
+                    {note.title ?? "Untitled Note"}
+
+                    <Icon iconName="arrowCircleRight" size="sm" />
+                  </button>
                 ))}
             </div>
 
