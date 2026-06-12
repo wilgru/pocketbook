@@ -109,6 +109,7 @@ export const TasksSection = ({
               key={task.id}
               task={task}
               colour={colour}
+              onCreateNextTask={onCreateTask}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
             />
@@ -161,6 +162,7 @@ export const TasksSection = ({
             key={task.id}
             task={task}
             colour={colour}
+            onCreateNextTask={onCreateTask}
             autoFocusTitle={task.id === newTaskFocusId}
             onAutoFocusComplete={() => setNewTaskFocusId(null)}
           />

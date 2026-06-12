@@ -26,6 +26,7 @@ type TaskEditorProps = {
   task?: Partial<Task>;
   onSave?: () => void;
   onCreate?: (task: Task) => void;
+  onCreateNextTask?: () => void | Promise<void>;
   onFocusLost?: () => void;
   autoFocusTitle?: boolean;
   onAutoFocusComplete?: () => void;
@@ -53,6 +54,7 @@ export const TaskEditor = ({
   task,
   onSave,
   onCreate,
+  onCreateNextTask,
   onFocusLost,
   autoFocusTitle = false,
   onAutoFocusComplete,
@@ -334,6 +336,16 @@ export const TaskEditor = ({
               name="title"
               value={editedTask.title ?? ""}
               placeholder="No Title"
+              onKeyDown={async (e) => {
+                if (e.key !== "Enter" || e.shiftKey) {
+                  return;
+                }
+
+                e.preventDefault();
+                debouncedSave.flush();
+                await saveRef.current?.();
+                await onCreateNextTask?.();
+              }}
               onChange={(e) =>
                 onUpdateTask({
                   title: e.target.value,
