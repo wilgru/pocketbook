@@ -1,6 +1,5 @@
 import type { UpdateSchema } from "./updates.schema";
 import type { Dayjs } from "dayjs";
-import type Delta from "quill-delta";
 import type { Prettify } from "src/common/types/Prettify.type";
 import type { Note } from "src/notes/Note.type";
 
@@ -11,7 +10,7 @@ export type Update = Prettify<
     UpdateSchema,
     "content" | "tint" | "pocketbook" | "user" | "created" | "updated"
   > & {
-    content: Delta;
+    content: string;
     tint: UpdateTint | null;
     notes: Note[];
     created: Dayjs;

@@ -4,18 +4,11 @@ import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
+import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
 import { useGetNotes } from "src/notes/hooks/useGetNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { NoteListItem } from "../NotesList/NoteListItem";
-import type Delta from "quill-delta";
 import type { Note } from "src/notes/Note.type";
-
-const getTextFromDelta = (delta: Delta): string => {
-  return delta.ops
-    .filter((op) => typeof op.insert === "string")
-    .map((op) => op.insert as string)
-    .join("");
-};
 
 export const NoteSearchBar = () => {
   const [inputValue, setInputValue] = useState("");
@@ -31,7 +24,12 @@ export const NoteSearchBar = () => {
 
   const noteTextMap = useMemo(
     () =>
-      new Map(notes.map((note) => [note.id, getTextFromDelta(note.content)])),
+      new Map(
+        notes.map((note) => [
+          note.id,
+          getPlainTextFromLexicalContent(note.content),
+        ]),
+      ),
     [notes],
   );
 

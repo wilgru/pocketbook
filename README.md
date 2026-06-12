@@ -33,3 +33,23 @@
    ```
    npm run dev
    ```
+
+## One-off note content migration (Quill Delta -> Lexical JSON)
+
+For production note content migration, run:
+
+```bash
+npx tsx scripts/migrateNotesQuillToLexical.ts --db-path=/var/lib/pocketbook/pocketbook.db
+```
+
+Use `--apply` to persist changes:
+
+```bash
+npx tsx scripts/migrateNotesQuillToLexical.ts --db-path=/var/lib/pocketbook/pocketbook.db --apply
+```
+
+Optional: migrate a single note only:
+
+```bash
+npx tsx scripts/migrateNotesQuillToLexical.ts --db-path=/var/lib/pocketbook/pocketbook.db --note-id=<NOTE_ID> --apply
+```

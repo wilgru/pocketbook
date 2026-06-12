@@ -2,12 +2,12 @@ import { Check } from "@phosphor-icons/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import Delta from "quill-delta";
 import { useMemo, useState } from "react";
 import requireClientAuth from "src/Users/utils/requireClientAuth";
 import { Button } from "src/common/components/Button/Button";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
 import { cn } from "src/common/utils/cn";
+import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { sortNotes } from "src/common/utils/sortNotes";
 import { NotesLayout } from "src/notes/components/NotesLayout/NotesLayout";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
@@ -59,7 +59,7 @@ export default function TagComponent() {
     const newNote = await createNote({
       createNoteData: {
         title: "",
-        content: new Delta(),
+        content: createEmptyLexicalContent(),
         tags: [tag],
         isBookmarked: false,
         links: [],
