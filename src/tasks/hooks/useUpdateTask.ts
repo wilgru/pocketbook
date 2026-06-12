@@ -35,6 +35,7 @@ export const useUpdateTask = (): UseUpdateTaskResponse => {
       dueDate: updateTaskData.dueDate?.toISOString() ?? null,
       completedDate: updateTaskData.completedDate?.toISOString() ?? null,
       cancelledDate: updateTaskData.cancelledDate?.toISOString() ?? null,
+      sortOrder: updateTaskData.sortOrder,
     });
     if (!response.success) throw new Error(response.error);
 

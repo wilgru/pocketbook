@@ -14,6 +14,8 @@ type TaskEditorState = {
   onDueDateChange: ((date: Dayjs | null) => void) | null;
   onDatePickerOpenChange: ((open: boolean) => void) | null;
   onDeleteClick: (() => void) | null;
+  onMoveUp: (() => void) | null;
+  onMoveDown: (() => void) | null;
 };
 
 export const defaultTaskEditorState: TaskEditorState = {
@@ -28,6 +30,8 @@ export const defaultTaskEditorState: TaskEditorState = {
   onDueDateChange: null,
   onDatePickerOpenChange: null,
   onDeleteClick: null,
+  onMoveUp: null,
+  onMoveDown: null,
 };
 
 export const taskEditorStateAtom = atom<TaskEditorState>(defaultTaskEditorState);

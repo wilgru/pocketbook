@@ -4,8 +4,9 @@ import { Button } from "src/common/components/Button/Button";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
+import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
 import type { Colour } from "src/colours/Colour.type";
-import type { TasksGroup } from "src/tasks/Task.type";
+import type { Task, TasksGroup } from "src/tasks/Task.type";
 
 type TasksSectionProps = {
   taskGroup: TasksGroup;
@@ -22,6 +23,7 @@ export const TasksSection = ({
   const [isTitleHovered, setIsTitleHovered] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
   const { createTask } = useCreateTask();
+  const { updateTask } = useUpdateTask();
   const { pocketbookId } = useCurrentPocketbookId();
   const handledToolbarTriggerRef = useRef(0);
 
@@ -45,6 +47,29 @@ export const TasksSection = ({
       setNewTaskFocusId(createdTask.id);
     }
   }, [createTask, note]);
+
+  const swapTaskOrder = useCallback(
+    (taskA: Task, taskB: Task) => {
+      updateTask({ taskId: taskA.id, updateTaskData: { ...taskA, sortOrder: taskB.sortOrder } });
+      updateTask({ taskId: taskB.id, updateTaskData: { ...taskB, sortOrder: taskA.sortOrder } });
+    },
+    [updateTask],
+  );
+
+  const getMoveCallbacks = useCallback(
+    (index: number, tasks: Task[]) => {
+      const onMoveUp =
+        index > 0
+          ? () => swapTaskOrder(tasks[index], tasks[index - 1])
+          : undefined;
+      const onMoveDown =
+        index < tasks.length - 1
+          ? () => swapTaskOrder(tasks[index], tasks[index + 1])
+          : undefined;
+      return { onMoveUp, onMoveDown };
+    },
+    [swapTaskOrder],
+  );
 
   // Create a new no-note task whenever the toolbar plus button fires.
   useEffect(() => {
@@ -104,7 +129,7 @@ export const TasksSection = ({
             </div>
           )}
 
-          {taskGroup.tasks.map((task) => (
+          {taskGroup.tasks.map((task, index) => (
             <TaskEditor
               key={task.id}
               task={task}
@@ -112,6 +137,7 @@ export const TasksSection = ({
               onCreateNextTask={onCreateTask}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
+              {...getMoveCallbacks(index, taskGroup.tasks)}
             />
           ))}
         </div>
@@ -157,7 +183,7 @@ export const TasksSection = ({
       </div>
 
       <div className="flex flex-col gap-1.5 p-1">
-        {taskGroup.tasks.map((task) => (
+        {taskGroup.tasks.map((task, index) => (
           <TaskEditor
             key={task.id}
             task={task}
@@ -165,6 +191,7 @@ export const TasksSection = ({
             onCreateNextTask={onCreateTask}
             autoFocusTitle={task.id === newTaskFocusId}
             onAutoFocusComplete={() => setNewTaskFocusId(null)}
+            {...getMoveCallbacks(index, taskGroup.tasks)}
           />
         ))}
       </div>

@@ -6,7 +6,7 @@ import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Task } from "src/tasks/Task.type";
 
 type CreateTaskProps = {
-  createTaskData: Omit<Task, "id" | "created" | "updated">;
+  createTaskData: Omit<Task, "id" | "created" | "updated" | "sortOrder">;
 };
 
 type UseCreateTaskResponse = {
