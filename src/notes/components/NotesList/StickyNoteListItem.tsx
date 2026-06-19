@@ -4,14 +4,13 @@ import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import QuillViewer from "src/common/components/QuillViewer/QuillViewer";
 import { cn } from "src/common/utils/cn";
+import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
 
 type StickyNoteListItemProps = {
   note: Note;
-
-  createdDateFormat?: string;
   colour?: Colour;
   to?: string;
 };
@@ -26,7 +25,6 @@ const getStickyNoteRotation = (noteId: string): number => {
 
 export const StickyNoteListItem = ({
   note,
-  createdDateFormat = "ddd MMM D, YYYY",
   colour = colours.orange,
   to,
 }: StickyNoteListItemProps) => {
@@ -61,8 +59,8 @@ export const StickyNoteListItem = ({
             </div>
 
             <div className="flex items-center gap-1">
-              <p className={cn("text-xs", stickyMetaColourClass)}>
-                {note.created.format(createdDateFormat)}
+              <p className={cn("text-xs pt-0.5", stickyMetaColourClass)}>
+                {getRelativeDateTitle(note.created, false)}
               </p>
 
               {note.tags.length > 0 &&
@@ -84,7 +82,7 @@ export const StickyNoteListItem = ({
 
               {note.isBookmarked && (
                 <Bookmark
-                  className="fill-red-400 m-1"
+                  className="fill-red-400 my-1"
                   weight="fill"
                   size={14}
                 />

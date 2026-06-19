@@ -3,21 +3,19 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
+import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
 
 type NoteListItemProps = {
   note: Note;
-
-  createdDateFormat?: string;
   colour?: Colour;
   to?: string;
 };
 
 export const NoteListItem = ({
   note,
-  createdDateFormat = "ddd MMM D, YYYY",
   colour = colours.orange,
   to,
 }: NoteListItemProps) => {
@@ -40,19 +38,19 @@ export const NoteListItem = ({
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
-        <div key={note.id} className="w-full flex flex-col gap-1 p-1">
+        <div key={note.id} className="w-full flex flex-col p-1">
           <p className="truncate">
             {note.title === "" ? "Untitled Note" : note.title}
           </p>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center">
             <p
               className={cn(
-                "text-xs text-slate-400",
+                "text-xs text-slate-400 pt-0.5 pr-1",
                 (isHovered || isActive) && colour.textPill,
               )}
             >
-              {note.created.format(createdDateFormat)}
+              {getRelativeDateTitle(note.created, false)}
             </p>
 
             {note.tags.length > 0 &&
