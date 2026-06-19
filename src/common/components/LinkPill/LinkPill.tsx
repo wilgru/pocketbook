@@ -16,12 +16,12 @@ export const LinkPill = ({ link, colour = colours.orange }: LinkPillProps) => {
       href={link.link}
       target="_blank"
       className={cn(
-        "h-fit flex flex-row items-center gap-1 text-sm rounded-full hover:underline min-w-0",
+        "h-fit flex flex-row items-center text-sm rounded-full hover:underline min-w-0",
         colour.text,
       )}
     >
-      <Icon iconName="link" size="sm" />
       <span className="truncate">{link.title || getDisplayUrl(link.link)}</span>
+      <Icon weight="regular" iconName="arrowUpRight" size="xs" />
     </a>
   );
 };
