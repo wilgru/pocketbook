@@ -57,7 +57,7 @@ export const StickyNoteListItem = ({
           </div>
 
           <div className="flex items-center gap-1">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-yellow-600">
               {note.created.format(createdDateFormat)}
             </p>
 
@@ -70,6 +70,7 @@ export const StickyNoteListItem = ({
                   variant="ghost"
                   closable={false}
                   collapsed={true}
+                  iconClassName="text-yellow-600"
                 />
               ))}
 
