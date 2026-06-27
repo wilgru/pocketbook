@@ -75,7 +75,7 @@ export const NotesLayout = ({
 
   return (
     <div className="flex-1 min-h-0 w-full min-w-0 flex overflow-hidden">
-      <div className="h-full w-60 px-4 flex flex-col gap-6 overflow-y-scroll border-dashed border-r-2 border-slate-100">
+      <div className="h-full w-64 px-3 flex flex-col gap-5 overflow-y-scroll border-r border-slate-200 bg-slate-50/50">
         {(description || (links && links.length > 0)) && (
           <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
             {description && (
@@ -89,7 +89,7 @@ export const NotesLayout = ({
           </div>
         )}
 
-        <div className="h-full flex flex-col gap-4 pb-6">
+        <div className="h-full flex flex-col gap-3 pt-3 pb-6">
           {noteGroups.map((noteGroup) => (
             <NotesList
               key={noteGroup.title ?? "no-title"}

@@ -17,9 +17,11 @@ export const NotesList = ({
 }: NotesListProps) => {
   return (
     <section>
-      <div className="flex flex-col gap-1 items-start">
+      <div className="flex flex-col gap-0.5 items-start">
         {noteGroup.title && (
-          <h3 className="text-slate-400 text-xs">{noteGroup.title}</h3>
+          <h3 className="text-slate-400 text-xs uppercase tracking-wider font-semibold px-2 pb-1 pt-2">
+            {noteGroup.title}
+          </h3>
         )}
 
         {noteGroup.notes.map((note) => {

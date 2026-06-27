@@ -158,8 +158,8 @@ const NoteEditor = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-12 pt-6">
-      <div className="w-full flex flex-col gap-2 justify-between border-b-2 border-slate-100 pb-3">
+    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-12 pt-8">
+      <div className="w-full flex flex-col gap-3 justify-between border-b border-slate-200 pb-4">
         <textarea
           ref={titleRef}
           rows={1}
@@ -226,7 +226,7 @@ const NoteEditor = ({
             iconName="bookmark"
           />
 
-          <p className="text-slate-500 text-xs">
+          <p className="text-slate-400 text-xs">
             {editedNote.created.format("D MMMM YYYY, hh:mm a")}
           </p>
 
@@ -265,7 +265,7 @@ const NoteEditor = ({
       </div>
 
       {note.tasks && note.tasks.length > 0 && (
-        <div className="w-full flex flex-col gap-2 justify-between border-b-2 border-slate-100 pb-4">
+        <div className="w-full flex flex-col gap-2 justify-between border-b border-slate-200 pb-4">
           {note.tasks.map((task) => (
             <TaskEditor
               key={task.id}
@@ -301,7 +301,7 @@ const NoteEditor = ({
       </div>
 
       {(updates.length > 0 || showNewUpdate) && (
-        <div className="w-full flex flex-col border-t-2 border-slate-100 pt-6">
+        <div className="w-full flex flex-col border-t border-slate-200 pt-6">
           {showNewUpdate && (
             <div ref={newUpdateRef}>
               <UpdateEditor

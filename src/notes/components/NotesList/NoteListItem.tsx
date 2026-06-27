@@ -29,17 +29,17 @@ export const NoteListItem = ({
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       activeProps={{
-        className: cn(colour.textPill, colour.backgroundPill),
+        className: cn(colour.textPill, colour.backgroundPill, "rounded-lg"),
       }}
       className={cn(
-        "w-full flex justify-between items-center gap-2 px-2 py-1 rounded-xl text-sm transition-colors",
+        "w-full flex justify-between items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-colors",
         isHovered && colour.textPill,
         isHovered && colour.backgroundPill,
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
         <div key={note.id} className="w-full flex flex-col p-1">
-          <p className="truncate">
+          <p className="truncate font-medium">
             {note.title === "" ? "Untitled Note" : note.title}
           </p>
 
