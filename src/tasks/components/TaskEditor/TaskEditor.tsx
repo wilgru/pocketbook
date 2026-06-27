@@ -388,10 +388,10 @@ export const TaskEditor = ({
           {!!editedTask.dueDate && (
             <span
               className={cn(
-                "text-xs px-2 py-1 rounded-full",
+                "text-xs px-2.5 py-0.5 rounded-md font-medium",
                 isDueDateOverdue
                   ? "bg-red-100 text-red-500"
-                  : "bg-gray-100 text-gray-500",
+                  : "bg-slate-100 text-slate-500",
               )}
             >
               {editedTask.dueDate.format("MMM D, YYYY")}

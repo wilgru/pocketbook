@@ -136,7 +136,7 @@ export const UpdateEditor = ({
     <div className="relative">
       <div
         className={cn(
-          "rounded-2xl p-2 my-2 flex flex-col gap-1 border transition-shadow",
+          "rounded-xl p-3 my-3 flex flex-col gap-2 border transition-shadow",
           isEditing
             ? "bg-white border-slate-100 shadow-md"
             : cn("", tintClasses.card, tintClasses.border),
@@ -216,7 +216,7 @@ export const UpdateEditor = ({
           <div className="flex items-center justify-between flex-wrap gap-2 mt-1">
             <div className="flex items-center gap-2 flex-wrap">
               {dateStr && (
-                <span className="text-xs text-slate-400 shrink-0 pl-1">
+                <span className="text-xs text-slate-400 shrink-0">
                   {dateStr}
                 </span>
               )}
