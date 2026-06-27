@@ -136,60 +136,20 @@ export const UpdateEditor = ({
     <div className="relative">
       <div
         className={cn(
-          "rounded-2xl p-4 my-2 flex flex-col gap-3 border transition-shadow",
+          "rounded-2xl p-2 my-2 flex flex-col gap-1 border transition-shadow",
           isEditing
             ? "bg-white border-slate-100 shadow-md"
-            : cn(
-                "shadow hover:shadow-md",
-                tintClasses.card,
-                tintClasses.border,
-              ),
+            : cn("", tintClasses.card, tintClasses.border),
         )}
       >
-        <div
-          className={cn(
-            "flex items-center justify-between flex-wrap gap-2 border-b-2 pb-3 ",
-            isEditing ? "border-slate-100" : tintClasses.border,
-          )}
-        >
-          <div className="flex items-center justify-start gap-3 flex-wrap">
-            {dateStr && (
-              <span className="text-xs text-slate-700 shrink-0">{dateStr}</span>
-            )}
+        {isEditing && (
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <NoteMultiSelect
+              selectedNotes={(editedUpdate.notes ?? []) as Note[]}
+              colour={resolvedColour}
+              onChange={(notes) => onUpdateField({ notes })}
+            />
 
-            {showNotes &&
-              !isEditing &&
-              (editedUpdate.notes ?? []).map((note) => (
-                <button
-                  key={note.id}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    navigate({
-                      to: `/${pocketbookId ?? ""}/notes`,
-                      search: { noteId: note.id },
-                    });
-                  }}
-                  className={cn(
-                    "flex items-center gap-1 pl-2 pr-1 py-1 text-xs rounded-full transition-colors",
-                    tintClasses.notePill,
-                  )}
-                >
-                  {note.title ?? "Untitled Note"}
-
-                  <Icon iconName="arrowCircleRight" size="sm" />
-                </button>
-              ))}
-
-            {isEditing && (
-              <NoteMultiSelect
-                selectedNotes={(editedUpdate.notes ?? []) as Note[]}
-                colour={resolvedColour}
-                onChange={(notes) => onUpdateField({ notes })}
-              />
-            )}
-          </div>
-
-          {isEditing && (
             <div className="flex gap-1.5 items-center">
               <Toggle
                 isToggled={editedUpdate.isWaypoint ?? false}
@@ -229,23 +189,8 @@ export const UpdateEditor = ({
                 />
               ))}
             </div>
-          )}
-
-          {!isEditing && editedUpdate.isWaypoint && (
-            <div
-              className={cn(
-                "p-1 rounded-lg",
-                tintClasses.colour.backgroundPill,
-              )}
-            >
-              <Icon
-                iconName="flagBannerFold"
-                size="sm"
-                className={cn("shrink-0", tintClasses.colour.textPill)}
-              />
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {isEditing && (
           <QuillFormattingToolbar
@@ -266,6 +211,55 @@ export const UpdateEditor = ({
             setToolbarFormatting(formatting)
           }
         />
+
+        {!isEditing && (
+          <div className="flex items-center justify-between flex-wrap gap-2 mt-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              {dateStr && (
+                <span className="text-xs text-slate-400 shrink-0 pl-1">
+                  {dateStr}
+                </span>
+              )}
+
+              {showNotes &&
+                (editedUpdate.notes ?? []).map((note) => (
+                  <button
+                    key={note.id}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate({
+                        to: `/${pocketbookId ?? ""}/notes`,
+                        search: { noteId: note.id },
+                      });
+                    }}
+                    className={cn(
+                      "flex items-center gap-1 pl-2 pr-1 py-1 text-xs rounded-full transition-colors",
+                      tintClasses.notePill,
+                    )}
+                  >
+                    {note.title ?? "Untitled Note"}
+
+                    <Icon iconName="arrowCircleRight" size="sm" />
+                  </button>
+                ))}
+            </div>
+
+            {editedUpdate.isWaypoint && (
+              <div
+                className={cn(
+                  "p-1 rounded-lg",
+                  tintClasses.colour.backgroundPill,
+                )}
+              >
+                <Icon
+                  iconName="flagBannerFold"
+                  size="sm"
+                  className={cn("shrink-0", tintClasses.colour.textPill)}
+                />
+              </div>
+            )}
+          </div>
+        )}
 
         {isEditing && (
           <div className="flex items-center justify-between flex-wrap gap-2">
