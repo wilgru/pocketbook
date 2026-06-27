@@ -140,19 +140,19 @@ export const Sidebar = () => {
           </SidebarTagSection>
         ))}
 
-        {/* <hr className="w-full border-slate-200" /> */}
+        <hr className="w-full border-slate-200" />
 
         <Dialog.Root>
           <Dialog.Trigger asChild>
             <button
               type="button"
               className={cn(
-                "mt-1 w-fit flex items-center gap-1 text-slate-400 transition-colors",
+                "pl-0.5 mt-1 w-fit flex items-center gap-1 text-slate-400 transition-colors",
                 `hover:${currentPocketbook.colour.textPill}`,
               )}
             >
-              <span className="font-title text-md">Add Section</span>
-              <Icon iconName="plus" size="sm" className="pb-1" />
+              <Icon iconName="plus" size="xs" />
+              <span className="text-xs">Add Tag Group</span>
             </button>
           </Dialog.Trigger>
 

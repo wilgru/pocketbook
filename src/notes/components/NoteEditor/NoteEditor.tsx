@@ -170,14 +170,6 @@ const NoteEditor = ({
           className="text-5xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-none"
         />
 
-        {editedNote.links.length > 0 && (
-          <div className="flex flex-row flex-wrap gap-2 items-center">
-            {editedNote.links.map((link) => (
-              <LinkPill key={link.id} link={link} colour={colour} />
-            ))}
-          </div>
-        )}
-
         <div className="flex flex-row flex-wrap gap-2 items-center">
           <TagMultiSelect
             key={editedNote.id}
@@ -262,6 +254,14 @@ const NoteEditor = ({
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
         </div>
+
+        {editedNote.links.length > 0 && (
+          <div className="flex flex-row flex-wrap gap-2 items-center">
+            {editedNote.links.map((link) => (
+              <LinkPill key={link.id} link={link} colour={colour} />
+            ))}
+          </div>
+        )}
       </div>
 
       {note.tasks && note.tasks.length > 0 && (
@@ -271,6 +271,7 @@ const NoteEditor = ({
               key={task.id}
               task={task}
               colour={colour}
+              onCreateNextTask={onCreateTask}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
             />

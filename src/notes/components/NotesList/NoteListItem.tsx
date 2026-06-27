@@ -1,23 +1,21 @@
-import { Bookmark, ChatCenteredText } from "@phosphor-icons/react";
+import { Bookmark } from "@phosphor-icons/react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
+import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
 
 type NoteListItemProps = {
   note: Note;
-
-  createdDateFormat?: string;
   colour?: Colour;
   to?: string;
 };
 
 export const NoteListItem = ({
   note,
-  createdDateFormat = "ddd MMM D, YYYY",
   colour = colours.orange,
   to,
 }: NoteListItemProps) => {
@@ -39,40 +37,43 @@ export const NoteListItem = ({
         isHovered && colour.backgroundPill,
       )}
     >
-      <div key={note.id} className="w-full flex flex-col gap-1 p-1">
-        <p className="truncate">
-          {note.title === "" ? "Untitled Note" : note.title}
-        </p>
-
-        <div className="flex items-center gap-1">
-          <p className="text-xs text-slate-400">
-            {note.created.format(createdDateFormat)}
+      {({ isActive }: { isActive: boolean }) => (
+        <div key={note.id} className="w-full flex flex-col p-1">
+          <p className="truncate">
+            {note.title === "" ? "Untitled Note" : note.title}
           </p>
 
-          {note.tags.length > 0 &&
-            note.tags.map((tag) => (
-              <TagPill
-                key={tag.id}
-                tag={tag}
-                size="xs"
-                variant="ghost"
-                closable={false}
-                collapsed={true}
-              />
-            ))}
+          <div className="flex items-center">
+            <p
+              className={cn(
+                "text-xs text-slate-400 pt-0.5 pr-1",
+                (isHovered || isActive) && colour.textPill,
+              )}
+            >
+              {getRelativeDateTitle(note.created, false)}
+            </p>
 
-          {note.updateCount > 0 && (
-            <div className="flex items-center gap-1 text-xs text-slate-400 m-1">
-              <ChatCenteredText size={14} />
-              <span>{note.updateCount}</span>
-            </div>
-          )}
+            {note.tags.length > 0 &&
+              note.tags.map((tag) => (
+                <TagPill
+                  key={tag.id}
+                  tag={tag}
+                  size="xs"
+                  variant="ghost"
+                  closable={false}
+                  collapsed={true}
+                  iconClassName={
+                    isHovered || isActive ? tag.colour.textPill : undefined
+                  }
+                />
+              ))}
 
-          {note.isBookmarked && (
-            <Bookmark className="fill-red-400 m-1" weight="fill" size={14} />
-          )}
+            {note.isBookmarked && (
+              <Bookmark className="fill-red-400 m-1" weight="fill" size={14} />
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </Link>
   );
 };
