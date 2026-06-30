@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
+import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { PageHeader } from "src/common/components/PageHeader/PageHeader";
 import { cn } from "src/common/utils/cn";
-import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
 import TableOfContents from "src/tableOfContents/TableOfContents/TableOfContents";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
@@ -46,14 +46,24 @@ export const UpdatesLayout = ({
   const tableOfContentItems = useMemo(() => {
     return groupedUpdates.map((group) => {
       const groupDate = getGroupDate(group);
+      const diffDays = groupDate
+        ? dayjs().startOf("day").diff(groupDate, "day")
+        : null;
 
       const sectionGroup = groupDate
         ? `${groupDate.format("MMMM")} ${groupDate.format("YYYY")}`
         : undefined;
 
-      const sectionTitle = groupDate
-        ? getRelativeDateTitle(groupDate, true, false)
-        : group.title;
+      let sectionTitle = group.title;
+      if (groupDate) {
+        if (diffDays === 0) {
+          sectionTitle = "Today";
+        } else if (diffDays === 1) {
+          sectionTitle = "Yesterday";
+        } else {
+          sectionTitle = groupDate.format("D MMM, dddd");
+        }
+      }
 
       return {
         title: sectionTitle,
