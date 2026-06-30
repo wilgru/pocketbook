@@ -286,7 +286,7 @@ export const TaskEditor = ({
 
   return (
     <div
-      className="w-full flex gap-2 items-start"
+      className="w-full flex gap-1 items-start"
       onFocus={() => setIsFocused(true)}
       onBlur={(e) => {
         if (
@@ -300,7 +300,7 @@ export const TaskEditor = ({
       }}
     >
       <button
-        className="pt-px pl-px"
+        className="pt-[3px] pl-px"
         onMouseDown={handleCircleMouseDown}
         onClick={handleCircleClick}
       >
@@ -308,7 +308,7 @@ export const TaskEditor = ({
           iconName={
             isCompleted ? "checkCircle" : isCancelled ? "xCircle" : "circle"
           }
-          size="md"
+          size="sm"
           weight={isCompleted || isCancelled ? "fill" : "regular"}
           className="fill-slate-400 hover:fill-slate-600 transition-colors"
         />
@@ -388,10 +388,10 @@ export const TaskEditor = ({
           {!!editedTask.dueDate && (
             <span
               className={cn(
-                "text-xs px-2.5 py-0.5 rounded-md font-medium",
+                "text-xs px-2 py-1 rounded-full",
                 isDueDateOverdue
                   ? "bg-red-100 text-red-500"
-                  : "bg-slate-100 text-slate-500",
+                  : "bg-gray-100 text-gray-500",
               )}
             >
               {editedTask.dueDate.format("MMM D, YYYY")}
