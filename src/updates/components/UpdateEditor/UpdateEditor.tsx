@@ -213,7 +213,7 @@ export const UpdateEditor = ({
         />
 
         {!isEditing && (
-          <div className="flex items-center justify-between flex-wrap gap-2 mt-1">
+          <div className="flex items-center justify-between flex-wrap gap-2 mt-0.5">
             <div className="flex items-center gap-2 flex-wrap">
               {dateStr && (
                 <span className="text-xs text-slate-400 shrink-0">
@@ -233,7 +233,7 @@ export const UpdateEditor = ({
                       });
                     }}
                     className={cn(
-                      "flex items-center gap-1 pl-2 pr-1 py-1 text-xs rounded-full transition-colors",
+                      "flex items-center gap-1 pl-1.5 pr-1 py-0.5 text-[11px] rounded-full transition-colors",
                       tintClasses.notePill,
                     )}
                   >
@@ -253,7 +253,7 @@ export const UpdateEditor = ({
               >
                 <Icon
                   iconName="flagBannerFold"
-                  size="sm"
+                  size="xs"
                   className={cn("shrink-0", tintClasses.colour.textPill)}
                 />
               </div>
