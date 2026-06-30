@@ -12,7 +12,7 @@ export const UpdatesSection = ({ group, colour }: UpdatesSectionProps) => {
     <section id={group.title} className="w-full flex flex-col gap-2">
       <h2 className="font-title text-3xl">{group.title}</h2>
 
-      <div className="flex flex-col relative">
+      <div className="flex flex-col gap-2 relative">
         {group.updates.map((upd) => (
           <UpdateEditor key={upd.id} update={upd} colour={colour} />
         ))}
