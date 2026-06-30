@@ -136,7 +136,7 @@ export const UpdateEditor = ({
     <div className="relative">
       <div
         className={cn(
-          "rounded-xl p-3 my-3 flex flex-col gap-2 border transition-shadow",
+          "rounded-xl p-2 flex flex-col gap-2 border transition-shadow",
           isEditing
             ? "bg-white border-slate-100 shadow-md"
             : cn("", tintClasses.card, tintClasses.border),

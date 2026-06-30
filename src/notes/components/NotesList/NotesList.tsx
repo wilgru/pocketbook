@@ -10,16 +10,12 @@ type NotesListProps = {
   colour: Colour;
 };
 
-export const NotesList = ({
-  noteGroup,
-  createdDateFormat,
-  colour,
-}: NotesListProps) => {
+export const NotesList = ({ noteGroup, colour }: NotesListProps) => {
   return (
     <section>
       <div className="flex flex-col gap-0.5 items-start">
         {noteGroup.title && (
-          <h3 className="text-slate-400 text-xs uppercase tracking-wider font-semibold px-2 pb-1 pt-2">
+          <h3 className="text-slate-500 text-xs w-full tracking-wider font-medium px-2 pb-1 pt-2 border-dashed border-b border-slate-300">
             {noteGroup.title}
           </h3>
         )}
@@ -30,23 +26,11 @@ export const NotesList = ({
 
           if (hasNoTitle && hasContent) {
             return (
-              <StickyNoteListItem
-                key={note.id}
-                note={note}
-                createdDateFormat={createdDateFormat}
-                colour={colour}
-              />
+              <StickyNoteListItem key={note.id} note={note} colour={colour} />
             );
           }
 
-          return (
-            <NoteListItem
-              key={note.id}
-              note={note}
-              createdDateFormat={createdDateFormat}
-              colour={colour}
-            />
-          );
+          return <NoteListItem key={note.id} note={note} colour={colour} />;
         })}
       </div>
     </section>
