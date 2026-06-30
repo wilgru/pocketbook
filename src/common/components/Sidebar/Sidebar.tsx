@@ -40,7 +40,7 @@ export const Sidebar = () => {
     <aside className="bg-slate-50 min-w-60 max-w-60 flex flex-col h-full">
       <div
         className={cn(
-          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[58px] px-3",
+          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] p-2",
           isWindows ? "justify-between" : "justify-end",
         )}
       >
@@ -140,7 +140,7 @@ export const Sidebar = () => {
           </SidebarTagSection>
         ))}
 
-        <hr className="w-full border-slate-200" />
+        <hr className="w-full border-slate-300" />
 
         <Dialog.Root>
           <Dialog.Trigger asChild>

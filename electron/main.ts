@@ -58,13 +58,13 @@ const createWindow = () => {
   const isWindows = process.platform === "win32";
 
   mainWindow = new BrowserWindow({
-    width: isDev ? 2400 : 1200,
+    width: isDev ? 2000 : 1000,
     height: 800,
     title: "Pocketbook",
     titleBarStyle: "hidden",
     ...(isMac
       ? {
-          trafficLightPosition: { x: 21, y: 21 },
+          trafficLightPosition: { x: 18, y: 18 },
         }
       : {}),
     ...(isWindows
@@ -73,7 +73,7 @@ const createWindow = () => {
           titleBarOverlay: {
             color: "#ffffff00",
             symbolColor: "#64748b",
-            height: 58,
+            height: 50,
           },
         }
       : {}),
