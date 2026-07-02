@@ -18,7 +18,7 @@ import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
-import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
+import { useTaskReorder } from "src/tasks/hooks/useTaskReorder";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
 import { TagMultiSelect } from "../../../tags/components/TagMultiSelect/TagMultiSelect";
@@ -26,7 +26,6 @@ import { TaskEditor } from "../../../tasks/components/TaskEditor/TaskEditor";
 import type { Colour } from "src/colours/Colour.type";
 import type { Link } from "src/common/types/Link.type";
 import type { Note } from "src/notes/Note.type";
-import type { Task } from "src/tasks/Task.type";
 
 type NoteEditorProps = {
   note: Note;
@@ -43,7 +42,7 @@ const NoteEditor = ({
 }: NoteEditorProps) => {
   const { createNote } = useCreateNote();
   const { createTask } = useCreateTask();
-  const { updateTask } = useUpdateTask();
+  const { getMoveCallbacks } = useTaskReorder();
   const { updateNote } = useUpdateNote();
   const { deleteNote } = useDeleteNote();
   const { updates } = useGetUpdates({ noteId: note.id });
@@ -133,21 +132,6 @@ const NoteEditor = ({
     if (createdTask?.id) {
       setNewTaskFocusId(createdTask.id);
     }
-  };
-
-  const swapTaskOrder = (taskA: Task, taskB: Task) => {
-    updateTask({ taskId: taskA.id, updateTaskData: { ...taskA, sortOrder: taskB.sortOrder } });
-    updateTask({ taskId: taskB.id, updateTaskData: { ...taskB, sortOrder: taskA.sortOrder } });
-  };
-
-  const getTaskMoveCallbacks = (index: number, tasks: Task[]) => {
-    const onMoveUp =
-      index > 0 ? () => swapTaskOrder(tasks[index], tasks[index - 1]) : undefined;
-    const onMoveDown =
-      index < tasks.length - 1
-        ? () => swapTaskOrder(tasks[index], tasks[index + 1])
-        : undefined;
-    return { onMoveUp, onMoveDown };
   };
 
   const onUpdateNote = (updateNoteData: Partial<Note>) => {
@@ -292,7 +276,7 @@ const NoteEditor = ({
               onCreateNextTask={onCreateTask}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
-              {...getTaskMoveCallbacks(index, note.tasks)}
+              {...getMoveCallbacks(index, note.tasks)}
             />
           ))}
         </div>
