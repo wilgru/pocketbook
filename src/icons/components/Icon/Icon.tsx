@@ -37,6 +37,7 @@ import {
   CaretDown,
   DotsThreeOutline,
   FlagBannerFold,
+  ArrowUpRight,
 } from "@phosphor-icons/react";
 import { ChatCenteredText } from "@phosphor-icons/react/dist/ssr";
 import { icons } from "src/icons/icons.constant";
@@ -151,6 +152,8 @@ const Icon = ({
       return <DotsThreeOutline {...iconProps} weight="fill" />;
     case "flagBannerFold":
       return <FlagBannerFold {...iconProps} />;
+    case "arrowUpRight":
+      return <ArrowUpRight {...iconProps} />;
     default:
       return <></>;
   }

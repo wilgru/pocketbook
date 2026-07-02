@@ -40,7 +40,7 @@ export const Sidebar = () => {
     <aside className="bg-slate-50 min-w-60 max-w-60 flex flex-col h-full">
       <div
         className={cn(
-          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[58px] px-3",
+          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] p-2",
           isWindows ? "justify-between" : "justify-end",
         )}
       >
@@ -69,7 +69,7 @@ export const Sidebar = () => {
           pocketbooks={pocketbooks}
         />
 
-        <section className="flex flex-col gap-1">
+        <section className="flex flex-col">
           <NavItem
             ghost
             iconName="pencil"
@@ -140,19 +140,19 @@ export const Sidebar = () => {
           </SidebarTagSection>
         ))}
 
-        {/* <hr className="w-full border-slate-200" /> */}
+        <hr className="w-full border-slate-300" />
 
         <Dialog.Root>
           <Dialog.Trigger asChild>
             <button
               type="button"
               className={cn(
-                "mt-1 w-fit flex items-center gap-1 text-slate-400 transition-colors",
+                "pl-0.5 mt-1 w-fit flex items-center gap-1 text-slate-400 transition-colors",
                 `hover:${currentPocketbook.colour.textPill}`,
               )}
             >
-              <span className="font-title text-md">Add Section</span>
-              <Icon iconName="plus" size="sm" className="pb-1" />
+              <Icon iconName="plus" size="xs" />
+              <span className="text-xs">Add Tag Group</span>
             </button>
           </Dialog.Trigger>
 

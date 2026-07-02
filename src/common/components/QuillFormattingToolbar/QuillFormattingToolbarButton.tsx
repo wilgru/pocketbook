@@ -36,7 +36,7 @@ export const QuillFormattingToolbarButton = ({
       ref={refCallback}
       className={cn(
         quillClass,
-        "rounded-md text-slate-400 px-2 py-1",
+        "rounded-md text-slate-500 px-2 py-1",
         `hover:${colour.backgroundPill}`,
         `hover:${colour.textPill}`,
         `data-[state=on]:${colour.backgroundPill}`,
