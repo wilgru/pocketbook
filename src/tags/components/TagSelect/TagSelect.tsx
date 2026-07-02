@@ -10,17 +10,17 @@ import { useGetTags } from "src/tags/hooks/useGetTags";
 import type { Colour } from "src/colours/Colour.type";
 import type { Tag } from "src/tags/Tag.type";
 
-type TagMultiSelectProps = {
+type TagSelectProps = {
   initialTags: Tag[];
   colour?: Colour;
   onChange: (tags: Tag[]) => void;
 };
 
-export const TagMultiSelect = ({
+export const TagSelect = ({
   initialTags,
   colour = colours.orange,
   onChange,
-}: TagMultiSelectProps) => {
+}: TagSelectProps) => {
   const { tags } = useGetTags();
   const { createTag } = useCreateTag();
 

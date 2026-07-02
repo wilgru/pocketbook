@@ -8,7 +8,7 @@ import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToo
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { NoteMultiSelect } from "src/notes/components/NoteMultiSelect/NoteMultiSelect";
+import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
 import { useDeleteUpdate } from "src/updates/hooks/useDeleteUpdate";
@@ -144,7 +144,7 @@ export const UpdateEditor = ({
       >
         {isEditing && (
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <NoteMultiSelect
+            <NoteSelect
               selectedNotes={(editedUpdate.notes ?? []) as Note[]}
               colour={resolvedColour}
               onChange={(notes) => onUpdateField({ notes })}
