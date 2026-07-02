@@ -381,7 +381,7 @@ export const TaskEditor = ({
                 })
               }
               className={cn(
-                "w-full text-sm font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+                "w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-none",
                 isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
               )}
             />
