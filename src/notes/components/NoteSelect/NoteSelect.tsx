@@ -42,8 +42,6 @@ export const NoteSelect = ({
     onChange(newNotes);
   };
 
-  const showTrigger = mode === "multi" || selectedNotes.length === 0;
-
   return (
     <div className="flex flex-row flex-wrap gap-2 items-center">
       {selectedNotes.map((note) => (
@@ -64,47 +62,45 @@ export const NoteSelect = ({
         </button>
       ))}
 
-      {showTrigger && (
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <div>
-              <Button variant="ghost" size="sm" colour={colour} iconName="plus">
-                {selectedNotes.length === 0 ? <>Add note</> : undefined}
-              </Button>
-            </div>
-          </DropdownMenu.Trigger>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <div>
+            <Button variant="ghost" size="sm" colour={colour} iconName="plus">
+              {selectedNotes.length === 0 ? <>Add note</> : undefined}
+            </Button>
+          </div>
+        </DropdownMenu.Trigger>
 
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              className="flex flex-col gap-2 bg-white border border-slate-200 text-sm rounded-2xl p-2 w-48 drop-shadow z-50"
-              sideOffset={2}
-              align="start"
-            >
-              <input
-                type="text"
-                className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-none focus:border-orange-400"
-                placeholder="search for a note"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content
+            className="flex flex-col gap-2 bg-white border border-slate-200 text-sm rounded-2xl p-2 w-48 drop-shadow z-50"
+            sideOffset={2}
+            align="start"
+          >
+            <input
+              type="text"
+              className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-none focus:border-orange-400"
+              placeholder="search for a note"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-              {filteredNotes.length === 0 && (
-                <p className="text-xs text-slate-400 px-2 py-1">No notes found</p>
-              )}
+            {filteredNotes.length === 0 && (
+              <p className="text-xs text-slate-400 px-2 py-1">No notes found</p>
+            )}
 
-              {filteredNotes.map((note) => (
-                <DropdownMenu.Item
-                  key={note.id}
-                  className="rounded-lg px-2 py-1 cursor-pointer hover:bg-slate-100 text-sm truncate"
-                  onClick={() => handleSelectNote(note)}
-                >
-                  {note.title ?? "Untitled Note"}
-                </DropdownMenu.Item>
-              ))}
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-      )}
+            {filteredNotes.map((note) => (
+              <DropdownMenu.Item
+                key={note.id}
+                className="rounded-lg px-2 py-1 cursor-pointer hover:bg-slate-100 text-sm truncate"
+                onClick={() => handleSelectNote(note)}
+              >
+                {note.title ?? "Untitled Note"}
+              </DropdownMenu.Item>
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
     </div>
   );
 };
