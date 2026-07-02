@@ -384,7 +384,7 @@ export const TaskEditor = ({
             <Icon
               iconName="warningCircle"
               size="sm"
-              className="text-red-500"
+              className={isCompleted ? "text-slate-400" : "text-red-500"}
             />
           )}
 
