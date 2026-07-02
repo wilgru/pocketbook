@@ -30,6 +30,7 @@ export const mapTask = (
     isImportant: task.isImportant,
     note: options.note ?? null,
     links,
+    sortOrder: task.sortOrder,
     dueDate: task.dueDate ? dayjs.utc(task.dueDate).local() : null,
     completedDate: task.completedDate
       ? dayjs.utc(task.completedDate).local()

@@ -15,6 +15,7 @@ export type UpdateTaskInput = {
   dueDate: string | null;
   completedDate: string | null;
   cancelledDate: string | null;
+  sortOrder?: number;
 };
 
 createIpcHandler(
@@ -30,6 +31,7 @@ createIpcHandler(
     dueDate,
     completedDate,
     cancelledDate,
+    sortOrder,
   }: UpdateTaskInput): TaskSchema => {
     const now = new Date().toISOString();
 
@@ -45,6 +47,7 @@ createIpcHandler(
         dueDate,
         completedDate,
         cancelledDate,
+        ...(sortOrder !== undefined ? { sortOrder } : {}),
         updated: now,
       })
       .where(eq(tasks.id, taskId))
