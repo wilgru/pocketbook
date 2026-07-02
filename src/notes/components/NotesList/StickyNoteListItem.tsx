@@ -39,7 +39,7 @@ export const StickyNoteListItem = ({
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ "--sticky-rotate": `${rotation}deg` } as React.CSSProperties}
-      className="w-full my-2 text-sm transition-colors [transform:rotate(var(--sticky-rotate,0deg))] motion-reduce:transform-none"
+      className="w-full my-1 text-sm transition-colors [transform:rotate(var(--sticky-rotate,0deg))] motion-reduce:transform-none"
     >
       {({ isActive }: { isActive: boolean }) => {
         const stickyMetaColourClass =
@@ -58,8 +58,8 @@ export const StickyNoteListItem = ({
               <QuillViewer smallViewer content={note.content} />
             </div>
 
-            <div className="flex items-center gap-1">
-              <p className={cn("text-xs pt-0.5", stickyMetaColourClass)}>
+            <div className="flex items-center">
+              <p className={cn("text-xs pt-0.5 pr-1", stickyMetaColourClass)}>
                 {getRelativeDateTitle(note.created, false)}
               </p>
 

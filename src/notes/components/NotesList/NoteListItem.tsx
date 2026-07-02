@@ -38,8 +38,8 @@ export const NoteListItem = ({
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
-        <div key={note.id} className="w-full flex flex-col p-1">
-          <p className="truncate font-medium">
+        <div key={note.id} className="w-full flex flex-col p-0.5">
+          <p className="truncate font-normal">
             {note.title === "" ? "Untitled Note" : note.title}
           </p>
 
