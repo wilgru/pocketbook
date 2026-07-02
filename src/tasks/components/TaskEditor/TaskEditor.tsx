@@ -375,7 +375,10 @@ export const TaskEditor = ({
                   description: e.target.value,
                 })
               }
-              className="w-full text-sm font-normal bg-transparent placeholder-slate-400 text-slate-500 select-none resize-none outline-none"
+              className={cn(
+                "w-full text-sm font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+                isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
+              )}
             />
           )}
         </div>
