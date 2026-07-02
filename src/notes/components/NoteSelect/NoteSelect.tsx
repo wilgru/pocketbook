@@ -7,17 +7,19 @@ import { useGetNotes } from "src/notes/hooks/useGetNotes";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
 
-type NoteMultiSelectProps = {
+type NoteSelectProps = {
   selectedNotes: Note[];
   colour?: Colour;
+  mode?: "single" | "multi";
   onChange: (notes: Note[]) => void;
 };
 
-export const NoteMultiSelect = ({
+export const NoteSelect = ({
   selectedNotes,
   colour = colours.orange,
+  mode = "multi",
   onChange,
-}: NoteMultiSelectProps) => {
+}: NoteSelectProps) => {
   const { notes } = useGetNotes({});
   const [search, setSearch] = useState("");
 
@@ -30,7 +32,7 @@ export const NoteMultiSelect = ({
   );
 
   const handleSelectNote = (note: Note) => {
-    const newNotes = [...selectedNotes, note];
+    const newNotes = mode === "single" ? [note] : [...selectedNotes, note];
     onChange(newNotes);
     setSearch("");
   };

@@ -20,7 +20,7 @@ import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
-import { TagMultiSelect } from "../../../tags/components/TagMultiSelect/TagMultiSelect";
+import { TagSelect } from "../../../tags/components/TagSelect/TagSelect";
 import { TaskEditor } from "../../../tasks/components/TaskEditor/TaskEditor";
 import type { Colour } from "src/colours/Colour.type";
 import type { Link } from "src/common/types/Link.type";
@@ -171,7 +171,7 @@ const NoteEditor = ({
         />
 
         <div className="flex flex-row flex-wrap gap-2 items-center">
-          <TagMultiSelect
+          <TagSelect
             key={editedNote.id}
             initialTags={editedNote.tags}
             colour={colour}
