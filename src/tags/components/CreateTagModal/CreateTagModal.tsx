@@ -4,7 +4,7 @@ import { colours } from "src/colours/colours.constant";
 import { ColourPicker } from "src/colours/components/ColourPicker/ColourPicker";
 import { Button } from "src/common/components/Button/Button";
 import { Input } from "src/common/components/Input/Input";
-// import { MultiLinkInput } from "src/tags/components/MultiLinkInput/MultiLinkInput";
+// import { LinkMultiInput } from "src/common/components/LinkMultiInput/LinkMultiInput";
 import { Label } from "src/common/components/Label/Label";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useCreateTag } from "src/tags/hooks/useCreateTag";
@@ -105,7 +105,7 @@ export const CreateTagModal = ({ tagGroupId }: CreateTagModalProps) => {
               tooltipContent="You can add links to highlight important information at the top of this tag's page"
             />
 
-            <MultiLinkInput
+            <LinkMultiInput
               links={editedTag.links}
               onChange={onEditLinks}
               onAddLink={onAddLink}

@@ -8,7 +8,7 @@ import { Icon } from "src/icons/components/Icon/Icon";
 import { PocketbookSettingsModal } from "src/pocketbooks/components/PocketbookSettingsModal/PocketbookSettingsModal";
 import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
 
-type PocketbookSelectorProps = {
+type PocketbookSwitcherProps = {
   currentPocketbook: Pocketbook;
   pocketbooks: Pocketbook[];
 };
@@ -32,10 +32,10 @@ const getPocketbookSummary = (pocketbook: Pocketbook): string => {
   return parts.join(", ");
 };
 
-export const PocketbookSelector = ({
+export const PocketbookSwitcher = ({
   currentPocketbook,
   pocketbooks,
-}: PocketbookSelectorProps) => {
+}: PocketbookSwitcherProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

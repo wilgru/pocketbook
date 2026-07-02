@@ -6,7 +6,7 @@ import { NavItem } from "src/common/components/NavItem/NavItem";
 import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { PocketbookSelector } from "src/pocketbooks/components/PocketbookSelector/PocketbookSelector";
+import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";
 import { CreateTagGroupModal } from "src/tags/components/CreateTagGroupModal/CreateTagGroupModal";
@@ -64,7 +64,7 @@ export const Sidebar = () => {
           isWindows && "scrollbar-hide",
         )}
       >
-        <PocketbookSelector
+        <PocketbookSwitcher
           currentPocketbook={currentPocketbook}
           pocketbooks={pocketbooks}
         />
