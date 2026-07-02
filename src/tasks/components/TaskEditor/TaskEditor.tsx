@@ -286,7 +286,7 @@ export const TaskEditor = ({
 
   return (
     <div
-      className="w-full flex gap-2 items-start"
+      className="w-full flex gap-1 items-start"
       onFocus={() => setIsFocused(true)}
       onBlur={(e) => {
         if (
@@ -300,7 +300,7 @@ export const TaskEditor = ({
       }}
     >
       <button
-        className="pt-px pl-px"
+        className="pt-[3px] pl-px"
         onMouseDown={handleCircleMouseDown}
         onClick={handleCircleClick}
       >
@@ -308,96 +308,100 @@ export const TaskEditor = ({
           iconName={
             isCompleted ? "checkCircle" : isCancelled ? "xCircle" : "circle"
           }
-          size="md"
+          size="sm"
           weight={isCompleted || isCancelled ? "fill" : "regular"}
-          className="fill-slate-400 hover:fill-slate-600 transition-colors"
+          className={cn(
+            "transition-colors",
+            isCompleted && !isCancelled
+              ? cn(colour.text, colour.textPillInverted)
+              : "text-slate-400 hover:text-slate-600",
+          )}
         />
       </button>
 
-      <div className="w-full flex items-start justify-between">
-        <div className="flex flex-col grow">
-          <div className="flex items-center flex-1">
+      <div className="w-full flex-col items-start">
+        <div className="flex justify-between items-start">
+          <textarea
+            ref={titleRef}
+            rows={1}
+            name="title"
+            value={editedTask.title ?? ""}
+            placeholder="No Title"
+            onKeyDown={async (e) => {
+              if (e.key !== "Enter" || e.shiftKey) {
+                return;
+              }
+
+              e.preventDefault();
+              debouncedSave.flush();
+              await saveRef.current?.();
+              await onCreateNextTask?.();
+            }}
+            onChange={(e) =>
+              onUpdateTask({
+                title: e.target.value,
+              })
+            }
+            className={cn(
+              "flex-1 tracking-tight text-md bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+              isCompleted || isCancelled
+                ? "text-slate-500"
+                : editedTask.isImportant
+                  ? "text-red-500"
+                  : "text-slate-700",
+              isCancelled && "line-through",
+            )}
+          />
+
+          <div className="flex flex-row flex-wrap items-center gap-2 pl-1">
+            {editedTask.links.map((link) => (
+              <LinkPill key={link.id} link={link} colour={colour} />
+            ))}
+
             {editedTask.isImportant && (
               <Icon
-                iconName="exclamationMark"
+                iconName="warningCircle"
                 size="sm"
                 className={cn(
-                  "-ml-2 shrink-0",
-                  isCompleted || isCancelled
-                    ? "text-slate-500"
-                    : "text-red-500",
+                  "mt-0.5",
+                  isCompleted ? "text-slate-400" : "text-red-500",
                 )}
               />
             )}
 
-            <textarea
-              ref={titleRef}
-              rows={1}
-              name="title"
-              value={editedTask.title ?? ""}
-              placeholder="No Title"
-              onKeyDown={async (e) => {
-                if (e.key !== "Enter" || e.shiftKey) {
-                  return;
-                }
-
-                e.preventDefault();
-                debouncedSave.flush();
-                await saveRef.current?.();
-                await onCreateNextTask?.();
-              }}
-              onChange={(e) =>
-                onUpdateTask({
-                  title: e.target.value,
-                })
-              }
-              className={cn(
-                "flex-1 tracking-tight text-md bg-transparent placeholder-slate-400 select-none resize-none outline-none",
-                isCompleted || isCancelled
-                  ? "text-slate-500"
-                  : editedTask.isImportant
-                    ? "text-red-500"
-                    : "text-slate-700",
-                isCancelled && "line-through",
-              )}
-            />
+            {!!editedTask.dueDate && (
+              <span
+                className={cn(
+                  "text-xs px-2 py-1 rounded-full",
+                  isDueDateOverdue
+                    ? "bg-red-100 text-red-500"
+                    : "bg-gray-100 text-gray-500",
+                )}
+              >
+                {editedTask.dueDate.format("MMM D, YYYY")}
+              </span>
+            )}
           </div>
-
-          {showDescription && (
-            <textarea
-              ref={descriptionRef}
-              rows={1}
-              name="description"
-              value={editedTask.description ?? ""}
-              placeholder="No description"
-              onChange={(e) =>
-                onUpdateTask({
-                  description: e.target.value,
-                })
-              }
-              className="w-full text-sm font-normal bg-transparent placeholder-slate-400 text-slate-500 select-none resize-none outline-none"
-            />
-          )}
         </div>
 
-        <div className="flex flex-row flex-wrap items-center gap-2">
-          {editedTask.links.map((link) => (
-            <LinkPill key={link.id} link={link} colour={colour} />
-          ))}
-
-          {!!editedTask.dueDate && (
-            <span
-              className={cn(
-                "text-xs px-2 py-1 rounded-full",
-                isDueDateOverdue
-                  ? "bg-red-100 text-red-500"
-                  : "bg-gray-100 text-gray-500",
-              )}
-            >
-              {editedTask.dueDate.format("MMM D, YYYY")}
-            </span>
-          )}
-        </div>
+        {showDescription && (
+          <textarea
+            ref={descriptionRef}
+            rows={1}
+            name="description"
+            value={editedTask.description ?? ""}
+            placeholder="No description"
+            onChange={(e) =>
+              onUpdateTask({
+                description: e.target.value,
+              })
+            }
+            className={cn(
+              "w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+              isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
+            )}
+          />
+        )}
       </div>
 
       <Dialog.Root

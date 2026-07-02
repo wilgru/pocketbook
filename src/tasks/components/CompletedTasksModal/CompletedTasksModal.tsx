@@ -45,7 +45,10 @@ export const CompletedTasksModal = ({
                   iconName={isCompleted ? "checkCircle" : "xCircle"}
                   size="md"
                   weight="fill"
-                  className="fill-slate-400 mt-px shrink-0"
+                  className={cn(
+                    "mt-px shrink-0",
+                    isCompleted ? colour.text : "text-slate-400",
+                  )}
                 />
                 <div className="flex flex-col">
                   <span
