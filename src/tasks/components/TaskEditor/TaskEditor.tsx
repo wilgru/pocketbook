@@ -322,19 +322,6 @@ export const TaskEditor = ({
       <div className="w-full flex items-start justify-between">
         <div className="flex flex-col grow">
           <div className="flex items-center flex-1">
-            {editedTask.isImportant && (
-              <Icon
-                iconName="exclamationMark"
-                size="sm"
-                className={cn(
-                  "-ml-2 shrink-0",
-                  isCompleted || isCancelled
-                    ? "text-slate-500"
-                    : "text-red-500",
-                )}
-              />
-            )}
-
             <textarea
               ref={titleRef}
               rows={1}
@@ -392,6 +379,14 @@ export const TaskEditor = ({
           {editedTask.links.map((link) => (
             <LinkPill key={link.id} link={link} colour={colour} />
           ))}
+
+          {editedTask.isImportant && (
+            <Icon
+              iconName="warningCircle"
+              size="sm"
+              className="text-red-500"
+            />
+          )}
 
           {!!editedTask.dueDate && (
             <span
