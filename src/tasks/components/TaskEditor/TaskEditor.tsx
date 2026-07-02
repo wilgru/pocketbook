@@ -310,7 +310,12 @@ export const TaskEditor = ({
           }
           size="sm"
           weight={isCompleted || isCancelled ? "fill" : "regular"}
-          className="fill-slate-400 hover:fill-slate-600 transition-colors"
+          className={cn(
+            "transition-colors",
+            isCompleted && !isCancelled
+              ? cn(colour.text, colour.textPillInverted)
+              : "text-slate-400 hover:text-slate-600",
+          )}
         />
       </button>
 
