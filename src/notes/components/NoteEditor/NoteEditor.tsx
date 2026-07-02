@@ -18,6 +18,7 @@ import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
+import { useTaskReorder } from "src/tasks/hooks/useTaskReorder";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
 import { TagMultiSelect } from "../../../tags/components/TagMultiSelect/TagMultiSelect";
@@ -41,6 +42,7 @@ const NoteEditor = ({
 }: NoteEditorProps) => {
   const { createNote } = useCreateNote();
   const { createTask } = useCreateTask();
+  const { getMoveCallbacks } = useTaskReorder();
   const { updateNote } = useUpdateNote();
   const { deleteNote } = useDeleteNote();
   const { updates } = useGetUpdates({ noteId: note.id });
@@ -113,7 +115,7 @@ const NoteEditor = ({
     }
   }, [showNewUpdate]);
 
-  const onCreateTask = async () => {
+  const onCreateTask = async (insertAfterSortOrder?: number) => {
     const createdTask = await createTask({
       createTaskData: {
         note: editedNote,
@@ -126,12 +128,12 @@ const NoteEditor = ({
         completedDate: null,
         cancelledDate: null,
       },
+      insertAfterSortOrder,
     });
     if (createdTask?.id) {
       setNewTaskFocusId(createdTask.id);
     }
   };
-
   const onUpdateNote = (updateNoteData: Partial<Note>) => {
     setEditedNote((currentEditedNote) => ({
       ...currentEditedNote,
@@ -204,7 +206,7 @@ const NoteEditor = ({
             size="sm"
             variant="ghost"
             colour={colour}
-            onClick={onCreateTask}
+            onClick={() => void onCreateTask()}
             iconName="checkCircle"
           />
 
@@ -266,14 +268,15 @@ const NoteEditor = ({
 
       {note.tasks && note.tasks.length > 0 && (
         <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-4">
-          {note.tasks.map((task) => (
+          {note.tasks.map((task, index) => (
             <TaskEditor
               key={task.id}
               task={task}
               colour={colour}
-              onCreateNextTask={onCreateTask}
+              onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
+              {...getMoveCallbacks(index, note.tasks)}
             />
           ))}
         </div>

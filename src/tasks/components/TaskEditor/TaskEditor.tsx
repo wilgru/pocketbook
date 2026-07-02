@@ -31,6 +31,8 @@ type TaskEditorProps = {
   autoFocusTitle?: boolean;
   onAutoFocusComplete?: () => void;
   colour?: Colour;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 };
 
 const getInitialTask = (task: Partial<Task> | undefined): Task => {
@@ -45,6 +47,7 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
     completedDate: task?.completedDate || null,
     cancelledDate: task?.cancelledDate || null,
     isImportant: task?.isImportant || false,
+    sortOrder: task?.sortOrder ?? 0,
     created: task?.created || dayjs(),
     updated: task?.updated || dayjs(),
   };
@@ -59,6 +62,8 @@ export const TaskEditor = ({
   autoFocusTitle = false,
   onAutoFocusComplete,
   colour = colours.orange,
+  onMoveUp,
+  onMoveDown,
 }: TaskEditorProps) => {
   const { createTask } = useCreateTask();
   const { updateTask } = useUpdateTask();
@@ -92,7 +97,11 @@ export const TaskEditor = ({
     }
 
     if (editedTask.id) {
-      updateTask({ taskId: editedTask.id, updateTaskData: editedTask });
+      updateTask({
+        taskId: editedTask.id,
+        updateTaskData: editedTask,
+        includeSortOrder: false,
+      });
       onSave?.();
     } else {
       const newTask = await createTask({ createTaskData: editedTask });
@@ -162,6 +171,12 @@ export const TaskEditor = ({
     setIsLinksModalOpen(true);
   };
 
+  const onMoveUpCallbackRef = useRef<(() => void) | undefined>(onMoveUp);
+  onMoveUpCallbackRef.current = onMoveUp;
+
+  const onMoveDownCallbackRef = useRef<(() => void) | undefined>(onMoveDown);
+  onMoveDownCallbackRef.current = onMoveDown;
+
   // Stable callbacks created once – these are safe to store in the atom.
   const stableFlagCallback = useRef(() =>
     onFlagCallbackRef.current?.(),
@@ -177,6 +192,12 @@ export const TaskEditor = ({
   ).current;
   const stableDatePickerOpenChangeCallback = useRef((open: boolean) =>
     setIsDatePickerOpen(open),
+  ).current;
+  const stableMoveUpCallback = useRef(() =>
+    onMoveUpCallbackRef.current?.(),
+  ).current;
+  const stableMoveDownCallback = useRef(() =>
+    onMoveDownCallbackRef.current?.(),
   ).current;
 
   // Sync atom when focus state or colour changes.
@@ -194,6 +215,8 @@ export const TaskEditor = ({
         onDueDateChange: stableDueDateCallback,
         onDatePickerOpenChange: stableDatePickerOpenChangeCallback,
         onDeleteClick: stableDeleteCallback,
+        onMoveUp: stableMoveUpCallback,
+        onMoveDown: stableMoveDownCallback,
       });
     } else {
       setTaskEditorState((current) =>
