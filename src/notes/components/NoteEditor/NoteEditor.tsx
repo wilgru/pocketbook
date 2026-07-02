@@ -115,7 +115,7 @@ const NoteEditor = ({
     }
   }, [showNewUpdate]);
 
-  const onCreateTask = async () => {
+  const onCreateTask = async (insertAfterSortOrder?: number) => {
     const createdTask = await createTask({
       createTaskData: {
         note: editedNote,
@@ -128,12 +128,12 @@ const NoteEditor = ({
         completedDate: null,
         cancelledDate: null,
       },
+      insertAfterSortOrder,
     });
     if (createdTask?.id) {
       setNewTaskFocusId(createdTask.id);
     }
   };
-
   const onUpdateNote = (updateNoteData: Partial<Note>) => {
     setEditedNote((currentEditedNote) => ({
       ...currentEditedNote,
@@ -206,7 +206,7 @@ const NoteEditor = ({
             size="sm"
             variant="ghost"
             colour={colour}
-            onClick={onCreateTask}
+            onClick={() => void onCreateTask()}
             iconName="checkCircle"
           />
 
@@ -273,7 +273,7 @@ const NoteEditor = ({
               key={task.id}
               task={task}
               colour={colour}
-              onCreateNextTask={onCreateTask}
+              onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
               {...getMoveCallbacks(index, note.tasks)}

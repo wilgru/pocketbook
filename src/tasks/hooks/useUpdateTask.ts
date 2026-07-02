@@ -6,6 +6,7 @@ import type { Task } from "src/tasks/Task.type";
 type UpdateTaskProps = {
   taskId: string;
   updateTaskData: Task;
+  includeSortOrder?: boolean;
 };
 
 type UseUpdateTaskResponse = {
@@ -23,6 +24,7 @@ export const useUpdateTask = (): UseUpdateTaskResponse => {
   const mutationFn = async ({
     taskId,
     updateTaskData,
+    includeSortOrder = true,
   }: UpdateTaskProps): Promise<Task | undefined> => {
     const response = await window.api.updateTask({
       taskId,
@@ -35,7 +37,7 @@ export const useUpdateTask = (): UseUpdateTaskResponse => {
       dueDate: updateTaskData.dueDate?.toISOString() ?? null,
       completedDate: updateTaskData.completedDate?.toISOString() ?? null,
       cancelledDate: updateTaskData.cancelledDate?.toISOString() ?? null,
-      sortOrder: updateTaskData.sortOrder,
+      sortOrder: includeSortOrder ? updateTaskData.sortOrder : undefined,
     });
     if (!response.success) throw new Error(response.error);
 

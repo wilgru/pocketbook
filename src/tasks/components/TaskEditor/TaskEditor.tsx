@@ -97,7 +97,11 @@ export const TaskEditor = ({
     }
 
     if (editedTask.id) {
-      updateTask({ taskId: editedTask.id, updateTaskData: editedTask });
+      updateTask({
+        taskId: editedTask.id,
+        updateTaskData: editedTask,
+        includeSortOrder: false,
+      });
       onSave?.();
     } else {
       const newTask = await createTask({ createTaskData: editedTask });

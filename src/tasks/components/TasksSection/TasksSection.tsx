@@ -29,7 +29,7 @@ export const TasksSection = ({
 
   const note = taskGroup.relevantTaskData.note;
 
-  const onCreateTask = useCallback(async () => {
+  const onCreateTask = useCallback(async (insertAfterSortOrder?: number) => {
     const createdTask = await createTask({
       createTaskData: {
         note: note ?? null,
@@ -42,12 +42,12 @@ export const TasksSection = ({
         completedDate: null,
         cancelledDate: null,
       },
+      insertAfterSortOrder,
     });
     if (createdTask?.id) {
       setNewTaskFocusId(createdTask.id);
     }
   }, [createTask, note]);
-
   // Create a new no-note task whenever the toolbar plus button fires.
   useEffect(() => {
     if (!noNoteEditorTrigger || noNoteEditorTrigger <= 0) {
@@ -111,7 +111,7 @@ export const TasksSection = ({
               key={task.id}
               task={task}
               colour={colour}
-              onCreateNextTask={onCreateTask}
+              onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
               {...getMoveCallbacks(index, taskGroup.tasks)}
@@ -165,7 +165,7 @@ export const TasksSection = ({
             key={task.id}
             task={task}
             colour={colour}
-            onCreateNextTask={onCreateTask}
+            onCreateNextTask={() => onCreateTask(task.sortOrder)}
             autoFocusTitle={task.id === newTaskFocusId}
             onAutoFocusComplete={() => setNewTaskFocusId(null)}
             {...getMoveCallbacks(index, taskGroup.tasks)}

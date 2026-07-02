@@ -1,4 +1,4 @@
-import { eq, max, and, isNull } from "drizzle-orm";
+import { and, eq, gte, isNull, max, sql } from "drizzle-orm";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
 import { tasks } from "src/tasks/tasks.schema";
@@ -14,6 +14,7 @@ export type CreateTaskInput = {
   dueDate: string | null;
   pocketbookId: string | null;
   userId: string | null;
+  insertAfterSortOrder: number | null;
 };
 
 createIpcHandler(
@@ -28,43 +29,60 @@ createIpcHandler(
     dueDate,
     pocketbookId,
     userId,
+    insertAfterSortOrder,
   }: CreateTaskInput): TaskSchema => {
     const now = new Date().toISOString();
     const id = crypto.randomUUID();
 
-    // Assign sortOrder as max existing + 1 within the same group (note or pocketbook)
-    const conditions = noteId
-      ? and(eq(tasks.note, noteId))
-      : and(isNull(tasks.note), pocketbookId ? eq(tasks.pocketbook, pocketbookId) : undefined);
+    // Assign sortOrder within the same group (same note, or no-note tasks in the pocketbook).
+    const groupCondition = noteId
+      ? eq(tasks.note, noteId)
+      : and(
+          isNull(tasks.note),
+          pocketbookId ? eq(tasks.pocketbook, pocketbookId) : undefined,
+        );
 
-    const maxResult = db
-      .select({ maxOrder: max(tasks.sortOrder) })
-      .from(tasks)
-      .where(conditions)
-      .get();
+    return db.transaction((tx) => {
+      let sortOrder = 0;
+      if (insertAfterSortOrder !== null) {
+        sortOrder = insertAfterSortOrder + 1;
+        tx
+          .update(tasks)
+          .set({
+            sortOrder: sql`${tasks.sortOrder} + 1`,
+          })
+          .where(and(groupCondition, gte(tasks.sortOrder, sortOrder)))
+          .run();
+      } else {
+        const maxResult = tx
+          .select({ maxOrder: max(tasks.sortOrder) })
+          .from(tasks)
+          .where(groupCondition)
+          .get();
+        sortOrder = (maxResult?.maxOrder ?? -1) + 1;
+      }
 
-    const sortOrder = (maxResult?.maxOrder ?? -1) + 1;
+      const [inserted] = tx
+        .insert(tasks)
+        .values({
+          id,
+          title,
+          description,
+          link,
+          links,
+          isImportant,
+          note: noteId,
+          dueDate,
+          sortOrder,
+          pocketbook: pocketbookId,
+          user: userId,
+          created: now,
+          updated: now,
+        })
+        .returning()
+        .all();
 
-    const [inserted] = db
-      .insert(tasks)
-      .values({
-        id,
-        title,
-        description,
-        link,
-        links,
-        isImportant,
-        note: noteId,
-        dueDate,
-        sortOrder,
-        pocketbook: pocketbookId,
-        user: userId,
-        created: now,
-        updated: now,
-      })
-      .returning()
-      .all();
-
-    return inserted;
+      return inserted;
+    });
   },
 );
