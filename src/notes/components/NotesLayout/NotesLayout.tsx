@@ -7,6 +7,7 @@ import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToolbar/QuillFormattingToolbar";
+import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
@@ -20,7 +21,6 @@ type NotesLayoutProps = {
   colour?: Colour;
   notes: Note[];
   selectedNote: Note | null;
-  showNoteCreateTimeOnly?: boolean;
   description: string | null;
   links?: TagLink[];
   prefillNewNoteData?: Partial<Note>;
@@ -34,7 +34,6 @@ export const NotesLayout = ({
   colour = colours.orange,
   notes,
   selectedNote,
-  showNoteCreateTimeOnly = false,
   description,
   links,
   prefillNewNoteData,
@@ -74,9 +73,9 @@ export const NotesLayout = ({
   }, [notes, groupNotesBy, title, prefillNewNoteData, groupSortDirection]);
 
   return (
-    <div className="flex-1 min-h-0 w-full min-w-0 flex overflow-hidden">
-      <div className="h-full w-60 px-3 flex flex-col gap-5 overflow-y-scroll border-r border-slate-200">
-        {(description || (links && links.length > 0)) && (
+    <TwoPaneLayout
+      sidebarTopContent={
+        (description || (links && links.length > 0)) && (
           <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
             {description && (
               <p className="text-sm text-slate-500">{description}</p>
@@ -87,56 +86,53 @@ export const NotesLayout = ({
                 <LinkPill key={index} link={link} colour={colour} />
               ))}
           </div>
-        )}
-
-        <div className="h-full flex flex-col gap-3 pt-3 pb-6">
+        )
+      }
+      sidebar={
+        <>
           {noteGroups.map((noteGroup) => (
             <NotesList
               key={noteGroup.title ?? "no-title"}
               noteGroup={noteGroup}
               colour={colour}
-              createdDateFormat={
-                showNoteCreateTimeOnly || groupNotesBy === "created"
-                  ? "h:mm a"
-                  : undefined
-              }
             />
           ))}
 
           {noteGroups.length === 0 && (
             <EmptyState text="No notes yet" onAdd={onCreateNote} />
           )}
-        </div>
-      </div>
+        </>
+      }
+      content={
+        <>
+          <div className="flex-1 min-h-0 overflow-y-scroll flex justify-center">
+            {selectedNote ? (
+              <NoteEditor note={selectedNote} colour={colour} />
+            ) : (
+              <div className="h-full w-full flex flex-col justify-center items-center text-center">
+                <h1 className="text-gray-400 text-lg">No note selected</h1>
+              </div>
+            )}
+          </div>
 
-      <div className="h-full flex-1 relative flex flex-col min-w-0">
-        <div className="flex-1 min-h-0 overflow-y-scroll flex justify-center">
-          {selectedNote ? (
-            <NoteEditor note={selectedNote} colour={colour} />
-          ) : (
-            <div className="h-full w-full flex flex-col justify-center items-center text-center">
-              <h1 className="text-gray-400 text-lg">No note selected</h1>
-            </div>
-          )}
-        </div>
-
-        {/* isTaskFocused and isQuillFocused are mutually exclusive so each toolbar is
+          {/* isTaskFocused and isQuillFocused are mutually exclusive so each toolbar is
             positioned at the same absolute location and only one is ever shown at a time. */}
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-          <FloatingToolbar visible={isTaskFocused}>
-            <TaskFloatingToolbar />
-          </FloatingToolbar>
-        </div>
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-          <FloatingToolbar visible={isQuillFocused}>
-            <QuillFormattingToolbar
-              toolbarId="toolbar"
-              toolbarFormatting={toolbarFormatting}
-              colour={quillColour ?? colour}
-            />
-          </FloatingToolbar>
-        </div>
-      </div>
-    </div>
+          <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
+            <FloatingToolbar visible={isTaskFocused}>
+              <TaskFloatingToolbar />
+            </FloatingToolbar>
+          </div>
+          <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
+            <FloatingToolbar visible={isQuillFocused}>
+              <QuillFormattingToolbar
+                toolbarId="toolbar"
+                toolbarFormatting={toolbarFormatting}
+                colour={quillColour ?? colour}
+              />
+            </FloatingToolbar>
+          </div>
+        </>
+      }
+    />
   );
 };

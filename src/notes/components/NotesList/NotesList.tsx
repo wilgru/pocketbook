@@ -6,7 +6,6 @@ import type { NotesGroup } from "src/notes/Note.type";
 
 type NotesListProps = {
   noteGroup: NotesGroup;
-  createdDateFormat?: string;
   colour: Colour;
 };
 
