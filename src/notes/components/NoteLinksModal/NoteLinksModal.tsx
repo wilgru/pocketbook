@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { MultiLinkInput } from "src/common/components/MultiLinkInput/MultiLinkInput";
+import { LinkMultiInput } from "src/common/components/LinkMultiInput/LinkMultiInput";
 import type { Colour } from "src/colours/Colour.type";
 import type { Link } from "src/common/types/Link.type";
 
@@ -48,7 +48,7 @@ export const NoteLinksModal = ({
         </Dialog.Title>
 
         <div className="flex flex-col gap-4">
-          <MultiLinkInput
+          <LinkMultiInput
             links={editedLinks}
             onChange={onChangeLink}
             onAddLink={onAddLink}

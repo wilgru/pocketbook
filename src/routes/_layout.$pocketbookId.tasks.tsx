@@ -28,28 +28,28 @@ function RouteComponent() {
   const [completedModalOpen, setCompletedModalOpen] = useState(false);
 
   const today = dayjs();
-  const { incompleteTasks, completedTodayTasks, pastCompletedTasks } =
+  const { incompleteTasks, todayTasks, pastCompletedTasks } =
     tasks.reduce<{
       incompleteTasks: Task[];
-      completedTodayTasks: Task[];
+      todayTasks: Task[];
       pastCompletedTasks: Task[];
     }>(
       (acc, task) => {
         if (!task.completedDate && !task.cancelledDate) {
           acc.incompleteTasks.push(task);
+          acc.todayTasks.push(task);
         } else if (
           (task.completedDate && task.completedDate.isSame(today, "day")) ||
           (task.cancelledDate && task.cancelledDate.isSame(today, "day"))
         ) {
-          acc.completedTodayTasks.push(task);
+          acc.todayTasks.push(task);
         } else {
           acc.pastCompletedTasks.push(task);
         }
         return acc;
       },
-      { incompleteTasks: [], completedTodayTasks: [], pastCompletedTasks: [] },
+      { incompleteTasks: [], todayTasks: [], pastCompletedTasks: [] },
     );
-  const todayTasks = [...incompleteTasks, ...completedTodayTasks];
 
   return (
     <div className="h-full w-full flex flex-col items-center">

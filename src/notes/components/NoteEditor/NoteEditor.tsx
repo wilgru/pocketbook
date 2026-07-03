@@ -18,6 +18,7 @@ import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
+import { useTaskReorder } from "src/tasks/hooks/useTaskReorder";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
 import { TagSelect } from "../../../tags/components/TagSelect/TagSelect";
@@ -41,6 +42,7 @@ const NoteEditor = ({
 }: NoteEditorProps) => {
   const { createNote } = useCreateNote();
   const { createTask } = useCreateTask();
+  const { getMoveCallbacks } = useTaskReorder();
   const { updateNote } = useUpdateNote();
   const { deleteNote } = useDeleteNote();
   const { updates } = useGetUpdates({ noteId: note.id });
@@ -113,7 +115,7 @@ const NoteEditor = ({
     }
   }, [showNewUpdate]);
 
-  const onCreateTask = async () => {
+  const onCreateTask = async (insertAfterSortOrder?: number) => {
     const createdTask = await createTask({
       createTaskData: {
         note: editedNote,
@@ -126,12 +128,12 @@ const NoteEditor = ({
         completedDate: null,
         cancelledDate: null,
       },
+      insertAfterSortOrder,
     });
     if (createdTask?.id) {
       setNewTaskFocusId(createdTask.id);
     }
   };
-
   const onUpdateNote = (updateNoteData: Partial<Note>) => {
     setEditedNote((currentEditedNote) => ({
       ...currentEditedNote,
@@ -158,8 +160,8 @@ const NoteEditor = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-12 pt-6">
-      <div className="w-full flex flex-col gap-2 justify-between border-b-2 border-slate-100 pb-3">
+    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-8 pt-8">
+      <div className="w-full flex flex-col gap-2 justify-between border-b border-slate-200 pb-4">
         <textarea
           ref={titleRef}
           rows={1}
@@ -170,7 +172,7 @@ const NoteEditor = ({
           className="text-5xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-none"
         />
 
-        <div className="flex flex-row flex-wrap gap-2 items-center">
+        <div className="flex flex-row flex-wrap gap-1.5 items-center">
           <TagSelect
             key={editedNote.id}
             initialTags={editedNote.tags}
@@ -204,7 +206,7 @@ const NoteEditor = ({
             size="sm"
             variant="ghost"
             colour={colour}
-            onClick={onCreateTask}
+            onClick={() => void onCreateTask()}
             iconName="checkCircle"
           />
 
@@ -265,15 +267,16 @@ const NoteEditor = ({
       </div>
 
       {note.tasks && note.tasks.length > 0 && (
-        <div className="w-full flex flex-col gap-2 justify-between border-b-2 border-slate-100 pb-4">
-          {note.tasks.map((task) => (
+        <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-4">
+          {note.tasks.map((task, index) => (
             <TaskEditor
               key={task.id}
               task={task}
               colour={colour}
-              onCreateNextTask={onCreateTask}
+              onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
+              {...getMoveCallbacks(index, note.tasks)}
             />
           ))}
         </div>
@@ -301,9 +304,9 @@ const NoteEditor = ({
       </div>
 
       {(updates.length > 0 || showNewUpdate) && (
-        <div className="w-full flex flex-col border-t-2 border-slate-100 pt-6">
+        <div className="w-full flex flex-col border-dashed border-t border-slate-300 pt-4 px-1">
           {showNewUpdate && (
-            <div ref={newUpdateRef}>
+            <div ref={newUpdateRef} className="pb-4">
               <UpdateEditor
                 update={{ notes: [editedNote], tint: null }}
                 colour={colour}
@@ -316,7 +319,7 @@ const NoteEditor = ({
           )}
 
           {updates.length > 0 && (
-            <div className="flex flex-col relative">
+            <div className="flex flex-col relative gap-4">
               {[...updates].reverse().map((upd) => (
                 <UpdateEditor
                   key={upd.id}
