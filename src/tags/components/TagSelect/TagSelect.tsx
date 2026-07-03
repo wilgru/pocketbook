@@ -3,6 +3,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
+import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { TagPill } from "src/tags/components/TagPill/TagPill";
 import { useCreateTag } from "src/tags/hooks/useCreateTag";
@@ -92,46 +93,49 @@ export const TagSelect = ({
 
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            className="flex flex-col gap-2 bg-white border border-slate-200 text-sm rounded-2xl p-2 w-40 drop-shadow"
-            sideOffset={2}
-            align="start"
+            className="z-50"
+            sideOffset={6}
+            align="center"
+            onCloseAutoFocus={(e) => e.preventDefault()}
           >
-            <input
-              type="text"
-              className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-none focus:border-orange-400"
-              placeholder="search for a tag"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-            />
+            <ControlPopover className="flex flex-col gap-2 text-sm p-3 w-48">
+              <input
+                type="text"
+                className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-none focus:border-orange-400"
+                placeholder="search for a tag"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+              />
 
-            {filteredTags.map((tag) => (
-              <DropdownMenu.Item
-                key={tag.id}
-                className="rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-orange-100 text-sm"
-                onClick={() => handleSelectTag(tag)}
-              >
-                <Icon
-                  iconName={tag.icon}
-                  size="sm"
-                  className={tag.colour.textPill}
-                  weight="regular"
-                />
-                {tag.name}
-              </DropdownMenu.Item>
-            ))}
-
-            {search.trim().length > 0 &&
-              !tags.some((tag) => tag.name === search) && (
+              {filteredTags.map((tag) => (
                 <DropdownMenu.Item
+                  key={tag.id}
                   className="rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-orange-100 text-sm"
-                  onMouseDown={handleCreateTag}
+                  onClick={() => handleSelectTag(tag)}
                 >
-                  <Plus className="fill-slate-500" size={18} />
-                  Create "{search.trim()}"
+                  <Icon
+                    iconName={tag.icon}
+                    size="sm"
+                    className={tag.colour.textPill}
+                    weight="regular"
+                  />
+                  {tag.name}
                 </DropdownMenu.Item>
-              )}
+              ))}
+
+              {search.trim().length > 0 &&
+                !tags.some((tag) => tag.name === search) && (
+                  <DropdownMenu.Item
+                    className="rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-orange-100 text-sm"
+                    onMouseDown={handleCreateTag}
+                  >
+                    <Plus className="fill-slate-500" size={18} />
+                    Create "{search.trim()}"
+                  </DropdownMenu.Item>
+                )}
+            </ControlPopover>
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>

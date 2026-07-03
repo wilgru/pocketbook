@@ -3,20 +3,29 @@ import { colours } from "src/colours/colours.constant";
 import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
 import { Button } from "src/common/components/Button/Button";
 import { Toggle } from "src/common/components/Toggle/Toggle";
+import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { TaskDatePicker } from "src/tasks/components/TaskDatePicker/TaskDatePicker";
+import { TaskLinksPopover } from "src/tasks/components/TaskLinksPopover/TaskLinksPopover";
 
 export const TaskFloatingToolbar = () => {
   const {
     colour,
+    links,
+    selectedNote,
     isImportant,
     dueDate,
     isCompleted,
     isCancelled,
-    onLinkClick,
+    onNoteChange,
+    onNoteSelectOpenChange,
+    onLinksChange,
+    onLinkPopoverOpenChange,
     onFlagClick,
     onDueDateChange,
     onDatePickerOpenChange,
     onDeleteClick,
+    onMoveUp,
+    onMoveDown,
   } = useAtomValue(taskEditorStateAtom);
 
   const toolbarColour = colour ?? colours.orange;
@@ -24,12 +33,21 @@ export const TaskFloatingToolbar = () => {
   return (
     <div className="flex flex-row items-center">
       <div className="flex flex-row gap-1 border-r-2 pr-1 border-slate-100">
-        <Button variant="ghost" size="sm" iconName="caretUp" colour={colour} />
+        <Button
+          variant="ghost"
+          size="sm"
+          iconName="caretUp"
+          colour={colour}
+          onClick={onMoveUp ?? undefined}
+          disabled={!onMoveUp}
+        />
         <Button
           variant="ghost"
           size="sm"
           iconName="caretDown"
           colour={colour}
+          onClick={onMoveDown ?? undefined}
+          disabled={!onMoveDown}
         />
       </div>
 
@@ -42,12 +60,20 @@ export const TaskFloatingToolbar = () => {
           iconName="warningCircle"
         />
 
-        <Button
+        <TaskLinksPopover
+          links={links}
           colour={toolbarColour}
-          variant="ghost"
-          size="sm"
-          iconName="link"
-          onClick={onLinkClick ?? undefined}
+          onChange={onLinksChange ?? (() => undefined)}
+          onOpenChange={onLinkPopoverOpenChange ?? undefined}
+        />
+
+        <NoteSelect
+          mode="single"
+          selectedNotes={selectedNote ? [selectedNote] : []}
+          showPlaceholderText={false}
+          colour={toolbarColour}
+          onChange={(notes) => onNoteChange?.(notes[0] ?? null)}
+          onOpenChange={onNoteSelectOpenChange ?? undefined}
         />
 
         {onDueDateChange && (

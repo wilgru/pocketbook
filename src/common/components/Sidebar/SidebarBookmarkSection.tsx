@@ -18,7 +18,7 @@ export const SidebarBookmarkSection = () => {
           <h1 className="font-title text-slate-400 text-md">Bookmarks</h1>
         </div>
 
-        <div className="flex flex-col gap-1 mt-1">
+        <div className="flex flex-col">
           {notes.map((note) => (
             <NavItem
               key={note.id}

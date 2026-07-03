@@ -4,6 +4,7 @@ import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { Calendar } from "src/common/components/Calendar/Calendar";
+import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { cn } from "src/common/utils/cn";
 import type { Dayjs } from "dayjs";
 import type { Colour } from "src/colours/Colour.type";
@@ -56,37 +57,32 @@ export const TaskDatePicker = ({
 
       <Popover.Portal>
         <Popover.Content
-          className="bg-white border border-slate-200 rounded-2xl shadow-xl p-3 w-64 focus:outline-none z-50"
+          className="z-50"
           sideOffset={6}
-          align="end"
+          align="center"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
-          <Calendar
-            colour={colour}
-            selectedDate={dueDate}
-            onSelectDate={(date) => {
-              onChange(date);
-              handleOpenChange(false);
-            }}
-          />
-
-          {dueDate && (
-            <div className="mt-2 flex justify-center">
-              <button
-                type="button"
-                aria-label={`Clear due date ${dueDate.format("MMMM D, YYYY")}`}
-                onClick={() => {
-                  onChange(null);
-                  handleOpenChange(false);
-                }}
-                className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                Clear date
-              </button>
-            </div>
-          )}
-
-          <Popover.Arrow className="fill-slate-200" />
+          <ControlPopover
+            className="p-3 w-52"
+            clearActionLabel={dueDate ? "Clear date" : undefined}
+            onClearAction={
+              dueDate
+                ? () => {
+                    onChange(null);
+                    handleOpenChange(false);
+                  }
+                : undefined
+            }
+          >
+            <Calendar
+              colour={colour}
+              selectedDate={dueDate}
+              onSelectDate={(date) => {
+                onChange(date);
+                handleOpenChange(false);
+              }}
+            />
+          </ControlPopover>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>

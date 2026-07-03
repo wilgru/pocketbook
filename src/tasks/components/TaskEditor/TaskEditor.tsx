@@ -1,4 +1,3 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import dayjs from "dayjs";
 import debounce from "debounce";
 import { useSetAtom } from "jotai";
@@ -12,7 +11,6 @@ import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { TaskLinksModal } from "src/tasks/components/TaskLinksModal/TaskLinksModal";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { useDeleteTask } from "src/tasks/hooks/useDeleteTask";
 import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
@@ -20,6 +18,7 @@ import type { Dayjs } from "dayjs";
 import type { MouseEvent } from "react";
 import type { Colour } from "src/colours/Colour.type";
 import type { Link } from "src/common/types/Link.type";
+import type { Note } from "src/notes/Note.type";
 import type { Task } from "src/tasks/Task.type";
 
 type TaskEditorProps = {
@@ -31,6 +30,8 @@ type TaskEditorProps = {
   autoFocusTitle?: boolean;
   onAutoFocusComplete?: () => void;
   colour?: Colour;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 };
 
 const getInitialTask = (task: Partial<Task> | undefined): Task => {
@@ -45,6 +46,7 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
     completedDate: task?.completedDate || null,
     cancelledDate: task?.cancelledDate || null,
     isImportant: task?.isImportant || false,
+    sortOrder: task?.sortOrder ?? 0,
     created: task?.created || dayjs(),
     updated: task?.updated || dayjs(),
   };
@@ -59,6 +61,8 @@ export const TaskEditor = ({
   autoFocusTitle = false,
   onAutoFocusComplete,
   colour = colours.orange,
+  onMoveUp,
+  onMoveDown,
 }: TaskEditorProps) => {
   const { createTask } = useCreateTask();
   const { updateTask } = useUpdateTask();
@@ -68,9 +72,16 @@ export const TaskEditor = ({
 
   const [editedTask, setEditedTask] = useState<Task>(getInitialTask(task));
   const [isFocused, setIsFocused] = useState(false);
-  const [linksModalKey, setLinksModalKey] = useState(0);
-  const [isLinksModalOpen, setIsLinksModalOpen] = useState(false);
+  const [isLinksPopoverOpen, setIsLinksPopoverOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isNoteSelectOpen, setIsNoteSelectOpen] = useState(false);
+  const isLinksPopoverOpenRef = useRef(false);
+  const isDatePickerOpenRef = useRef(false);
+  const isNoteSelectOpenRef = useRef(false);
+  const [editorInstanceId] = useState(
+    () => `task-editor-${Math.random().toString(36).slice(2)}`,
+  );
+  const editorRootRef = useRef<HTMLDivElement>(null);
 
   const titleRef = useAutoResize(editedTask.title);
   const descriptionRef = useAutoResize(editedTask.description);
@@ -92,7 +103,11 @@ export const TaskEditor = ({
     }
 
     if (editedTask.id) {
-      updateTask({ taskId: editedTask.id, updateTaskData: editedTask });
+      updateTask({
+        taskId: editedTask.id,
+        updateTaskData: editedTask,
+        includeSortOrder: false,
+      });
       onSave?.();
     } else {
       const newTask = await createTask({ createTaskData: editedTask });
@@ -145,10 +160,33 @@ export const TaskEditor = ({
     debouncedSave();
   };
 
+  const scheduleTitleRefocus = () => {
+    setTimeout(() => {
+      const editorRoot = editorRootRef.current;
+      const activeElement = document.activeElement as HTMLElement | null;
+
+      if (!editorRoot || !titleRef.current) {
+        return;
+      }
+
+      const shouldRefocus =
+        !activeElement ||
+        activeElement === document.body ||
+        editorRoot.contains(activeElement);
+
+      if (shouldRefocus) {
+        titleRef.current.focus();
+      }
+    }, 0);
+  };
+
   // Stable refs so callbacks stored in the atom always call the latest implementation.
   const onFlagCallbackRef = useRef<() => void>();
   onFlagCallbackRef.current = () =>
     onUpdateTask({ isImportant: !editedTask.isImportant });
+
+  const onNoteCallbackRef = useRef<(note: Note | null) => void>();
+  onNoteCallbackRef.current = (note) => onUpdateTask({ note });
 
   const onDueDateCallbackRef = useRef<(date: Dayjs | null) => void>();
   onDueDateCallbackRef.current = (date) => onUpdateTask({ dueDate: date });
@@ -156,15 +194,21 @@ export const TaskEditor = ({
   const onDeleteCallbackRef = useRef<() => void>();
   onDeleteCallbackRef.current = () => deleteTask({ taskId: editedTask.id });
 
-  const onLinkCallbackRef = useRef<() => void>();
-  onLinkCallbackRef.current = () => {
-    setLinksModalKey((k) => k + 1);
-    setIsLinksModalOpen(true);
-  };
+  const onLinksCallbackRef = useRef<(links: Link[]) => void>();
+  onLinksCallbackRef.current = (links) => onUpdateTask({ links });
+
+  const onMoveUpCallbackRef = useRef<(() => void) | undefined>(onMoveUp);
+  onMoveUpCallbackRef.current = onMoveUp;
+
+  const onMoveDownCallbackRef = useRef<(() => void) | undefined>(onMoveDown);
+  onMoveDownCallbackRef.current = onMoveDown;
 
   // Stable callbacks created once – these are safe to store in the atom.
   const stableFlagCallback = useRef(() =>
     onFlagCallbackRef.current?.(),
+  ).current;
+  const stableNoteCallback = useRef((note: Note | null) =>
+    onNoteCallbackRef.current?.(note),
   ).current;
   const stableDueDateCallback = useRef((date: Dayjs | null) =>
     onDueDateCallbackRef.current?.(date),
@@ -172,47 +216,91 @@ export const TaskEditor = ({
   const stableDeleteCallback = useRef(() =>
     onDeleteCallbackRef.current?.(),
   ).current;
-  const stableLinkCallback = useRef(() =>
-    onLinkCallbackRef.current?.(),
+  const stableLinksCallback = useRef((links: Link[]) =>
+    onLinksCallbackRef.current?.(links),
+  ).current;
+  const stableLinkPopoverOpenChangeCallback = useRef((open: boolean) =>
+    {
+      isLinksPopoverOpenRef.current = open;
+      setIsLinksPopoverOpen(open);
+      if (!open) {
+        scheduleTitleRefocus();
+      }
+    },
   ).current;
   const stableDatePickerOpenChangeCallback = useRef((open: boolean) =>
-    setIsDatePickerOpen(open),
+    {
+      isDatePickerOpenRef.current = open;
+      setIsDatePickerOpen(open);
+      if (!open) {
+        scheduleTitleRefocus();
+      }
+    },
+  ).current;
+  const stableNoteSelectOpenChangeCallback = useRef((open: boolean) =>
+    {
+      isNoteSelectOpenRef.current = open;
+      setIsNoteSelectOpen(open);
+      if (!open) {
+        scheduleTitleRefocus();
+      }
+    },
+  ).current;
+  const stableMoveUpCallback = useRef(() =>
+    onMoveUpCallbackRef.current?.(),
+  ).current;
+  const stableMoveDownCallback = useRef(() =>
+    onMoveDownCallbackRef.current?.(),
   ).current;
 
   // Sync atom when focus state or colour changes.
   useEffect(() => {
     if (isFocused) {
       setTaskEditorState({
+        focusedTaskEditorId: editorInstanceId,
         isTaskFocused: true,
         colour,
+        links: editedTask.links,
+        selectedNote: editedTask.note,
         isImportant: editedTask.isImportant,
         dueDate: editedTask.dueDate,
         isCompleted: !!editedTask.completedDate,
         isCancelled: !!editedTask.cancelledDate,
-        onLinkClick: stableLinkCallback,
+        onNoteChange: stableNoteCallback,
+        onNoteSelectOpenChange: stableNoteSelectOpenChangeCallback,
+        onLinksChange: stableLinksCallback,
+        onLinkPopoverOpenChange: stableLinkPopoverOpenChangeCallback,
         onFlagClick: stableFlagCallback,
         onDueDateChange: stableDueDateCallback,
         onDatePickerOpenChange: stableDatePickerOpenChangeCallback,
         onDeleteClick: stableDeleteCallback,
+        onMoveUp: stableMoveUpCallback,
+        onMoveDown: stableMoveDownCallback,
       });
     } else {
       setTaskEditorState((current) =>
-        current.isTaskFocused ? { ...defaultTaskEditorState } : current,
+        current.focusedTaskEditorId === editorInstanceId
+          ? { ...defaultTaskEditorState }
+          : current,
       );
     }
-  }, [isFocused, colour, setTaskEditorState]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isFocused, colour, editorInstanceId, setTaskEditorState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keep toolbar display data (important, due date, completion) in sync while focused.
   useEffect(() => {
     if (!isFocused) return;
     setTaskEditorState((current) => ({
       ...current,
+      links: editedTask.links,
+      selectedNote: editedTask.note,
       isImportant: editedTask.isImportant,
       dueDate: editedTask.dueDate,
       isCompleted: !!editedTask.completedDate,
       isCancelled: !!editedTask.cancelledDate,
     }));
   }, [
+    editedTask.links,
+    editedTask.note,
     editedTask.isImportant,
     editedTask.dueDate,
     editedTask.completedDate,
@@ -225,10 +313,12 @@ export const TaskEditor = ({
   useEffect(() => {
     return () => {
       setTaskEditorState((current) =>
-        current.isTaskFocused ? { ...defaultTaskEditorState } : current,
+        current.focusedTaskEditorId === editorInstanceId
+          ? { ...defaultTaskEditorState }
+          : current,
       );
     };
-  }, [setTaskEditorState]);
+  }, [editorInstanceId, setTaskEditorState]);
 
   const handleCircleClick = () => {
     const previousState = {
@@ -268,10 +358,6 @@ export const TaskEditor = ({
     event.preventDefault();
   };
 
-  const onSaveLinks = (links: Link[]) => {
-    onUpdateTask({ links });
-  };
-
   const isCompleted = !!editedTask.completedDate;
   const isCancelled = !!editedTask.cancelledDate;
 
@@ -286,21 +372,29 @@ export const TaskEditor = ({
 
   return (
     <div
-      className="w-full flex gap-2 items-start"
+      ref={editorRootRef}
+      className="w-full flex gap-1 items-start"
       onFocus={() => setIsFocused(true)}
       onBlur={(e) => {
-        if (
-          !e.currentTarget.contains(e.relatedTarget) &&
-          !isLinksModalOpen &&
-          !isDatePickerOpen
-        ) {
-          setIsFocused(false);
-          onFocusLost?.();
-        }
+        const editorRoot = e.currentTarget;
+        setTimeout(() => {
+          if (
+            !editorRoot.contains(document.activeElement) &&
+            !isDatePickerOpen &&
+            !isNoteSelectOpen &&
+            !isLinksPopoverOpen &&
+            !isLinksPopoverOpenRef.current &&
+            !isDatePickerOpenRef.current &&
+            !isNoteSelectOpenRef.current
+          ) {
+            setIsFocused(false);
+            onFocusLost?.();
+          }
+        }, 0);
       }}
     >
       <button
-        className="pt-px pl-px"
+        className="pt-[3px] pl-px"
         onMouseDown={handleCircleMouseDown}
         onClick={handleCircleClick}
       >
@@ -308,111 +402,102 @@ export const TaskEditor = ({
           iconName={
             isCompleted ? "checkCircle" : isCancelled ? "xCircle" : "circle"
           }
-          size="md"
+          size="sm"
           weight={isCompleted || isCancelled ? "fill" : "regular"}
-          className="fill-slate-400 hover:fill-slate-600 transition-colors"
+          className={cn(
+            "transition-colors",
+            isCompleted && !isCancelled
+              ? cn(colour.text, colour.textPillInverted)
+              : "text-slate-400 hover:text-slate-600",
+          )}
         />
       </button>
 
-      <div className="w-full flex items-start justify-between">
-        <div className="flex flex-col grow">
-          <div className="flex items-center flex-1">
+      <div className="w-full flex-col items-start">
+        <div className="flex justify-between items-start">
+          <textarea
+            ref={titleRef}
+            rows={1}
+            name="title"
+            value={editedTask.title ?? ""}
+            placeholder="No Title"
+            onKeyDown={async (e) => {
+              if (e.key !== "Enter" || e.shiftKey) {
+                return;
+              }
+
+              e.preventDefault();
+              debouncedSave.flush();
+              await saveRef.current?.();
+              await onCreateNextTask?.();
+            }}
+            onChange={(e) =>
+              onUpdateTask({
+                title: e.target.value,
+              })
+            }
+            className={cn(
+              "flex-1 tracking-tight text-md bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+              isCompleted || isCancelled
+                ? "text-slate-500"
+                : editedTask.isImportant
+                  ? "text-red-500"
+                  : "text-slate-700",
+              isCancelled && "line-through",
+            )}
+          />
+
+          <div className="flex flex-row flex-wrap items-center gap-2 pl-1">
+            {editedTask.links.map((link) => (
+              <LinkPill key={link.id} link={link} colour={colour} />
+            ))}
+
             {editedTask.isImportant && (
               <Icon
-                iconName="exclamationMark"
+                iconName="warningCircle"
                 size="sm"
                 className={cn(
-                  "-ml-2 shrink-0",
-                  isCompleted || isCancelled
-                    ? "text-slate-500"
-                    : "text-red-500",
+                  "mt-0.5",
+                  isCompleted ? "text-slate-400" : "text-red-500",
                 )}
               />
             )}
 
-            <textarea
-              ref={titleRef}
-              rows={1}
-              name="title"
-              value={editedTask.title ?? ""}
-              placeholder="No Title"
-              onKeyDown={async (e) => {
-                if (e.key !== "Enter" || e.shiftKey) {
-                  return;
-                }
-
-                e.preventDefault();
-                debouncedSave.flush();
-                await saveRef.current?.();
-                await onCreateNextTask?.();
-              }}
-              onChange={(e) =>
-                onUpdateTask({
-                  title: e.target.value,
-                })
-              }
-              className={cn(
-                "flex-1 tracking-tight text-md bg-transparent placeholder-slate-400 select-none resize-none outline-none",
-                isCompleted || isCancelled
-                  ? "text-slate-500"
-                  : editedTask.isImportant
-                    ? "text-red-500"
-                    : "text-slate-700",
-                isCancelled && "line-through",
-              )}
-            />
+            {!!editedTask.dueDate && (
+              <span
+                className={cn(
+                  "text-xs px-2 py-1 rounded-full",
+                  isDueDateOverdue
+                    ? "bg-red-100 text-red-500"
+                    : "bg-gray-100 text-gray-500",
+                )}
+              >
+                {editedTask.dueDate.format("MMM D, YYYY")}
+              </span>
+            )}
           </div>
-
-          {showDescription && (
-            <textarea
-              ref={descriptionRef}
-              rows={1}
-              name="description"
-              value={editedTask.description ?? ""}
-              placeholder="No description"
-              onChange={(e) =>
-                onUpdateTask({
-                  description: e.target.value,
-                })
-              }
-              className="w-full text-sm font-normal bg-transparent placeholder-slate-400 text-slate-500 select-none resize-none outline-none"
-            />
-          )}
         </div>
 
-        <div className="flex flex-row flex-wrap items-center gap-2">
-          {editedTask.links.map((link) => (
-            <LinkPill key={link.id} link={link} colour={colour} />
-          ))}
-
-          {!!editedTask.dueDate && (
-            <span
-              className={cn(
-                "text-xs px-2 py-1 rounded-full",
-                isDueDateOverdue
-                  ? "bg-red-100 text-red-500"
-                  : "bg-gray-100 text-gray-500",
-              )}
-            >
-              {editedTask.dueDate.format("MMM D, YYYY")}
-            </span>
-          )}
-        </div>
+        {showDescription && (
+          <textarea
+            ref={descriptionRef}
+            rows={1}
+            name="description"
+            value={editedTask.description ?? ""}
+            placeholder="No description"
+            onChange={(e) =>
+              onUpdateTask({
+                description: e.target.value,
+              })
+            }
+            className={cn(
+              "w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+              isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
+            )}
+          />
+        )}
       </div>
 
-      <Dialog.Root
-        open={isLinksModalOpen}
-        onOpenChange={(open) => {
-          setIsLinksModalOpen(open);
-        }}
-      >
-        <TaskLinksModal
-          key={linksModalKey}
-          links={editedTask.links}
-          colour={colour}
-          onSave={onSaveLinks}
-        />
-      </Dialog.Root>
     </div>
   );
 };

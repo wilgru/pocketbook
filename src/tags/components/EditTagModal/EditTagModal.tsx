@@ -5,7 +5,7 @@ import { ColourPicker } from "src/colours/components/ColourPicker/ColourPicker";
 import { Button } from "src/common/components/Button/Button";
 import { Input } from "src/common/components/Input/Input";
 import { Label } from "src/common/components/Label/Label";
-import { MultiLinkInput } from "src/common/components/MultiLinkInput/MultiLinkInput";
+import { LinkMultiInput } from "src/common/components/LinkMultiInput/LinkMultiInput";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useUpdateTag } from "src/tags/hooks/useUpdateTag";
 import { DeleteTagModal } from "../DeleteTagModal/DeleteTagModal";
@@ -16,13 +16,30 @@ type EditTagModalProps = {
   onDeleted?: () => void | Promise<void>;
 };
 
+const createEmptyTagLink = (): TagLink => ({
+  id: crypto.randomUUID(),
+  title: undefined,
+  link: "",
+});
+
+const toDraftTagLinks = (links: TagLink[]): TagLink[] => [
+  ...links.filter((link) => link.link.trim() !== ""),
+  createEmptyTagLink(),
+];
+
 export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
-  const [editedTag, setEditedTag] = useState<Tag>(tag);
+  const [editedTag, setEditedTag] = useState<Tag>({
+    ...tag,
+    links: toDraftTagLinks(tag.links),
+  });
   const { updateTag } = useUpdateTag();
 
   // TODO: find better solution than using useEffect
   useEffect(() => {
-    setEditedTag(tag);
+    setEditedTag({
+      ...tag,
+      links: toDraftTagLinks(tag.links),
+    });
   }, [tag]);
 
   const onSaveEdit = async () => {
@@ -37,22 +54,12 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
     }
   };
 
-  const onAddLink = () => {
-    setEditedTag((currentTagToEdit) => {
-      return {
-        ...currentTagToEdit,
-        links: [
-          ...currentTagToEdit.links,
-          { id: crypto.randomUUID(), title: undefined, link: "" },
-        ],
-      };
-    });
-  };
-
   const onEditLinks = (updatedLink: TagLink) => {
     setEditedTag((currentTagToEdit) => {
-      const updatedLinks = currentTagToEdit.links.map((link) =>
-        link.id === updatedLink.id ? updatedLink : link,
+      const updatedLinks = toDraftTagLinks(
+        currentTagToEdit.links.map((link) =>
+          link.id === updatedLink.id ? updatedLink : link,
+        ),
       );
 
       return { ...currentTagToEdit, links: updatedLinks };
@@ -103,10 +110,9 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
               tooltipContent="You can add links that will appear underneath this tag's description"
             />
 
-            <MultiLinkInput
+            <LinkMultiInput
               links={editedTag.links}
               onChange={onEditLinks}
-              onAddLink={onAddLink}
             />
           </div>
 

@@ -8,7 +8,6 @@ import type { Colour } from "src/colours/Colour.type";
 
 type CalendarProps = {
   colour?: Colour;
-  size?: "sm" | "medium";
   selectedDate?: Dayjs | null;
   showSelectedDate?: boolean;
   onSelectDate?: (date: Dayjs) => void;
@@ -42,14 +41,12 @@ const MAX_VISIBLE_DOTS = 4;
 
 export const Calendar = ({
   colour = colours.orange,
-  size = "medium",
   selectedDate,
   showSelectedDate = true,
   onSelectDate,
   isDateDisabled,
   dayDotIndicators,
 }: CalendarProps): JSX.Element => {
-  const isSmall = size === "sm";
   const today = dayjs();
   const [displayYear, setDisplayYear] = useState(today.year());
   const [displayMonth, setDisplayMonth] = useState(today.month());
@@ -117,43 +114,35 @@ export const Calendar = ({
   return (
     <div>
       <div
-        className={cn(
-          "flex justify-between items-center",
-          isSmall ? "mb-1" : "mb-2",
-        )}
+        className={cn("flex justify-between items-center mb-1")}
       >
-        <h3
-          className={cn("text-slate-400", isSmall ? "ml-1.5 text-xs" : "ml-1 text-sm")}
-        >
+        <h3 className={cn("text-slate-400 ml-1.5 text-xs")}>
           {MONTH_NAMES[displayMonth]} {displayYear}
         </h3>
 
-        <div className={cn("flex items-center", isSmall ? "gap-0.5" : "gap-1")}>
+        <div className={cn("flex items-center gap-0.5")}>
           <Button
             onClick={handlePrevMonth}
             colour={colour}
             iconName="caretLeft"
             variant="ghost-strong"
-            size={isSmall ? "xs" : "sm"}
+            size="xs"
           />
           <Button
             onClick={handleNextMonth}
             colour={colour}
             iconName="caretRight"
             variant="ghost-strong"
-            size={isSmall ? "xs" : "sm"}
+            size="xs"
           />
         </div>
       </div>
 
-      <div className={cn("grid grid-cols-7", isSmall ? "gap-px" : "gap-0.5")}>
+      <div className={cn("grid grid-cols-7 gap-px")}>
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
           <span
             key={d}
-            className={cn(
-              "font-medium text-slate-500 text-center",
-              isSmall ? "text-[10px] py-0" : "text-xs py-0.5",
-            )}
+            className={cn("font-medium text-slate-500 text-center text-[10px] py-0")}
           >
             {d}
           </span>
@@ -191,7 +180,7 @@ export const Calendar = ({
               onClick={() => onSelectDate?.(calendarDay.day)}
               className={cn(
                 "w-full cursor-pointer select-none transition-colors flex flex-col items-center justify-start",
-                isSmall ? "text-[10px] rounded-md py-0.5" : "text-xs rounded-lg py-1",
+                "text-[10px] rounded-md py-0.5",
                 !calendarDay.isCurrentMonth && !isDisabled && "text-slate-300",
                 calendarDay.isCurrentMonth &&
                   !isSelected &&

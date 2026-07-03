@@ -170,7 +170,6 @@ export const UpdatesLayout = ({
           >
             <Calendar
               colour={colour}
-              size="sm"
               showSelectedDate={false}
               dayDotIndicators={dayDotIndicators}
               isDateDisabled={(date) =>

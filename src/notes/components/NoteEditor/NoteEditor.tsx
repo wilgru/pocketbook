@@ -1,4 +1,3 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
@@ -13,17 +12,17 @@ import { QuillEditor } from "src/common/components/QuillEditor/QuillEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { NoteLinksModal } from "src/notes/components/NoteLinksModal/NoteLinksModal";
+import { NoteLinksPopover } from "src/notes/components/NoteLinksPopover/NoteLinksPopover";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
+import { useTaskReorder } from "src/tasks/hooks/useTaskReorder";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
 import { TagSelect } from "../../../tags/components/TagSelect/TagSelect";
 import { TaskEditor } from "../../../tasks/components/TaskEditor/TaskEditor";
 import type { Colour } from "src/colours/Colour.type";
-import type { Link } from "src/common/types/Link.type";
 import type { Note } from "src/notes/Note.type";
 
 type NoteEditorProps = {
@@ -41,6 +40,7 @@ const NoteEditor = ({
 }: NoteEditorProps) => {
   const { createNote } = useCreateNote();
   const { createTask } = useCreateTask();
+  const { getMoveCallbacks } = useTaskReorder();
   const { updateNote } = useUpdateNote();
   const { deleteNote } = useDeleteNote();
   const { updates } = useGetUpdates({ noteId: note.id });
@@ -52,7 +52,6 @@ const NoteEditor = ({
 
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewUpdate, setShowNewUpdate] = useState(false);
-  const [linksModalKey, setLinksModalKey] = useState(0);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
 
   const newUpdateRef = useRef<HTMLDivElement>(null);
@@ -113,7 +112,7 @@ const NoteEditor = ({
     }
   }, [showNewUpdate]);
 
-  const onCreateTask = async () => {
+  const onCreateTask = async (insertAfterSortOrder?: number) => {
     const createdTask = await createTask({
       createTaskData: {
         note: editedNote,
@@ -126,12 +125,12 @@ const NoteEditor = ({
         completedDate: null,
         cancelledDate: null,
       },
+      insertAfterSortOrder,
     });
     if (createdTask?.id) {
       setNewTaskFocusId(createdTask.id);
     }
   };
-
   const onUpdateNote = (updateNoteData: Partial<Note>) => {
     setEditedNote((currentEditedNote) => ({
       ...currentEditedNote,
@@ -139,10 +138,6 @@ const NoteEditor = ({
       updated: dayjs(),
     }));
     debouncedSave();
-  };
-
-  const onSaveLinks = (links: Link[]) => {
-    onUpdateNote({ links });
   };
 
   const onDeleteNote = async () => {
@@ -158,8 +153,8 @@ const NoteEditor = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-12 pt-6">
-      <div className="w-full flex flex-col gap-2 justify-between border-b-2 border-slate-100 pb-3">
+    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-8 pt-8">
+      <div className="w-full flex flex-col gap-2 justify-between border-b border-slate-200 pb-2">
         <textarea
           ref={titleRef}
           rows={1}
@@ -170,7 +165,7 @@ const NoteEditor = ({
           className="text-5xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-none"
         />
 
-        <div className="flex flex-row flex-wrap gap-2 items-center">
+        <div className="flex flex-row flex-wrap gap-1.5 items-center">
           <TagSelect
             key={editedNote.id}
             initialTags={editedNote.tags}
@@ -178,33 +173,17 @@ const NoteEditor = ({
             onChange={(tags) => onUpdateNote({ tags })}
           />
 
-          <Dialog.Root
-            onOpenChange={(open) => {
-              if (open) setLinksModalKey((k) => k + 1);
-            }}
-          >
-            <Dialog.Trigger asChild>
-              <Button
-                size="sm"
-                variant="ghost"
-                colour={colour}
-                iconName="link"
-              />
-            </Dialog.Trigger>
-
-            <NoteLinksModal
-              key={linksModalKey}
-              links={editedNote.links}
-              colour={colour}
-              onSave={onSaveLinks}
-            />
-          </Dialog.Root>
+          <NoteLinksPopover
+            links={editedNote.links}
+            colour={colour}
+            onChange={(links) => onUpdateNote({ links })}
+          />
 
           <Button
             size="sm"
             variant="ghost"
             colour={colour}
-            onClick={onCreateTask}
+            onClick={() => void onCreateTask()}
             iconName="checkCircle"
           />
 
@@ -256,7 +235,7 @@ const NoteEditor = ({
         </div>
 
         {editedNote.links.length > 0 && (
-          <div className="flex flex-row flex-wrap gap-2 items-center">
+          <div className="flex flex-row flex-wrap gap-2 items-center pl-1">
             {editedNote.links.map((link) => (
               <LinkPill key={link.id} link={link} colour={colour} />
             ))}
@@ -265,15 +244,16 @@ const NoteEditor = ({
       </div>
 
       {note.tasks && note.tasks.length > 0 && (
-        <div className="w-full flex flex-col gap-2 justify-between border-b-2 border-slate-100 pb-4">
-          {note.tasks.map((task) => (
+        <div className="w-full flex flex-col justify-between border-dashed border-b border-slate-300 pb-4">
+          {note.tasks.map((task, index) => (
             <TaskEditor
               key={task.id}
               task={task}
               colour={colour}
-              onCreateNextTask={onCreateTask}
+              onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
+              {...getMoveCallbacks(index, note.tasks)}
             />
           ))}
         </div>
@@ -301,9 +281,9 @@ const NoteEditor = ({
       </div>
 
       {(updates.length > 0 || showNewUpdate) && (
-        <div className="w-full flex flex-col border-t-2 border-slate-100 pt-6">
+        <div className="w-full flex flex-col border-dashed border-t border-slate-300 pt-4 px-1">
           {showNewUpdate && (
-            <div ref={newUpdateRef}>
+            <div ref={newUpdateRef} className="pb-4">
               <UpdateEditor
                 update={{ notes: [editedNote], tint: null }}
                 colour={colour}
@@ -316,7 +296,7 @@ const NoteEditor = ({
           )}
 
           {updates.length > 0 && (
-            <div className="flex flex-col relative">
+            <div className="flex flex-col relative gap-4">
               {[...updates].reverse().map((upd) => (
                 <UpdateEditor
                   key={upd.id}
