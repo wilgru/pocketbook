@@ -153,7 +153,7 @@ export const UpdatesLayout = ({
       }
       sidebarTopContentClassName="border-b mb-3"
       sidebar={updatesGroupedByMonth.map((monthGroup) => (
-        <div key={monthGroup.monthYear} className="flex flex-col gap-3">
+        <div key={monthGroup.monthYear} className="flex flex-col gap-0.5">
           {/* //TODO: like the NotesList.tsx, put this into a component, and then could be used by tasks page at some point. The headers are the same, so perhaps they could be put into a generic list header component */}
           <h3 className="text-slate-500 text-xs w-full tracking-wider font-medium px-2 pb-1 pt-2 border-dashed border-b border-slate-300">
             {monthGroup.monthYear}
