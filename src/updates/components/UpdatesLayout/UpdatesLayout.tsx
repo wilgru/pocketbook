@@ -2,11 +2,11 @@ import { useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
+import { ListSection } from "src/common/ListSection/ListSection";
+import { TableOfContentsListItem } from "src/common/TableOfContentsListItem/TableOfContentsListItem";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
-import { cn } from "src/common/utils/cn";
-import { Icon } from "src/icons/components/Icon/Icon";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
 import { getTintClasses } from "src/updates/utils/getTintClasses";
@@ -36,9 +36,9 @@ export const UpdatesLayout = ({
   onCreateNew,
 }: UpdatesLayoutProps) => {
   const navigate = useNavigate();
-  const groupedUpdates = groupUpdates(updates);
+  const groupedUpdates = useMemo(() => groupUpdates(updates), [updates]);
 
-  const updatesGroupedByMonth = useMemo(() => {
+  const effectiveUpdateGroups = useMemo(() => {
     const monthGroups = new Map<string, typeof groupedUpdates>();
 
     groupedUpdates.forEach((group) => {
@@ -152,44 +152,19 @@ export const UpdatesLayout = ({
         />
       }
       sidebarTopContentClassName="border-b mb-3"
-      sidebar={updatesGroupedByMonth.map((monthGroup) => (
-        <div key={monthGroup.monthYear} className="flex flex-col gap-0.5">
-          {/* //TODO: like the NotesList.tsx, put this into a component, and then could be used by tasks page at some point. The headers are the same, so perhaps they could be put into a generic list header component */}
-          <h3 className="text-slate-500 text-xs w-full tracking-wider font-medium px-2 pb-1 pt-2 border-dashed border-b border-slate-300">
-            {monthGroup.monthYear}
-          </h3>
-
-          <ul className="flex flex-col gap-1">
-            {monthGroup.items.map((item) => (
-              <li
-                key={item.title}
-                className={cn(
-                  "py-1 px-2 cursor-pointer rounded-lg transition-colors flex items-center gap-2 max-w-full",
-                  colour.backgroundGlow,
-                  colour.textPillInverted,
-                )}
-                onClick={() => {
-                  navigate({ to: `#${item.navigationId}` });
-                }}
-              >
-                <h2 className="text-sm min-w-0 overflow-x-hidden whitespace-nowrap overflow-ellipsis">
-                  {item.title}
-                </h2>
-
-                <div className="flex items-center gap-1">
-                  {item.icons.map((icon, index) => (
-                    <Icon
-                      key={`${item.title}-${icon.iconName}-${index}`}
-                      iconName={icon.iconName}
-                      size="sm"
-                      className={icon.colour.text}
-                    />
-                  ))}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+      sidebar={effectiveUpdateGroups.map((monthGroup) => (
+        <ListSection title={monthGroup.monthYear}>
+          {monthGroup.items.map((item) => (
+            <TableOfContentsListItem
+              key={item.navigationId}
+              title={item.title}
+              navigationId={item.navigationId}
+              onJumpTo={(id) => navigate({ to: `#${id}` })}
+              colour={colour}
+              icons={item.icons}
+            />
+          ))}
+        </ListSection>
       ))}
       content={
         <div className="h-full w-full max-w-[800px] flex flex-col gap-14 pb-6">

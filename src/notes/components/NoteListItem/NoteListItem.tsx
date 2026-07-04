@@ -38,7 +38,7 @@ export const NoteListItem = ({
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
-        <div key={note.id} className="w-full flex flex-col p-0.5">
+        <li key={note.id} className="w-full flex flex-col p-0.5">
           <p className="truncate font-normal">
             {note.title === "" ? "Untitled Note" : note.title}
           </p>
@@ -72,7 +72,7 @@ export const NoteListItem = ({
               <Bookmark className="fill-red-400 m-1" weight="fill" size={14} />
             )}
           </div>
-        </div>
+        </li>
       )}
     </Link>
   );

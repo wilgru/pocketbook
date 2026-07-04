@@ -1,6 +1,7 @@
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
+import { ListSection } from "src/common/ListSection/ListSection";
 import { quillEditorStateAtom } from "src/common/atoms/quillEditorStateAtom";
 import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
@@ -10,8 +11,10 @@ import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToo
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { groupNotes } from "src/notes/utils/groupNotes";
+import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
 import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
-import { NotesList } from "../NotesList/NotesList";
+import { NoteListItem } from "../NoteListItem/NoteListItem";
+import { StickyNoteListItem } from "../NoteListItem/StickyNoteListItem";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note, NotesGroup } from "src/notes/Note.type";
 import type { TagLink } from "src/tags/Tag.type";
@@ -91,11 +94,29 @@ export const NotesLayout = ({
       sidebar={
         <>
           {noteGroups.map((noteGroup) => (
-            <NotesList
+            <ListSection
+              title={noteGroup.title}
               key={noteGroup.title ?? "no-title"}
-              noteGroup={noteGroup}
-              colour={colour}
-            />
+            >
+              {noteGroup.notes.map((note) => {
+                const hasNoTitle = !note.title || note.title.trim() === "";
+                const hasContent = !isNoteContentEmpty(note.content);
+
+                if (hasNoTitle && hasContent) {
+                  return (
+                    <StickyNoteListItem
+                      key={note.id}
+                      note={note}
+                      colour={colour}
+                    />
+                  );
+                }
+
+                return (
+                  <NoteListItem key={note.id} note={note} colour={colour} />
+                );
+              })}
+            </ListSection>
           ))}
 
           {noteGroups.length === 0 && (
@@ -120,6 +141,7 @@ export const NotesLayout = ({
               <TaskFloatingToolbar />
             </FloatingToolbar>
           </div>
+
           <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
             <FloatingToolbar visible={isQuillFocused}>
               <QuillFormattingToolbar
