@@ -1,12 +1,11 @@
-import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useMemo, Fragment } from "react";
 import { colours } from "src/colours/colours.constant";
-import { ListSection } from "src/common/ListSection/ListSection";
-import { TableOfContentsListItem } from "src/common/TableOfContentsListItem/TableOfContentsListItem";
 import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
+import { ListSection } from "src/common/components/ListSection/ListSection";
+import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
 import { groupTasks } from "src/tasks/utils/groupTasks";
@@ -31,7 +30,6 @@ export const TasksLayout = ({
   tasks,
   noNoteEditorTrigger,
 }: TasksLayoutProps) => {
-  const navigate = useNavigate();
   const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
   const groupedTasks = useMemo(() => groupTasks(tasks, "note"), [tasks]);
 
@@ -58,7 +56,7 @@ export const TasksLayout = ({
 
     return groups.map((group) => ({
       ...group,
-      navigationId: group.title,
+      navigationId: group.relevantTaskData.note?.id ?? "no-note",
     }));
   }, [groupedTasks, noNoteEditorTrigger]);
 
@@ -71,7 +69,7 @@ export const TasksLayout = ({
               key={effectiveGroup.navigationId}
               title={effectiveGroup.title}
               navigationId={effectiveGroup.navigationId}
-              onJumpTo={(id) => navigate({ to: `#${id}` })}
+              onJumpTo={() => undefined}
               colour={colour}
             />
           ))}
@@ -79,7 +77,7 @@ export const TasksLayout = ({
       }
       content={
         <>
-          <div className="h-full w-full max-w-[800px] flex flex-col gap-6">
+          <div className="h-full w-full max-w-[800px] px-4 py-12 flex flex-col gap-6">
             {effectiveTaskGroups.length === 0 && (
               <EmptyState text="No tasks yet" />
             )}
