@@ -44,6 +44,7 @@ export const TwoPaneLayout = ({
         <div
           className={cn(
             "min-h-0 flex-1 flex flex-col gap-3 px-3 pb-6 overflow-y-scroll",
+            !sidebarTopContent && "pt-3",
             sidebarScrollClassName,
           )}
         >
@@ -53,7 +54,7 @@ export const TwoPaneLayout = ({
 
       <section
         className={cn(
-          "h-full flex-1 relative flex flex-col min-w-0",
+          "flex-1 min-h-0 overflow-y-scroll flex justify-center px-8 pt-8",
           contentClassName,
         )}
       >

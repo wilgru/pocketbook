@@ -105,15 +105,13 @@ export const NotesLayout = ({
       }
       content={
         <>
-          <div className="flex-1 min-h-0 overflow-y-scroll flex justify-center">
-            {selectedNote ? (
-              <NoteEditor note={selectedNote} colour={colour} />
-            ) : (
-              <div className="h-full w-full flex flex-col justify-center items-center text-center">
-                <h1 className="text-gray-400 text-lg">No note selected</h1>
-              </div>
-            )}
-          </div>
+          {selectedNote ? (
+            <NoteEditor note={selectedNote} colour={colour} />
+          ) : (
+            <div className="h-full w-full flex flex-col justify-center items-center text-center">
+              <h1 className="text-gray-400 text-lg">No note selected</h1>
+            </div>
+          )}
 
           {/* isTaskFocused and isQuillFocused are mutually exclusive so each toolbar is
             positioned at the same absolute location and only one is ever shown at a time. */}
