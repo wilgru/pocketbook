@@ -1,12 +1,12 @@
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
-import { ListSection } from "src/common/ListSection/ListSection";
 import { quillEditorStateAtom } from "src/common/atoms/quillEditorStateAtom";
 import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
+import { ListSection } from "src/common/components/ListSection/ListSection";
 import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToolbar/QuillFormattingToolbar";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
