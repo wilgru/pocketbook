@@ -76,34 +76,34 @@ export const TasksLayout = ({
         </ListSection>
       }
       content={
-        <>
-          <div className="h-full w-full max-w-[800px] px-4 py-12 flex flex-col gap-6">
-            {effectiveTaskGroups.length === 0 && (
-              <EmptyState text="No tasks yet" />
-            )}
+        <div className="h-full w-full max-w-[800px] flex flex-col gap-6">
+          {effectiveTaskGroups.length === 0 && (
+            <EmptyState text="No tasks yet" />
+          )}
 
-            {effectiveTaskGroups.map((group, index) => (
-              <Fragment key={group.relevantTaskData.note?.id ?? "no-note"}>
-                {index > 0 && <hr className="border-slate-200" />}
-                <TasksSection
-                  taskGroup={group}
-                  colour={colour}
-                  noNoteEditorTrigger={
-                    group.relevantTaskData.note === null
-                      ? noNoteEditorTrigger
-                      : undefined
-                  }
-                />
-              </Fragment>
-            ))}
-          </div>
+          {effectiveTaskGroups.map((group, index) => (
+            <Fragment key={group.relevantTaskData.note?.id ?? "no-note"}>
+              {index > 0 && <hr className="border-slate-200" />}
+              <TasksSection
+                taskGroup={group}
+                colour={colour}
+                noNoteEditorTrigger={
+                  group.relevantTaskData.note === null
+                    ? noNoteEditorTrigger
+                    : undefined
+                }
+              />
+            </Fragment>
+          ))}
 
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex justify-center pointer-events-none z-30">
+          <div aria-hidden="true" className="h-10 w-full shrink-0" />
+
+          <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
             <FloatingToolbar visible={isTaskFocused}>
               <TaskFloatingToolbar />
             </FloatingToolbar>
           </div>
-        </>
+        </div>
       }
     />
   );
