@@ -51,7 +51,7 @@ export const NotesLayout = ({
   } = useAtomValue(quillEditorStateAtom);
   const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
 
-  const noteGroups = useMemo<NotesGroup[]>(() => {
+  const effectiveNoteGroups = useMemo<NotesGroup[]>(() => {
     if (!notes || notes.length === 0) {
       return [];
     }
@@ -93,7 +93,7 @@ export const NotesLayout = ({
       }
       sidebar={
         <>
-          {noteGroups.map((noteGroup) => (
+          {effectiveNoteGroups.map((noteGroup) => (
             <ListSection
               title={noteGroup.title}
               key={noteGroup.title ?? "no-title"}
@@ -119,7 +119,7 @@ export const NotesLayout = ({
             </ListSection>
           ))}
 
-          {noteGroups.length === 0 && (
+          {effectiveNoteGroups.length === 0 && (
             <EmptyState text="No notes yet" onAdd={onCreateNote} />
           )}
         </>
