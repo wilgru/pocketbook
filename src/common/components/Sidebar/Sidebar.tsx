@@ -140,7 +140,7 @@ export const Sidebar = () => {
           </SidebarTagSection>
         ))}
 
-        <hr className="w-full border-slate-300" />
+        <hr className="w-full border-dashed border-slate-300" />
 
         <Dialog.Root>
           <Dialog.Trigger asChild>

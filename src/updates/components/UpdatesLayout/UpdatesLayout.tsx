@@ -1,13 +1,12 @@
 import { useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
-import { PageHeader } from "src/common/components/PageHeader/PageHeader";
-import { cn } from "src/common/utils/cn";
-import { Icon } from "src/icons/components/Icon/Icon";
-import TableOfContents from "src/tableOfContents/TableOfContents/TableOfContents";
+import { ListSection } from "src/common/components/ListSection/ListSection";
+import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
+import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
 import { getTintClasses } from "src/updates/utils/getTintClasses";
@@ -37,46 +36,54 @@ export const UpdatesLayout = ({
   onCreateNew,
 }: UpdatesLayoutProps) => {
   const navigate = useNavigate();
-  const [navigationId, setNavigationId] = useState("");
+  const groupedUpdates = useMemo(() => groupUpdates(updates), [updates]);
 
-  const groupedUpdates = groupUpdates(updates);
+  const effectiveUpdateGroups = useMemo(() => {
+    const monthGroups = new Map<string, typeof groupedUpdates>();
 
-  const badges = useMemo(() => [`${updates.length} updates`], [updates.length]);
-
-  const tableOfContentItems = useMemo(() => {
-    return groupedUpdates.map((group) => {
+    groupedUpdates.forEach((group) => {
       const groupDate = getGroupDate(group);
-      const diffDays = groupDate
-        ? dayjs().startOf("day").diff(groupDate, "day")
-        : null;
-
-      const sectionGroup = groupDate
+      const monthKey = groupDate
         ? `${groupDate.format("MMMM")} ${groupDate.format("YYYY")}`
-        : undefined;
+        : "Other";
 
-      let sectionTitle = group.title;
-      if (groupDate) {
-        if (diffDays === 0) {
-          sectionTitle = "Today";
-        } else if (diffDays === 1) {
-          sectionTitle = "Yesterday";
-        } else {
-          sectionTitle = groupDate.format("D MMM, dddd");
-        }
+      if (!monthGroups.has(monthKey)) {
+        monthGroups.set(monthKey, []);
       }
-
-      return {
-        title: sectionTitle,
-        navigationId: group.title,
-        group: sectionGroup,
-        icons: group.updates
-          .filter((update) => update.isWaypoint)
-          .map((update) => ({
-            iconName: "flagBannerFold",
-            colour: getTintClasses(update.tint).colour,
-          })),
-      };
+      monthGroups.get(monthKey)!.push(group);
     });
+
+    return Array.from(monthGroups, ([monthYear, groups]) => ({
+      monthYear,
+      items: groups.map((group) => {
+        const groupDate = getGroupDate(group);
+        const diffDays = groupDate
+          ? dayjs().startOf("day").diff(groupDate, "day")
+          : null;
+
+        let sectionTitle = group.title;
+        if (groupDate) {
+          if (diffDays === 0) {
+            sectionTitle = "Today";
+          } else if (diffDays === 1) {
+            sectionTitle = "Yesterday";
+          } else {
+            sectionTitle = groupDate.format("D MMM, dddd");
+          }
+        }
+
+        return {
+          title: sectionTitle,
+          navigationId: group.title,
+          icons: group.updates
+            .filter((update) => update.isWaypoint)
+            .map((update) => ({
+              iconName: "flagBannerFold",
+              colour: getTintClasses(update.tint).colour,
+            })),
+        };
+      }),
+    }));
   }, [groupedUpdates]);
 
   const navigationIdByDate = useMemo(() => {
@@ -126,67 +133,63 @@ export const UpdatesLayout = ({
   }, [groupedUpdates]);
 
   return (
-    <div className="flex-1 min-h-0 w-full min-w-0 px-4 flex gap-4 items-center justify-evenly overflow-hidden">
-      <div className="h-full w-full max-w-[800px] px-4 py-12 flex flex-col gap-14 overflow-y-auto">
-        <PageHeader colour={colour} badges={badges}>
-          <div className="flex gap-3 items-end">
-            <Icon
-              className={cn("pb-1", colour.text)}
-              iconName="chatCenteredText"
-              size="xl"
-            />
-            <h1 className="font-title text-5xl">Updates</h1>
-          </div>
-        </PageHeader>
-
-        {pendingNew && (
-          <div className="flex flex-col">
-            <UpdateEditor
-              update={{ notes: [], tint: null }}
+    <TwoPaneLayout
+      sidebarTopContent={
+        <Calendar
+          colour={colour}
+          size="sm"
+          showSelectedDate={false}
+          dayDotIndicators={dayDotIndicators}
+          isDateDisabled={(date) =>
+            !availableDateKeys.has(date.startOf("day").format("YYYY-MM-DD"))
+          }
+          onSelectDate={(date) => {
+            const dateKey = date.startOf("day").format("YYYY-MM-DD");
+            const targetNavigationId = navigationIdByDate.get(dateKey);
+            if (!targetNavigationId) return;
+            navigate({ to: `#${targetNavigationId}` });
+          }}
+        />
+      }
+      showSidebarTopContentDivider
+      sidebar={effectiveUpdateGroups.map((monthGroup) => (
+        <ListSection title={monthGroup.monthYear}>
+          {monthGroup.items.map((item) => (
+            <TableOfContentsListItem
+              key={item.navigationId}
+              title={item.title}
+              navigationId={item.navigationId}
+              onJumpTo={(id) => navigate({ to: `#${id}` })}
               colour={colour}
-              onCancel={onCancelNew}
-              onCreated={onCancelNew}
+              icons={item.icons}
             />
-          </div>
-        )}
+          ))}
+        </ListSection>
+      ))}
+      content={
+        <div className="h-full w-full max-w-[800px] flex flex-col gap-14 pb-6">
+          {pendingNew && (
+            <div className="flex flex-col">
+              <UpdateEditor
+                update={{ notes: [], tint: null }}
+                colour={colour}
+                onCancel={onCancelNew}
+                onCreated={onCancelNew}
+              />
+            </div>
+          )}
 
-        {groupedUpdates.length === 0 && !pendingNew && (
-          <EmptyState text="No updates yet" onAdd={onCreateNew} />
-        )}
+          {groupedUpdates.length === 0 && !pendingNew && (
+            <EmptyState text="No updates yet" onAdd={onCreateNew} />
+          )}
 
-        {groupedUpdates.map((group) => (
-          <UpdatesSection key={group.title} group={group} colour={colour} />
-        ))}
-      </div>
+          {groupedUpdates.map((group) => (
+            <UpdatesSection key={group.title} group={group} colour={colour} />
+          ))}
 
-      {tableOfContentItems.length > 0 && (
-        <div className="flex flex-col justify-center">
-          <TableOfContents
-            title="Updates"
-            items={tableOfContentItems}
-            colour={colour}
-            activeItemNavigationId={navigationId}
-            onJumpTo={(id) => setNavigationId(id)}
-          >
-            <Calendar
-              colour={colour}
-              size="sm"
-              showSelectedDate={false}
-              dayDotIndicators={dayDotIndicators}
-              isDateDisabled={(date) =>
-                !availableDateKeys.has(date.startOf("day").format("YYYY-MM-DD"))
-              }
-              onSelectDate={(date) => {
-                const dateKey = date.startOf("day").format("YYYY-MM-DD");
-                const targetNavigationId = navigationIdByDate.get(dateKey);
-                if (!targetNavigationId) return;
-                setNavigationId(targetNavigationId);
-                navigate({ to: `#${targetNavigationId}` });
-              }}
-            />
-          </TableOfContents>
+          <div aria-hidden="true" className="h-10 w-full shrink-0" />
         </div>
-      )}
-    </div>
+      }
+    />
   );
 };

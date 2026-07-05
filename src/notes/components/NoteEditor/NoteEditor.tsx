@@ -160,7 +160,7 @@ const NoteEditor = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-8 pt-8">
+    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px]">
       <div className="w-full flex flex-col gap-2 justify-between border-b border-slate-200 pb-4">
         <textarea
           ref={titleRef}
