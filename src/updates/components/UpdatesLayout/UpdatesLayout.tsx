@@ -151,7 +151,7 @@ export const UpdatesLayout = ({
           }}
         />
       }
-      sidebarTopContentClassName="border-b mb-3"
+      showSidebarTopContentDivider
       sidebar={effectiveUpdateGroups.map((monthGroup) => (
         <ListSection title={monthGroup.monthYear}>
           {monthGroup.items.map((item) => (
