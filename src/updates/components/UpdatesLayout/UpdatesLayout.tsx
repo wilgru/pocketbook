@@ -169,23 +169,21 @@ export const UpdatesLayout = ({
       content={
         <div className="h-full w-full max-w-[800px] flex flex-col gap-14 pb-6">
           {pendingNew && (
-            <div className="flex flex-col">
-              <UpdateEditor
-                update={{ notes: [], tint: null }}
-                colour={colour}
-                onCancel={onCancelNew}
-                onCreated={onCancelNew}
-              />
-            </div>
-          )}
-
-          {groupedUpdates.length === 0 && !pendingNew && (
-            <EmptyState text="No updates yet" onAdd={onCreateNew} />
+            <UpdateEditor
+              update={{ notes: [], tint: null }}
+              colour={colour}
+              onCancel={onCancelNew}
+              onCreated={onCancelNew}
+            />
           )}
 
           {groupedUpdates.map((group) => (
             <UpdatesSection key={group.title} group={group} colour={colour} />
           ))}
+
+          {groupedUpdates.length === 0 && !pendingNew && (
+            <EmptyState text="No updates yet" onAdd={onCreateNew} />
+          )}
 
           <div aria-hidden="true" className="h-10 w-full shrink-0" />
         </div>
