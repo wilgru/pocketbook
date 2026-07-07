@@ -11,7 +11,7 @@ import {
   ChatCircle,
   ArrowsDownUp,
   UserCircle,
-  House,
+  HouseLine,
   SlidersHorizontal,
   CaretLeft,
   CaretRight,
@@ -98,8 +98,8 @@ const Icon = ({
       return <ChatCircle {...iconProps} />;
     case "arrowsDownUp":
       return <ArrowsDownUp {...iconProps} />;
-    case "house":
-      return <House {...iconProps} />;
+    case "houseLine":
+      return <HouseLine {...iconProps} />;
     case "notebook":
       return <Notebook {...iconProps} />;
     case "calendarDot":

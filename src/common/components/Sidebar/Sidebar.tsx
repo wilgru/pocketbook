@@ -72,11 +72,11 @@ export const Sidebar = () => {
         <section className="flex flex-col">
           <NavItem
             ghost
-            iconName="pencil"
-            title="Notes"
-            to={`/${pocketbookId}/notes/`}
+            iconName="houseLine"
+            title="Home"
+            to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
-            preview={counts?.noteCount}
+            preview={counts?.updateCount}
           />
 
           <NavItem
@@ -90,11 +90,11 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            iconName="chatCenteredText"
-            title="Updates"
-            to={`/${pocketbookId}/updates`}
+            iconName="pencil"
+            title="Notes"
+            to={`/${pocketbookId}/notes/`}
             colour={currentPocketbook.colour}
-            preview={counts?.updateCount}
+            preview={counts?.noteCount}
           />
         </section>
 
@@ -125,18 +125,16 @@ export const Sidebar = () => {
             isEmpty={tagGroup.tags.length === 0}
             key={tagGroup.id}
           >
-            <div className="flex flex-col gap-1 mt-1">
-              {tagGroup.tags.map((tag) => (
-                <NavItem
-                  iconName={tag.icon}
-                  colour={tag.colour}
-                  title={tag.name}
-                  preview={tag.noteCount}
-                  to={`/${pocketbookId}/tags/${tag.id}`}
-                  key={tag.id}
-                />
-              ))}
-            </div>
+            {tagGroup.tags.map((tag) => (
+              <NavItem
+                iconName={tag.icon}
+                colour={tag.colour}
+                title={tag.name}
+                preview={tag.noteCount}
+                to={`/${pocketbookId}/tags/${tag.id}`}
+                key={tag.id}
+              />
+            ))}
           </SidebarTagSection>
         ))}
 
