@@ -19,7 +19,31 @@ export type Update = Prettify<
   }
 >;
 
+export type NormalisedGroupItem =
+  | {
+      id: string;
+      type: "journal";
+      action: "created" | "updated";
+      date: Dayjs;
+      title: string;
+    }
+  | {
+      id: string;
+      type: "note";
+      action: "created" | "updated";
+      date: Dayjs;
+      title: string;
+    }
+  | {
+      id: string;
+      type: "task";
+      action: "completed" | "cancelled";
+      date: Dayjs;
+      title: string;
+    };
+
 export type UpdatesGroup = {
   title: string;
   updates: Update[];
+  normalisedItems: NormalisedGroupItem[];
 };
