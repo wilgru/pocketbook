@@ -274,6 +274,7 @@ export const RichTextEditor = ({
       className={cn(
         "rich-text h-full placeholder-slate-500",
         size === "sm" && "rich-text-sm",
+        size === "md" && "rich-text-md",
         size === "lg" && "rich-text-lg",
         className,
       )}
