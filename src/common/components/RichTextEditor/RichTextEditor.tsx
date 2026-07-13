@@ -48,7 +48,7 @@ type RichTextSurfaceProps = {
   className?: string;
   style?: CSSProperties;
   colour?: Colour;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
   value?: string;
   readOnly?: boolean;
   autoFocus?: boolean;
@@ -274,6 +274,7 @@ export const RichTextEditor = ({
       className={cn(
         "rich-text h-full placeholder-slate-500",
         size === "sm" && "rich-text-sm",
+        size === "lg" && "rich-text-lg",
         className,
       )}
       style={{ ...linkColorStyle, ...style }}
