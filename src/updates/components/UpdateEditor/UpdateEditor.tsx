@@ -10,6 +10,7 @@ import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteMultiSelect } from "src/notes/components/NoteMultiSelect/NoteMultiSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
+import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
 import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
 import { useDeleteUpdate } from "src/updates/hooks/useDeleteUpdate";
 import { useUpdateUpdate } from "src/updates/hooks/useUpdateUpdate";
@@ -25,6 +26,8 @@ type UpdateEditorProps = {
   colour?: Colour;
   showNotes?: boolean;
   autoFocus?: boolean;
+  showTimeOnly?: boolean;
+  showBottomPadding?: boolean;
   onCancel?: () => void;
   onCreated?: () => void;
 };
@@ -51,11 +54,12 @@ export const UpdateEditor = ({
   colour,
   showNotes = true,
   autoFocus = false,
+  showBottomPadding = false,
+  showTimeOnly = false,
   onCancel,
   onCreated,
 }: UpdateEditorProps) => {
   const { pocketbookId, currentPocketbook } = useCurrentPocketbook();
-  const navigate = useNavigate();
 
   const { createUpdate } = useCreateUpdate();
   const { updateUpdate } = useUpdateUpdate();
@@ -131,67 +135,66 @@ export const UpdateEditor = ({
   };
 
   const dateStr = editedUpdate.created
-    ? editedUpdate.created.format("D MMM YYYY, h:mm a")
+    ? editedUpdate.created.format(
+        showTimeOnly ? "h:mm a" : "D MMM YYYY, h:mm a",
+      )
     : null;
 
   return (
-    <div className="relative">
-      <div
-        className={cn(
-          "rounded-2xl p-4 my-2 flex flex-col gap-3 border transition-shadow",
-          isEditing
-            ? "bg-white border-slate-100 shadow-md"
-            : cn(
-                "shadow hover:shadow-md",
-                tintClasses.card,
-                tintClasses.border,
-              ),
-        )}
-      >
-        <div
-          className={cn(
-            "flex items-center justify-between flex-wrap gap-2 border-b-2 pb-3 ",
-            isEditing ? "border-slate-100" : tintClasses.border,
-          )}
-        >
-          <div className="flex items-center justify-start gap-3 flex-wrap">
-            {dateStr && (
-              <span className="text-xs text-slate-700 shrink-0">{dateStr}</span>
-            )}
+    <UpdateTimelineItem
+      iconName={editedUpdate.isWaypoint ? "flagBannerFold" : "chatCenteredText"}
+      iconColour={editedUpdate.isWaypoint ? tintClasses.colour : colours.grey}
+      strongIcon={editedUpdate.isWaypoint}
+      dateText={dateStr}
+      showBottomPadding={showBottomPadding}
+      headline={
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <p className="text-slate-500">
+            {editedUpdate.notes?.length
+              ? "Commented on"
+              : "Left a general comment"}
+          </p>
 
-            {showNotes &&
-              !isEditing &&
-              (editedUpdate.notes ?? []).map((note) => (
-                <button
+          {showNotes &&
+            (editedUpdate.notes ?? []).map((note) =>
+              pocketbookId ? (
+                <Link
                   key={note.id}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    navigate({
-                      to: `/${pocketbookId ?? ""}/notes`,
-                      search: { noteId: note.id },
-                    });
-                  }}
-                  className={cn(
-                    "flex items-center gap-1 pl-2 pr-1 py-1 text-xs rounded-full transition-colors",
-                    tintClasses.notePill,
-                  )}
+                  to="/$pocketbookId/notes"
+                  params={{ pocketbookId }}
+                  search={{ noteId: note.id }}
+                  className="underline flex items-center gap-1 text-slate-600 hover:text-slate-800"
                 >
                   {note.title ?? "Untitled Note"}
-
-                  <Icon iconName="arrowCircleRight" size="sm" />
-                </button>
-              ))}
-
-            {isEditing && (
-              <NoteMultiSelect
-                selectedNotes={(editedUpdate.notes ?? []) as Note[]}
-                colour={resolvedColour}
-                onChange={(notes) => onUpdateField({ notes })}
-              />
+                </Link>
+              ) : (
+                <span
+                  key={note.id}
+                  className="underline flex items-center gap-1 text-slate-600"
+                >
+                  {note.title ?? "Untitled Note"}
+                </span>
+              ),
             )}
-          </div>
+        </div>
+      }
+    >
+      <div
+        className={cn(
+          "rounded-xl p-2 flex flex-col border drop-shadow-sm",
+          isEditing
+            ? "bg-white border-slate-200 gap-2"
+            : cn(tintClasses.card, tintClasses.border),
+        )}
+      >
+        {isEditing && (
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <NoteMultiSelect
+              selectedNotes={(editedUpdate.notes ?? []) as Note[]}
+              colour={resolvedColour}
+              onChange={(notes) => onUpdateField({ notes })}
+            />
 
-          {isEditing && (
             <div className="flex gap-1.5 items-center">
               <Toggle
                 isToggled={editedUpdate.isWaypoint ?? false}
@@ -231,23 +234,8 @@ export const UpdateEditor = ({
                 />
               ))}
             </div>
-          )}
-
-          {!isEditing && editedUpdate.isWaypoint && (
-            <div
-              className={cn(
-                "p-1 rounded-lg",
-                tintClasses.colour.backgroundPill,
-              )}
-            >
-              <Icon
-                iconName="flagBannerFold"
-                size="sm"
-                className={cn("shrink-0", tintClasses.colour.textPill)}
-              />
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {isEditing && (
           <FormattingToolbar
@@ -303,6 +291,6 @@ export const UpdateEditor = ({
           </div>
         )}
       </div>
-    </div>
+    </UpdateTimelineItem>
   );
 };

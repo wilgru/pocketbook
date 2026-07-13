@@ -5,7 +5,7 @@ import { ColourPicker } from "src/colours/components/ColourPicker/ColourPicker";
 import { Button } from "src/common/components/Button/Button";
 import { Input } from "src/common/components/Input/Input";
 import { Label } from "src/common/components/Label/Label";
-import { MultiLinkInput } from "src/common/components/MultiLinkInput/MultiLinkInput";
+import { LinkMultiInput } from "src/common/components/LinkMultiInput/LinkMultiInput";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useUpdateTag } from "src/tags/hooks/useUpdateTag";
 import { DeleteTagModal } from "../DeleteTagModal/DeleteTagModal";
@@ -103,7 +103,7 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
               tooltipContent="You can add links that will appear underneath this tag's description"
             />
 
-            <MultiLinkInput
+            <LinkMultiInput
               links={editedTag.links}
               onChange={onEditLinks}
               onAddLink={onAddLink}

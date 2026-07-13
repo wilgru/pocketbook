@@ -37,6 +37,8 @@ import {
   CaretDown,
   DotsThreeOutline,
   FlagBannerFold,
+  ArrowUpRight,
+  Check,
 } from "@phosphor-icons/react";
 import { ChatCenteredText } from "@phosphor-icons/react/dist/ssr";
 import { icons } from "src/icons/icons.constant";
@@ -125,6 +127,8 @@ const Icon = ({
       return <Paperclip {...iconProps} weight="regular" />;
     case "checkCircle":
       return <CheckCircle {...iconProps} />;
+    case "check":
+      return <Check {...iconProps} />;
     case "minusCircle":
       return <MinusCircle {...iconProps} />;
     case "xCircle":
@@ -151,6 +155,8 @@ const Icon = ({
       return <DotsThreeOutline {...iconProps} weight="fill" />;
     case "flagBannerFold":
       return <FlagBannerFold {...iconProps} />;
+    case "arrowUpRight":
+      return <ArrowUpRight {...iconProps} />;
     default:
       return <></>;
   }

@@ -6,7 +6,8 @@ import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Task } from "src/tasks/Task.type";
 
 type CreateTaskProps = {
-  createTaskData: Omit<Task, "id" | "created" | "updated">;
+  createTaskData: Omit<Task, "id" | "created" | "updated" | "sortOrder">;
+  insertAfterSortOrder?: number;
 };
 
 type UseCreateTaskResponse = {
@@ -25,6 +26,7 @@ export const useCreateTask = (): UseCreateTaskResponse => {
 
   const mutationFn = async ({
     createTaskData,
+    insertAfterSortOrder,
   }: CreateTaskProps): Promise<Task | undefined> => {
     const response = await window.api.createTask({
       title: createTaskData.title,
@@ -36,6 +38,7 @@ export const useCreateTask = (): UseCreateTaskResponse => {
       dueDate: createTaskData.dueDate?.toISOString() ?? null,
       pocketbookId: pocketbookId ?? null,
       userId: user?.id ?? null,
+      insertAfterSortOrder: insertAfterSortOrder ?? null,
     });
     if (!response.success) throw new Error(response.error);
 

@@ -64,7 +64,7 @@ const createWindow = () => {
     titleBarStyle: "hidden",
     ...(isMac
       ? {
-          trafficLightPosition: { x: 21, y: 21 },
+          trafficLightPosition: { x: 18, y: 18 },
         }
       : {}),
     ...(isWindows
@@ -73,7 +73,7 @@ const createWindow = () => {
           titleBarOverlay: {
             color: "#ffffff00",
             symbolColor: "#64748b",
-            height: 58,
+            height: 50,
           },
         }
       : {}),

@@ -6,7 +6,7 @@ import { NavItem } from "src/common/components/NavItem/NavItem";
 import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { PocketbookSelector } from "src/pocketbooks/components/PocketbookSelector/PocketbookSelector";
+import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";
 import { CreateTagGroupModal } from "src/tags/components/CreateTagGroupModal/CreateTagGroupModal";
@@ -40,7 +40,7 @@ export const Sidebar = () => {
     <aside className="bg-slate-50 min-w-60 max-w-60 flex flex-col h-full">
       <div
         className={cn(
-          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[58px] px-3",
+          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] p-2",
           isWindows ? "justify-between" : "justify-end",
         )}
       >
@@ -64,12 +64,12 @@ export const Sidebar = () => {
           isWindows && "scrollbar-hide",
         )}
       >
-        <PocketbookSelector
+        <PocketbookSwitcher
           currentPocketbook={currentPocketbook}
           pocketbooks={pocketbooks}
         />
 
-        <section className="flex flex-col gap-1">
+        <section className="flex flex-col">
           <NavItem
             ghost
             iconName="pencil"
@@ -90,7 +90,7 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            iconName="chatCenteredText"
+            iconName="calendarDots"
             title="Updates"
             to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
@@ -125,34 +125,32 @@ export const Sidebar = () => {
             isEmpty={tagGroup.tags.length === 0}
             key={tagGroup.id}
           >
-            <div className="flex flex-col gap-1 mt-1">
-              {tagGroup.tags.map((tag) => (
-                <NavItem
-                  iconName={tag.icon}
-                  colour={tag.colour}
-                  title={tag.name}
-                  preview={tag.noteCount}
-                  to={`/${pocketbookId}/tags/${tag.id}`}
-                  key={tag.id}
-                />
-              ))}
-            </div>
+            {tagGroup.tags.map((tag) => (
+              <NavItem
+                iconName={tag.icon}
+                colour={tag.colour}
+                title={tag.name}
+                preview={tag.noteCount}
+                to={`/${pocketbookId}/tags/${tag.id}`}
+                key={tag.id}
+              />
+            ))}
           </SidebarTagSection>
         ))}
 
-        {/* <hr className="w-full border-slate-200" /> */}
+        <hr className="w-full border-dashed border-slate-300" />
 
         <Dialog.Root>
           <Dialog.Trigger asChild>
             <button
               type="button"
               className={cn(
-                "mt-1 w-fit flex items-center gap-1 text-slate-400 transition-colors",
+                "pl-0.5 mt-1 w-fit flex items-center gap-1 text-slate-400 transition-colors",
                 `hover:${currentPocketbook.colour.textPill}`,
               )}
             >
-              <span className="font-title text-md">Add Section</span>
-              <Icon iconName="plus" size="sm" className="pb-1" />
+              <Icon iconName="plus" size="xs" />
+              <span className="text-xs">Add Tag Group</span>
             </button>
           </Dialog.Trigger>
 

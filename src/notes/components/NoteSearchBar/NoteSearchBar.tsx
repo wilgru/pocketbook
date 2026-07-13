@@ -7,7 +7,7 @@ import { cn } from "src/common/utils/cn";
 import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
 import { useGetNotes } from "src/notes/hooks/useGetNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
-import { NoteListItem } from "../NotesList/NoteListItem";
+import { NoteListItem } from "../NoteListItem/NoteListItem";
 import type { Note } from "src/notes/Note.type";
 
 export const NoteSearchBar = () => {

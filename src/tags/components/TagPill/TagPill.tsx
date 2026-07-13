@@ -10,6 +10,7 @@ type TagPillProps = {
   variant?: "block" | "ghost" | "link";
   closable?: boolean;
   collapsed?: boolean;
+  iconClassName?: string;
   onClick?: (id: string) => void;
 };
 
@@ -19,6 +20,7 @@ export const TagPill = ({
   variant = "block",
   closable = false,
   collapsed = false,
+  iconClassName,
   onClick,
 }: TagPillProps): JSX.Element => {
   const [closeButtonVisible, setCloseButtonVisible] = useState<boolean>(false);
@@ -67,7 +69,12 @@ export const TagPill = ({
             variant === "link" && "underline-offset-4",
           )}
         >
-          <Icon iconName={iconName} size={size} weight="regular" />
+          <Icon
+            iconName={iconName}
+            size={size}
+            weight="regular"
+            className={iconClassName}
+          />
           {!collapsed && (
             <span
               className={cn(

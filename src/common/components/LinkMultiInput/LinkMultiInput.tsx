@@ -2,17 +2,17 @@ import { Button } from "src/common/components/Button/Button";
 import { Input } from "src/common/components/Input/Input";
 import type { Link } from "src/common/types/Link.type";
 
-type MultiLinkInputProps = {
+type LinkMultiInputProps = {
   links: Link[];
   onChange: (link: Link) => void;
   onAddLink: () => void;
 };
 
-export const MultiLinkInput = ({
+export const LinkMultiInput = ({
   links,
   onChange,
   onAddLink,
-}: MultiLinkInputProps) => {
+}: LinkMultiInputProps) => {
   return (
     <div className="flex flex-col gap-3 p-2 bg-slate-100 rounded-md">
       {links.map((link) => (

@@ -190,16 +190,8 @@ export const Calendar = ({
               aria-label={ariaLabel}
               onClick={() => onSelectDate?.(calendarDay.day)}
               className={cn(
-                "w-full cursor-pointer select-none transition-colors flex flex-col items-center justify-center",
-                isSmall
-                  ? cn(
-                      "text-[10px] rounded-md",
-                      hasDots ? "py-1 gap-px" : "py-0.5",
-                    )
-                  : cn(
-                      "text-xs rounded-lg",
-                      hasDots ? "py-1.5 gap-0.5" : "py-1",
-                    ),
+                "w-full cursor-pointer select-none transition-colors flex flex-col items-center justify-start",
+                isSmall ? "text-[10px] rounded-md py-0.5" : "text-xs rounded-lg py-1",
                 !calendarDay.isCurrentMonth && !isDisabled && "text-slate-300",
                 calendarDay.isCurrentMonth &&
                   !isSelected &&
@@ -218,7 +210,7 @@ export const Calendar = ({
               <span>{calendarDay.day.date()}</span>
               {hasDots && (
                 <span
-                  className={cn("flex items-center justify-center gap-0.5")}
+                  className={cn("mt-0.5 flex items-center justify-center gap-0.5")}
                 >
                   {dotsForDay
                     .slice(0, MAX_VISIBLE_DOTS)

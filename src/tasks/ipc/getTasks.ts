@@ -1,4 +1,4 @@
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, eq, isNotNull, isNull } from "drizzle-orm";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
 import { tasks } from "src/tasks/tasks.schema";
@@ -36,6 +36,7 @@ createIpcHandler(
       .select()
       .from(tasks)
       .where(and(...conditions))
+      .orderBy(asc(tasks.sortOrder))
       .all();
 
     return { tasks: rows };

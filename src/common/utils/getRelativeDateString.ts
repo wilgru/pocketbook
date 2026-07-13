@@ -22,5 +22,5 @@ export const getRelativeDateTitle = (
 
   const title = showDay ? `${dayLabel}, ${dateLabel}` : dateLabel;
 
-  return showTime ? `${title}, ${date.format("HH:mm")}` : title;
+  return showTime ? `${title}, ${date.format("HH:mm a")}` : title;
 };
