@@ -26,7 +26,7 @@ function UpdatesComponent() {
   return (
     <div className="h-full w-full flex flex-col items-center">
       <Toolbar
-        iconName="chatCenteredText"
+        iconName="calendarDots"
         title="Updates"
         colour={currentPocketbook?.colour}
       >
@@ -34,7 +34,7 @@ function UpdatesComponent() {
           variant="ghost"
           size="sm"
           colour={currentPocketbook?.colour}
-          iconName="plus"
+          iconName="chatCenteredText"
           onClick={() => setPendingNew(true)}
         />
       </Toolbar>

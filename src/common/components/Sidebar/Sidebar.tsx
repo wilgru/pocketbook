@@ -90,7 +90,7 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            iconName="chatCenteredText"
+            iconName="calendarDots"
             title="Updates"
             to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
