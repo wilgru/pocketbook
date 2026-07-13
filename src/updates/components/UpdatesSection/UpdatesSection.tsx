@@ -1,11 +1,11 @@
-import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
+import { Link } from "@tanstack/react-router";
+import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
+import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
+import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
+import { UpdateTimelineItem } from "../UpdateTimelineItem/UpdateTimelineItem";
 import type { Colour } from "src/colours/Colour.type";
 import type { UpdateGroup } from "src/updates/Update.type";
-import { UpdateTimelineItem } from "../UpdateTimelineItem/UpdateTimelineItem";
-import { colours } from "src/colours/colours.constant";
-import { Link } from "@tanstack/react-router";
-import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 
 type UpdatesSectionProps = {
   title: string;
