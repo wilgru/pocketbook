@@ -29,7 +29,7 @@ export const NoteListItem = ({
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       activeProps={{
-        className: cn(colour.textPill, colour.backgroundPill, "rounded-lg"),
+        className: cn(colour.textPill, colour.backgroundPill),
       }}
       className={cn(
         "w-full flex justify-between items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-colors",

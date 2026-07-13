@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import Delta from "quill-delta";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
@@ -7,9 +7,9 @@ import { QuillEditor } from "src/common/components/QuillEditor/QuillEditor";
 import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToolbar/QuillFormattingToolbar";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
-import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
+import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
 import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
 import { useDeleteUpdate } from "src/updates/hooks/useDeleteUpdate";
 import { useUpdateUpdate } from "src/updates/hooks/useUpdateUpdate";
@@ -24,6 +24,8 @@ type UpdateEditorProps = {
   colour?: Colour;
   showNotes?: boolean;
   autoFocus?: boolean;
+  showTimeOnly?: boolean;
+  showBottomPadding?: boolean;
   onCancel?: () => void;
   onCreated?: () => void;
 };
@@ -50,11 +52,12 @@ export const UpdateEditor = ({
   colour,
   showNotes = true,
   autoFocus = false,
+  showBottomPadding = false,
+  showTimeOnly = false,
   onCancel,
   onCreated,
 }: UpdateEditorProps) => {
   const { pocketbookId, currentPocketbook } = useCurrentPocketbook();
-  const navigate = useNavigate();
 
   const { createUpdate } = useCreateUpdate();
   const { updateUpdate } = useUpdateUpdate();
@@ -129,16 +132,55 @@ export const UpdateEditor = ({
   };
 
   const dateStr = editedUpdate.created
-    ? editedUpdate.created.format("D MMM YYYY, h:mm a")
+    ? editedUpdate.created.format(
+        showTimeOnly ? "h:mm a" : "D MMM YYYY, h:mm a",
+      )
     : null;
 
   return (
-    <div className="relative">
+    <UpdateTimelineItem
+      iconName={editedUpdate.isWaypoint ? "flagBannerFold" : "chatCenteredText"}
+      iconColour={editedUpdate.isWaypoint ? tintClasses.colour : colours.grey}
+      strongIcon={editedUpdate.isWaypoint}
+      dateText={dateStr}
+      showBottomPadding={showBottomPadding}
+      headline={
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <p className="text-slate-500">
+            {editedUpdate.notes?.length
+              ? "Commented on"
+              : "Left a general comment"}
+          </p>
+
+          {showNotes &&
+            (editedUpdate.notes ?? []).map((note) =>
+              pocketbookId ? (
+                <Link
+                  key={note.id}
+                  to="/$pocketbookId/notes"
+                  params={{ pocketbookId }}
+                  search={{ noteId: note.id }}
+                  className="underline flex items-center gap-1 text-slate-600 hover:text-slate-800"
+                >
+                  {note.title ?? "Untitled Note"}
+                </Link>
+              ) : (
+                <span
+                  key={note.id}
+                  className="underline flex items-center gap-1 text-slate-600"
+                >
+                  {note.title ?? "Untitled Note"}
+                </span>
+              ),
+            )}
+        </div>
+      }
+    >
       <div
         className={cn(
-          "rounded-xl p-2 flex flex-col border transition-shadow",
+          "rounded-xl p-2 flex flex-col border drop-shadow-sm",
           isEditing
-            ? "bg-white border-slate-100 gap-2"
+            ? "bg-white border-slate-200 gap-2"
             : cn(tintClasses.card, tintClasses.border),
         )}
       >
@@ -212,55 +254,6 @@ export const UpdateEditor = ({
           }
         />
 
-        {!isEditing && (
-          <div className="flex items-center justify-between flex-wrap">
-            <div className="flex items-center gap-2 flex-wrap">
-              {dateStr && (
-                <span className="text-xs text-slate-400 shrink-0 pl-1 mt-0.5">
-                  {dateStr}
-                </span>
-              )}
-
-              {showNotes &&
-                (editedUpdate.notes ?? []).map((note) => (
-                  <button
-                    key={note.id}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      navigate({
-                        to: `/${pocketbookId ?? ""}/notes`,
-                        search: { noteId: note.id },
-                      });
-                    }}
-                    className={cn(
-                      "flex items-center gap-1 pl-1.5 pr-1 py-0.5 text-[11px] rounded-full transition-colors",
-                      tintClasses.notePill,
-                    )}
-                  >
-                    {note.title ?? "Untitled Note"}
-
-                    <Icon iconName="arrowCircleRight" size="sm" />
-                  </button>
-                ))}
-            </div>
-
-            {editedUpdate.isWaypoint && (
-              <div
-                className={cn(
-                  "p-1 rounded-lg",
-                  tintClasses.colour.backgroundPill,
-                )}
-              >
-                <Icon
-                  iconName="flagBannerFold"
-                  size="xs"
-                  className={cn("shrink-0", tintClasses.colour.textPill)}
-                />
-              </div>
-            )}
-          </div>
-        )}
-
         {isEditing && (
           <div className="flex items-center justify-between flex-wrap gap-2">
             <Button
@@ -294,6 +287,6 @@ export const UpdateEditor = ({
           </div>
         )}
       </div>
-    </div>
+    </UpdateTimelineItem>
   );
 };

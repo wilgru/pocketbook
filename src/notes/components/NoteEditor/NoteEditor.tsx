@@ -153,8 +153,8 @@ const NoteEditor = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px] px-8 pt-8">
-      <div className="w-full flex flex-col gap-2 justify-between border-b border-slate-200 pb-2">
+    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px]">
+      <div className="w-full flex flex-col gap-2 justify-between border-b border-slate-200 pb-4">
         <textarea
           ref={titleRef}
           rows={1}
@@ -259,26 +259,24 @@ const NoteEditor = ({
         </div>
       )}
 
-      <div className="flex flex-col gap-5 w-full">
-        <QuillEditor
-          toolbarId={QUILL_TOOLBAR_ID}
-          value={editedNote.content}
-          colour={colour}
-          onChange={(delta) => onUpdateNote({ content: delta })}
-          onSelectedFormattingChange={(selectionFormatting) => {
-            setQuillEditorState((s) => ({
-              ...s,
-              toolbarFormatting: selectionFormatting,
-            }));
-          }}
-          onFocus={() =>
-            setQuillEditorState((s) => ({ ...s, isQuillFocused: true }))
-          }
-          onBlur={() =>
-            setQuillEditorState((s) => ({ ...s, isQuillFocused: false }))
-          }
-        />
-      </div>
+      <QuillEditor
+        toolbarId={QUILL_TOOLBAR_ID}
+        value={editedNote.content}
+        colour={colour}
+        onChange={(delta) => onUpdateNote({ content: delta })}
+        onSelectedFormattingChange={(selectionFormatting) => {
+          setQuillEditorState((s) => ({
+            ...s,
+            toolbarFormatting: selectionFormatting,
+          }));
+        }}
+        onFocus={() =>
+          setQuillEditorState((s) => ({ ...s, isQuillFocused: true }))
+        }
+        onBlur={() =>
+          setQuillEditorState((s) => ({ ...s, isQuillFocused: false }))
+        }
+      />
 
       {(updates.length > 0 || showNewUpdate) && (
         <div className="w-full flex flex-col border-dashed border-t border-slate-300 pt-4 px-1">
@@ -296,7 +294,7 @@ const NoteEditor = ({
           )}
 
           {updates.length > 0 && (
-            <div className="flex flex-col relative gap-4">
+            <div className="flex flex-col relative">
               {[...updates].reverse().map((upd) => (
                 <UpdateEditor
                   key={upd.id}

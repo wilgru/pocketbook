@@ -41,7 +41,7 @@ export const PocketbookSwitcher = ({
   return (
     <div
       className={cn(
-        "flex gap-2 justify-between border border-slate-300 rounded-2xl p-1.5 relative",
+        "flex gap-2 justify-between border border-slate-300 rounded-xl p-1.5 relative",
         `hover:${currentPocketbook.colour.backgroundPill}`,
       )}
     >
@@ -54,7 +54,7 @@ export const PocketbookSwitcher = ({
             <Icon
               iconName={currentPocketbook.icon}
               className={cn(
-                "w-8 h-8 p-1.5 rounded-lg",
+                "w-8 h-8 p-1.5 rounded-md",
                 currentPocketbook.colour.textPill,
                 currentPocketbook.colour.backgroundPill,
               )}
@@ -105,7 +105,7 @@ export const PocketbookSwitcher = ({
                   <Icon
                     iconName={pocketbook.icon}
                     className={cn(
-                      "w-8 h-8 p-1.5 rounded-lg",
+                      "w-8 h-8 p-1.5 rounded-md",
                       pocketbook.colour.textPill,
                       pocketbook.colour.backgroundPill,
                     )}

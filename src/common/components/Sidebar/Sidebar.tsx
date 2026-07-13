@@ -90,7 +90,7 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            iconName="chatCenteredText"
+            iconName="calendarDots"
             title="Updates"
             to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
@@ -125,22 +125,20 @@ export const Sidebar = () => {
             isEmpty={tagGroup.tags.length === 0}
             key={tagGroup.id}
           >
-            <div className="flex flex-col gap-1 mt-1">
-              {tagGroup.tags.map((tag) => (
-                <NavItem
-                  iconName={tag.icon}
-                  colour={tag.colour}
-                  title={tag.name}
-                  preview={tag.noteCount}
-                  to={`/${pocketbookId}/tags/${tag.id}`}
-                  key={tag.id}
-                />
-              ))}
-            </div>
+            {tagGroup.tags.map((tag) => (
+              <NavItem
+                iconName={tag.icon}
+                colour={tag.colour}
+                title={tag.name}
+                preview={tag.noteCount}
+                to={`/${pocketbookId}/tags/${tag.id}`}
+                key={tag.id}
+              />
+            ))}
           </SidebarTagSection>
         ))}
 
-        <hr className="w-full border-slate-300" />
+        <hr className="w-full border-dashed border-slate-300" />
 
         <Dialog.Root>
           <Dialog.Trigger asChild>
