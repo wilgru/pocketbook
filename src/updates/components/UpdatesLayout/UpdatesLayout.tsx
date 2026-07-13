@@ -1,5 +1,4 @@
 import { useNavigate } from "@tanstack/react-router";
-import dayjs from "dayjs";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Calendar } from "src/common/components/Calendar/Calendar";
@@ -15,7 +14,7 @@ import type { Dayjs } from "dayjs";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
 import type { Task } from "src/tasks/Task.type";
-import type { NormalisedGroupItem, Update } from "src/updates/Update.type";
+import type { Update, UpdateGroup } from "src/updates/Update.type";
 
 type UpdatesLayoutProps = {
   updates: Update[];
@@ -27,9 +26,9 @@ type UpdatesLayoutProps = {
   onCreateNew?: () => void;
 };
 
-const getGroupDate = (group: { updates: Update[] }): Dayjs | null => {
-  const firstUpdate = group.updates[0];
-  return firstUpdate ? firstUpdate.created.startOf("day") : null;
+const getGroupDate = (updateGroup: UpdateGroup): Dayjs | null => {
+  const firstUpdate = updateGroup.updates[0];
+  return firstUpdate ? firstUpdate.date.startOf("day") : null;
 };
 
 export const UpdatesLayout = ({
@@ -42,161 +41,99 @@ export const UpdatesLayout = ({
   onCreateNew,
 }: UpdatesLayoutProps) => {
   const navigate = useNavigate();
-  const groupedUpdates = useMemo(() => groupUpdates(updates), [updates]);
+  const updateGroups = useMemo(
+    () => groupUpdates(updates, tasks, notes),
+    [updates, tasks, notes],
+  );
 
-  const groupedContent = useMemo(() => {
-    const noteItemsByDate = notes.reduce((acc, note) => {
-      const createdKey = note.created.startOf("day").format("YYYY-MM-DD");
-      const updatedKey = note.updated.startOf("day").format("YYYY-MM-DD");
-
-      if (!acc.has(createdKey)) acc.set(createdKey, []);
-      acc.get(createdKey)!.push({
-        id: note.id,
-        type: "note" as const,
-        action: "created" as const,
-        date: note.created,
-        title: note.title ?? "",
-      });
-
-      if (updatedKey !== createdKey) {
-        if (!acc.has(updatedKey)) acc.set(updatedKey, []);
-        acc.get(updatedKey)!.push({
-          id: note.id,
-          type: "note" as const,
-          action: "updated" as const,
-          date: note.updated,
-          title: note.title ?? "",
-        });
-      }
-
-      return acc;
-    }, new Map<string, NormalisedGroupItem[]>());
-
-    const taskItemsByDate = tasks.reduce((acc, task) => {
-      if (task.completedDate) {
-        const key = task.completedDate.startOf("day").format("YYYY-MM-DD");
-        if (!acc.has(key)) acc.set(key, []);
-        acc.get(key)!.push({
-          id: task.id,
-          type: "task" as const,
-          action: "completed" as const,
-          date: task.completedDate,
-          title: task.title,
-        });
-      }
-
-      if (task.cancelledDate) {
-        const key = task.cancelledDate.startOf("day").format("YYYY-MM-DD");
-        if (!acc.has(key)) acc.set(key, []);
-        acc.get(key)!.push({
-          id: task.id,
-          type: "task" as const,
-          action: "cancelled" as const,
-          date: task.cancelledDate,
-          title: task.title,
-        });
-      }
-
-      return acc;
-    }, new Map<string, NormalisedGroupItem[]>());
-
-    return groupedUpdates.map((group) => {
-      const groupDateKey = getGroupDate(group)?.format("YYYY-MM-DD");
-
-      const normalisedItems: NormalisedGroupItem[] = [
-        ...(groupDateKey ? (noteItemsByDate.get(groupDateKey) ?? []) : []),
-        ...(groupDateKey ? (taskItemsByDate.get(groupDateKey) ?? []) : []),
-      ].sort((a, b) => b.date.valueOf() - a.date.valueOf());
-
-      return {
-        ...group,
-        normalisedItems,
-      };
-    });
-  }, [groupedUpdates, notes, tasks]);
-
-  const effectiveUpdateGroups = useMemo(() => {
-    const monthGroups = new Map<string, typeof groupedContent>();
-
-    groupedContent.forEach((group) => {
-      const groupDate = getGroupDate(group);
-      const monthKey = groupDate
-        ? `${groupDate.format("MMMM")} ${groupDate.format("YYYY")}`
-        : "Other";
-
-      if (!monthGroups.has(monthKey)) {
-        monthGroups.set(monthKey, []);
-      }
-      monthGroups.get(monthKey)!.push(group);
-    });
-
-    return Array.from(monthGroups, ([monthYear, groups]) => ({
-      monthYear,
-      items: groups.map((group) => {
-        const groupDate = getGroupDate(group);
-        const diffDays = groupDate
-          ? dayjs().startOf("day").diff(groupDate, "day")
-          : null;
-
-        let sectionTitle = group.title;
-        if (groupDate) {
-          if (diffDays === 0) {
-            sectionTitle = "Today";
-          } else if (diffDays === 1) {
-            sectionTitle = "Yesterday";
-          } else {
-            sectionTitle = groupDate.format("D MMM, dddd");
+  const tableOfContentsGroups: {
+    title: string;
+    items: {
+      title: string;
+      navigationId: string;
+      icons: { iconName: string; colour: Colour }[];
+    }[];
+  }[] = useMemo(() => {
+    return updateGroups.reduce<
+      {
+        title: string;
+        items: {
+          title: string;
+          navigationId: string;
+          icons: { iconName: string; colour: Colour }[];
+        }[];
+      }[]
+    >((acc, updateGroup) => {
+      const formattedDate = updateGroup.date.format("MMMM, YYYY");
+      const item = {
+        title: updateGroup.date.format("D dddd"),
+        navigationId: updateGroup.date.format("YYYY-MM-DD"),
+        icons: updateGroup.updates.reduce<
+          { iconName: string; colour: Colour }[]
+        >((icons, update) => {
+          if (update.type !== "comment" || !update.data?.isWaypoint) {
+            return icons;
           }
-        }
 
-        return {
-          title: sectionTitle,
-          navigationId: group.title,
-          icons: group.updates
-            .filter((update) => update.isWaypoint)
-            .map((update) => ({
-              iconName: "flagBannerFold",
-              colour: getTintClasses(update.tint).colour,
-            })),
-        };
-      }),
-    }));
-  }, [groupedContent]);
+          icons.push({
+            iconName: "flagBannerFold",
+            colour: getTintClasses(update.data.tint).colour,
+          });
+          return icons;
+        }, []),
+      };
+
+      const existingGroup = acc.find((group) => group.title === formattedDate);
+      if (existingGroup) {
+        existingGroup.items.push(item);
+      } else {
+        acc.push({
+          title: formattedDate,
+          items: [item],
+        });
+      }
+
+      return acc;
+    }, []);
+  }, [updateGroups]);
 
   const navigationIdByDate = useMemo(() => {
     return new Map(
-      groupedContent
-        .map((group) => [
-          getGroupDate(group)?.format("YYYY-MM-DD"),
-          group.title,
+      updateGroups
+        .map((updateGroup) => [
+          getGroupDate(updateGroup)?.format("YYYY-MM-DD"),
+          updateGroup.date.format("YYYY-MM-DD"),
         ])
         .filter((entry): entry is [string, string] => Boolean(entry[0])),
     );
-  }, [groupedContent]);
+  }, [updateGroups]);
 
   const availableDateKeys = useMemo(() => {
     return new Set(
-      groupedContent
-        .map((group) => getGroupDate(group)?.format("YYYY-MM-DD"))
+      updateGroups
+        .map((updateGroup) => getGroupDate(updateGroup)?.format("YYYY-MM-DD"))
         .filter(Boolean),
     );
-  }, [groupedContent]);
+  }, [updateGroups]);
 
   const dayDotIndicators = useMemo(() => {
-    return groupedContent.reduce<
+    return updateGroups.reduce<
       Record<string, Array<{ colourClassName: string; count: number }>>
-    >((acc, group) => {
-      const dateKey = getGroupDate(group)?.format("YYYY-MM-DD");
+    >((acc, updateGroup) => {
+      const dateKey = getGroupDate(updateGroup)?.format("YYYY-MM-DD");
       if (!dateKey) return acc;
 
-      const dotCountByColour = group.updates
-        .filter((update) => update.isWaypoint)
-        .reduce<Record<string, number>>((waypointAcc, update) => {
-          const colourClassName = getTintClasses(update.tint).colour.background;
+      const dotCountByColour = updateGroup.updates.reduce<
+        Record<string, number>
+      >((waypointAcc, update) => {
+        if (update.type === "comment" && update.data.isWaypoint) {
+          const colourClassName = getTintClasses(update.data.tint).colour
+            .background;
           waypointAcc[colourClassName] =
             (waypointAcc[colourClassName] ?? 0) + 1;
-          return waypointAcc;
-        }, {});
+        }
+        return waypointAcc;
+      }, {});
 
       acc[dateKey] = Object.entries(dotCountByColour).map(
         ([colourClassName, count]) => ({
@@ -207,7 +144,7 @@ export const UpdatesLayout = ({
 
       return acc;
     }, {});
-  }, [groupedContent]);
+  }, [updateGroups]);
 
   return (
     <TwoPaneLayout
@@ -229,22 +166,25 @@ export const UpdatesLayout = ({
         />
       }
       showSidebarTopContentDivider
-      sidebar={effectiveUpdateGroups.map((monthGroup) => (
-        <ListSection title={monthGroup.monthYear}>
-          {monthGroup.items.map((item) => (
+      sidebar={tableOfContentsGroups.map((tableOfContentsGroup) => (
+        <ListSection
+          title={tableOfContentsGroup.title}
+          key={tableOfContentsGroup.title}
+        >
+          {tableOfContentsGroup.items.map((tableOfContentsItem) => (
             <TableOfContentsListItem
-              key={item.navigationId}
-              title={item.title}
-              navigationId={item.navigationId}
+              key={tableOfContentsItem.navigationId}
+              title={tableOfContentsItem.title}
+              navigationId={tableOfContentsItem.navigationId}
               onJumpTo={(id) => navigate({ to: `#${id}` })}
               colour={colour}
-              icons={item.icons}
+              icons={tableOfContentsItem.icons}
             />
           ))}
         </ListSection>
       ))}
       content={
-        <div className="h-full w-full max-w-[800px] flex flex-col gap-14 pb-6">
+        <div className="h-full w-full max-w-[800px] flex flex-col pb-6">
           {pendingNew && (
             <UpdateEditor
               update={{ notes: [], tint: null }}
@@ -254,16 +194,16 @@ export const UpdatesLayout = ({
             />
           )}
 
-          {groupedContent.map((updatesGroup) => (
+          {updateGroups.map((updateGroup) => (
             <UpdatesSection
-              key={updatesGroup.title}
+              key={updateGroup.date.valueOf()}
               colour={colour}
-              title={updatesGroup.title}
-              updateGroup={updatesGroup}
+              title={updateGroup.date.format("MMMM D, YYYY")}
+              updateGroup={updateGroup}
             />
           ))}
 
-          {groupedUpdates.length === 0 && !pendingNew && (
+          {updateGroups.length === 0 && !pendingNew && (
             <EmptyState text="No updates yet" onAdd={onCreateNew} />
           )}
 
