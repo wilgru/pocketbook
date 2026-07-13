@@ -1,4 +1,3 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import dayjs from "dayjs";
 import debounce from "debounce";
 import { useSetAtom } from "jotai";
@@ -12,7 +11,6 @@ import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { TaskLinksModal } from "src/tasks/components/TaskLinksModal/TaskLinksModal";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { useDeleteTask } from "src/tasks/hooks/useDeleteTask";
 import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
@@ -20,6 +18,7 @@ import type { Dayjs } from "dayjs";
 import type { MouseEvent } from "react";
 import type { Colour } from "src/colours/Colour.type";
 import type { Link } from "src/common/types/Link.type";
+import type { Note } from "src/notes/Note.type";
 import type { Task } from "src/tasks/Task.type";
 
 type TaskEditorProps = {
@@ -73,9 +72,16 @@ export const TaskEditor = ({
 
   const [editedTask, setEditedTask] = useState<Task>(getInitialTask(task));
   const [isFocused, setIsFocused] = useState(false);
-  const [linksModalKey, setLinksModalKey] = useState(0);
-  const [isLinksModalOpen, setIsLinksModalOpen] = useState(false);
+  const [isLinksPopoverOpen, setIsLinksPopoverOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isNoteSelectOpen, setIsNoteSelectOpen] = useState(false);
+  const isLinksPopoverOpenRef = useRef(false);
+  const isDatePickerOpenRef = useRef(false);
+  const isNoteSelectOpenRef = useRef(false);
+  const [editorInstanceId] = useState(
+    () => `task-editor-${Math.random().toString(36).slice(2)}`,
+  );
+  const editorRootRef = useRef<HTMLDivElement>(null);
 
   const titleRef = useAutoResize(editedTask.title);
   const descriptionRef = useAutoResize(editedTask.description);
@@ -154,10 +160,33 @@ export const TaskEditor = ({
     debouncedSave();
   };
 
+  const scheduleTitleRefocus = () => {
+    setTimeout(() => {
+      const editorRoot = editorRootRef.current;
+      const activeElement = document.activeElement as HTMLElement | null;
+
+      if (!editorRoot || !titleRef.current) {
+        return;
+      }
+
+      const shouldRefocus =
+        !activeElement ||
+        activeElement === document.body ||
+        editorRoot.contains(activeElement);
+
+      if (shouldRefocus) {
+        titleRef.current.focus();
+      }
+    }, 0);
+  };
+
   // Stable refs so callbacks stored in the atom always call the latest implementation.
   const onFlagCallbackRef = useRef<() => void>();
   onFlagCallbackRef.current = () =>
     onUpdateTask({ isImportant: !editedTask.isImportant });
+
+  const onNoteCallbackRef = useRef<(note: Note | null) => void>();
+  onNoteCallbackRef.current = (note) => onUpdateTask({ note });
 
   const onDueDateCallbackRef = useRef<(date: Dayjs | null) => void>();
   onDueDateCallbackRef.current = (date) => onUpdateTask({ dueDate: date });
@@ -165,11 +194,8 @@ export const TaskEditor = ({
   const onDeleteCallbackRef = useRef<() => void>();
   onDeleteCallbackRef.current = () => deleteTask({ taskId: editedTask.id });
 
-  const onLinkCallbackRef = useRef<() => void>();
-  onLinkCallbackRef.current = () => {
-    setLinksModalKey((k) => k + 1);
-    setIsLinksModalOpen(true);
-  };
+  const onLinksCallbackRef = useRef<(links: Link[]) => void>();
+  onLinksCallbackRef.current = (links) => onUpdateTask({ links });
 
   const onMoveUpCallbackRef = useRef<(() => void) | undefined>(onMoveUp);
   onMoveUpCallbackRef.current = onMoveUp;
@@ -181,17 +207,44 @@ export const TaskEditor = ({
   const stableFlagCallback = useRef(() =>
     onFlagCallbackRef.current?.(),
   ).current;
+  const stableNoteCallback = useRef((note: Note | null) =>
+    onNoteCallbackRef.current?.(note),
+  ).current;
   const stableDueDateCallback = useRef((date: Dayjs | null) =>
     onDueDateCallbackRef.current?.(date),
   ).current;
   const stableDeleteCallback = useRef(() =>
     onDeleteCallbackRef.current?.(),
   ).current;
-  const stableLinkCallback = useRef(() =>
-    onLinkCallbackRef.current?.(),
+  const stableLinksCallback = useRef((links: Link[]) =>
+    onLinksCallbackRef.current?.(links),
+  ).current;
+  const stableLinkPopoverOpenChangeCallback = useRef((open: boolean) =>
+    {
+      isLinksPopoverOpenRef.current = open;
+      setIsLinksPopoverOpen(open);
+      if (!open) {
+        scheduleTitleRefocus();
+      }
+    },
   ).current;
   const stableDatePickerOpenChangeCallback = useRef((open: boolean) =>
-    setIsDatePickerOpen(open),
+    {
+      isDatePickerOpenRef.current = open;
+      setIsDatePickerOpen(open);
+      if (!open) {
+        scheduleTitleRefocus();
+      }
+    },
+  ).current;
+  const stableNoteSelectOpenChangeCallback = useRef((open: boolean) =>
+    {
+      isNoteSelectOpenRef.current = open;
+      setIsNoteSelectOpen(open);
+      if (!open) {
+        scheduleTitleRefocus();
+      }
+    },
   ).current;
   const stableMoveUpCallback = useRef(() =>
     onMoveUpCallbackRef.current?.(),
@@ -204,13 +257,19 @@ export const TaskEditor = ({
   useEffect(() => {
     if (isFocused) {
       setTaskEditorState({
+        focusedTaskEditorId: editorInstanceId,
         isTaskFocused: true,
         colour,
+        links: editedTask.links,
+        selectedNote: editedTask.note,
         isImportant: editedTask.isImportant,
         dueDate: editedTask.dueDate,
         isCompleted: !!editedTask.completedDate,
         isCancelled: !!editedTask.cancelledDate,
-        onLinkClick: stableLinkCallback,
+        onNoteChange: stableNoteCallback,
+        onNoteSelectOpenChange: stableNoteSelectOpenChangeCallback,
+        onLinksChange: stableLinksCallback,
+        onLinkPopoverOpenChange: stableLinkPopoverOpenChangeCallback,
         onFlagClick: stableFlagCallback,
         onDueDateChange: stableDueDateCallback,
         onDatePickerOpenChange: stableDatePickerOpenChangeCallback,
@@ -220,22 +279,28 @@ export const TaskEditor = ({
       });
     } else {
       setTaskEditorState((current) =>
-        current.isTaskFocused ? { ...defaultTaskEditorState } : current,
+        current.focusedTaskEditorId === editorInstanceId
+          ? { ...defaultTaskEditorState }
+          : current,
       );
     }
-  }, [isFocused, colour, setTaskEditorState]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isFocused, colour, editorInstanceId, setTaskEditorState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keep toolbar display data (important, due date, completion) in sync while focused.
   useEffect(() => {
     if (!isFocused) return;
     setTaskEditorState((current) => ({
       ...current,
+      links: editedTask.links,
+      selectedNote: editedTask.note,
       isImportant: editedTask.isImportant,
       dueDate: editedTask.dueDate,
       isCompleted: !!editedTask.completedDate,
       isCancelled: !!editedTask.cancelledDate,
     }));
   }, [
+    editedTask.links,
+    editedTask.note,
     editedTask.isImportant,
     editedTask.dueDate,
     editedTask.completedDate,
@@ -248,10 +313,12 @@ export const TaskEditor = ({
   useEffect(() => {
     return () => {
       setTaskEditorState((current) =>
-        current.isTaskFocused ? { ...defaultTaskEditorState } : current,
+        current.focusedTaskEditorId === editorInstanceId
+          ? { ...defaultTaskEditorState }
+          : current,
       );
     };
-  }, [setTaskEditorState]);
+  }, [editorInstanceId, setTaskEditorState]);
 
   const handleCircleClick = () => {
     const previousState = {
@@ -291,10 +358,6 @@ export const TaskEditor = ({
     event.preventDefault();
   };
 
-  const onSaveLinks = (links: Link[]) => {
-    onUpdateTask({ links });
-  };
-
   const isCompleted = !!editedTask.completedDate;
   const isCancelled = !!editedTask.cancelledDate;
 
@@ -309,17 +372,25 @@ export const TaskEditor = ({
 
   return (
     <div
+      ref={editorRootRef}
       className="w-full flex gap-1 items-start"
       onFocus={() => setIsFocused(true)}
       onBlur={(e) => {
-        if (
-          !e.currentTarget.contains(e.relatedTarget) &&
-          !isLinksModalOpen &&
-          !isDatePickerOpen
-        ) {
-          setIsFocused(false);
-          onFocusLost?.();
-        }
+        const editorRoot = e.currentTarget;
+        setTimeout(() => {
+          if (
+            !editorRoot.contains(document.activeElement) &&
+            !isDatePickerOpen &&
+            !isNoteSelectOpen &&
+            !isLinksPopoverOpen &&
+            !isLinksPopoverOpenRef.current &&
+            !isDatePickerOpenRef.current &&
+            !isNoteSelectOpenRef.current
+          ) {
+            setIsFocused(false);
+            onFocusLost?.();
+          }
+        }, 0);
       }}
     >
       <button
@@ -427,19 +498,6 @@ export const TaskEditor = ({
         )}
       </div>
 
-      <Dialog.Root
-        open={isLinksModalOpen}
-        onOpenChange={(open) => {
-          setIsLinksModalOpen(open);
-        }}
-      >
-        <TaskLinksModal
-          key={linksModalKey}
-          links={editedTask.links}
-          colour={colour}
-          onSave={onSaveLinks}
-        />
-      </Dialog.Root>
     </div>
   );
 };

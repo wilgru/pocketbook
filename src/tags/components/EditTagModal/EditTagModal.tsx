@@ -16,13 +16,30 @@ type EditTagModalProps = {
   onDeleted?: () => void | Promise<void>;
 };
 
+const createEmptyTagLink = (): TagLink => ({
+  id: crypto.randomUUID(),
+  title: undefined,
+  link: "",
+});
+
+const toDraftTagLinks = (links: TagLink[]): TagLink[] => [
+  ...links.filter((link) => link.link.trim() !== ""),
+  createEmptyTagLink(),
+];
+
 export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
-  const [editedTag, setEditedTag] = useState<Tag>(tag);
+  const [editedTag, setEditedTag] = useState<Tag>({
+    ...tag,
+    links: toDraftTagLinks(tag.links),
+  });
   const { updateTag } = useUpdateTag();
 
   // TODO: find better solution than using useEffect
   useEffect(() => {
-    setEditedTag(tag);
+    setEditedTag({
+      ...tag,
+      links: toDraftTagLinks(tag.links),
+    });
   }, [tag]);
 
   const onSaveEdit = async () => {
@@ -37,22 +54,12 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
     }
   };
 
-  const onAddLink = () => {
-    setEditedTag((currentTagToEdit) => {
-      return {
-        ...currentTagToEdit,
-        links: [
-          ...currentTagToEdit.links,
-          { id: crypto.randomUUID(), title: undefined, link: "" },
-        ],
-      };
-    });
-  };
-
   const onEditLinks = (updatedLink: TagLink) => {
     setEditedTag((currentTagToEdit) => {
-      const updatedLinks = currentTagToEdit.links.map((link) =>
-        link.id === updatedLink.id ? updatedLink : link,
+      const updatedLinks = toDraftTagLinks(
+        currentTagToEdit.links.map((link) =>
+          link.id === updatedLink.id ? updatedLink : link,
+        ),
       );
 
       return { ...currentTagToEdit, links: updatedLinks };
@@ -106,7 +113,6 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
             <LinkMultiInput
               links={editedTag.links}
               onChange={onEditLinks}
-              onAddLink={onAddLink}
             />
           </div>
 
