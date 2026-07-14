@@ -229,7 +229,7 @@ const LexicalEditorBridge = ({
     <RichTextPlugin
       contentEditable={
         <ContentEditable
-          className="editor-input outline-none h-full"
+          className="editor-input outline-none"
           onFocus={onFocus}
           onBlur={onBlur}
         />
@@ -272,7 +272,7 @@ export const RichTextEditor = ({
   return (
     <div
       className={cn(
-        "rich-text h-full placeholder-slate-500",
+        "rich-text placeholder-slate-500",
         size === "sm" && "rich-text-sm",
         size === "md" && "rich-text-md",
         size === "lg" && "rich-text-lg",
