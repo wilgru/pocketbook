@@ -7,7 +7,7 @@ import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEdi
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
-import { NoteMultiSelect } from "src/notes/components/NoteMultiSelect/NoteMultiSelect";
+import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
 import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
@@ -188,7 +188,7 @@ export const UpdateEditor = ({
       >
         {isEditing && (
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <NoteMultiSelect
+            <NoteSelect
               selectedNotes={(editedUpdate.notes ?? []) as Note[]}
               colour={resolvedColour}
               onChange={(notes) => onUpdateField({ notes })}

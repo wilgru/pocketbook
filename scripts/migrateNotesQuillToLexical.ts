@@ -51,7 +51,7 @@ type LexicalEditorState = {
   };
 };
 
-type NoteRow = {
+type ContentRow = {
   id: string;
   content: string | null;
 };
@@ -76,6 +76,8 @@ const dbPath = dbPathArg
 
 const noteIdArg = args.find((arg) => arg.startsWith("--note-id="));
 const noteIdFilter = noteIdArg ? noteIdArg.replace("--note-id=", "") : null;
+const updateIdArg = args.find((arg) => arg.startsWith("--update-id="));
+const updateIdFilter = updateIdArg ? updateIdArg.replace("--update-id=", "") : null;
 
 function toTextFormat(attributes?: QuillOpAttributes): number {
   if (!attributes) {
@@ -256,14 +258,13 @@ function parseQuillDelta(content: string): QuillDelta | null {
   return null;
 }
 
-function main(): void {
-  const db = new Database(dbPath, { readonly: !shouldApply });
-  const rows: NoteRow[] = noteIdFilter
-    ? db
-        .prepare("SELECT id, content FROM notes WHERE id = ?")
-        .all(noteIdFilter) as NoteRow[]
-    : (db.prepare("SELECT id, content FROM notes").all() as NoteRow[]);
+type ConversionResult = {
+  convertedRows: Array<{ id: string; content: string }>;
+  skippedAlreadyLexical: string[];
+  skippedInvalid: string[];
+};
 
+function convertRows(rows: ContentRow[]): ConversionResult {
   const convertedRows: Array<{ id: string; content: string }> = [];
   const skippedAlreadyLexical: string[] = [];
   const skippedInvalid: string[] = [];
@@ -296,33 +297,79 @@ function main(): void {
     });
   }
 
-  if (shouldApply && convertedRows.length > 0) {
-    const updateStatement = db.prepare(
+  return { convertedRows, skippedAlreadyLexical, skippedInvalid };
+}
+
+function main(): void {
+  const db = new Database(dbPath, { readonly: !shouldApply });
+  const noteRows: ContentRow[] = noteIdFilter
+    ? db
+        .prepare("SELECT id, content FROM notes WHERE id = ?")
+        .all(noteIdFilter) as ContentRow[]
+    : (db.prepare("SELECT id, content FROM notes").all() as ContentRow[]);
+
+  const updateRows: ContentRow[] = updateIdFilter
+    ? db
+        .prepare("SELECT id, content FROM updates WHERE id = ?")
+        .all(updateIdFilter) as ContentRow[]
+    : (db.prepare("SELECT id, content FROM updates").all() as ContentRow[]);
+
+  const noteResult = convertRows(noteRows);
+  const updateResult = convertRows(updateRows);
+
+  if (shouldApply && noteResult.convertedRows.length > 0) {
+    const updateNotesStatement = db.prepare(
       "UPDATE notes SET content = ?, updated = CURRENT_TIMESTAMP WHERE id = ?",
     );
-    const tx = db.transaction((updates: Array<{ id: string; content: string }>) => {
+    const notesTx = db.transaction((updates: Array<{ id: string; content: string }>) => {
       for (const update of updates) {
-        updateStatement.run(update.content, update.id);
+        updateNotesStatement.run(update.content, update.id);
       }
     });
 
-    tx(convertedRows);
+    notesTx(noteResult.convertedRows);
+  }
+
+  if (shouldApply && updateResult.convertedRows.length > 0) {
+    const updateUpdatesStatement = db.prepare(
+      "UPDATE updates SET content = ?, updated = CURRENT_TIMESTAMP WHERE id = ?",
+    );
+    const updatesTx = db.transaction((updates: Array<{ id: string; content: string }>) => {
+      for (const update of updates) {
+        updateUpdatesStatement.run(update.content, update.id);
+      }
+    });
+
+    updatesTx(updateResult.convertedRows);
   }
 
   db.close();
 
   console.log(`Database: ${dbPath}`);
   console.log(`Mode: ${shouldApply ? "APPLY" : "DRY_RUN"}`);
-  console.log(`Rows scanned: ${rows.length}`);
-  console.log(`Rows converted: ${convertedRows.length}`);
-  console.log(`Rows already lexical: ${skippedAlreadyLexical.length}`);
-  console.log(`Rows skipped (invalid JSON or non-delta): ${skippedInvalid.length}`);
+  console.log(`Notes scanned: ${noteRows.length}`);
+  console.log(`Notes converted: ${noteResult.convertedRows.length}`);
+  console.log(`Notes already lexical: ${noteResult.skippedAlreadyLexical.length}`);
+  console.log(
+    `Notes skipped (invalid JSON or non-delta): ${noteResult.skippedInvalid.length}`,
+  );
+  console.log(`Updates scanned: ${updateRows.length}`);
+  console.log(`Updates converted: ${updateResult.convertedRows.length}`);
+  console.log(
+    `Updates already lexical: ${updateResult.skippedAlreadyLexical.length}`,
+  );
+  console.log(
+    `Updates skipped (invalid JSON or non-delta): ${updateResult.skippedInvalid.length}`,
+  );
 
   if (!shouldApply) {
     console.log("\nRun again with --apply to persist converted content.");
   }
-  if (skippedInvalid.length > 0) {
-    console.log(`\nSkipped note ids: ${skippedInvalid.join(", ")}`);
+  if (noteResult.skippedInvalid.length > 0) {
+    console.log(`\nSkipped note ids: ${noteResult.skippedInvalid.join(", ")}`);
+  }
+  if (updateResult.skippedInvalid.length > 0) {
+    console.log(`Skipped update ids: ${updateResult.skippedInvalid.join(", ")}`);
   }
 }
 

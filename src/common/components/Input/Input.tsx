@@ -7,11 +7,12 @@ type InputType = {
   required?: boolean;
   value: string;
   placeholder?: string;
-  size?: "md" | "lg";
+  size?: "xs" | "md" | "lg";
   onChange: (e: { target: { name: string; value: string } }) => void;
 };
 
 enum InputSize {
+  "xs" = "px-1 py-0.5 text-xs",
   "md" = "p-1 text-sm",
   "lg" = "p-2 text-md",
 }

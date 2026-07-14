@@ -1,4 +1,3 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
@@ -13,7 +12,7 @@ import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEdi
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { NoteLinksModal } from "src/notes/components/NoteLinksModal/NoteLinksModal";
+import { NoteLinksPopover } from "src/notes/components/NoteLinksPopover/NoteLinksPopover";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
@@ -21,10 +20,9 @@ import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { useTaskReorder } from "src/tasks/hooks/useTaskReorder";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
-import { TagMultiSelect } from "../../../tags/components/TagMultiSelect/TagMultiSelect";
+import { TagSelect } from "../../../tags/components/TagSelect/TagSelect";
 import { TaskEditor } from "../../../tasks/components/TaskEditor/TaskEditor";
 import type { Colour } from "src/colours/Colour.type";
-import type { Link } from "src/common/types/Link.type";
 import type { Note } from "src/notes/Note.type";
 
 type NoteEditorProps = {
@@ -52,7 +50,6 @@ const NoteEditor = ({
 
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewUpdate, setShowNewUpdate] = useState(false);
-  const [linksModalKey, setLinksModalKey] = useState(0);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
 
   const newUpdateRef = useRef<HTMLDivElement>(null);
@@ -131,10 +128,6 @@ const NoteEditor = ({
     debouncedSave();
   };
 
-  const onSaveLinks = (links: Link[]) => {
-    onUpdateNote({ links });
-  };
-
   const onDeleteNote = async () => {
     debouncedSave.clear();
     await deleteNote({ noteId: editedNote.id });
@@ -161,34 +154,18 @@ const NoteEditor = ({
         />
 
         <div className="flex flex-row flex-wrap gap-1.5 items-center">
-          <TagMultiSelect
+          <TagSelect
             key={editedNote.id}
             initialTags={editedNote.tags}
             colour={colour}
             onChange={(tags) => onUpdateNote({ tags })}
           />
 
-          <Dialog.Root
-            onOpenChange={(open) => {
-              if (open) setLinksModalKey((k) => k + 1);
-            }}
-          >
-            <Dialog.Trigger asChild>
-              <Button
-                size="sm"
-                variant="ghost"
-                colour={colour}
-                iconName="link"
-              />
-            </Dialog.Trigger>
-
-            <NoteLinksModal
-              key={linksModalKey}
-              links={editedNote.links}
-              colour={colour}
-              onSave={onSaveLinks}
-            />
-          </Dialog.Root>
+          <NoteLinksPopover
+            links={editedNote.links}
+            colour={colour}
+            onChange={(links) => onUpdateNote({ links })}
+          />
 
           <Button
             size="sm"
@@ -246,7 +223,7 @@ const NoteEditor = ({
         </div>
 
         {editedNote.links.length > 0 && (
-          <div className="flex flex-row flex-wrap gap-2 items-center">
+          <div className="flex flex-row flex-wrap gap-2 items-center pl-1">
             {editedNote.links.map((link) => (
               <LinkPill key={link.id} link={link} colour={colour} />
             ))}
@@ -255,7 +232,7 @@ const NoteEditor = ({
       </div>
 
       {note.tasks && note.tasks.length > 0 && (
-        <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-4">
+        <div className="w-full flex flex-col justify-between border-dashed border-b border-slate-300 pb-4">
           {note.tasks.map((task, index) => (
             <TaskEditor
               key={task.id}

@@ -6,9 +6,23 @@ type FloatingToolbarProps = {
 };
 
 export const FloatingToolbar = ({ visible, children }: FloatingToolbarProps) => {
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement | null;
+
+    const isFocusableTextControl = target?.closest(
+      "input, textarea, select, [contenteditable='true']",
+    );
+
+    if (isFocusableTextControl) {
+      return;
+    }
+
+    event.preventDefault();
+  };
+
   return (
     <div
-      onMouseDown={(e) => e.preventDefault()}
+      onMouseDown={handleMouseDown}
       className={cn(
         "bg-white rounded-2xl shadow-md border border-slate-200 px-3 py-2",
         "transition-all duration-200 ease-out",
