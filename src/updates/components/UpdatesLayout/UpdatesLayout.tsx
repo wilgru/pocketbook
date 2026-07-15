@@ -6,6 +6,7 @@ import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
+import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
 import { getTintClasses } from "src/updates/utils/getTintClasses";
@@ -67,7 +68,7 @@ export const UpdatesLayout = ({
       const formattedDate = updateGroup.date.format("MMMM, YYYY");
       const item = {
         title: updateGroup.date.format("D dddd"),
-        navigationId: updateGroup.date.format("YYYY-MM-DD"),
+        navigationId: getRelativeDateTitle(updateGroup.date, false, false),
         icons: updateGroup.updates.reduce<
           { iconName: string; colour: Colour }[]
         >((icons, update) => {
@@ -151,7 +152,6 @@ export const UpdatesLayout = ({
       sidebarTopContent={
         <Calendar
           colour={colour}
-          size="sm"
           showSelectedDate={false}
           dayDotIndicators={dayDotIndicators}
           isDateDisabled={(date) =>
@@ -198,8 +198,11 @@ export const UpdatesLayout = ({
             <UpdatesSection
               key={updateGroup.date.valueOf()}
               colour={colour}
-              title={updateGroup.date.format("MMMM D, YYYY")}
+              title={getRelativeDateTitle(updateGroup.date, false, false)}
               updateGroup={updateGroup}
+              hideBottomLine={
+                updateGroup === updateGroups[updateGroups.length - 1]
+              }
             />
           ))}
 
