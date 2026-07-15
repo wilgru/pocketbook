@@ -29,7 +29,7 @@ export const Toolbar = ({
   const shouldReserveWindowButtonSpace = isMac && !isSideBarVisible;
 
   return (
-    <div className="bg-white w-full flex items-center justify-between p-2 border-b border-slate-200 electron-drag-region">
+    <div className=" w-full flex items-center justify-between p-2 electron-drag-region">
       <div className="flex items-center gap-2">
         {shouldReserveWindowButtonSpace && <div className="h-8 w-[4.5rem]" />}
 
