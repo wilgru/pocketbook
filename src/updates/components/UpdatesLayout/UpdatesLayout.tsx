@@ -4,8 +4,8 @@ import { colours } from "src/colours/colours.constant";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { ListSection } from "src/common/components/ListSection/ListSection";
+import { PaneWithInspectorLayout } from "src/common/components/PaneWithInspectorLayout/PaneWithInspectorLayout";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
-import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
@@ -148,7 +148,7 @@ export const UpdatesLayout = ({
   }, [updateGroups]);
 
   return (
-    <TwoPaneLayout
+    <PaneWithInspectorLayout
       sidebarTopContent={
         <Calendar
           colour={colour}
