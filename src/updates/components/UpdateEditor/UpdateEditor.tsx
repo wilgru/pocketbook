@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import Delta from "quill-delta";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { QuillEditor } from "src/common/components/QuillEditor/QuillEditor";
-import { QuillFormattingToolbar } from "src/common/components/QuillFormattingToolbar/QuillFormattingToolbar";
+import { FormattingToolbar } from "src/common/components/FormattingToolbar/FormattingToolbar";
+import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
+import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
@@ -15,8 +15,9 @@ import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
 import { useDeleteUpdate } from "src/updates/hooks/useDeleteUpdate";
 import { useUpdateUpdate } from "src/updates/hooks/useUpdateUpdate";
 import { getTintClasses } from "src/updates/utils/getTintClasses";
-import type { StringMap } from "quill";
+import type { LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
+import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
 import type { Note } from "src/notes/Note.type";
 import type { Update, UpdateTint } from "src/updates/Update.type";
 
@@ -41,7 +42,7 @@ const TINT_OPTIONS: Array<{ value: UpdateTint; bg: string }> = [
 
 const getInitialUpdate = (update: Partial<Update>): Partial<Update> => ({
   id: update.id ?? "",
-  content: update.content ?? new Delta(),
+  content: update.content ?? createEmptyLexicalContent(),
   tint: update.tint ?? null,
   isWaypoint: update.isWaypoint ?? false,
   notes: update.notes ?? [],
@@ -70,9 +71,10 @@ export const UpdateEditor = ({
     getInitialUpdate(update),
   );
   const [isEditing, setIsEditing] = useState(!update.id);
-  const [toolbarFormatting, setToolbarFormatting] = useState<StringMap>();
+  const [toolbarFormatting, setToolbarFormatting] =
+    useState<LexicalToolbarFormatting>();
+  const [editor, setEditor] = useState<LexicalEditor | null>(null);
 
-  const toolbarId = `update-toolbar-${editedUpdate.id || "new"}`;
   const tintClasses = getTintClasses(editedUpdate.tint);
 
   const onUpdateField = (fields: Partial<Update>) => {
@@ -236,15 +238,15 @@ export const UpdateEditor = ({
         )}
 
         {isEditing && (
-          <QuillFormattingToolbar
-            toolbarId={toolbarId}
+          <FormattingToolbar
             toolbarFormatting={toolbarFormatting}
+            editor={editor}
             colour={resolvedColour}
           />
         )}
 
-        <QuillEditor
-          toolbarId={toolbarId}
+        <RichTextEditor
+          size="md"
           value={editedUpdate.content}
           colour={resolvedColour}
           onFocus={() => setIsEditing(true)}
@@ -253,6 +255,7 @@ export const UpdateEditor = ({
           onSelectedFormattingChange={(formatting) =>
             setToolbarFormatting(formatting)
           }
+          onEditorChange={setEditor}
         />
 
         {isEditing && (

@@ -2,14 +2,14 @@ import { TextB } from "@phosphor-icons/react";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { QuillFormattingToolbarButton } from "./QuillFormattingToolbarButton";
+import { FormattingToolbarButton } from "./FormattingToolbarButton";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  component: QuillFormattingToolbarButton,
-  title: "Controls/QuillFormattingToolbarButton",
+  component: FormattingToolbarButton,
+  title: "Controls/FormattingToolbarButton",
   tags: ["Atoms"],
-} satisfies Meta<typeof QuillFormattingToolbarButton>;
+} satisfies Meta<typeof FormattingToolbarButton>;
 
 export default meta;
 
@@ -26,7 +26,7 @@ export const Story: Story = {
         value={value}
         onValueChange={setValue}
       >
-        <QuillFormattingToolbarButton {...args} />
+        <FormattingToolbarButton {...args} />
       </ToggleGroup.Root>
     );
   },

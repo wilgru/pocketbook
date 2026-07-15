@@ -5,10 +5,10 @@ import debounce from "debounce";
 import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { quillEditorStateAtom } from "src/common/atoms/quillEditorStateAtom";
+import { noteEditorStateAtom } from "src/common/atoms/noteEditorStateAtom";
 import { Button } from "src/common/components/Button/Button";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
-import { QuillEditor } from "src/common/components/QuillEditor/QuillEditor";
+import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { Icon } from "src/icons/components/Icon/Icon";
@@ -31,8 +31,6 @@ type NoteEditorProps = {
   onSave?: () => void;
 };
 
-const QUILL_TOOLBAR_ID = "toolbar";
-
 const NoteEditor = ({
   note,
   colour = colours.orange,
@@ -48,7 +46,7 @@ const NoteEditor = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const setQuillEditorState = useSetAtom(quillEditorStateAtom);
+  const setEditorState = useSetAtom(noteEditorStateAtom);
 
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewUpdate, setShowNewUpdate] = useState(false);
@@ -74,33 +72,23 @@ const NoteEditor = ({
     debounce(() => saveRef.current?.(), 500),
   ).current;
 
-  // When the selected note changes (NoteEditor stays mounted while the note
-  // prop switches), flush any pending save for the previous note first so
-  // edits aren't lost, then reset state to the new note.
-  useEffect(() => {
-    debouncedSave.flush();
-    setEditedNote(note);
-    setShowNewUpdate(false);
-    setNewTaskFocusId(null);
-    setQuillEditorState((s) => ({ ...s, isQuillFocused: false }));
-  }, [note.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // Keep the colour in the toolbar atom in sync with the current note's colour.
   useEffect(() => {
-    setQuillEditorState((s) => ({ ...s, colour }));
-  }, [colour, setQuillEditorState]);
+    setEditorState((s) => ({ ...s, colour }));
+  }, [colour, setEditorState]);
 
   // Flush any pending debounced save when the component unmounts (navigation).
   useEffect(() => {
     return () => {
       debouncedSave.flush();
-      setQuillEditorState({
-        isQuillFocused: false,
+      setEditorState({
+        isEditorFocused: false,
+        editor: null,
         toolbarFormatting: undefined,
         colour: undefined,
       });
     };
-  }, [debouncedSave, setQuillEditorState]);
+  }, [debouncedSave, setEditorState]);
 
   // Scroll to the new update editor when it appears.
   useEffect(() => {
@@ -259,24 +247,28 @@ const NoteEditor = ({
         </div>
       )}
 
-      <QuillEditor
-        toolbarId={QUILL_TOOLBAR_ID}
-        value={editedNote.content}
-        colour={colour}
-        onChange={(delta) => onUpdateNote({ content: delta })}
-        onSelectedFormattingChange={(selectionFormatting) => {
-          setQuillEditorState((s) => ({
-            ...s,
-            toolbarFormatting: selectionFormatting,
-          }));
-        }}
-        onFocus={() =>
-          setQuillEditorState((s) => ({ ...s, isQuillFocused: true }))
-        }
-        onBlur={() =>
-          setQuillEditorState((s) => ({ ...s, isQuillFocused: false }))
-        }
-      />
+      <div className="flex flex-col gap-5 w-full h-full">
+        <RichTextEditor
+          className="w-full px-1"
+          size="lg"
+          value={editedNote.content}
+          colour={colour}
+          onChange={(delta) => onUpdateNote({ content: delta })}
+          onSelectedFormattingChange={(selectionFormatting) => {
+            setEditorState((s) => ({
+              ...s,
+              toolbarFormatting: selectionFormatting,
+            }));
+          }}
+          onFocus={() =>
+            setEditorState((s) => ({ ...s, isEditorFocused: true }))
+          }
+          onBlur={() =>
+            setEditorState((s) => ({ ...s, isEditorFocused: false }))
+          }
+          onEditorChange={(editor) => setEditorState((s) => ({ ...s, editor }))}
+        />
+      </div>
 
       {(updates.length > 0 || showNewUpdate) && (
         <div className="w-full flex flex-col border-t border-slate-200">

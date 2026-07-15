@@ -1,6 +1,5 @@
 import type { NoteSchema } from "./notes.schema";
 import type { Dayjs } from "dayjs";
-import type Delta from "quill-delta";
 import type { Link } from "src/common/types/Link.type";
 import type { Prettify } from "src/common/types/Prettify.type";
 import type { Tag } from "src/tags/Tag.type";
@@ -19,7 +18,7 @@ export type Note = Prettify<
     | "user"
     | "links"
   > & {
-    content: Delta;
+    content: string;
     deleted: Dayjs | null;
     created: Dayjs;
     updated: Dayjs;

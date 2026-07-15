@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
-import Delta from "quill-delta";
+import { normalizeLexicalContent } from "src/common/utils/lexicalContent";
 import type { NoteLink, Note } from "src/notes/Note.type";
 import type { NoteSchema } from "src/notes/notes.schema";
 import type { Tag } from "src/tags/Tag.type";
@@ -23,7 +23,7 @@ export const mapNote = (
     id: note.id,
     title: note.title,
     tasks: options.tasks ?? [],
-    content: note.content ? new Delta(JSON.parse(note.content)) : new Delta(),
+    content: normalizeLexicalContent(note.content),
     isBookmarked: note.isBookmarked,
     tags: options.tags ?? [],
     links,
