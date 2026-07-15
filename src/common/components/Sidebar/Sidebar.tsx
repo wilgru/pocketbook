@@ -40,7 +40,7 @@ export const Sidebar = () => {
     <aside className="min-w-60 max-w-60 flex flex-col h-full">
       <div
         className={cn(
-          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] p-2",
+          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] pl-2",
           isWindows ? "justify-between" : "justify-end",
         )}
       >
@@ -60,7 +60,7 @@ export const Sidebar = () => {
 
       <div
         className={cn(
-          "flex flex-col gap-3 overflow-y-auto overflow-x-hidden px-3 pb-3 flex-1",
+          "flex flex-col gap-3 overflow-y-auto overflow-x-hidden pl-3 pr-1 pb-3 flex-1",
           isWindows && "scrollbar-hide",
         )}
       >
@@ -138,7 +138,7 @@ export const Sidebar = () => {
           </SidebarTagSection>
         ))}
 
-        <hr className="w-full border-dashed border-slate-300" />
+        <hr className="w-full border-slate-200" />
 
         <Dialog.Root>
           <Dialog.Trigger asChild>

@@ -26,8 +26,8 @@ export const TableOfContentsListItem = ({
   return (
     <div
       className={cn(
-        "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-colors",
-        isHovered && colour.textPill,
+        "w-full flex items-center gap-2 px-2 py-1 rounded-lg text-sm transition-colors",
+
         isHovered && colour.backgroundPill,
       )}
       key={title}
@@ -41,9 +41,14 @@ export const TableOfContentsListItem = ({
         }
       }}
     >
-      <h2 className="min-w-0 overflow-x-hidden whitespace-nowrap overflow-ellipsis">
+      <p
+        className={cn(
+          "min-w-0 overflow-x-hidden whitespace-nowrap overflow-ellipsis",
+          isHovered && colour.textPill,
+        )}
+      >
         {title}
-      </h2>
+      </p>
 
       {icons && icons.length > 0 && (
         <span className="flex items-center gap-1 shrink-0" aria-hidden="true">

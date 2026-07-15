@@ -232,7 +232,7 @@ const NoteEditor = ({
       </div>
 
       {note.tasks && note.tasks.length > 0 && (
-        <div className="w-full flex flex-col justify-between border-dashed border-b border-slate-300 pb-4">
+        <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-4">
           {note.tasks.map((task, index) => (
             <TaskEditor
               key={task.id}

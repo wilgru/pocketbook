@@ -69,7 +69,9 @@ export const SidebarTagSection = ({
         </div>
         {children}
 
-        {isEmpty && <p className="pl-3 pt-0.5 text-xs text-slate-400">Empty</p>}
+        {isEmpty && (
+          <p className="italic pt-0.5 text-xs text-slate-400">Empty</p>
+        )}
       </div>
     </section>
   );

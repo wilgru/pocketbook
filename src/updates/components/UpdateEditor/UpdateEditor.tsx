@@ -6,8 +6,8 @@ import { FormattingToolbar } from "src/common/components/FormattingToolbar/Forma
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
-import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
+import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
