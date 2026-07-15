@@ -10,7 +10,7 @@ type UpdateTimelineItemProps = {
   strongIcon?: boolean;
   headline?: ReactNode;
   dateText?: string | null;
-  showTopLine?: boolean;
+  hideBottomLine?: boolean;
   showBottomPadding?: boolean;
   children?: ReactNode;
 };
@@ -21,6 +21,7 @@ export const UpdateTimelineItem = ({
   strongIcon = false,
   headline,
   dateText,
+  hideBottomLine = false,
   showBottomPadding = true,
   children,
 }: UpdateTimelineItemProps) => {
@@ -30,8 +31,10 @@ export const UpdateTimelineItem = ({
         <div className="w-px h-2 bg-slate-200" />
         <div
           className={cn(
-            "border rounded-full p-1",
-            strongIcon ? iconColour.background : "bg-white border-slate-200",
+            "rounded-full p-1",
+            strongIcon
+              ? iconColour.background
+              : "bg-white border border-slate-200",
           )}
         >
           <Icon
@@ -44,7 +47,7 @@ export const UpdateTimelineItem = ({
             weight={strongIcon ? "fill" : "regular"}
           />
         </div>
-        <div className="w-px flex-1 bg-slate-200" />
+        {!hideBottomLine && <div className="w-px flex-1 bg-slate-200" />}
       </div>
 
       <div
@@ -54,11 +57,13 @@ export const UpdateTimelineItem = ({
         )}
       >
         {(headline || dateText) && (
-          <div className="flex items-center justify-between gap-2 px-1">
+          <div className="flex items-start justify-between gap-2 px-1">
             <div className="flex items-center gap-2 flex-wrap">{headline}</div>
 
             {dateText && (
-              <p className="text-xs text-slate-400 pl-1 mt-0.5">{dateText}</p>
+              <p className="text-xs text-slate-400 pt-1.5 shrink-0">
+                {dateText}
+              </p>
             )}
           </div>
         )}

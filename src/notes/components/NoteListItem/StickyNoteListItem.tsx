@@ -13,6 +13,7 @@ type StickyNoteListItemProps = {
   note: Note;
   colour?: Colour;
   to?: string;
+  hideDate?: boolean;
 };
 
 const getStickyNoteRotation = (noteId: string): number => {
@@ -27,6 +28,7 @@ export const StickyNoteListItem = ({
   note,
   colour = colours.orange,
   to,
+  hideDate = false,
 }: StickyNoteListItemProps) => {
   const location = useLocation();
   const [isHovered, setIsHovered] = useState(false);
@@ -59,9 +61,11 @@ export const StickyNoteListItem = ({
             </div>
 
             <div className="flex items-center">
-              <p className={cn("text-xs pt-0.5 pr-1", stickyMetaColourClass)}>
-                {getRelativeDateTitle(note.created, false)}
-              </p>
+              {!hideDate && (
+                <p className={cn("text-xs pt-0.5 pr-1", stickyMetaColourClass)}>
+                  {getRelativeDateTitle(note.created, false)}
+                </p>
+              )}
 
               {note.tags.length > 0 &&
                 note.tags.map((tag) => (

@@ -37,7 +37,7 @@ export const Sidebar = () => {
   }
 
   return (
-    <aside className="bg-slate-50 min-w-60 max-w-60 flex flex-col h-full">
+    <aside className="min-w-60 max-w-60 flex flex-col h-full">
       <div
         className={cn(
           "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] p-2",

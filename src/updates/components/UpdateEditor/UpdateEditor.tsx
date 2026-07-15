@@ -7,6 +7,7 @@ import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEdi
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
+import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
@@ -27,6 +28,7 @@ type UpdateEditorProps = {
   autoFocus?: boolean;
   showTimeOnly?: boolean;
   showBottomPadding?: boolean;
+  hideBottomLine?: boolean;
   onCancel?: () => void;
   onCreated?: () => void;
 };
@@ -54,6 +56,7 @@ export const UpdateEditor = ({
   showNotes = true,
   autoFocus = false,
   showBottomPadding = false,
+  hideBottomLine = false,
   showTimeOnly = false,
   onCancel,
   onCreated,
@@ -135,7 +138,9 @@ export const UpdateEditor = ({
 
   const dateStr = editedUpdate.created
     ? editedUpdate.created.format(
-        showTimeOnly ? "h:mm a" : "D MMM YYYY, h:mm a",
+        showTimeOnly
+          ? "h:mm a"
+          : getRelativeDateTitle(editedUpdate.created, showTimeOnly),
       )
     : null;
 
@@ -146,36 +151,32 @@ export const UpdateEditor = ({
       strongIcon={editedUpdate.isWaypoint}
       dateText={dateStr}
       showBottomPadding={showBottomPadding}
+      hideBottomLine={hideBottomLine}
       headline={
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <p className="text-slate-500">
-            {editedUpdate.notes?.length
-              ? "Commented on"
-              : "Left a general comment"}
-          </p>
+        <p className="text-slate-500">
+          {editedUpdate.notes?.length
+            ? "Commented on "
+            : "Left a general comment "}
 
           {showNotes &&
-            (editedUpdate.notes ?? []).map((note) =>
-              pocketbookId ? (
+            editedUpdate.notes &&
+            editedUpdate.notes.map((note, index) => (
+              <>
                 <Link
                   key={note.id}
                   to="/$pocketbookId/notes"
-                  params={{ pocketbookId }}
+                  params={{ pocketbookId: pocketbookId ?? "" }}
                   search={{ noteId: note.id }}
-                  className="underline flex items-center gap-1 text-slate-600 hover:text-slate-800"
+                  className="underline text-slate-600 hover:text-slate-800"
                 >
                   {note.title ?? "Untitled Note"}
                 </Link>
-              ) : (
-                <span
-                  key={note.id}
-                  className="underline flex items-center gap-1 text-slate-600"
-                >
-                  {note.title ?? "Untitled Note"}
-                </span>
-              ),
-            )}
-        </div>
+
+                {index < (editedUpdate.notes?.length ?? 0) - 2 && ", "}
+                {index === (editedUpdate.notes?.length ?? 0) - 2 && " and "}
+              </>
+            ))}
+        </p>
       }
     >
       <div

@@ -11,7 +11,7 @@ function RouteComponent() {
   const isSideBarVisible = useAtomValue(isSideBarVisibleAtom);
 
   return (
-    <div className="fixed flex h-screen w-screen">
+    <div className="fixed flex h-screen w-screen bg-slate-50">
       {isSideBarVisible && <Sidebar />}
       {/* all the other elements */}
       <div id="detail" className="flex-1 min-w-0">

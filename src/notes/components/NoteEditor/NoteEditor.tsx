@@ -142,7 +142,7 @@ const NoteEditor = ({
 
   return (
     <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px]">
-      <div className="w-full flex flex-col gap-2 justify-between border-b border-slate-200 pb-4">
+      <div className="w-full flex flex-col gap-1 justify-between border-b border-slate-200 pb-3">
         <textarea
           ref={titleRef}
           rows={1}
@@ -223,7 +223,7 @@ const NoteEditor = ({
         </div>
 
         {editedNote.links.length > 0 && (
-          <div className="flex flex-row flex-wrap gap-2 items-center pl-1">
+          <div className="flex flex-row flex-wrap gap-3 items-center pl-1 pt-1">
             {editedNote.links.map((link) => (
               <LinkPill key={link.id} link={link} colour={colour} />
             ))}
@@ -271,7 +271,7 @@ const NoteEditor = ({
       </div>
 
       {(updates.length > 0 || showNewUpdate) && (
-        <div className="w-full flex flex-col border-dashed border-t border-slate-300 pt-4 px-1">
+        <div className="w-full flex flex-col border-t border-slate-200">
           {showNewUpdate && (
             <div ref={newUpdateRef} className="pb-4">
               <UpdateEditor
@@ -287,12 +287,13 @@ const NoteEditor = ({
 
           {updates.length > 0 && (
             <div className="flex flex-col relative">
-              {[...updates].reverse().map((upd) => (
+              {[...updates].reverse().map((update) => (
                 <UpdateEditor
-                  key={upd.id}
-                  update={upd}
+                  key={update.id}
+                  update={update}
                   colour={colour}
                   showNotes={false}
+                  hideBottomLine={update === updates[0]}
                 />
               ))}
             </div>
