@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { useMemo, Fragment } from "react";
+import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
@@ -81,19 +81,16 @@ export const TasksLayout = ({
             <EmptyState text="No tasks yet" />
           )}
 
-          {effectiveTaskGroups.map((group, index) => (
-            <Fragment key={group.relevantTaskData.note?.id ?? "no-note"}>
-              {index > 0 && <hr className="border-slate-200" />}
-              <TasksSection
-                taskGroup={group}
-                colour={colour}
-                noNoteEditorTrigger={
-                  group.relevantTaskData.note === null
-                    ? noNoteEditorTrigger
-                    : undefined
-                }
-              />
-            </Fragment>
+          {effectiveTaskGroups.map((group) => (
+            <TasksSection
+              taskGroup={group}
+              colour={colour}
+              noNoteEditorTrigger={
+                group.relevantTaskData.note === null
+                  ? noNoteEditorTrigger
+                  : undefined
+              }
+            />
           ))}
 
           <div aria-hidden="true" className="h-10 w-full shrink-0" />

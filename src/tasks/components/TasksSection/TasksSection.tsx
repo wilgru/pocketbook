@@ -29,25 +29,28 @@ export const TasksSection = ({
 
   const note = taskGroup.relevantTaskData.note;
 
-  const onCreateTask = useCallback(async (insertAfterSortOrder?: number) => {
-    const createdTask = await createTask({
-      createTaskData: {
-        note: note ?? null,
-        title: "",
-        isImportant: false,
-        link: null,
-        links: [],
-        description: "",
-        dueDate: null,
-        completedDate: null,
-        cancelledDate: null,
-      },
-      insertAfterSortOrder,
-    });
-    if (createdTask?.id) {
-      setNewTaskFocusId(createdTask.id);
-    }
-  }, [createTask, note]);
+  const onCreateTask = useCallback(
+    async (insertAfterSortOrder?: number) => {
+      const createdTask = await createTask({
+        createTaskData: {
+          note: note ?? null,
+          title: "",
+          isImportant: false,
+          link: null,
+          links: [],
+          description: "",
+          dueDate: null,
+          completedDate: null,
+          cancelledDate: null,
+        },
+        insertAfterSortOrder,
+      });
+      if (createdTask?.id) {
+        setNewTaskFocusId(createdTask.id);
+      }
+    },
+    [createTask, note],
+  );
   // Create a new no-note task whenever the toolbar plus button fires.
   useEffect(() => {
     if (!noNoteEditorTrigger || noNoteEditorTrigger <= 0) {
@@ -107,15 +110,19 @@ export const TasksSection = ({
           )}
 
           {taskGroup.tasks.map((task, index) => (
-            <TaskEditor
-              key={task.id}
-              task={task}
-              colour={colour}
-              onCreateNextTask={() => onCreateTask(task.sortOrder)}
-              autoFocusTitle={task.id === newTaskFocusId}
-              onAutoFocusComplete={() => setNewTaskFocusId(null)}
-              {...getMoveCallbacks(index, taskGroup.tasks)}
-            />
+            <>
+              <TaskEditor
+                key={task.id}
+                task={task}
+                colour={colour}
+                onCreateNextTask={() => onCreateTask(task.sortOrder)}
+                autoFocusTitle={task.id === newTaskFocusId}
+                onAutoFocusComplete={() => setNewTaskFocusId(null)}
+                {...getMoveCallbacks(index, taskGroup.tasks)}
+              />
+
+              <div className="ml-6 border-b border-dashed border-slate-300 flex-1" />
+            </>
           ))}
         </div>
       </section>
@@ -125,7 +132,7 @@ export const TasksSection = ({
   return (
     <section id={note.id}>
       <div
-        className="flex p-2 gap-2 items-center"
+        className="flex gap-2 px-2 items-center"
         onMouseOver={() => setIsTitleHovered(true)}
         onMouseLeave={() => setIsTitleHovered(false)}
       >
@@ -159,17 +166,23 @@ export const TasksSection = ({
         )}
       </div>
 
+      <div className="border-b border-slate-200 flex-1" />
+
       <div className="flex flex-col gap-1.5 p-1">
         {taskGroup.tasks.map((task, index) => (
-          <TaskEditor
-            key={task.id}
-            task={task}
-            colour={colour}
-            onCreateNextTask={() => onCreateTask(task.sortOrder)}
-            autoFocusTitle={task.id === newTaskFocusId}
-            onAutoFocusComplete={() => setNewTaskFocusId(null)}
-            {...getMoveCallbacks(index, taskGroup.tasks)}
-          />
+          <>
+            <TaskEditor
+              key={task.id}
+              task={task}
+              colour={colour}
+              onCreateNextTask={() => onCreateTask(task.sortOrder)}
+              autoFocusTitle={task.id === newTaskFocusId}
+              onAutoFocusComplete={() => setNewTaskFocusId(null)}
+              {...getMoveCallbacks(index, taskGroup.tasks)}
+            />
+
+            <div className="ml-6 border-b border-dashed border-slate-300 flex-1" />
+          </>
         ))}
       </div>
     </section>
