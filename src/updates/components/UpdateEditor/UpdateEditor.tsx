@@ -137,11 +137,9 @@ export const UpdateEditor = ({
   };
 
   const dateStr = editedUpdate.created
-    ? editedUpdate.created.format(
-        showTimeOnly
-          ? "h:mm a"
-          : getRelativeDateTitle(editedUpdate.created, showTimeOnly),
-      )
+    ? showTimeOnly
+      ? editedUpdate.created.format("h:mm a")
+      : getRelativeDateTitle(editedUpdate.created)
     : null;
 
   return (

@@ -15,6 +15,7 @@ export const getRelativeDateTitle = (
       : diffDays === 1
         ? "Yesterday"
         : date.format("dddd");
+
   const dateLabel =
     date.year() !== today.year()
       ? date.format("D MMMM, YYYY")
@@ -22,5 +23,5 @@ export const getRelativeDateTitle = (
 
   const title = showDay ? `${dayLabel}, ${dateLabel}` : dateLabel;
 
-  return showTime ? `${title}, ${date.format("HH:mm a")}` : title;
+  return showTime ? `${title}, ${date.format("hh:mm a")}` : title;
 };
