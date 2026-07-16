@@ -28,7 +28,8 @@ export const UpdateTimelineItem = ({
   return (
     <div className="w-full flex gap-2 items-start">
       <div className="flex flex-col items-center self-stretch">
-        <div className="w-px h-2 bg-slate-300" />
+        <div className="w-px h-3 bg-slate-300" />
+
         <div
           className={cn(
             "rounded-full p-1 border border-slate-300",
@@ -45,12 +46,13 @@ export const UpdateTimelineItem = ({
             weight={strongIcon ? "fill" : "regular"}
           />
         </div>
+
         {!hideBottomLine && <div className="w-px flex-1 bg-slate-300" />}
       </div>
 
       <div
         className={cn(
-          "flex flex-col gap-1 w-full py-2",
+          "flex flex-col gap-1 w-full py-3",
           showBottomPadding && "pb-10",
         )}
       >

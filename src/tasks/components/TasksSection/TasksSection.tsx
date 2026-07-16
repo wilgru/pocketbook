@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "src/common/components/Button/Button";
+import { cn } from "src/common/utils/cn";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
@@ -20,7 +21,6 @@ export const TasksSection = ({
   colour,
   noNoteEditorTrigger,
 }: TasksSectionProps) => {
-  const [isTitleHovered, setIsTitleHovered] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
   const { createTask } = useCreateTask();
   const { getMoveCallbacks } = useTaskReorder();
@@ -65,124 +65,122 @@ export const TasksSection = ({
     onCreateTask();
   }, [noNoteEditorTrigger, onCreateTask]);
 
-  const isNoNote = !note;
+  // const isNoNote = !note;
 
-  if (isNoNote) {
-    return (
-      <section id="no-note">
-        <div className="flex flex-col gap-2 p-4 rounded-2xl bg-gray-50">
-          <div
-            className="flex gap-2 items-center"
-            onMouseOver={() => setIsTitleHovered(true)}
-            onMouseLeave={() => setIsTitleHovered(false)}
-          >
-            <p className="text-lg text-slate-400 font-title">
-              {taskGroup.title}
-            </p>
+  // if (isNoNote) {
+  //   return (
+  //     <section id="no-note">
+  //       <div className="flex flex-col gap-2 p-4 rounded-2xl bg-gray-50">
+  //         <div
+  //           className="flex gap-2 items-center"
+  //           onMouseOver={() => setIsTitleHovered(true)}
+  //           onMouseLeave={() => setIsTitleHovered(false)}
+  //         >
+  //           <p className="font-title text-3xl text-slate-400">
+  //             {taskGroup.title}
+  //           </p>
 
-            {isTitleHovered && (
-              <Button
-                variant="ghost-strong"
-                size="sm"
-                iconName="plus"
-                colour={colour}
-                onClick={() => onCreateTask()}
-              />
-            )}
-          </div>
+  //           {isTitleHovered && (
+  //             <Button
+  //               variant="ghost-strong"
+  //               size="sm"
+  //               iconName="plus"
+  //               colour={colour}
+  //               onClick={() => onCreateTask()}
+  //             />
+  //           )}
+  //         </div>
 
-          {taskGroup.tasks.length === 0 && (
-            <div className="w-full p-3 flex flex-col gap-3 items-center">
-              <p className="text-slate-500">No task yet</p>
+  //         {taskGroup.tasks.length === 0 && (
+  //           <div className="w-full p-3 flex flex-col gap-3 items-center">
+  //             <p className="text-slate-500">No task yet</p>
 
-              <div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full"
-                  iconName="plusSquare"
-                  onClick={() => onCreateTask()}
-                >
-                  Create your first task
-                </Button>
-              </div>
-            </div>
-          )}
+  //             <div>
+  //               <Button
+  //                 variant="ghost"
+  //                 size="sm"
+  //                 className="w-full"
+  //                 iconName="plusSquare"
+  //                 onClick={() => onCreateTask()}
+  //               >
+  //                 Create your first task
+  //               </Button>
+  //             </div>
+  //           </div>
+  //         )}
 
-          {taskGroup.tasks.map((task, index) => (
-            <>
-              <TaskEditor
-                key={task.id}
-                task={task}
-                colour={colour}
-                onCreateNextTask={() => onCreateTask(task.sortOrder)}
-                autoFocusTitle={task.id === newTaskFocusId}
-                onAutoFocusComplete={() => setNewTaskFocusId(null)}
-                {...getMoveCallbacks(index, taskGroup.tasks)}
-              />
-
-              <div className="ml-6 border-b border-dashed border-slate-300 flex-1" />
-            </>
-          ))}
-        </div>
-      </section>
-    );
-  }
+  //         {taskGroup.tasks.map((task, index) => (
+  //           <TaskEditor
+  //             key={task.id}
+  //             task={task}
+  //             colour={colour}
+  //             onCreateNextTask={() => onCreateTask(task.sortOrder)}
+  //             autoFocusTitle={task.id === newTaskFocusId}
+  //             onAutoFocusComplete={() => setNewTaskFocusId(null)}
+  //             {...getMoveCallbacks(index, taskGroup.tasks)}
+  //           />
+  //         ))}
+  //       </div>
+  //     </section>
+  //   );
+  // }
 
   return (
-    <section id={note.id}>
-      <div
-        className="flex gap-2 px-2 items-center"
-        onMouseOver={() => setIsTitleHovered(true)}
-        onMouseLeave={() => setIsTitleHovered(false)}
-      >
-        <h2 className="font-title text-3xl">{taskGroup.title}</h2>
+    <section
+      id={note?.id ?? "no-note"}
+      className={cn("p-4", !note && "rounded-2xl bg-gray-50")}
+    >
+      <div className="flex flex-col mb-1 border-b border-slate-200">
+        <h2
+          className={cn(
+            "font-title text-3xl pl-0.5",
+            !note && "text-slate-500",
+          )}
+        >
+          {taskGroup.title}
+        </h2>
 
-        {isTitleHovered && (
-          <div className="mb-2 flex gap-1">
-            <Button
-              variant="ghost-strong"
-              size="sm"
-              iconName="plus"
-              colour={colour}
-              onClick={() => onCreateTask()}
-            />
+        <div className="mb-1 flex gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            iconName="plus"
+            colour={colour}
+            onClick={() => onCreateTask()}
+          >
+            Add task
+          </Button>
 
-            {pocketbookId && (
-              <Link
-                to="/$pocketbookId/notes"
-                params={{ pocketbookId }}
-                search={{ noteId: note.id }}
+          {pocketbookId && note && (
+            <Link
+              to="/$pocketbookId/notes"
+              params={{ pocketbookId }}
+              search={{ noteId: note.id }}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                iconName="arrowCircleRight"
+                colour={colour}
               >
-                <Button
-                  variant="ghost-strong"
-                  size="sm"
-                  iconName="arrowCircleRight"
-                  colour={colour}
-                />
-              </Link>
-            )}
-          </div>
-        )}
+                Go to note
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
-
-      <div className="border-b border-slate-200 flex-1" />
 
       <div className="flex flex-col gap-1.5 p-1">
         {taskGroup.tasks.map((task, index) => (
-          <>
-            <TaskEditor
-              key={task.id}
-              task={task}
-              colour={colour}
-              onCreateNextTask={() => onCreateTask(task.sortOrder)}
-              autoFocusTitle={task.id === newTaskFocusId}
-              onAutoFocusComplete={() => setNewTaskFocusId(null)}
-              {...getMoveCallbacks(index, taskGroup.tasks)}
-            />
-
-            <div className="ml-6 border-b border-dashed border-slate-300 flex-1" />
-          </>
+          <TaskEditor
+            key={task.id}
+            task={task}
+            colour={colour}
+            onCreateNextTask={() => onCreateTask(task.sortOrder)}
+            autoFocusTitle={task.id === newTaskFocusId}
+            onAutoFocusComplete={() => setNewTaskFocusId(null)}
+            {...getMoveCallbacks(index, taskGroup.tasks)}
+          />
         ))}
       </div>
     </section>

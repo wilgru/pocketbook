@@ -11,6 +11,7 @@ import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
+import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteLinksPopover } from "src/notes/components/NoteLinksPopover/NoteLinksPopover";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
@@ -150,7 +151,7 @@ const NoteEditor = ({
           value={editedNote.title ?? ""}
           placeholder="No Title"
           onChange={(e) => onUpdateNote({ title: e.target.value })}
-          className="text-5xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-none"
+          className="text-4xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-none"
         />
 
         <div className="flex flex-row flex-wrap gap-1.5 items-center">
@@ -247,7 +248,7 @@ const NoteEditor = ({
         </div>
       )}
 
-      <div className="flex flex-col gap-5 w-full h-full">
+      <div className={cn("flex flex-col gap-5 w-full")}>
         <RichTextEditor
           className="w-full px-1"
           size="lg"
@@ -273,7 +274,7 @@ const NoteEditor = ({
       {(updates.length > 0 || showNewUpdate) && (
         <div className="w-full flex flex-col border-t border-slate-200">
           {showNewUpdate && (
-            <div ref={newUpdateRef} className="pb-4">
+            <div ref={newUpdateRef}>
               <UpdateEditor
                 update={{ notes: [editedNote], tint: null }}
                 colour={colour}
@@ -285,9 +286,10 @@ const NoteEditor = ({
             </div>
           )}
 
-          {updates.length > 0 && (
-            <div className="flex flex-col relative">
-              {[...updates].reverse().map((update) => (
+          {updates.length > 0 &&
+            [...updates]
+              .reverse()
+              .map((update) => (
                 <UpdateEditor
                   key={update.id}
                   update={update}
@@ -296,8 +298,6 @@ const NoteEditor = ({
                   hideBottomLine={update === updates[0]}
                 />
               ))}
-            </div>
-          )}
         </div>
       )}
 

@@ -123,8 +123,6 @@ const nodes = [
   QuoteNode,
 ];
 
-const Placeholder = () => null;
-
 const editorStateToString = (editorState: EditorState): string => {
   return JSON.stringify(editorState.toJSON());
 };
@@ -234,7 +232,9 @@ const LexicalEditorBridge = ({
           onBlur={onBlur}
         />
       }
-      placeholder={<Placeholder />}
+      placeholder={
+        <p className="text-slate-400">Start typing to add content...</p>
+      }
       ErrorBoundary={LexicalErrorBoundary}
     />
   );
