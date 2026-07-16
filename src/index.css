@@ -68,20 +68,42 @@ body {
     "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier,
     monospace;
   background-color: #f1f5f9;
-  padding: 2px 4px;
+  padding: 1px 2px;
   border-radius: 4px;
   font-size: 0.875em;
+}
+
+.rich-text .editor-code {
+  margin-top: 0.7em;
+  display: block;
 }
 
 .rich-text p {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.35;
-  margin-bottom: 0.7em;
+  margin-top: 0.7em;
+  margin-bottom: 0;
 }
 
-.rich-text p:last-child {
-  margin-bottom: 0;
+.rich-text p:first-child {
+  margin-top: 0;
+}
+
+.rich-text
+  :is(
+    .editor-heading-h1,
+    .editor-heading-h2,
+    .editor-code,
+    .editor-text-code,
+    h1,
+    h2,
+    ul,
+    ol,
+    blockquote
+  ):first-child {
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .rich-text h1,
@@ -91,7 +113,7 @@ body {
   font-weight: 600;
   line-height: 1.2;
   margin-top: 1em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0;
 }
 
 .rich-text h2,
@@ -101,7 +123,7 @@ body {
   font-weight: 500;
   line-height: 1.2;
   margin-top: 1em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0;
 }
 
 .rich-text.rich-text-sm h1,
@@ -166,7 +188,8 @@ body {
 
 .rich-text.rich-text-sm p {
   font-size: 12px;
-  margin-bottom: 0.4em;
+  margin-top: 0.4em;
+  margin-bottom: 0;
 }
 
 .rich-text.rich-text-sm ul li,
