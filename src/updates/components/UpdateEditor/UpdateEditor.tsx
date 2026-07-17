@@ -245,7 +245,7 @@ export const UpdateEditor = ({
 
         <RichTextEditor
           size="md"
-          className="pl-2"
+          className={cn(isEditing && "px-2")}
           value={editedUpdate.content}
           colour={resolvedColour}
           onFocus={() => setIsEditing(true)}

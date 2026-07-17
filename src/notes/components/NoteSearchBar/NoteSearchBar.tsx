@@ -103,11 +103,11 @@ export const NoteSearchBar = () => {
     <div ref={containerRef} className="relative">
       <div
         className={cn(
-          "flex items-center gap-1.5 px-2 py-1.5 rounded-xl border border-slate-200 bg-white text-sm transition-colors",
+          "flex items-center gap-1.5 px-2 py-1.5 rounded-xl border border-slate-200 bg-slate-100 text-sm transition-colors",
           isOpen && "border-slate-300",
         )}
       >
-        <MagnifyingGlass size={14} className="text-slate-400 shrink-0" />
+        <MagnifyingGlass size={14} className="text-slate-500 shrink-0" />
         <input
           ref={inputRef}
           type="text"
@@ -116,7 +116,7 @@ export const NoteSearchBar = () => {
           onFocus={() => inputValue.length > 0 && setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Search notes..."
-          className="w-48 outline-none text-sm placeholder:text-slate-400 bg-transparent"
+          className="w-56 outline-none text-sm placeholder:text-slate-500 bg-transparent"
         />
         {inputValue && (
           <button

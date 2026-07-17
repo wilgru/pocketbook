@@ -16,7 +16,7 @@ export const TwoPaneLayout = ({
 }: TwoPaneLayoutProps) => {
   return (
     <div className="flex-1 min-h-0 w-full min-w-0 pb-2 px-2 box-border">
-      <div className="bg-white border border-slate-200 rounded-xl drop-shadow h-full w-full min-w-0 flex overflow-hidden">
+      <div className="bg-white border border-slate-300 rounded-xl drop-shadow h-full w-full min-w-0 flex overflow-hidden">
         <aside className="h-full w-60 min-h-0 flex flex-col border-r border-dashed border-slate-300">
           {sidebarTopContent && (
             <div

@@ -165,7 +165,6 @@ export const UpdatesLayout = ({
           }}
         />
       }
-      showSidebarTopContentDivider
       sidebar={tableOfContentsGroups.map((tableOfContentsGroup) => (
         <ListSection
           title={tableOfContentsGroup.title}

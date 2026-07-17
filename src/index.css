@@ -75,7 +75,10 @@ body {
 
 .rich-text .editor-code {
   margin-top: 0.7em;
+  padding: 6px;
   display: block;
+  color: #f7f9fb;
+  background-color: #222222;
 }
 
 .rich-text p {

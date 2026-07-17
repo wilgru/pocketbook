@@ -37,7 +37,7 @@ export const Sidebar = () => {
   }
 
   return (
-    <aside className="min-w-60 max-w-60 flex flex-col h-full">
+    <aside className="min-w-56 max-w-min-w-56 flex flex-col h-full">
       <div
         className={cn(
           "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] pl-2",
@@ -45,7 +45,7 @@ export const Sidebar = () => {
         )}
       >
         {isWindows && (
-          <h1 className="font-title text-slate-500 text-xl">Pocketbook</h1>
+          <h1 className="pl-2 font-title text-slate-500 text-xl">Pocketbook</h1>
         )}
 
         <Button
