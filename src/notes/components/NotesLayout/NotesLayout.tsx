@@ -52,6 +52,17 @@ export const NotesLayout = ({
   } = useAtomValue(noteEditorStateAtom);
   const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
 
+  const activeToolbarContent = isTaskFocused ? (
+    <TaskFloatingToolbar />
+  ) : isEditorFocused ? (
+    <FormattingToolbar
+      toolbarFormatting={toolbarFormatting}
+      editor={editor}
+      colour={editorColour ?? colour}
+      isEditorFocused={isEditorFocused}
+    />
+  ) : null;
+
   const effectiveNoteGroups = useMemo<NotesGroup[]>(() => {
     if (!notes || notes.length === 0) {
       return [];
@@ -125,6 +136,11 @@ export const NotesLayout = ({
           )}
         </>
       }
+      floatingToolbar={
+        <FloatingToolbar visible={isTaskFocused || isEditorFocused}>
+          {activeToolbarContent}
+        </FloatingToolbar>
+      }
       content={
         <>
           {selectedNote ? (
@@ -138,25 +154,6 @@ export const NotesLayout = ({
               <h1 className="text-gray-400 text-lg">No note selected</h1>
             </div>
           )}
-
-          {/* isTaskFocused and isEditorFocused are mutually exclusive so each toolbar is
-              positioned at the same absolute location and only one is ever shown at a time. */}
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-            <FloatingToolbar visible={isTaskFocused}>
-              <TaskFloatingToolbar />
-            </FloatingToolbar>
-          </div>
-
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-            <FloatingToolbar visible={isEditorFocused}>
-              <FormattingToolbar
-                toolbarFormatting={toolbarFormatting}
-                editor={editor}
-                colour={editorColour ?? colour}
-                isEditorFocused={isEditorFocused}
-              />
-            </FloatingToolbar>
-          </div>
         </>
       }
     />

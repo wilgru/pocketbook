@@ -75,6 +75,11 @@ export const TasksLayout = ({
           ))}
         </ListSection>
       }
+      floatingToolbar={
+        <FloatingToolbar visible={isTaskFocused}>
+          <TaskFloatingToolbar />
+        </FloatingToolbar>
+      }
       content={
         <div className="h-full w-full max-w-[800px] flex flex-col gap-6">
           {effectiveTaskGroups.length === 0 && (
@@ -94,12 +99,6 @@ export const TasksLayout = ({
           ))}
 
           <div aria-hidden="true" className="h-10 w-full shrink-0" />
-
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-            <FloatingToolbar visible={isTaskFocused}>
-              <TaskFloatingToolbar />
-            </FloatingToolbar>
-          </div>
         </div>
       }
     />
