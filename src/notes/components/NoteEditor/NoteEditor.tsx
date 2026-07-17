@@ -52,9 +52,12 @@ const NoteEditor = ({
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewUpdate, setShowNewUpdate] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
+  const [isFormattingLinkPopoverOpen, setIsFormattingLinkPopoverOpen] =
+    useState(false);
 
   const newUpdateRef = useRef<HTMLDivElement>(null);
   const titleRef = useAutoResize(editedNote.title);
+  const isFormattingLinkPopoverOpenRef = useRef(false);
 
   // Ref that always points to the latest save implementation so the debounced
   // function never closes over stale state.
@@ -73,10 +76,29 @@ const NoteEditor = ({
     debounce(() => saveRef.current?.(), 500),
   ).current;
 
+  const stableLinkPopoverOpenChangeCallback = useRef((open: boolean) => {
+    isFormattingLinkPopoverOpenRef.current = open;
+    setIsFormattingLinkPopoverOpen(open);
+    if (open) {
+      setEditorState((s) => ({ ...s, isEditorFocused: true }));
+    }
+  }).current;
+
   // Keep the colour in the toolbar atom in sync with the current note's colour.
   useEffect(() => {
     setEditorState((s) => ({ ...s, colour }));
   }, [colour, setEditorState]);
+
+  useEffect(() => {
+    setEditorState((s) => ({
+      ...s,
+      onLinkPopoverOpenChange: stableLinkPopoverOpenChangeCallback,
+    }));
+
+    return () => {
+      setEditorState((s) => ({ ...s, onLinkPopoverOpenChange: null }));
+    };
+  }, [setEditorState, stableLinkPopoverOpenChangeCallback]);
 
   // Flush any pending debounced save when the component unmounts (navigation).
   useEffect(() => {
@@ -87,6 +109,7 @@ const NoteEditor = ({
         editor: null,
         toolbarFormatting: undefined,
         colour: undefined,
+        onLinkPopoverOpenChange: null,
       });
     };
   }, [debouncedSave, setEditorState]);
@@ -264,9 +287,15 @@ const NoteEditor = ({
           onFocus={() =>
             setEditorState((s) => ({ ...s, isEditorFocused: true }))
           }
-          onBlur={() =>
-            setEditorState((s) => ({ ...s, isEditorFocused: false }))
-          }
+          onBlur={() => {
+            if (
+              isFormattingLinkPopoverOpenRef.current ||
+              isFormattingLinkPopoverOpen
+            ) {
+              return;
+            }
+            setEditorState((s) => ({ ...s, isEditorFocused: false }));
+          }}
           onEditorChange={(editor) => setEditorState((s) => ({ ...s, editor }))}
         />
       </div>

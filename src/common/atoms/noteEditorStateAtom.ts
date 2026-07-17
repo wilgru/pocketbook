@@ -8,6 +8,7 @@ type NoteEditorState = {
   editor: LexicalEditor | null;
   toolbarFormatting: LexicalToolbarFormatting | undefined;
   colour: Colour | undefined;
+  onLinkPopoverOpenChange: ((open: boolean) => void) | null;
 };
 
 export const noteEditorStateAtom = atom<NoteEditorState>({
@@ -15,4 +16,5 @@ export const noteEditorStateAtom = atom<NoteEditorState>({
   editor: null,
   toolbarFormatting: undefined,
   colour: undefined,
+  onLinkPopoverOpenChange: null,
 });

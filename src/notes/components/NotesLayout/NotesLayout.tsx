@@ -49,6 +49,7 @@ export const NotesLayout = ({
     editor,
     toolbarFormatting,
     colour: editorColour,
+    onLinkPopoverOpenChange,
   } = useAtomValue(noteEditorStateAtom);
   const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
 
@@ -60,6 +61,7 @@ export const NotesLayout = ({
       editor={editor}
       colour={editorColour ?? colour}
       isEditorFocused={isEditorFocused}
+      onLinkPopoverOpenChange={onLinkPopoverOpenChange ?? undefined}
     />
   ) : null;
 

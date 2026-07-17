@@ -1,5 +1,4 @@
 import {
-  ArrowLeft,
   Check,
   Code,
   CodeBlock,
@@ -13,9 +12,11 @@ import {
   TextStrikethrough,
   TextUnderline,
 } from "@phosphor-icons/react";
+import * as Popover from "@radix-ui/react-popover";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { $getSelection } from "lexical";
+import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
+import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarCommands";
 import { FormattingToolbarButton } from "./FormattingToolbarButton";
 import type { BaseSelection, LexicalEditor } from "lexical";
@@ -27,6 +28,7 @@ type FormattingToolbarProps = {
   editor: LexicalEditor | null;
   colour: Colour;
   isEditorFocused?: boolean;
+  onLinkPopoverOpenChange?: (open: boolean) => void;
 };
 
 export const FormattingToolbar = ({
@@ -34,41 +36,63 @@ export const FormattingToolbar = ({
   editor,
   colour,
   isEditorFocused,
+  onLinkPopoverOpenChange,
 }: FormattingToolbarProps) => {
-  const [isLinkEditing, setIsLinkEditing] = useState(false);
+  const [isLinkPopoverOpen, setIsLinkPopoverOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+  const linkInputRef = useRef<HTMLInputElement | null>(null);
   const savedSelectionRef = useRef<BaseSelection | null>(null);
 
-  // When the editor regains focus, reset the link editor so the
-  // normal formatting toolbar is shown (not a stale link editor).
+  // When the editor regains focus, reset any stale link editing state.
   useEffect(() => {
     if (isEditorFocused) {
-      setIsLinkEditing(false);
+      setIsLinkPopoverOpen(false);
       setLinkUrl("");
       savedSelectionRef.current = null;
     }
   }, [isEditorFocused]);
 
-  const openLinkEditor = () => {
-    editor?.getEditorState().read(() => {
-      savedSelectionRef.current = $getSelection()?.clone() ?? null;
-    });
-    setLinkUrl("");
-    setIsLinkEditing(true);
-  };
-
-  const closeLinkEditor = () => {
-    setIsLinkEditing(false);
-    setLinkUrl("");
-    savedSelectionRef.current = null;
-  };
-
-  const handleLinkClick = () => {
-    if (toolbarFormatting?.link) {
-      openLinkEditor();
+  useEffect(() => {
+    if (!isLinkPopoverOpen) {
       return;
     }
-    openLinkEditor();
+
+    requestAnimationFrame(() => {
+      linkInputRef.current?.focus();
+      linkInputRef.current?.select();
+    });
+  }, [isLinkPopoverOpen]);
+
+  const saveSelectionSnapshot = () => {
+    editor?.getEditorState().read(() => {
+      const selection = $getSelection();
+
+      if (!$isRangeSelection(selection)) {
+        return;
+      }
+
+      savedSelectionRef.current = selection.clone();
+    });
+  };
+
+  const handleLinkTriggerMouseDown = () => {
+    saveSelectionSnapshot();
+  };
+
+  const handleLinkPopoverOpenChange = (open: boolean) => {
+    setIsLinkPopoverOpen(open);
+    onLinkPopoverOpenChange?.(open);
+
+    if (open) {
+      if (!savedSelectionRef.current) {
+        saveSelectionSnapshot();
+      }
+      setLinkUrl("");
+      return;
+    }
+
+    setLinkUrl("");
+    savedSelectionRef.current = null;
   };
 
   const handleLinkSave = () => {
@@ -78,71 +102,13 @@ export const FormattingToolbar = ({
       linkUrl,
       savedSelectionRef.current,
     );
-    closeLinkEditor();
+    handleLinkPopoverOpenChange(false);
   };
 
   const handleLinkRemove = () => {
     executeLexicalToolbarAction(editor, "link");
-    closeLinkEditor();
+    handleLinkPopoverOpenChange(false);
   };
-
-  if (isLinkEditing) {
-    return (
-      <div className="w-full h-fit" onMouseDown={(e) => e.preventDefault()}>
-        <ToggleGroup.Root
-          className="font-medium text-sm flex items-center gap-1"
-          type="multiple"
-          value={[]}
-          aria-label="Link editing"
-        >
-          <FormattingToolbarButton
-            value="back"
-            colour={colour}
-            onClick={closeLinkEditor}
-          >
-            <ArrowLeft size={16} weight="bold" />
-          </FormattingToolbarButton>
-
-          <div
-            className="flex flex-row gap-1 px-1 border-l-2 border-slate-100 flex-1"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <input
-              type="url"
-              value={linkUrl}
-              onChange={(e) => setLinkUrl(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleLinkSave();
-                if (e.key === "Escape") closeLinkEditor();
-              }}
-              placeholder="https://example.com"
-              className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:border-slate-400"
-            />
-          </div>
-
-          <div className="flex flex-row gap-1 pl-1">
-            <FormattingToolbarButton
-              value="save"
-              colour={colour}
-              onClick={handleLinkSave}
-            >
-              <Check size={16} weight="bold" />
-            </FormattingToolbarButton>
-
-            {toolbarFormatting?.link && (
-              <FormattingToolbarButton
-                value="remove"
-                colour={colour}
-                onClick={handleLinkRemove}
-              >
-                <LinkBreak size={16} weight="bold" />
-              </FormattingToolbarButton>
-            )}
-          </div>
-        </ToggleGroup.Root>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full h-fit" onMouseDown={(e) => e.preventDefault()}>
@@ -220,13 +186,72 @@ export const FormattingToolbar = ({
         </div>
 
         <div className="flex flex-row gap-1 px-1 pr-1">
-          <FormattingToolbarButton
-            value="link"
-            colour={colour}
-            onClick={handleLinkClick}
+          <Popover.Root
+            open={isLinkPopoverOpen}
+            onOpenChange={handleLinkPopoverOpenChange}
           >
-            <LinkSimple size={16} weight="bold" />
-          </FormattingToolbarButton>
+            <Popover.Trigger asChild>
+              <span onMouseDownCapture={handleLinkTriggerMouseDown}>
+                <FormattingToolbarButton value="link" colour={colour}>
+                  <LinkSimple size={16} weight="bold" />
+                </FormattingToolbarButton>
+              </span>
+            </Popover.Trigger>
+
+            <Popover.Portal>
+              <Popover.Content
+                className="z-50"
+                sideOffset={6}
+                align="center"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+              >
+                <ControlPopover className="p-3 w-[360px]">
+                  <div
+                    className="flex items-center gap-1"
+                    onMouseDown={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      ref={linkInputRef}
+                      type="url"
+                      value={linkUrl}
+                      onChange={(e) => setLinkUrl(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleLinkSave();
+                        }
+                        if (e.key === "Escape") {
+                          handleLinkPopoverOpenChange(false);
+                        }
+                      }}
+                      placeholder="https://example.com"
+                      className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:border-slate-400"
+                    />
+
+                    <button
+                      type="button"
+                      className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                      onClick={handleLinkSave}
+                      aria-label="Save link"
+                    >
+                      <Check size={16} weight="bold" />
+                    </button>
+
+                    {toolbarFormatting?.link && (
+                      <button
+                        type="button"
+                        className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                        onClick={handleLinkRemove}
+                        aria-label="Remove link"
+                      >
+                        <LinkBreak size={16} weight="bold" />
+                      </button>
+                    )}
+                  </div>
+                </ControlPopover>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+
           <FormattingToolbarButton
             value="blockquote"
             colour={colour}
