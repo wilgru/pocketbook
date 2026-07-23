@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { noteEditorStateAtom } from "src/common/atoms/noteEditorStateAtom";
 import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
+import { BlankLayout } from "src/common/components/BlankLayout/BlankLayout";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
 import { FormattingToolbar } from "src/common/components/FormattingToolbar/FormattingToolbar";
@@ -10,6 +11,7 @@ import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
+import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTableSection";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
 import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
@@ -19,9 +21,35 @@ import type { Colour } from "src/colours/Colour.type";
 import type { Note, NotesGroup } from "src/notes/Note.type";
 import type { TagLink } from "src/tags/Tag.type";
 
+type StickyNotesGridProps = {
+  notes: Note[];
+  colour: Colour;
+};
+
+const StickyNotesGrid = ({ notes, colour }: StickyNotesGridProps) => {
+  const stickyNotes = notes.filter((note) => {
+    const hasNoTitle = !note.title || note.title.trim() === "";
+    const hasContent = !isNoteContentEmpty(note.content);
+    return hasNoTitle && hasContent;
+  });
+
+  if (stickyNotes.length === 0) {
+    return;
+  }
+
+  return (
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-3">
+      {stickyNotes.map((note) => (
+        <StickyNoteListItem key={note.id} note={note} colour={colour} />
+      ))}
+    </div>
+  );
+};
+
 type NotesLayoutProps = {
   title: string;
   colour?: Colour;
+  layout?: "list" | "table";
   notes: Note[];
   selectedNote: Note | null;
   description: string | null;
@@ -35,6 +63,7 @@ type NotesLayoutProps = {
 export const NotesLayout = ({
   title,
   colour = colours.orange,
+  layout = "list",
   notes,
   selectedNote,
   description,
@@ -89,75 +118,128 @@ export const NotesLayout = ({
     );
   }, [notes, groupNotesBy, title, prefillNewNoteData, groupSortDirection]);
 
-  return (
-    <TwoPaneLayout
-      sidebarTopContent={
-        (description || (links && links.length > 0)) && (
-          <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
-            {description && (
-              <p className="text-sm text-slate-500">{description}</p>
-            )}
+  switch (layout) {
+    case "list":
+      return (
+        <TwoPaneLayout
+          sidebarTopContent={
+            (description || (links && links.length > 0)) && (
+              <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
+                {description && (
+                  <p className="text-sm text-slate-500">{description}</p>
+                )}
 
-            {links &&
-              links.map((link, index) => (
-                <LinkPill key={index} link={link} colour={colour} />
+                {links &&
+                  links.map((link, index) => (
+                    <LinkPill key={index} link={link} colour={colour} />
+                  ))}
+              </div>
+            )
+          }
+          sidebar={
+            <>
+              {effectiveNoteGroups.map((noteGroup) => (
+                <ListSection
+                  title={noteGroup.title}
+                  key={noteGroup.title ?? "no-title"}
+                >
+                  {noteGroup.notes.map((note) => {
+                    const hasNoTitle = !note.title || note.title.trim() === "";
+                    const hasContent = !isNoteContentEmpty(note.content);
+
+                    if (hasNoTitle && hasContent) {
+                      return (
+                        <StickyNoteListItem
+                          key={note.id}
+                          note={note}
+                          colour={colour}
+                        />
+                      );
+                    }
+
+                    return (
+                      <NoteListItem key={note.id} note={note} colour={colour} />
+                    );
+                  })}
+                </ListSection>
               ))}
-          </div>
-        )
-      }
-      sidebar={
-        <>
-          {effectiveNoteGroups.map((noteGroup) => (
-            <ListSection
-              title={noteGroup.title}
-              key={noteGroup.title ?? "no-title"}
-            >
-              {noteGroup.notes.map((note) => {
-                const hasNoTitle = !note.title || note.title.trim() === "";
-                const hasContent = !isNoteContentEmpty(note.content);
 
-                if (hasNoTitle && hasContent) {
-                  return (
-                    <StickyNoteListItem
-                      key={note.id}
-                      note={note}
-                      colour={colour}
-                    />
-                  );
-                }
+              {effectiveNoteGroups.length === 0 && (
+                <EmptyState text="No notes yet" onAdd={onCreateNote} />
+              )}
+            </>
+          }
+          floatingToolbar={
+            <FloatingToolbar visible={isTaskFocused || isEditorFocused}>
+              {activeToolbarContent}
+            </FloatingToolbar>
+          }
+          content={
+            <>
+              {selectedNote ? (
+                <NoteEditor
+                  key={selectedNote.id}
+                  note={selectedNote}
+                  colour={colour}
+                />
+              ) : (
+                <div className="h-full w-full flex flex-col justify-center items-center text-center">
+                  <h1 className="text-gray-400 text-lg">No note selected</h1>
+                </div>
+              )}
+            </>
+          }
+        />
+      );
+    case "table":
+      return (
+        <BlankLayout
+          description={
+            (description || (links && links.length > 0)) && (
+              <>
+                {description && (
+                  <p className="text-sm text-slate-500">{description}</p>
+                )}
 
-                return (
-                  <NoteListItem key={note.id} note={note} colour={colour} />
-                );
-              })}
-            </ListSection>
-          ))}
-
-          {effectiveNoteGroups.length === 0 && (
-            <EmptyState text="No notes yet" onAdd={onCreateNote} />
-          )}
-        </>
-      }
-      floatingToolbar={
-        <FloatingToolbar visible={isTaskFocused || isEditorFocused}>
-          {activeToolbarContent}
-        </FloatingToolbar>
-      }
-      content={
-        <>
-          {selectedNote ? (
-            <NoteEditor
-              key={selectedNote.id}
-              note={selectedNote}
-              colour={colour}
-            />
-          ) : (
-            <div className="h-full w-full flex flex-col justify-center items-center text-center">
-              <h1 className="text-gray-400 text-lg">No note selected</h1>
+                <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
+                  {links &&
+                    links.map((link, index) => (
+                      <LinkPill key={index} link={link} colour={colour} />
+                    ))}
+                </div>
+              </>
+            )
+          }
+          content={
+            <div className="flex flex-col gap-2">
+              {effectiveNoteGroups.map((noteGroup) => (
+                <NoteTableSection
+                  title={noteGroup.title}
+                  key={noteGroup.title ?? "no-title"}
+                  topSection={
+                    <StickyNotesGrid notes={noteGroup.notes} colour={colour} />
+                  }
+                  columns={[
+                    { key: "title", label: "Title" },
+                    { key: "details", label: "Tags" },
+                    {
+                      key: "created",
+                      label: "Created",
+                      className: "text-right",
+                    },
+                  ]}
+                  notes={noteGroup.notes}
+                  colour={colour}
+                />
+              ))}
             </div>
-          )}
-        </>
-      }
-    />
-  );
+          }
+          floatingToolbar={
+            <FloatingToolbar visible={isTaskFocused || isEditorFocused}>
+              {activeToolbarContent}
+            </FloatingToolbar>
+          }
+        />
+      );
+  }
 };

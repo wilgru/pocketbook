@@ -311,6 +311,7 @@ export default function TagComponent() {
       <NotesLayout
         title={tag.name}
         description={tag.description}
+        layout={tag.layout ?? "list"}
         links={tag.links}
         colour={tag.colour}
         notes={sortedNotes}
