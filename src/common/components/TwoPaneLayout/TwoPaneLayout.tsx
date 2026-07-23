@@ -3,18 +3,18 @@ import type { ReactNode } from "react";
 
 type TwoPaneLayoutProps = {
   sidebarTopContent?: ReactNode;
+  showSidebarTopContentDivider?: boolean;
   sidebar: ReactNode;
   content: ReactNode;
   floatingToolbar?: ReactNode;
-  showSidebarTopContentDivider?: boolean;
 };
 
 export const TwoPaneLayout = ({
   sidebarTopContent,
+  showSidebarTopContentDivider = false,
   sidebar,
   content,
   floatingToolbar,
-  showSidebarTopContentDivider = false,
 }: TwoPaneLayoutProps) => {
   return (
     <div className="flex-1 min-h-0 w-full min-w-0 pb-2 px-2 box-border">

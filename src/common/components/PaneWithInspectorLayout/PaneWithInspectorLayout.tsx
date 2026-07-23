@@ -21,7 +21,7 @@ export const PaneWithInspectorLayout = ({
           {content}
         </section>
 
-        <aside className="w-56 min-h-0 mb-2 mr-2 flex flex-col bg-white border border-slate-300 rounded-xl drop-shadow ">
+        <aside className="w-52 min-h-0 mb-2 mr-2 flex flex-col bg-white border border-slate-300 rounded-xl drop-shadow ">
           {sidebarTopContent && (
             <div
               className={cn(

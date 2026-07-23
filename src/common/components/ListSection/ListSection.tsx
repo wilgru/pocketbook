@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 type ListSectionProps = {
   title?: string | null;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export const ListSection = ({ title, children }: ListSectionProps) => {
