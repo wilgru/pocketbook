@@ -105,15 +105,49 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
           </div>
 
           <div>
+            <Label title="Layout" />
+            <div className="mt-1 flex items-center gap-4 text-sm">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="layout"
+                  value="list"
+                  checked={editedTag.layout === "list"}
+                  onChange={() =>
+                    setEditedTag((currentTagToEdit) => ({
+                      ...currentTagToEdit,
+                      layout: "list",
+                    }))
+                  }
+                />
+                List
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="layout"
+                  value="table"
+                  checked={editedTag.layout === "table"}
+                  onChange={() =>
+                    setEditedTag((currentTagToEdit) => ({
+                      ...currentTagToEdit,
+                      layout: "table",
+                    }))
+                  }
+                />
+                Table
+              </label>
+            </div>
+          </div>
+
+          <div>
             <Label
               title="Links"
               tooltipContent="You can add links that will appear underneath this tag's description"
             />
 
-            <LinkMultiInput
-              links={editedTag.links}
-              onChange={onEditLinks}
-            />
+            <LinkMultiInput links={editedTag.links} onChange={onEditLinks} />
           </div>
 
           <div>

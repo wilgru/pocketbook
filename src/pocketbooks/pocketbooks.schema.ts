@@ -7,9 +7,11 @@ export const pocketbooks = sqliteTable("pocketbooks", {
   title: text("title").notNull(),
   icon: text("icon").notNull().default(""),
   colour: text("colour").notNull().$type<ColourName>(),
+  notesLayout: text("notes_layout").notNull().default("list"),
   notesSortBy: text("notes_sort_by").notNull().default("created"),
   notesSortDirection: text("notes_sort_direction").notNull().default("desc"),
   notesGroupBy: text("notes_group_by"),
+  bookmarkedLayout: text("bookmarked_layout").notNull().default("list"),
   bookmarkedSortBy: text("bookmarked_sort_by").notNull().default("created"),
   bookmarkedSortDirection: text("bookmarked_sort_direction")
     .notNull()

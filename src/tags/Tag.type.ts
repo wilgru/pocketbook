@@ -14,6 +14,7 @@ export type Tag = Prettify<
     | "groupBy"
     | "sortBy"
     | "sortDirection"
+    | "layout"
     | "tagGroup"
     | "pocketbook"
     | "user"
@@ -25,6 +26,7 @@ export type Tag = Prettify<
     groupBy: "created" | "tag" | null;
     sortBy: "alphabetical" | "created";
     sortDirection: "asc" | "desc";
+    layout: "list" | "table";
     tagGroupId: string | null;
     noteCount: number;
     created: Dayjs;

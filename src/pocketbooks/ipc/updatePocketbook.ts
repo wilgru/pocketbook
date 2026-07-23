@@ -10,9 +10,11 @@ export type UpdatePocketbookInput = {
   title: string;
   icon: string;
   colour: ColourName;
+  notesLayout: string;
   notesSortBy: string;
   notesSortDirection: string;
   notesGroupBy: string | null;
+  bookmarkedLayout: string;
   bookmarkedSortBy: string;
   bookmarkedSortDirection: string;
   bookmarkedGroupBy: string | null;
@@ -25,9 +27,11 @@ createIpcHandler(
     title,
     icon,
     colour,
+    notesLayout,
     notesSortBy,
     notesSortDirection,
     notesGroupBy,
+    bookmarkedLayout,
     bookmarkedSortBy,
     bookmarkedSortDirection,
     bookmarkedGroupBy,
@@ -40,9 +44,11 @@ createIpcHandler(
         title,
         icon,
         colour,
+        notesLayout,
         notesSortBy,
         notesSortDirection,
         notesGroupBy,
+        bookmarkedLayout,
         bookmarkedSortBy,
         bookmarkedSortDirection,
         bookmarkedGroupBy,

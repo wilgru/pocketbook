@@ -47,6 +47,7 @@ export const useCreateTag = (): UseCreateTagResponse => {
       colour: createTagData.colour.name,
       icon: createTagData.icon,
       description: createTagData.description,
+      layout: createTagData.layout ?? "list",
       groupBy: null,
       sortBy: createTagData.sortBy ?? "created",
       sortDirection: createTagData.sortDirection ?? "desc",

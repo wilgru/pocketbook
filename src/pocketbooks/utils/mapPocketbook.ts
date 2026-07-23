@@ -16,11 +16,13 @@ export const mapPocketbook = (
     colour: getColour(pocketbook.colour),
     created: dayjs.utc(pocketbook.created).local(),
     updated: dayjs.utc(pocketbook.updated).local(),
+    notesLayout: pocketbook.notesLayout ?? "list",
     notesSortBy:
       (pocketbook.notesSortBy as "alphabetical" | "created") ?? "created",
     notesSortDirection:
       (pocketbook.notesSortDirection as "asc" | "desc") ?? "desc",
     notesGroupBy: (pocketbook.notesGroupBy as "created" | "tag" | null) ?? null,
+    bookmarkedLayout: pocketbook.bookmarkedLayout ?? "list",
     bookmarkedSortBy:
       (pocketbook.bookmarkedSortBy as "alphabetical" | "created") ?? "created",
     bookmarkedSortDirection:

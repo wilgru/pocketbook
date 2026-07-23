@@ -31,6 +31,7 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
       colour: updateTagData.colour.name,
       icon: updateTagData.icon,
       description: updateTagData.description,
+      layout: updateTagData.layout ?? "list",
       groupBy: updateTagData.groupBy,
       sortBy: updateTagData.sortBy,
       sortDirection: updateTagData.sortDirection,

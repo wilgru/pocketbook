@@ -57,6 +57,13 @@
       "when": 1778600000000,
       "tag": "0007_add_sort_order_to_tasks",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1784758829966,
+      "tag": "0008_add_layout_columns",
+      "breakpoints": true
     }
   ]
 }

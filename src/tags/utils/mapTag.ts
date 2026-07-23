@@ -16,6 +16,7 @@ export const mapTag = (tag: TagSchema, options: MapTagOptions = {}): Tag => {
     name: tag.name,
     colour: getColour(tag.colour),
     icon: tag.icon,
+    layout: tag.layout ?? "list",
     description: tag.description ?? null,
     noteCount: options.noteCount ?? 0,
     links: tag.links ? JSON.parse(tag.links) : [],

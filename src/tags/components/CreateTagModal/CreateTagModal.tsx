@@ -21,6 +21,7 @@ const getInitialTag = (tagGroupId?: string): NewTag => ({
   description: null,
   colour: colours.orange,
   icon: "tag",
+  layout: "list",
   links: [],
   tagGroupId: tagGroupId ?? null,
   sortBy: "created",
@@ -97,6 +98,43 @@ export const CreateTagModal = ({ tagGroupId }: CreateTagModalProps) => {
               }
               className="block p-1 text-sm w-full bg-white rounded-md border border-slate-300 placeholder:text-slate-500"
             />
+          </div>
+
+          <div>
+            <Label title="Layout" />
+            <div className="mt-1 flex items-center gap-4 text-sm">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="layout"
+                  value="list"
+                  checked={editedTag.layout === "list"}
+                  onChange={() =>
+                    setEditedTag((currentTagToEdit) => ({
+                      ...currentTagToEdit,
+                      layout: "list",
+                    }))
+                  }
+                />
+                List
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="layout"
+                  value="table"
+                  checked={editedTag.layout === "table"}
+                  onChange={() =>
+                    setEditedTag((currentTagToEdit) => ({
+                      ...currentTagToEdit,
+                      layout: "table",
+                    }))
+                  }
+                />
+                Table
+              </label>
+            </div>
           </div>
 
           {/* <div>

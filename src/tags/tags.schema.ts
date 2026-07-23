@@ -18,6 +18,7 @@ export const tags = sqliteTable("tags", {
   name: text("name").notNull(),
   colour: text("colour").notNull().$type<ColourName>(),
   icon: text("icon").notNull().default(""),
+  layout: text("layout").notNull().default("list"),
   description: text("description"),
   groupBy: text("group_by"),
   sortBy: text("sort_by").notNull().default("created"),

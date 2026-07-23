@@ -10,9 +10,11 @@ type UpdatePocketbookProps = {
     | "title"
     | "icon"
     | "colour"
+    | "notesLayout"
     | "notesSortBy"
     | "notesSortDirection"
     | "notesGroupBy"
+    | "bookmarkedLayout"
     | "bookmarkedSortBy"
     | "bookmarkedSortDirection"
     | "bookmarkedGroupBy"
@@ -41,9 +43,11 @@ export const useUpdatePocketbook = (): UseUpdatePocketbookResponse => {
       title: updatePocketbookData.title,
       icon: updatePocketbookData.icon,
       colour: updatePocketbookData.colour.name,
+      notesLayout: updatePocketbookData.notesLayout ?? "list",
       notesSortBy: updatePocketbookData.notesSortBy ?? "created",
       notesSortDirection: updatePocketbookData.notesSortDirection ?? "desc",
       notesGroupBy: updatePocketbookData.notesGroupBy ?? null,
+      bookmarkedLayout: updatePocketbookData.bookmarkedLayout ?? "list",
       bookmarkedSortBy: updatePocketbookData.bookmarkedSortBy ?? "created",
       bookmarkedSortDirection:
         updatePocketbookData.bookmarkedSortDirection ?? "desc",

@@ -12,6 +12,7 @@ export type UpdateTagInput = {
   icon: string;
   description: string | null;
   tagGroupId: string | null;
+  layout: string;
   sortBy: string;
   sortDirection: string;
   groupBy: string | null;
@@ -27,6 +28,7 @@ createIpcHandler(
     icon,
     description,
     tagGroupId,
+    layout,
     sortBy,
     sortDirection,
     groupBy,
@@ -42,6 +44,7 @@ createIpcHandler(
         icon,
         description,
         tagGroup: tagGroupId,
+        layout,
         sortBy,
         sortDirection,
         groupBy,
