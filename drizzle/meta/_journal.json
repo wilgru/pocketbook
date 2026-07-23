@@ -64,6 +64,13 @@
       "when": 1784758829966,
       "tag": "0008_add_layout_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1784801004000,
+      "tag": "0009_add_metric_keys_and_values",
+      "breakpoints": true
     }
   ]
 }
