@@ -5,12 +5,14 @@ import type { Colour } from "src/colours/Colour.type";
 
 type IconPickerProps = {
   selectedIconName: string;
+  allowNoIcon?: boolean;
   colour: Colour;
   onSelectIcon: (iconName: string) => void;
 };
 
 export default function IconPicker({
   selectedIconName,
+  allowNoIcon = false,
   colour,
   onSelectIcon,
 }: IconPickerProps) {
@@ -32,6 +34,24 @@ export default function IconPicker({
           />
         </button>
       ))}
+
+      {allowNoIcon && (
+        <button
+          onClick={() => onSelectIcon("")}
+          className={cn(
+            "flex justify-center items-center h-8 w-8 p-1 rounded-full",
+            selectedIconName === "" && "bg-gray-100",
+          )}
+        >
+          <Icon
+            iconName="empty"
+            weight={selectedIconName === "" ? "fill" : "regular"}
+            className={
+              selectedIconName === "" ? "fill-gray-400" : "fill-gray-300"
+            }
+          />
+        </button>
+      )}
     </div>
   );
 }

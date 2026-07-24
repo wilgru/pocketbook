@@ -166,6 +166,7 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
             <Label title="Icon" />
             <IconPicker
               selectedIconName={editedTag.icon}
+              allowNoIcon
               colour={editedTag.colour}
               onSelectIcon={(iconName) => {
                 setEditedTag((currentTagToEdit) => {

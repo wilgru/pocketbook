@@ -39,6 +39,7 @@ import {
   FlagBannerFold,
   ArrowUpRight,
   Check,
+  Empty,
 } from "@phosphor-icons/react";
 import { ChatCenteredText } from "@phosphor-icons/react/dist/ssr";
 import { icons } from "src/icons/icons.constant";
@@ -157,6 +158,8 @@ const Icon = ({
       return <FlagBannerFold {...iconProps} />;
     case "arrowUpRight":
       return <ArrowUpRight {...iconProps} />;
+    case "empty":
+      return <Empty {...iconProps} weight="regular" />;
     default:
       return <></>;
   }
