@@ -1,11 +1,9 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "src/common/components/Button/Button";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { PocketbookSettingsModal } from "src/pocketbooks/components/PocketbookSettingsModal/PocketbookSettingsModal";
 import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
 
 type PocketbookSwitcherProps = {
@@ -37,6 +35,15 @@ export const PocketbookSwitcher = ({
   pocketbooks,
 }: PocketbookSwitcherProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const onOpenSettingsModal = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("modal", "pocketbook-settings");
+    url.searchParams.set("modalPage", "general");
+
+    window.history.replaceState({}, "", url.toString());
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
 
   return (
     <div
@@ -90,7 +97,6 @@ export const PocketbookSwitcher = ({
                   params={{
                     pocketbookId: pocketbook.id,
                   }}
-                  search={{ noteId: null }}
                   onClick={() => {
                     localStorage.setItem("lastUsedPocketbookId", pocketbook.id);
                     setIsOpen(false);
@@ -136,18 +142,13 @@ export const PocketbookSwitcher = ({
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
 
-      <Dialog.Root>
-        <Dialog.Trigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            iconName="gear"
-            colour={currentPocketbook.colour}
-          />
-        </Dialog.Trigger>
-
-        <PocketbookSettingsModal pocketbook={currentPocketbook} />
-      </Dialog.Root>
+      <Button
+        variant="ghost"
+        size="sm"
+        iconName="gear"
+        colour={currentPocketbook.colour}
+        onClick={onOpenSettingsModal}
+      />
     </div>
   );
 };
