@@ -9,24 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as CreatePocketbookRouteImport } from './routes/create-pocketbook'
 import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as LayoutPocketbookIdUpdatesRouteImport } from './routes/_layout.$pocketbookId.updates'
-import { Route as LayoutPocketbookIdTasksRouteImport } from './routes/_layout.$pocketbookId.tasks'
-import { Route as LayoutPocketbookIdNotesRouteImport } from './routes/_layout.$pocketbookId.notes'
+import { Route as CreatePocketbookRouteImport } from './routes/create-pocketbook'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LayoutPocketbookIdBookmarkedRouteImport } from './routes/_layout.$pocketbookId.bookmarked'
+import { Route as LayoutPocketbookIdNotesRouteImport } from './routes/_layout.$pocketbookId.notes'
+import { Route as LayoutPocketbookIdTasksRouteImport } from './routes/_layout.$pocketbookId.tasks'
+import { Route as LayoutPocketbookIdUpdatesRouteImport } from './routes/_layout.$pocketbookId.updates'
 import { Route as LayoutPocketbookIdTagsTagIdRouteImport } from './routes/_layout.$pocketbookId.tags.$tagId'
 
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreatePocketbookRoute = CreatePocketbookRouteImport.update({
@@ -34,30 +28,36 @@ const CreatePocketbookRoute = CreatePocketbookRouteImport.update({
   path: '/create-pocketbook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutRoute = LayoutRouteImport.update({
-  id: '/_layout',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutPocketbookIdUpdatesRoute =
-  LayoutPocketbookIdUpdatesRouteImport.update({
-    id: '/$pocketbookId/updates',
-    path: '/$pocketbookId/updates',
-    getParentRoute: () => LayoutRoute,
-  } as any)
-const LayoutPocketbookIdTasksRoute = LayoutPocketbookIdTasksRouteImport.update({
-  id: '/$pocketbookId/tasks',
-  path: '/$pocketbookId/tasks',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutPocketbookIdNotesRoute = LayoutPocketbookIdNotesRouteImport.update({
-  id: '/$pocketbookId/notes',
-  path: '/$pocketbookId/notes',
-  getParentRoute: () => LayoutRoute,
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LayoutPocketbookIdBookmarkedRoute =
   LayoutPocketbookIdBookmarkedRouteImport.update({
     id: '/$pocketbookId/bookmarked',
     path: '/$pocketbookId/bookmarked',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+const LayoutPocketbookIdNotesRoute = LayoutPocketbookIdNotesRouteImport.update({
+  id: '/$pocketbookId/notes',
+  path: '/$pocketbookId/notes',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutPocketbookIdTasksRoute = LayoutPocketbookIdTasksRouteImport.update({
+  id: '/$pocketbookId/tasks',
+  path: '/$pocketbookId/tasks',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutPocketbookIdUpdatesRoute =
+  LayoutPocketbookIdUpdatesRouteImport.update({
+    id: '/$pocketbookId/updates',
+    path: '/$pocketbookId/updates',
     getParentRoute: () => LayoutRoute,
   } as any)
 const LayoutPocketbookIdTagsTagIdRoute =
@@ -146,18 +146,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create-pocketbook': {
@@ -167,25 +160,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreatePocketbookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout/$pocketbookId/updates': {
-      id: '/_layout/$pocketbookId/updates'
-      path: '/$pocketbookId/updates'
-      fullPath: '/$pocketbookId/updates'
-      preLoaderRoute: typeof LayoutPocketbookIdUpdatesRouteImport
-      parentRoute: typeof LayoutRoute
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_layout/$pocketbookId/tasks': {
-      id: '/_layout/$pocketbookId/tasks'
-      path: '/$pocketbookId/tasks'
-      fullPath: '/$pocketbookId/tasks'
-      preLoaderRoute: typeof LayoutPocketbookIdTasksRouteImport
+    '/_layout/$pocketbookId/bookmarked': {
+      id: '/_layout/$pocketbookId/bookmarked'
+      path: '/$pocketbookId/bookmarked'
+      fullPath: '/$pocketbookId/bookmarked'
+      preLoaderRoute: typeof LayoutPocketbookIdBookmarkedRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/$pocketbookId/notes': {
@@ -195,11 +188,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutPocketbookIdNotesRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/$pocketbookId/bookmarked': {
-      id: '/_layout/$pocketbookId/bookmarked'
-      path: '/$pocketbookId/bookmarked'
-      fullPath: '/$pocketbookId/bookmarked'
-      preLoaderRoute: typeof LayoutPocketbookIdBookmarkedRouteImport
+    '/_layout/$pocketbookId/tasks': {
+      id: '/_layout/$pocketbookId/tasks'
+      path: '/$pocketbookId/tasks'
+      fullPath: '/$pocketbookId/tasks'
+      preLoaderRoute: typeof LayoutPocketbookIdTasksRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$pocketbookId/updates': {
+      id: '/_layout/$pocketbookId/updates'
+      path: '/$pocketbookId/updates'
+      fullPath: '/$pocketbookId/updates'
+      preLoaderRoute: typeof LayoutPocketbookIdUpdatesRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/$pocketbookId/tags/$tagId': {
