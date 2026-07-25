@@ -15,9 +15,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "prettier": "prettier . --check",
-    "prettier:fix": "prettier . --check --write",
-    "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "prettier:fix": "prettier . --check --write"
   },
   "dependencies": {
     "@lexical/code": "^0.44.0",
@@ -53,13 +51,11 @@
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.2.6",
     "@electron-forge/cli": "^7.11.1",
     "@electron-forge/maker-zip": "^7.11.1",
     "@electron-forge/plugin-vite": "^7.11.1",
     "@electron/rebuild": "^4.0.3",
     "@flydotio/dockerfile": "^0.5.7",
-    "@storybook/react": "^8.6.12",
     "@tanstack/router-devtools": "^1.166.9",
     "@tanstack/router-plugin": "^1.167.0",
     "@types/better-sqlite3": "^7.6.13",
@@ -77,9 +73,7 @@
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "eslint-plugin-storybook": "^0.12.0",
     "postcss": "^8.4.31",
-    "storybook": "^8.6.12",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.0.2",
     "vite": "^7.0.0"

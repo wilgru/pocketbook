@@ -6,7 +6,6 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
     "plugin:import/recommended",
-    "plugin:storybook/recommended",
   ],
   ignorePatterns: ["dist", ".eslintrc.cjs", "node_modules", "drizzle"],
   parser: "@typescript-eslint/parser",
