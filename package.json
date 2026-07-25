@@ -40,14 +40,11 @@
     "debounce": "^1.2.1",
     "drizzle-orm": "^0.45.1",
     "electron-log": "^5.4.3",
-    "get-port": "^7.2.0",
     "jotai": "^2.12.5",
     "lexical": "^0.44.0",
-    "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sort-by": "^1.2.0",
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
@@ -55,8 +52,6 @@
     "@electron-forge/maker-zip": "^7.11.1",
     "@electron-forge/plugin-vite": "^7.11.1",
     "@electron/rebuild": "^4.0.3",
-    "@flydotio/dockerfile": "^0.5.7",
-    "@tanstack/router-devtools": "^1.166.9",
     "@tanstack/router-plugin": "^1.167.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/debounce": "^1.2.4",
