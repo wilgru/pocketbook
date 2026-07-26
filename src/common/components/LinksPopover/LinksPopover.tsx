@@ -72,7 +72,7 @@ export const LinksPopover = ({
           align="center"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
-          <ControlPopover className="p-3 w-[360px]">
+          <ControlPopover className="p-3 w-90">
             <LinkMultiInput
               compact
               links={draftLinks}

@@ -38,7 +38,7 @@ export const NoteTableSection = ({
 
       {topSection}
 
-      <div className="w-full border border-slate-300 rounded-xl drop-shadow bg-white overflow-hidden">
+      <div className="w-full border border-slate-300 rounded-xl drop-shadow-sm bg-white overflow-hidden">
         <table className="w-full border-collapse table-fixed">
           <colgroup>
             {columns.map((column) => (

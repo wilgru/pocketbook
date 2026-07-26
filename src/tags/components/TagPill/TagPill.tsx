@@ -46,7 +46,7 @@ export const TagPill = ({
           {!collapsed && (
             <span
               className={cn(
-                "inline-block overflow-hidden transition-all duration-300 ease-in-out max-w-[10rem] opacity-100",
+                "inline-block overflow-hidden transition-all duration-300 ease-in-out max-w-40 opacity-100",
               )}
             >
               {tag.name}
@@ -79,7 +79,7 @@ export const TagPill = ({
           {!collapsed && (
             <span
               className={cn(
-                "inline-block overflow-hidden transition-all duration-300 ease-in-out max-w-[10rem] opacity-100",
+                "inline-block overflow-hidden transition-all duration-300 ease-in-out max-w-40 opacity-100",
               )}
             >
               {tag.name}

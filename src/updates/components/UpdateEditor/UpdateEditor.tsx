@@ -1,23 +1,23 @@
 import { Link } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
+import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { Button } from "src/common/components/Button/Button";
-import { FormattingToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
+import { FormattingToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
 import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
 import { useDeleteUpdate } from "src/updates/hooks/useDeleteUpdate";
 import { useUpdateUpdate } from "src/updates/hooks/useUpdateUpdate";
 import { getTintClasses } from "src/updates/utils/getTintClasses";
-import type { LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
-import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
 import type { Note } from "src/notes/Note.type";
 import type { Update, UpdateTint } from "src/updates/Update.type";
 
@@ -67,14 +67,12 @@ export const UpdateEditor = ({
   const { updateUpdate } = useUpdateUpdate();
   const { deleteUpdate } = useDeleteUpdate();
 
+  const setNoteToolbarAtom = useSetAtom(NoteToolbarAtom);
+
   const [editedUpdate, setEditedUpdate] = useState<Partial<Update>>(
     getInitialUpdate(update),
   );
   const [isEditing, setIsEditing] = useState(!update.id);
-  const [toolbarFormatting, setToolbarFormatting] =
-    useState<LexicalToolbarFormatting>();
-  const [editor, setEditor] = useState<LexicalEditor | null>(null);
-
   const tintClasses = getTintClasses(editedUpdate.tint);
 
   const onUpdateField = (fields: Partial<Update>) => {
@@ -179,7 +177,7 @@ export const UpdateEditor = ({
     >
       <div
         className={cn(
-          "rounded-xl p-2 flex flex-col border drop-shadow-sm",
+          "rounded-xl p-2 flex flex-col border drop-shadow-xs",
           isEditing
             ? "bg-white border-slate-200 gap-2"
             : cn(tintClasses.card, tintClasses.border),
@@ -235,13 +233,7 @@ export const UpdateEditor = ({
           </div>
         )}
 
-        {isEditing && (
-          <FormattingToolbar
-            toolbarFormatting={toolbarFormatting}
-            editor={editor}
-            colour={resolvedColour}
-          />
-        )}
+        {isEditing && <FormattingToolbar />}
 
         <RichTextEditor
           size="md"
@@ -251,10 +243,18 @@ export const UpdateEditor = ({
           onFocus={() => setIsEditing(true)}
           autoFocus={autoFocus}
           onChange={(delta) => onUpdateField({ content: delta })}
-          onSelectedFormattingChange={(formatting) =>
-            setToolbarFormatting(formatting)
-          }
-          onEditorChange={setEditor}
+          onSelectedFormattingChange={(selectionFormatting) => {
+            setNoteToolbarAtom((current) => ({
+              ...current,
+              toolbarFormatting: selectionFormatting,
+            }));
+          }}
+          onEditorContextReady={(editorContext) => {
+            setNoteToolbarAtom((current) => ({
+              ...current,
+              editorContext,
+            }));
+          }}
         />
 
         {isEditing && (

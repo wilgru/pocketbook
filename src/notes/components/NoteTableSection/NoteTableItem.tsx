@@ -43,7 +43,7 @@ export const NoteTableItem = ({
       onMouseLeave={() => setIsHovered(false)}
       tabIndex={0}
       className={cn(
-        "cursor-pointer border-b border-slate-300 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:ring-inset",
+        "cursor-pointer border-b border-slate-300 text-sm transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:ring-inset",
         isHovered && colour.backgroundPill,
       )}
     >

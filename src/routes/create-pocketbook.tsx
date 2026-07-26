@@ -46,7 +46,7 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-6 justify-center items-center h-screen w-screen bg-slate-100">
-      <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow">
+      <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow-sm">
         <h1 className="text-4xl font-normal font-title tracking-tight ">
           New Pocketbook
         </h1>

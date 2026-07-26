@@ -62,7 +62,7 @@ export const NoteSelect = ({
               colour.backgroundPillInverted,
             )}
           >
-            <span className="max-w-[120px] truncate">
+            <span className="max-w-30 truncate">
               {note.title ?? "Untitled Note"}
             </span>
             <span className="text-xs leading-none">×</span>
@@ -81,7 +81,7 @@ export const NoteSelect = ({
                 colour.backgroundPillInverted,
               )}
             >
-              <span className="max-w-[120px] truncate">
+              <span className="max-w-30 truncate">
                 {selectedSingleNote.title ?? "Untitled Note"}
               </span>
             </button>
@@ -111,7 +111,9 @@ export const NoteSelect = ({
             <ControlPopover
               className="flex flex-col gap-2 text-sm p-3 w-48"
               clearActionLabel={
-                mode === "single" && selectedSingleNote ? "Clear note" : undefined
+                mode === "single" && selectedSingleNote
+                  ? "Clear note"
+                  : undefined
               }
               onClearAction={
                 mode === "single" && selectedSingleNote
@@ -121,7 +123,7 @@ export const NoteSelect = ({
             >
               <input
                 type="text"
-                className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-none focus:border-orange-400"
+                className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-hidden focus:border-orange-400"
                 placeholder="search for a note"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -129,7 +131,9 @@ export const NoteSelect = ({
               />
 
               {filteredNotes.length === 0 && (
-                <p className="text-xs text-slate-400 px-2 py-1">No notes found</p>
+                <p className="text-xs text-slate-400 px-2 py-1">
+                  No notes found
+                </p>
               )}
 
               {filteredNotes.map((note) => (

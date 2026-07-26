@@ -27,7 +27,7 @@ const buttonVariants = cva(
     "gap-2",
     "rounded-full",
     "transition-colors",
-    "focus-visible:outline",
+    "focus-visible:outline-solid",
     "focus-visible:outline-2",
     "focus-visible:outline-offset-2",
     "focus-visible:outline-orange-500",

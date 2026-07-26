@@ -169,7 +169,7 @@ export const TaskEditor = ({
   return (
     <div className="w-full flex gap-1 items-start">
       <button
-        className="pt-[3px] pl-px"
+        className="pt-0.75 pl-px"
         onMouseDown={(e) => {
           e.preventDefault();
         }}
@@ -215,7 +215,7 @@ export const TaskEditor = ({
               })
             }
             className={cn(
-              "flex-1 tracking-tight text-md bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+              "flex-1 tracking-tight text-md bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
               isCompleted || isCancelled
                 ? "text-slate-500"
                 : editedTask.isImportant
@@ -271,7 +271,7 @@ export const TaskEditor = ({
               })
             }
             className={cn(
-              "w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-none",
+              "w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
               isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
             )}
           />

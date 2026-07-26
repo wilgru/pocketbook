@@ -66,7 +66,7 @@ export const CreateTagModal = ({ tagGroupId }: CreateTagModalProps) => {
   return (
     <Dialog.Portal>
       <Dialog.Overlay className="bg-black opacity-25 fixed inset-0 data-[state=open]:animate-overlayShow" />
-      <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] overflow-y-scroll p-4 focus:outline-none bg-white border border-slate-300 rounded-2xl shadow-2xl  data-[state=open]:animate-contentShow">
+      <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-112.5 translate-x-[-50%] translate-y-[-50%] overflow-y-scroll p-4 focus:outline-hidden bg-white border border-slate-300 rounded-2xl shadow-2xl">
         <Dialog.Title className="mb-5 font-title text-xl">
           Create Tag
         </Dialog.Title>

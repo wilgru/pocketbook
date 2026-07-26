@@ -41,7 +41,7 @@ export const StickyNoteListItem = ({
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ "--sticky-rotate": `${rotation}deg` } as React.CSSProperties}
-      className="w-full my-1 text-sm transition-colors [transform:rotate(var(--sticky-rotate,0deg))] motion-reduce:transform-none"
+      className="w-full my-1 text-sm transition-colors transform-[rotate(var(--sticky-rotate,0deg))] motion-reduce:transform-none"
     >
       {({ isActive }: { isActive: boolean }) => {
         const stickyMetaColourClass =
@@ -50,7 +50,7 @@ export const StickyNoteListItem = ({
         return (
           <div
             className={cn(
-              "flex flex-col gap-2 px-3 py-2 rounded-sm shadow",
+              "flex flex-col gap-2 px-3 py-2 rounded-xs shadow-sm",
               isActive || isHovered
                 ? cn(colour.textPill, colour.backgroundPill)
                 : "bg-yellow-200",

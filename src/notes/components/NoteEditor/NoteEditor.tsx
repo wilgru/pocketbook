@@ -1,7 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import {
@@ -48,8 +48,7 @@ const NoteEditor = ({
   const { deleteNote } = useDeleteNote();
   const { updates } = useGetUpdates({ noteId: note.id });
 
-  const setFormattingToolbarAtom = useSetAtom(NoteToolbarAtom);
-  const { isToolbarBusy } = useAtomValue(NoteToolbarAtom);
+  const [noteToolbarAtom, setNoteToolbarAtom] = useAtom(NoteToolbarAtom);
 
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewUpdate, setShowNewUpdate] = useState(false);
@@ -112,9 +111,9 @@ const NoteEditor = ({
   useEffect(() => {
     return () => {
       debouncedSave.flush();
-      setFormattingToolbarAtom(defaultNoteToolbarAtom);
+      setNoteToolbarAtom(defaultNoteToolbarAtom);
     };
-  }, [debouncedSave, setFormattingToolbarAtom]);
+  }, [debouncedSave, setNoteToolbarAtom]);
 
   // Scroll to the new update editor when it appears.
   useEffect(() => {
@@ -127,7 +126,7 @@ const NoteEditor = ({
   }, [showNewUpdate]);
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px]">
+    <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-250">
       <div className="w-full flex flex-col gap-1 justify-between border-b border-slate-200 pb-3">
         <textarea
           ref={titleRef}
@@ -136,7 +135,7 @@ const NoteEditor = ({
           value={editedNote.title ?? ""}
           placeholder="No Title"
           onChange={(e) => onUpdateNote({ title: e.target.value })}
-          className="text-4xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-none"
+          className="text-4xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-hidden"
         />
 
         <div className="flex flex-row flex-wrap gap-1.5 items-center">
@@ -185,21 +184,21 @@ const NoteEditor = ({
 
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              className={`ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5 hover:${colour.textPill} hover:${colour.backgroundPill}`}
+              className={`ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5 hover:${colour.textPill} hover:${colour.backgroundPill}`}
               aria-label="Open note actions"
             >
               <Icon iconName="dotsThreeOutline" size="xs" />
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content
-                className="w-40 flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 drop-shadow"
+                className="w-40 flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 drop-shadow-sm"
                 side="bottom"
                 align="start"
                 sideOffset={6}
               >
                 <DropdownMenu.Item
                   onSelect={() => void onDeleteNote()}
-                  className="leading-none text-sm p-2 outline-none rounded-xl cursor-pointer transition-colors hover:bg-red-100"
+                  className="leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer transition-colors hover:bg-red-100"
                 >
                   Delete
                 </DropdownMenu.Item>
@@ -240,13 +239,13 @@ const NoteEditor = ({
           colour={colour}
           onChange={(content) => onUpdateNote({ content: content })}
           onSelectedFormattingChange={(selectionFormatting) => {
-            setFormattingToolbarAtom((s) => ({
+            setNoteToolbarAtom((s) => ({
               ...s,
               toolbarFormatting: selectionFormatting,
             }));
           }}
           onFocus={() =>
-            setFormattingToolbarAtom((current) => ({
+            setNoteToolbarAtom((current) => ({
               ...current,
               isVisible: true,
             }))
@@ -254,11 +253,11 @@ const NoteEditor = ({
           onBlur={(e) => {
             e.preventDefault();
 
-            if (isToolbarBusy) {
+            if (noteToolbarAtom.isToolbarBusy) {
               return;
             }
 
-            setFormattingToolbarAtom((current) => ({
+            setNoteToolbarAtom((current) => ({
               ...current,
               isVisible: false,
             }));
@@ -266,7 +265,7 @@ const NoteEditor = ({
             e.target.blur();
           }}
           onEditorContextReady={(editorContext) =>
-            setFormattingToolbarAtom((current) => ({
+            setNoteToolbarAtom((current) => ({
               ...current,
               colour: colour,
               editorContext,

@@ -71,7 +71,7 @@ export const NavItem = ({
               <Icon
                 iconName={iconName}
                 className={cn(
-                  "flex-shrink-0",
+                  "shrink-0",
                   isHovered || isActive || (colour && !ghost)
                     ? colour.textPill
                     : "text-slate-500",

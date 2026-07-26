@@ -40,7 +40,7 @@ export const Sidebar = () => {
     <aside className="min-w-56 max-w-56 flex flex-col h-full">
       <div
         className={cn(
-          "flex flex-row items-center gap-2 electron-drag-region flex-shrink-0 h-[50px] pl-2",
+          "flex flex-row items-center gap-2 electron-drag-region shrink-0 h-12.5 pl-2",
           isWindows ? "justify-between" : "justify-end",
         )}
       >

@@ -183,7 +183,7 @@ export const UpdatesLayout = ({
         </ListSection>
       ))}
       content={
-        <div className="h-full w-full max-w-[800px] flex flex-col pb-6">
+        <div className="h-full w-full max-w-200 flex flex-col pb-6">
           {pendingNew && (
             <UpdateEditor
               update={{ notes: [], tint: null }}

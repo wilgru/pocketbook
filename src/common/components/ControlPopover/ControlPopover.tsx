@@ -16,7 +16,7 @@ export const ControlPopover = ({
   return (
     <div
       className={cn(
-        "bg-white border border-slate-200 rounded-2xl shadow-xl focus:outline-none",
+        "bg-white border border-slate-200 rounded-2xl shadow-xl focus:outline-hidden",
         className,
       )}
     >

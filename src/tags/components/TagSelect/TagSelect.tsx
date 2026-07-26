@@ -101,7 +101,7 @@ export const TagSelect = ({
             <ControlPopover className="flex flex-col gap-2 text-sm p-3 w-48">
               <input
                 type="text"
-                className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-none focus:border-orange-400"
+                className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-hidden focus:border-orange-400"
                 placeholder="search for a tag"
                 value={search}
                 onChange={(e) => {

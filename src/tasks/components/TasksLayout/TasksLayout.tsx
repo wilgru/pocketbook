@@ -81,7 +81,7 @@ export const TasksLayout = ({
         </FloatingToolbar>
       }
       content={
-        <div className="h-full w-full max-w-[800px] flex flex-col gap-6">
+        <div className="h-full w-full max-w-200 flex flex-col gap-6">
           {effectiveTaskGroups.length === 0 && (
             <EmptyState text="No tasks yet" />
           )}

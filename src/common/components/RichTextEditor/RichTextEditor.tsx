@@ -227,7 +227,7 @@ const LexicalEditorBridge = ({
     <RichTextPlugin
       contentEditable={
         <ContentEditable
-          className="editor-input outline-none"
+          className="editor-input outline-hidden"
           onFocus={onFocus}
           onBlur={onBlur}
         />

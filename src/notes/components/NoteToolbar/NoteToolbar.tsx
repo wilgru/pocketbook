@@ -187,7 +187,7 @@ export const FormattingToolbar = () => {
                 align="center"
                 onOpenAutoFocus={(e) => e.preventDefault()}
               >
-                <ControlPopover className="p-3 w-[360px]">
+                <ControlPopover className="p-3 w-90">
                   <div
                     className="flex items-center gap-1"
                     onMouseDown={(e) => e.stopPropagation()}
@@ -206,7 +206,7 @@ export const FormattingToolbar = () => {
                         }
                       }}
                       placeholder="https://example.com"
-                      className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:border-slate-400"
+                      className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
                     />
 
                     <button

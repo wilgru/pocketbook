@@ -136,7 +136,7 @@ export default function TagComponent() {
 
             <DropdownMenu.Portal>
               <DropdownMenu.Content
-                className="flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 w-40 drop-shadow"
+                className="flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 w-40 drop-shadow-sm"
                 sideOffset={2}
                 align="start"
               >
@@ -164,7 +164,7 @@ export default function TagComponent() {
 
                   <DropdownMenu.RadioItem
                     className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-none rounded-xl cursor-pointer transition-colors",
+                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
                       `data-[highlighted]:${tag.colour.backgroundPill}`,
                       `data-[highlighted]:${tag.colour.textPill}`,
                     )}
@@ -178,7 +178,7 @@ export default function TagComponent() {
 
                   <DropdownMenu.RadioItem
                     className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-none rounded-xl cursor-pointer transition-colors",
+                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
                       `data-[highlighted]:${tag.colour.backgroundPill}`,
                       `data-[highlighted]:${tag.colour.textPill}`,
                     )}
@@ -191,7 +191,7 @@ export default function TagComponent() {
                   </DropdownMenu.RadioItem>
                   <DropdownMenu.RadioItem
                     className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-none rounded-xl cursor-pointer transition-colors",
+                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
                       `data-[highlighted]:${tag.colour.backgroundPill}`,
                       `data-[highlighted]:${tag.colour.textPill}`,
                     )}
@@ -224,7 +224,7 @@ export default function TagComponent() {
 
                   <DropdownMenu.RadioItem
                     className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-none rounded-xl cursor-pointer transition-colors",
+                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
                       `data-[highlighted]:${tag.colour.backgroundPill}`,
                       `data-[highlighted]:${tag.colour.textPill}`,
                     )}
@@ -237,7 +237,7 @@ export default function TagComponent() {
                   </DropdownMenu.RadioItem>
                   <DropdownMenu.RadioItem
                     className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-none rounded-xl cursor-pointer transition-colors",
+                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
                       `data-[highlighted]:${tag.colour.backgroundPill}`,
                       `data-[highlighted]:${tag.colour.textPill}`,
                     )}
@@ -270,7 +270,7 @@ export default function TagComponent() {
 
                   <DropdownMenu.RadioItem
                     className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-none rounded-xl cursor-pointer transition-colors",
+                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
                       `data-[highlighted]:${tag.colour.backgroundPill}`,
                       `data-[highlighted]:${tag.colour.textPill}`,
                     )}
@@ -283,7 +283,7 @@ export default function TagComponent() {
                   </DropdownMenu.RadioItem>
                   <DropdownMenu.RadioItem
                     className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-none rounded-xl cursor-pointer transition-colors",
+                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
                       `data-[highlighted]:${tag.colour.backgroundPill}`,
                       `data-[highlighted]:${tag.colour.textPill}`,
                     )}

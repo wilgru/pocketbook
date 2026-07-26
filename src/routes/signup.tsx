@@ -56,7 +56,7 @@ function SignUpIndexComponent(): JSX.Element {
           Something went wrong. Please try again
         </div>
       )}
-      <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow">
+      <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow-sm">
         <h1 className="text-4xl font-normal font-title tracking-tight ">
           Sign Up
         </h1>
