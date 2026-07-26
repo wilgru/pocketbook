@@ -14,46 +14,26 @@ import {
 } from "@phosphor-icons/react";
 import * as Popover from "@radix-ui/react-popover";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import { useAtomValue, useSetAtom } from "jotai";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
+import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarCommands";
-import { FormattingToolbarButton } from "./FormattingToolbarButton";
-import type { BaseSelection, LexicalEditor } from "lexical";
-import type { Colour } from "src/colours/Colour.type";
-import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
+import { FormattingToolbarButton } from "./NoteToolbarButton";
+import type { BaseSelection } from "lexical";
 
-type FormattingToolbarProps = {
-  toolbarFormatting?: LexicalToolbarFormatting;
-  editor: LexicalEditor | null;
-  colour: Colour;
-  isEditorFocused?: boolean;
-  onLinkPopoverOpenChange?: (open: boolean) => void;
-};
-
-export const FormattingToolbar = ({
-  toolbarFormatting,
-  editor,
-  colour,
-  isEditorFocused,
-  onLinkPopoverOpenChange,
-}: FormattingToolbarProps) => {
-  const [isLinkPopoverOpen, setIsLinkPopoverOpen] = useState(false);
+export const FormattingToolbar = () => {
   const [linkUrl, setLinkUrl] = useState("");
   const linkInputRef = useRef<HTMLInputElement | null>(null);
   const savedSelectionRef = useRef<BaseSelection | null>(null);
 
-  // When the editor regains focus, reset any stale link editing state.
-  useEffect(() => {
-    if (isEditorFocused) {
-      setIsLinkPopoverOpen(false);
-      setLinkUrl("");
-      savedSelectionRef.current = null;
-    }
-  }, [isEditorFocused]);
+  const { editorContext, toolbarFormatting, colour, isToolbarBusy } =
+    useAtomValue(NoteToolbarAtom);
+  const setFormattingToolbarAtom = useSetAtom(NoteToolbarAtom);
 
   useEffect(() => {
-    if (!isLinkPopoverOpen) {
+    if (isToolbarBusy) {
       return;
     }
 
@@ -61,10 +41,10 @@ export const FormattingToolbar = ({
       linkInputRef.current?.focus();
       linkInputRef.current?.select();
     });
-  }, [isLinkPopoverOpen]);
+  }, [isToolbarBusy]);
 
   const saveSelectionSnapshot = () => {
-    editor?.getEditorState().read(() => {
+    editorContext?.getEditorState().read(() => {
       const selection = $getSelection();
 
       if (!$isRangeSelection(selection)) {
@@ -80,8 +60,7 @@ export const FormattingToolbar = ({
   };
 
   const handleLinkPopoverOpenChange = (open: boolean) => {
-    setIsLinkPopoverOpen(open);
-    onLinkPopoverOpenChange?.(open);
+    setFormattingToolbarAtom((s) => ({ ...s, isToolbarBusy: open }));
 
     if (open) {
       if (!savedSelectionRef.current) {
@@ -93,11 +72,13 @@ export const FormattingToolbar = ({
 
     setLinkUrl("");
     savedSelectionRef.current = null;
+
+    editorContext?.focus();
   };
 
   const handleLinkSave = () => {
     executeLexicalToolbarAction(
-      editor,
+      editorContext,
       "link",
       linkUrl,
       savedSelectionRef.current,
@@ -106,7 +87,7 @@ export const FormattingToolbar = ({
   };
 
   const handleLinkRemove = () => {
-    executeLexicalToolbarAction(editor, "link");
+    executeLexicalToolbarAction(editorContext, "link");
     handleLinkPopoverOpenChange(false);
   };
 
@@ -134,35 +115,37 @@ export const FormattingToolbar = ({
           <FormattingToolbarButton
             value="bold"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "bold")}
+            onClick={() => executeLexicalToolbarAction(editorContext, "bold")}
           >
             <TextB size={16} weight="bold" />
           </FormattingToolbarButton>
           <FormattingToolbarButton
             value="italic"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "italic")}
+            onClick={() => executeLexicalToolbarAction(editorContext, "italic")}
           >
             <TextItalic size={16} weight="bold" />
           </FormattingToolbarButton>
           <FormattingToolbarButton
             value="underline"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "underline")}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "underline")
+            }
           >
             <TextUnderline size={16} weight="bold" />
           </FormattingToolbarButton>
           <FormattingToolbarButton
             value="strike"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "strike")}
+            onClick={() => executeLexicalToolbarAction(editorContext, "strike")}
           >
             <TextStrikethrough size={16} weight="bold" />
           </FormattingToolbarButton>
           <FormattingToolbarButton
             value="code"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "code")}
+            onClick={() => executeLexicalToolbarAction(editorContext, "code")}
           >
             <Code size={16} weight="bold" />
           </FormattingToolbarButton>
@@ -172,24 +155,23 @@ export const FormattingToolbar = ({
           <FormattingToolbarButton
             value="ordered"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "ordered")}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "ordered")
+            }
           >
             <ListNumbers size={16} weight="bold" />
           </FormattingToolbarButton>
           <FormattingToolbarButton
             value="bullet"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "bullet")}
+            onClick={() => executeLexicalToolbarAction(editorContext, "bullet")}
           >
             <ListBullets size={16} weight="bold" />
           </FormattingToolbarButton>
         </div>
 
         <div className="flex flex-row gap-1 px-1 pr-1">
-          <Popover.Root
-            open={isLinkPopoverOpen}
-            onOpenChange={handleLinkPopoverOpenChange}
-          >
+          <Popover.Root onOpenChange={handleLinkPopoverOpenChange}>
             <Popover.Trigger asChild>
               <span onMouseDownCapture={handleLinkTriggerMouseDown}>
                 <FormattingToolbarButton value="link" colour={colour}>
@@ -255,14 +237,18 @@ export const FormattingToolbar = ({
           <FormattingToolbarButton
             value="blockquote"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "blockquote")}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "blockquote")
+            }
           >
             <Quotes size={16} weight="bold" />
           </FormattingToolbarButton>
           <FormattingToolbarButton
             value="code-block"
             colour={colour}
-            onClick={() => executeLexicalToolbarAction(editor, "code-block")}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "code-block")
+            }
           >
             <CodeBlock size={16} weight="bold" />
           </FormattingToolbarButton>

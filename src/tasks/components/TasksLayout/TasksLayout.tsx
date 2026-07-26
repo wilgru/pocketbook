@@ -1,13 +1,13 @@
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
-import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
+import { taskToolbarAtom } from "src/common/atoms/taskToolbarAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
-import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
+import { TaskToolbar } from "src/tasks/components/TaskToolbar/TaskToolbar";
 import { groupTasks } from "src/tasks/utils/groupTasks";
 import { TasksSection } from "../TasksSection/TasksSection";
 import type { Colour } from "src/colours/Colour.type";
@@ -30,7 +30,7 @@ export const TasksLayout = ({
   tasks,
   noNoteEditorTrigger,
 }: TasksLayoutProps) => {
-  const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
+  const { isVisible } = useAtomValue(taskToolbarAtom);
   const groupedTasks = useMemo(() => groupTasks(tasks, "note"), [tasks]);
 
   // When the toolbar plus button is clicked and there's no "No Note" group yet, synthesise one so TasksSection can receive the trigger and create a task.
@@ -76,8 +76,8 @@ export const TasksLayout = ({
         </ListSection>
       }
       floatingToolbar={
-        <FloatingToolbar visible={isTaskFocused}>
-          <TaskFloatingToolbar />
+        <FloatingToolbar visible={isVisible}>
+          <TaskToolbar />
         </FloatingToolbar>
       }
       content={

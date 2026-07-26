@@ -37,7 +37,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.21",
-    "debounce": "^1.2.1",
     "drizzle-orm": "^0.45.2",
     "electron-log": "^5.4.4",
     "jotai": "^2.20.2",
@@ -45,7 +44,8 @@
     "match-sorter": "^6.3.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwind-merge": "^2.6.1"
+    "tailwind-merge": "^2.6.1",
+    "use-debounce": "^10.1.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.11.2",

@@ -14,6 +14,7 @@ type TagPillProps = {
   onClick?: (id: string) => void;
 };
 
+// TODO: refactor to have use cva for styles like Button component
 export const TagPill = ({
   tag,
   size = "sm",
@@ -57,7 +58,7 @@ export const TagPill = ({
         <div
           className={cn(
             "h-fit w-fit flex items-center gap-2 rounded-full transition-colors",
-            size === "xs" && "text-[0.625rem] font-normal py-0.5 pl-0.5 pr-1",
+            size === "xs" && "text-[0.625rem] font-normal pl-1.5 pr-2",
             size === "sm" && "text-xs font-normal py-1 pl-1 pr-2",
             size === "md" && "text-sm font-medium py-2 pl-2 pr-3",
             size === "lg" && "text-md font-medium py-3 pl-3 pr-4",

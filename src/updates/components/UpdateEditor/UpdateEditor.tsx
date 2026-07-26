@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { FormattingToolbar } from "src/common/components/FormattingToolbar/FormattingToolbar";
+import { FormattingToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";

@@ -3,18 +3,20 @@ import type { LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
 import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
 
-type NoteEditorState = {
-  isEditorFocused: boolean;
-  editor: LexicalEditor | null;
+type NoteToolbarAtom = {
+  editorContext: LexicalEditor | null;
+  isVisible: boolean;
+  isToolbarBusy: boolean;
   toolbarFormatting: LexicalToolbarFormatting | undefined;
   colour: Colour | undefined;
-  onLinkPopoverOpenChange: ((open: boolean) => void) | null;
 };
 
-export const noteEditorStateAtom = atom<NoteEditorState>({
-  isEditorFocused: false,
-  editor: null,
+export const defaultNoteToolbarAtom: NoteToolbarAtom = {
+  editorContext: null,
+  isVisible: false,
+  isToolbarBusy: false,
   toolbarFormatting: undefined,
   colour: undefined,
-  onLinkPopoverOpenChange: null,
-});
+};
+
+export const NoteToolbarAtom = atom<NoteToolbarAtom>(defaultNoteToolbarAtom);

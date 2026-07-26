@@ -56,8 +56,8 @@ type RichTextSurfaceProps = {
   onChange?: (content: string) => void;
   onSelectedFormattingChange?: (formatting: LexicalToolbarFormatting) => void;
   onFocus?: () => void;
-  onBlur?: () => void;
-  onEditorChange?: (editor: LexicalEditor | null) => void;
+  onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
+  onEditorContextReady?: (editor: LexicalEditor | null) => void;
 };
 
 const HEADING_H1_H2: ElementTransformer = {
@@ -135,7 +135,7 @@ const LexicalEditorBridge = ({
   onSelectedFormattingChange,
   onFocus,
   onBlur,
-  onEditorChange,
+  onEditorContextReady,
 }: Omit<
   RichTextSurfaceProps,
   "className" | "style" | "colour" | "size" | "onClick"
@@ -143,14 +143,14 @@ const LexicalEditorBridge = ({
   const [editor] = useLexicalComposerContext();
   const lastSerializedValueRef = useRef<string>(normalizeLexicalContent(value));
   const hasAppliedInitialValueRef = useRef(false);
-  const onEditorChangeRef = useRef(onEditorChange);
-  onEditorChangeRef.current = onEditorChange;
+  const onEditorContextReadyRef = useRef(onEditorContextReady);
 
   useEffect(() => {
-    onEditorChangeRef.current?.(editor);
+    const editorContextReady = onEditorContextReadyRef.current;
+    editorContextReady?.(editor);
 
     return () => {
-      onEditorChangeRef.current?.(null);
+      editorContextReady?.(null);
     };
   }, [editor]);
 
@@ -253,18 +253,8 @@ export const RichTextEditor = ({
   onSelectedFormattingChange,
   onFocus,
   onBlur,
-  onEditorChange,
+  onEditorContextReady,
 }: RichTextSurfaceProps) => {
-  const initialConfig = useRef({
-    namespace: "PocketbookLexicalEditor",
-    nodes,
-    onError(error: Error) {
-      throw error;
-    },
-    theme,
-    editorState: normalizeLexicalContent(value),
-  }).current;
-
   const linkColorStyle = colour
     ? ({ "--link-color": getColourHex(colour) } as CSSProperties)
     : undefined;
@@ -281,7 +271,17 @@ export const RichTextEditor = ({
       style={{ ...linkColorStyle, ...style }}
       onClick={onClick}
     >
-      <LexicalComposer initialConfig={initialConfig}>
+      <LexicalComposer
+        initialConfig={{
+          namespace: "PocketbookLexicalEditor",
+          nodes,
+          onError(error: Error) {
+            throw error;
+          },
+          theme,
+          editorState: normalizeLexicalContent(value),
+        }}
+      >
         <HistoryPlugin />
         <LinkPlugin />
         <ListPlugin />
@@ -297,7 +297,7 @@ export const RichTextEditor = ({
           onSelectedFormattingChange={onSelectedFormattingChange}
           onFocus={onFocus}
           onBlur={onBlur}
-          onEditorChange={onEditorChange}
+          onEditorContextReady={onEditorContextReady}
         />
       </LexicalComposer>
     </div>

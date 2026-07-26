@@ -1,28 +1,30 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
-import debounce from "debounce";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { noteEditorStateAtom } from "src/common/atoms/noteEditorStateAtom";
+import {
+  defaultNoteToolbarAtom,
+  NoteToolbarAtom,
+} from "src/common/atoms/noteToolbarStateAtom";
 import { Button } from "src/common/components/Button/Button";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
+import { LinksPopover } from "src/common/components/LinksPopover/LinksPopover";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { NoteLinksPopover } from "src/notes/components/NoteLinksPopover/NoteLinksPopover";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
+import { TagSelect } from "src/tags/components/TagSelect/TagSelect";
+import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
-import { useTaskReorder } from "src/tasks/hooks/useTaskReorder";
 import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
-import { TagSelect } from "../../../tags/components/TagSelect/TagSelect";
-import { TaskEditor } from "../../../tasks/components/TaskEditor/TaskEditor";
+import { useDebouncedCallback } from "use-debounce";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
 
@@ -37,92 +39,33 @@ const NoteEditor = ({
   colour = colours.orange,
   onSave,
 }: NoteEditorProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const { createNote } = useCreateNote();
   const { createTask } = useCreateTask();
-  const { getMoveCallbacks } = useTaskReorder();
   const { updateNote } = useUpdateNote();
   const { deleteNote } = useDeleteNote();
   const { updates } = useGetUpdates({ noteId: note.id });
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const setEditorState = useSetAtom(noteEditorStateAtom);
+  const setFormattingToolbarAtom = useSetAtom(NoteToolbarAtom);
+  const { isToolbarBusy } = useAtomValue(NoteToolbarAtom);
 
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewUpdate, setShowNewUpdate] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
-  const [isFormattingLinkPopoverOpen, setIsFormattingLinkPopoverOpen] =
-    useState(false);
 
   const newUpdateRef = useRef<HTMLDivElement>(null);
   const titleRef = useAutoResize(editedNote.title);
-  const isFormattingLinkPopoverOpenRef = useRef(false);
 
-  // Ref that always points to the latest save implementation so the debounced
-  // function never closes over stale state.
-  const saveRef = useRef<() => void>();
-  saveRef.current = () => {
+  const debouncedSave = useDebouncedCallback(() => {
     if (editedNote.id) {
       updateNote({ noteId: editedNote.id, updateNoteData: editedNote });
     } else {
       createNote({ createNoteData: editedNote });
     }
     onSave?.();
-  };
-
-  // Stable debounced save – created once and reused across renders.
-  const debouncedSave = useRef(
-    debounce(() => saveRef.current?.(), 500),
-  ).current;
-
-  const stableLinkPopoverOpenChangeCallback = useRef((open: boolean) => {
-    isFormattingLinkPopoverOpenRef.current = open;
-    setIsFormattingLinkPopoverOpen(open);
-    if (open) {
-      setEditorState((s) => ({ ...s, isEditorFocused: true }));
-    }
-  }).current;
-
-  // Keep the colour in the toolbar atom in sync with the current note's colour.
-  useEffect(() => {
-    setEditorState((s) => ({ ...s, colour }));
-  }, [colour, setEditorState]);
-
-  useEffect(() => {
-    setEditorState((s) => ({
-      ...s,
-      onLinkPopoverOpenChange: stableLinkPopoverOpenChangeCallback,
-    }));
-
-    return () => {
-      setEditorState((s) => ({ ...s, onLinkPopoverOpenChange: null }));
-    };
-  }, [setEditorState, stableLinkPopoverOpenChangeCallback]);
-
-  // Flush any pending debounced save when the component unmounts (navigation).
-  useEffect(() => {
-    return () => {
-      debouncedSave.flush();
-      setEditorState({
-        isEditorFocused: false,
-        editor: null,
-        toolbarFormatting: undefined,
-        colour: undefined,
-        onLinkPopoverOpenChange: null,
-      });
-    };
-  }, [debouncedSave, setEditorState]);
-
-  // Scroll to the new update editor when it appears.
-  useEffect(() => {
-    if (showNewUpdate) {
-      newUpdateRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
-    }
-  }, [showNewUpdate]);
+  }, 500);
 
   const onCreateTask = async (insertAfterSortOrder?: number) => {
     const createdTask = await createTask({
@@ -143,6 +86,7 @@ const NoteEditor = ({
       setNewTaskFocusId(createdTask.id);
     }
   };
+
   const onUpdateNote = (updateNoteData: Partial<Note>) => {
     setEditedNote((currentEditedNote) => ({
       ...currentEditedNote,
@@ -153,7 +97,7 @@ const NoteEditor = ({
   };
 
   const onDeleteNote = async () => {
-    debouncedSave.clear();
+    debouncedSave.cancel();
     await deleteNote({ noteId: editedNote.id });
 
     navigate({
@@ -163,6 +107,24 @@ const NoteEditor = ({
       },
     });
   };
+
+  // Flush any pending debounced save when the component unmounts (navigation).
+  useEffect(() => {
+    return () => {
+      debouncedSave.flush();
+      setFormattingToolbarAtom(defaultNoteToolbarAtom);
+    };
+  }, [debouncedSave, setFormattingToolbarAtom]);
+
+  // Scroll to the new update editor when it appears.
+  useEffect(() => {
+    if (showNewUpdate) {
+      newUpdateRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [showNewUpdate]);
 
   return (
     <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-[1000px]">
@@ -185,7 +147,7 @@ const NoteEditor = ({
             onChange={(tags) => onUpdateNote({ tags })}
           />
 
-          <NoteLinksPopover
+          <LinksPopover
             links={editedNote.links}
             colour={colour}
             onChange={(links) => onUpdateNote({ links })}
@@ -257,7 +219,7 @@ const NoteEditor = ({
 
       {note.tasks && note.tasks.length > 0 && (
         <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-4">
-          {note.tasks.map((task, index) => (
+          {note.tasks.map((task) => (
             <TaskEditor
               key={task.id}
               task={task}
@@ -265,7 +227,6 @@ const NoteEditor = ({
               onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
-              {...getMoveCallbacks(index, note.tasks)}
             />
           ))}
         </div>
@@ -277,26 +238,40 @@ const NoteEditor = ({
           size="lg"
           value={editedNote.content}
           colour={colour}
-          onChange={(delta) => onUpdateNote({ content: delta })}
+          onChange={(content) => onUpdateNote({ content: content })}
           onSelectedFormattingChange={(selectionFormatting) => {
-            setEditorState((s) => ({
+            setFormattingToolbarAtom((s) => ({
               ...s,
               toolbarFormatting: selectionFormatting,
             }));
           }}
           onFocus={() =>
-            setEditorState((s) => ({ ...s, isEditorFocused: true }))
+            setFormattingToolbarAtom((current) => ({
+              ...current,
+              isVisible: true,
+            }))
           }
-          onBlur={() => {
-            if (
-              isFormattingLinkPopoverOpenRef.current ||
-              isFormattingLinkPopoverOpen
-            ) {
+          onBlur={(e) => {
+            e.preventDefault();
+
+            if (isToolbarBusy) {
               return;
             }
-            setEditorState((s) => ({ ...s, isEditorFocused: false }));
+
+            setFormattingToolbarAtom((current) => ({
+              ...current,
+              isVisible: false,
+            }));
+
+            e.target.blur();
           }}
-          onEditorChange={(editor) => setEditorState((s) => ({ ...s, editor }))}
+          onEditorContextReady={(editorContext) =>
+            setFormattingToolbarAtom((current) => ({
+              ...current,
+              colour: colour,
+              editorContext,
+            }))
+          }
         />
       </div>
 

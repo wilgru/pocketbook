@@ -1,20 +1,20 @@
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
-import { noteEditorStateAtom } from "src/common/atoms/noteEditorStateAtom";
-import { taskEditorStateAtom } from "src/common/atoms/taskEditorStateAtom";
+import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
+import { taskToolbarAtom } from "src/common/atoms/taskToolbarAtom";
 import { BlankLayout } from "src/common/components/BlankLayout/BlankLayout";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
-import { FormattingToolbar } from "src/common/components/FormattingToolbar/FormattingToolbar";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTableSection";
+import { FormattingToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
-import { TaskFloatingToolbar } from "src/tasks/components/TaskFloatingToolbar/TaskFloatingToolbar";
+import { TaskToolbar } from "src/tasks/components/TaskToolbar/TaskToolbar";
 import { NoteListItem } from "../NoteListItem/NoteListItem";
 import { StickyNoteListItem } from "../NoteListItem/StickyNoteListItem";
 import type { Colour } from "src/colours/Colour.type";
@@ -73,25 +73,14 @@ export const NotesLayout = ({
   groupSortDirection = "desc",
   onCreateNote,
 }: NotesLayoutProps) => {
-  const {
-    isEditorFocused,
-    editor,
-    toolbarFormatting,
-    colour: editorColour,
-    onLinkPopoverOpenChange,
-  } = useAtomValue(noteEditorStateAtom);
-  const { isTaskFocused } = useAtomValue(taskEditorStateAtom);
+  const { isVisible: isFormattingToolbarVisible } =
+    useAtomValue(NoteToolbarAtom);
+  const { isVisible: isTaskToolbarVisible } = useAtomValue(taskToolbarAtom);
 
-  const activeToolbarContent = isTaskFocused ? (
-    <TaskFloatingToolbar />
-  ) : isEditorFocused ? (
-    <FormattingToolbar
-      toolbarFormatting={toolbarFormatting}
-      editor={editor}
-      colour={editorColour ?? colour}
-      isEditorFocused={isEditorFocused}
-      onLinkPopoverOpenChange={onLinkPopoverOpenChange ?? undefined}
-    />
+  const activeToolbarContent = isTaskToolbarVisible ? (
+    <TaskToolbar />
+  ) : isFormattingToolbarVisible ? (
+    <FormattingToolbar />
   ) : null;
 
   const effectiveNoteGroups = useMemo<NotesGroup[]>(() => {
@@ -170,7 +159,9 @@ export const NotesLayout = ({
             </>
           }
           floatingToolbar={
-            <FloatingToolbar visible={isTaskFocused || isEditorFocused}>
+            <FloatingToolbar
+              visible={isTaskToolbarVisible || isFormattingToolbarVisible}
+            >
               {activeToolbarContent}
             </FloatingToolbar>
           }
@@ -235,7 +226,9 @@ export const NotesLayout = ({
             </div>
           }
           floatingToolbar={
-            <FloatingToolbar visible={isTaskFocused || isEditorFocused}>
+            <FloatingToolbar
+              visible={isTaskToolbarVisible || isFormattingToolbarVisible}
+            >
               {activeToolbarContent}
             </FloatingToolbar>
           }

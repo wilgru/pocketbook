@@ -1,5 +1,4 @@
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
-import debounce from "debounce";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
@@ -7,6 +6,7 @@ import { cn } from "src/common/utils/cn";
 import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
 import { useGetNotes } from "src/notes/hooks/useGetNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
+import { useDebouncedCallback } from "use-debounce";
 import { NoteListItem } from "../NoteListItem/NoteListItem";
 import type { Note } from "src/notes/Note.type";
 
@@ -33,23 +33,20 @@ export const NoteSearchBar = () => {
     [notes],
   );
 
-  const debouncedSearch = useRef(
-    debounce((value: string) => {
-      setSearchQuery(value);
-    }, 300),
-  );
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setSearchQuery(value);
+  }, 300);
 
   useEffect(() => {
-    const debounced = debouncedSearch.current;
     return () => {
-      debounced.clear();
+      debouncedSearch.cancel();
     };
-  }, []);
+  }, [debouncedSearch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    debouncedSearch.current(value);
+    debouncedSearch(value);
     setIsOpen(value.length > 0);
   };
 
