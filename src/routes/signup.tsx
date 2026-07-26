@@ -43,7 +43,9 @@ function SignUpIndexComponent(): JSX.Element {
   };
 
   useEffect(() => {
-    user && navigate({ to: ".." });
+    if (user) {
+      navigate({ to: ".." });
+    }
   }, [navigate, user]);
 
   return (

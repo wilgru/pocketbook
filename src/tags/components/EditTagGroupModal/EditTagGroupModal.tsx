@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { Input } from "src/common/components/Input/Input";
@@ -15,10 +15,6 @@ type EditTagGroupModalProps = {
 export const EditTagGroupModal = ({ tagGroup }: EditTagGroupModalProps) => {
   const [editedTitle, setEditedTitle] = useState(tagGroup.title);
   const { updateTagGroup } = useUpdateTagGroup();
-
-  useEffect(() => {
-    setEditedTitle(tagGroup.title);
-  }, [tagGroup.title]);
 
   const onSaveEdit = async () => {
     await updateTagGroup({

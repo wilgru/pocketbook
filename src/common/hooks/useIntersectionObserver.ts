@@ -21,6 +21,7 @@ export const useIntersectionObserver = (
     }
 
     observerRef.current = new IntersectionObserver(([entry]) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       entry.isIntersecting && callback(entry);
     }, intersectionObserverOptions);
 

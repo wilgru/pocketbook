@@ -70,6 +70,7 @@ function RouteComponent() {
           onOpenChange={onSettingsModalOpenChange}
         >
           <PocketbookSettingsModal
+            key={currentPocketbook.id}
             pocketbook={currentPocketbook}
             currentPage={modalPage ?? "general"}
           />

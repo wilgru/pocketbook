@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { ColourPicker } from "src/colours/components/ColourPicker/ColourPicker";
 import { Button } from "src/common/components/Button/Button";
@@ -23,11 +23,6 @@ export const PocketbookSettingsModal = ({
 }: PocketbookSettingsModalProps) => {
   const [editedPocketbook, setEditedPocketbook] = useState(pocketbook);
   const { updatePocketbook, isUpdatingPocketbook } = useUpdatePocketbook();
-
-  // TODO: find better solution than using useEffect
-  useEffect(() => {
-    setEditedPocketbook(pocketbook);
-  }, [pocketbook]);
 
   const onSaveEdit = async () => {
     await updatePocketbook({

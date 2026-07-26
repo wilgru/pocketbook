@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { ColourPicker } from "src/colours/components/ColourPicker/ColourPicker";
 import { Button } from "src/common/components/Button/Button";
@@ -33,14 +33,6 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
     links: toDraftTagLinks(tag.links),
   });
   const { updateTag } = useUpdateTag();
-
-  // TODO: find better solution than using useEffect
-  useEffect(() => {
-    setEditedTag({
-      ...tag,
-      links: toDraftTagLinks(tag.links),
-    });
-  }, [tag]);
 
   const onSaveEdit = async () => {
     if (tag?.id) {
