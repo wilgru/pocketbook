@@ -24,11 +24,11 @@ import "src/tags/ipc/deleteTag";
 import "src/tags/ipc/createTagGroup";
 import "src/tags/ipc/updateTagGroup";
 import "src/tags/ipc/deleteTagGroup";
-import "src/updates/ipc/createUpdate";
-import "src/updates/ipc/getUpdate";
-import "src/updates/ipc/getUpdates";
-import "src/updates/ipc/updateUpdate";
-import "src/updates/ipc/deleteUpdate";
+import "src/comments/ipc/createComment";
+import "src/comments/ipc/getComment";
+import "src/comments/ipc/getComments";
+import "src/comments/ipc/updateComment";
+import "src/comments/ipc/deleteComment";
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;

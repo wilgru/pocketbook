@@ -27,7 +27,7 @@ export const mapNote = (
     isBookmarked: note.isBookmarked,
     tags: options.tags ?? [],
     links,
-    updateCount: 0,
+    commentCount: 0,
     deleted: note.deleted ? dayjs.utc(note.deleted).local() : null,
     created: dayjs.utc(note.created).local(),
     updated: dayjs.utc(note.updated).local(),

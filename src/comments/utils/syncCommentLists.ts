@@ -1,42 +1,42 @@
 import type { QueryClient } from "@tanstack/react-query";
+import type { Comment } from "src/comments/Comment.type";
 import type { Note } from "src/notes/Note.type";
-import type { Update } from "src/updates/Update.type";
 
-type SyncUpdateListsOptions = {
+type SyncCommentListsOptions = {
   notes: Note[];
 };
 
 // TODO: could make this generic somehow?
-export const syncUpdateLists = (
+export const syncCommentLists = (
   queryClient: QueryClient,
-  update: Update,
-  { notes }: SyncUpdateListsOptions,
+  comment: Comment,
+  { notes }: SyncCommentListsOptions,
 ) => {
   const noteIds = new Set(notes.map((note) => note.id));
 
   queryClient
     .getQueryCache()
-    .findAll({ queryKey: ["updates.list"] })
+    .findAll({ queryKey: ["comments.list"] })
     .forEach((query) => {
       const noteId = (query.queryKey as Array<string | undefined>)[2];
       const shouldInclude = !noteId || noteIds.has(noteId);
 
-      queryClient.setQueryData<Update[]>(query.queryKey, (current) => {
+      queryClient.setQueryData<Comment[]>(query.queryKey, (current) => {
         if (!current) return current;
 
-        const index = current.findIndex((item) => item.id === update.id);
+        const index = current.findIndex((item) => item.id === comment.id);
 
         if (!shouldInclude) {
           return index === -1
             ? current
-            : current.filter((item) => item.id !== update.id);
+            : current.filter((item) => item.id !== comment.id);
         }
 
         if (index === -1) {
-          return [...current, update];
+          return [...current, comment];
         }
 
-        return current.map((item) => (item.id === update.id ? update : item));
+        return current.map((item) => (item.id === comment.id ? comment : item));
       });
     });
 };

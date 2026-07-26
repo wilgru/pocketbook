@@ -1,26 +1,27 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
+import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
+import { getTintClasses } from "src/comments/utils/getTintClasses";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { PaneWithInspectorLayout } from "src/common/components/PaneWithInspectorLayout/PaneWithInspectorLayout";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
-import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
-import { getTintClasses } from "src/updates/utils/getTintClasses";
 import { groupUpdates } from "src/updates/utils/groupUpdates";
 import type { Dayjs } from "dayjs";
 import type { Colour } from "src/colours/Colour.type";
+import type { Comment } from "src/comments/Comment.type";
 import type { Note } from "src/notes/Note.type";
 import type { Task } from "src/tasks/Task.type";
-import type { Update, UpdateGroup } from "src/updates/Update.type";
+import type { UpdateGroup } from "src/updates/Update.type";
 
 type UpdatesLayoutProps = {
-  updates: Update[];
   notes: Note[];
   tasks: Task[];
+  comments: Comment[];
   colour?: Colour;
   pendingNew?: boolean;
   onCancelNew?: () => void;
@@ -33,9 +34,9 @@ const getGroupDate = (updateGroup: UpdateGroup): Dayjs | null => {
 };
 
 export const UpdatesLayout = ({
-  updates,
   notes,
   tasks,
+  comments,
   colour = colours.orange,
   pendingNew = false,
   onCancelNew,
@@ -43,8 +44,8 @@ export const UpdatesLayout = ({
 }: UpdatesLayoutProps) => {
   const navigate = useNavigate();
   const updateGroups = useMemo(
-    () => groupUpdates(updates, tasks, notes),
-    [updates, tasks, notes],
+    () => groupUpdates(comments, tasks, notes),
+    [comments, tasks, notes],
   );
 
   const tableOfContentsGroups: {
@@ -185,8 +186,8 @@ export const UpdatesLayout = ({
       content={
         <div className="h-full w-full max-w-200 flex flex-col pb-6">
           {pendingNew && (
-            <UpdateEditor
-              update={{ notes: [], tint: null }}
+            <CommentEditor
+              comment={{ notes: [], tint: null }}
               colour={colour}
               onCancel={onCancelNew}
               onCreated={onCancelNew}

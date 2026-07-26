@@ -2,6 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
+import { useCreateComment } from "src/comments/hooks/useCreateComment";
+import { useDeleteComment } from "src/comments/hooks/useDeleteComment";
+import { useUpdateComment } from "src/comments/hooks/useUpdateComment";
+import { getTintClasses } from "src/comments/utils/getTintClasses";
 import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { Button } from "src/common/components/Button/Button";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
@@ -12,16 +16,12 @@ import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
-import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
-import { useDeleteUpdate } from "src/updates/hooks/useDeleteUpdate";
-import { useUpdateUpdate } from "src/updates/hooks/useUpdateUpdate";
-import { getTintClasses } from "src/updates/utils/getTintClasses";
 import type { Colour } from "src/colours/Colour.type";
+import type { Comment, CommentTint } from "src/comments/Comment.type";
 import type { Note } from "src/notes/Note.type";
-import type { Update, UpdateTint } from "src/updates/Update.type";
 
-type UpdateEditorProps = {
-  update: Partial<Update>;
+type CommentEditorProps = {
+  comment: Partial<Comment>;
   colour?: Colour;
   showNotes?: boolean;
   autoFocus?: boolean;
@@ -32,25 +32,25 @@ type UpdateEditorProps = {
   onCreated?: () => void;
 };
 
-const TINT_OPTIONS: Array<{ value: UpdateTint; bg: string }> = [
+const TINT_OPTIONS: Array<{ value: CommentTint; bg: string }> = [
   { value: "red", bg: "bg-red-400" },
   { value: "yellow", bg: "bg-yellow-400" },
   { value: "green", bg: "bg-green-400" },
   { value: "blue", bg: "bg-blue-400" },
 ];
 
-const getInitialUpdate = (update: Partial<Update>): Partial<Update> => ({
-  id: update.id ?? "",
-  content: update.content ?? createEmptyLexicalContent(),
-  tint: update.tint ?? null,
-  isWaypoint: update.isWaypoint ?? false,
-  notes: update.notes ?? [],
-  created: update.created,
-  updated: update.updated,
+const getInitialComment = (comment: Partial<Comment>): Partial<Comment> => ({
+  id: comment.id ?? "",
+  content: comment.content ?? createEmptyLexicalContent(),
+  tint: comment.tint ?? null,
+  isWaypoint: comment.isWaypoint ?? false,
+  notes: comment.notes ?? [],
+  created: comment.created,
+  updated: comment.updated,
 });
 
-export const UpdateEditor = ({
-  update,
+export const CommentEditor = ({
+  comment,
   colour,
   showNotes = true,
   autoFocus = false,
@@ -59,23 +59,23 @@ export const UpdateEditor = ({
   showTimeOnly = false,
   onCancel,
   onCreated,
-}: UpdateEditorProps) => {
+}: CommentEditorProps) => {
   const { pocketbookId, currentPocketbook } = useCurrentPocketbook();
 
-  const { createUpdate } = useCreateUpdate();
-  const { updateUpdate } = useUpdateUpdate();
-  const { deleteUpdate } = useDeleteUpdate();
+  const { createComment } = useCreateComment();
+  const { updateComment } = useUpdateComment();
+  const { deleteComment } = useDeleteComment();
 
   const setNoteToolbarAtom = useSetAtom(NoteToolbarAtom);
 
-  const [editedUpdate, setEditedUpdate] = useState<Partial<Update>>(
-    getInitialUpdate(update),
+  const [editedComment, setEditedComment] = useState<Partial<Comment>>(
+    getInitialComment(comment),
   );
-  const [isEditing, setIsEditing] = useState(!update.id);
-  const tintClasses = getTintClasses(editedUpdate.tint);
+  const [isEditing, setIsEditing] = useState(!comment.id);
+  const tintClasses = getTintClasses(editedComment.tint);
 
-  const onUpdateField = (fields: Partial<Update>) => {
-    setEditedUpdate((current) => ({ ...current, ...fields }));
+  const onUpdateField = (fields: Partial<Comment>) => {
+    setEditedComment((current) => ({ ...current, ...fields }));
   };
 
   if (!currentPocketbook) {
@@ -90,32 +90,32 @@ export const UpdateEditor = ({
       isVisible: false,
     }));
 
-    if (editedUpdate.id) {
-      const updated = await updateUpdate({
-        updateId: editedUpdate.id,
-        updateData: {
-          content: editedUpdate.content,
-          tint: editedUpdate.tint,
-          isWaypoint: editedUpdate.isWaypoint,
-          notes: editedUpdate.notes as Note[],
+    if (editedComment.id) {
+      const updated = await updateComment({
+        commentId: editedComment.id,
+        commentData: {
+          content: editedComment.content,
+          tint: editedComment.tint,
+          isWaypoint: editedComment.isWaypoint,
+          notes: editedComment.notes as Note[],
         },
       });
       if (updated) {
-        setEditedUpdate(updated);
+        setEditedComment(updated);
       }
       setIsEditing(false);
     } else {
-      // New update — create explicitly now
-      const created = await createUpdate({
-        createUpdateData: {
-          content: editedUpdate.content!,
-          tint: editedUpdate.tint ?? null,
-          notes: (editedUpdate.notes ?? []) as Note[],
-          isWaypoint: editedUpdate.isWaypoint ?? false,
+      // New comment — create explicitly now
+      const created = await createComment({
+        createCommentData: {
+          content: editedComment.content!,
+          tint: editedComment.tint ?? null,
+          notes: (editedComment.notes ?? []) as Note[],
+          isWaypoint: editedComment.isWaypoint ?? false,
         },
       });
       if (created) {
-        setEditedUpdate(created);
+        setEditedComment(created);
         onCreated?.();
       }
     }
@@ -127,10 +127,10 @@ export const UpdateEditor = ({
       isVisible: false,
     }));
 
-    if (!editedUpdate.id) {
+    if (!editedComment.id) {
       onCancel?.();
     } else {
-      setEditedUpdate(getInitialUpdate(update));
+      setEditedComment(getInitialComment(comment));
       setIsEditing(false);
     }
   };
@@ -141,36 +141,38 @@ export const UpdateEditor = ({
       isVisible: false,
     }));
 
-    if (editedUpdate.id) {
-      await deleteUpdate({ updateId: editedUpdate.id });
+    if (editedComment.id) {
+      await deleteComment({ commentId: editedComment.id });
     } else {
       onCancel?.();
     }
   };
 
-  const dateStr = editedUpdate.created
+  const dateStr = editedComment.created
     ? showTimeOnly
-      ? editedUpdate.created.format("h:mm a")
-      : getRelativeDateTitle(editedUpdate.created)
+      ? editedComment.created.format("h:mm a")
+      : getRelativeDateTitle(editedComment.created)
     : null;
 
   return (
     <UpdateTimelineItem
-      iconName={editedUpdate.isWaypoint ? "flagBannerFold" : "chatCenteredText"}
-      iconColour={editedUpdate.isWaypoint ? tintClasses.colour : colours.grey}
-      strongIcon={editedUpdate.isWaypoint}
+      iconName={
+        editedComment.isWaypoint ? "flagBannerFold" : "chatCenteredText"
+      }
+      iconColour={editedComment.isWaypoint ? tintClasses.colour : colours.grey}
+      strongIcon={editedComment.isWaypoint}
       dateText={dateStr}
       showBottomPadding={showBottomPadding}
       hideBottomLine={hideBottomLine}
       headline={
         <p className="text-slate-500">
-          {editedUpdate.notes?.length
+          {editedComment.notes?.length
             ? "Commented on "
             : "Left a general comment "}
 
           {showNotes &&
-            editedUpdate.notes &&
-            editedUpdate.notes.map((note, index) => (
+            editedComment.notes &&
+            editedComment.notes.map((note, index) => (
               <>
                 <Link
                   key={note.id}
@@ -182,8 +184,8 @@ export const UpdateEditor = ({
                   {note.title ?? "Untitled Note"}
                 </Link>
 
-                {index < (editedUpdate.notes?.length ?? 0) - 2 && ", "}
-                {index === (editedUpdate.notes?.length ?? 0) - 2 && " and "}
+                {index < (editedComment.notes?.length ?? 0) - 2 && ", "}
+                {index === (editedComment.notes?.length ?? 0) - 2 && " and "}
               </>
             ))}
         </p>
@@ -200,17 +202,17 @@ export const UpdateEditor = ({
         {isEditing && (
           <div className="flex items-center justify-between flex-wrap gap-2">
             <NoteSelect
-              selectedNotes={(editedUpdate.notes ?? []) as Note[]}
+              selectedNotes={(editedComment.notes ?? []) as Note[]}
               colour={resolvedColour}
               onChange={(notes) => onUpdateField({ notes })}
             />
 
             <div className="flex gap-1.5 items-center">
               <Toggle
-                isToggled={editedUpdate.isWaypoint ?? false}
+                isToggled={editedComment.isWaypoint ?? false}
                 onClick={() =>
                   onUpdateField({
-                    isWaypoint: !(editedUpdate.isWaypoint ?? false),
+                    isWaypoint: !(editedComment.isWaypoint ?? false),
                   })
                 }
                 size="sm"
@@ -222,7 +224,7 @@ export const UpdateEditor = ({
                 onClick={() => onUpdateField({ tint: null })}
                 className={cn(
                   "h-5 w-5 rounded-full border-2 bg-slate-200",
-                  editedUpdate.tint === null
+                  editedComment.tint === null
                     ? "border-slate-500"
                     : "border-transparent",
                 )}
@@ -236,7 +238,7 @@ export const UpdateEditor = ({
                   className={cn(
                     "h-5 w-5 rounded-full border-2",
                     bg,
-                    editedUpdate.tint === value
+                    editedComment.tint === value
                       ? "border-slate-600"
                       : "border-transparent",
                   )}
@@ -250,7 +252,7 @@ export const UpdateEditor = ({
         <RichTextEditor
           size="md"
           className={cn(isEditing && "px-2")}
-          value={editedUpdate.content}
+          value={editedComment.content}
           colour={resolvedColour}
           onFocus={() => {
             setIsEditing(true);

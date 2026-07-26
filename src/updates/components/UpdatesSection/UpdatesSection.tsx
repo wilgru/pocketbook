@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { colours } from "src/colours/colours.constant";
+import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
 import { cn } from "src/common/utils/cn";
 import { StickyNoteListItem } from "src/notes/components/NoteListItem/StickyNoteListItem";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
-import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
 import { UpdateTimelineItem } from "../UpdateTimelineItem/UpdateTimelineItem";
 import type { Colour } from "src/colours/Colour.type";
 import type { UpdateGroup } from "src/updates/Update.type";
@@ -122,9 +122,9 @@ export const UpdatesSection = ({
               );
             case "comment":
               return (
-                <UpdateEditor
+                <CommentEditor
                   key={update.id}
-                  update={update.data}
+                  comment={update.data}
                   colour={colour}
                   showTimeOnly
                   showBottomPadding={index === updateGroup.updates.length - 1}

@@ -1,7 +1,7 @@
 import { colours } from "src/colours/colours.constant";
-import type { UpdateTint } from "src/updates/Update.type";
+import type { CommentTint } from "src/comments/Comment.type";
 
-export const getTintClasses = (tint: UpdateTint | null | undefined) => {
+export const getTintClasses = (tint: CommentTint | null | undefined) => {
   switch (tint) {
     case "red":
       return {

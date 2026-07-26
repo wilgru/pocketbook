@@ -1,3 +1,14 @@
+import type { CommentSchema } from "src/comments/comments.schema";
+import type { CreateCommentInput } from "src/comments/ipc/createComment";
+import type { DeleteCommentInput } from "src/comments/ipc/deleteComment";
+import type {
+  GetCommentInput,
+  GetCommentResult,
+} from "src/comments/ipc/getComment";
+import type {
+  GetCommentsInput,
+  GetCommentsResult,
+} from "src/comments/ipc/getComments";
 import type { IpcApiMethod } from "src/common/types/IpcApiMethod.type";
 import type { CreateNoteInput } from "src/notes/ipc/createNote";
 import type { DeleteNoteInput } from "src/notes/ipc/deleteNote";
@@ -29,18 +40,7 @@ import type { GetTaskInput } from "src/tasks/ipc/getTask";
 import type { GetTasksInput, GetTasksResult } from "src/tasks/ipc/getTasks";
 import type { UpdateTaskInput } from "src/tasks/ipc/updateTask";
 import type { TaskSchema } from "src/tasks/tasks.schema";
-import type { CreateUpdateInput } from "src/updates/ipc/createUpdate";
-import type { DeleteUpdateInput } from "src/updates/ipc/deleteUpdate";
-import type {
-  GetUpdateInput,
-  GetUpdateResult,
-} from "src/updates/ipc/getUpdate";
-import type {
-  GetUpdatesInput,
-  GetUpdatesResult,
-} from "src/updates/ipc/getUpdates";
-import type { UpdateUpdateInput } from "src/updates/ipc/updateUpdate";
-import type { UpdateSchema } from "src/updates/updates.schema";
+import type { UpdateCommentInput } from "src/updates/ipc/updateComment";
 
 declare global {
   interface Window {
@@ -72,11 +72,11 @@ declare global {
       updateTagGroup: IpcApiMethod<UpdateTagGroupInput, TagGroupSchema>;
       deleteTagGroup: IpcApiMethod<DeleteTagGroupInput, string>;
 
-      createUpdate: IpcApiMethod<CreateUpdateInput, UpdateSchema>;
-      getUpdates: IpcApiMethod<GetUpdatesInput, GetUpdatesResult>;
-      getUpdate: IpcApiMethod<GetUpdateInput, GetUpdateResult>;
-      updateUpdate: IpcApiMethod<UpdateUpdateInput, UpdateSchema>;
-      deleteUpdate: IpcApiMethod<DeleteUpdateInput, string>;
+      createComment: IpcApiMethod<CreateCommentInput, CommentSchema>;
+      getComments: IpcApiMethod<GetCommentsInput, GetCommentsResult>;
+      getComment: IpcApiMethod<GetCommentInput, GetCommentResult>;
+      updateComment: IpcApiMethod<UpdateCommentInput, CommentSchema>;
+      deleteComment: IpcApiMethod<DeleteCommentInput, string>;
     };
   }
 }

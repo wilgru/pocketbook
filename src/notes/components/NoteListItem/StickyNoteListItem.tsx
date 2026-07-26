@@ -92,10 +92,13 @@ export const StickyNoteListItem = ({
                 />
               )}
 
-              {note.updateCount > 0 && (
-                <div className="flex items-center gap-1 text-xs my-1" style={{ color: "inherit" }}>
+              {note.commentCount > 0 && (
+                <div
+                  className="flex items-center gap-1 text-xs my-1"
+                  style={{ color: "inherit" }}
+                >
                   <ChatCenteredText size={14} />
-                  <span>{note.updateCount}</span>
+                  <span>{note.commentCount}</span>
                 </div>
               )}
             </div>

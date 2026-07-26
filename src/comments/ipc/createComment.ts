@@ -1,9 +1,9 @@
+import { comments, commentNotes } from "src/comments/comments.schema";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
-import { updates, updateNotes } from "src/updates/updates.schema";
-import type { UpdateSchema } from "src/updates/updates.schema";
+import type { CommentSchema } from "src/comments/comments.schema";
 
-export type CreateUpdateInput = {
+export type CreateCommentInput = {
   content: string | null;
   tint: string | null;
   isWaypoint: boolean;
@@ -13,7 +13,7 @@ export type CreateUpdateInput = {
 };
 
 createIpcHandler(
-  "updates:create",
+  "comments:create",
   ({
     content,
     tint,
@@ -21,12 +21,12 @@ createIpcHandler(
     noteIds,
     pocketbookId,
     userId,
-  }: CreateUpdateInput): UpdateSchema => {
+  }: CreateCommentInput): CommentSchema => {
     const now = new Date().toISOString();
     const id = crypto.randomUUID();
 
     const [inserted] = db
-      .insert(updates)
+      .insert(comments)
       .values({
         id,
         content,
@@ -41,8 +41,8 @@ createIpcHandler(
       .all();
 
     if (noteIds.length > 0) {
-      db.insert(updateNotes)
-        .values(noteIds.map((noteId) => ({ updateId: id, noteId })))
+      db.insert(commentNotes)
+        .values(noteIds.map((noteId) => ({ commentId: id, noteId })))
         .run();
     }
 

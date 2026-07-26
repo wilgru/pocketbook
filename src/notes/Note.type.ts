@@ -25,7 +25,7 @@ export type Note = Prettify<
     tasks: Task[];
     tags: Tag[];
     links: NoteLink[];
-    updateCount: number;
+    commentCount: number;
   }
 >;
 

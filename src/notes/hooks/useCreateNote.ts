@@ -8,7 +8,7 @@ import type { Note } from "src/notes/Note.type";
 type CreateNoteProps = {
   createNoteData: Omit<
     Note,
-    "id" | "created" | "updated" | "deleted" | "tasks" | "updateCount"
+    "id" | "created" | "updated" | "deleted" | "tasks" | "commentCount"
   >;
 };
 

@@ -1,9 +1,9 @@
 import { and, eq, isNull, sql } from "drizzle-orm";
+import { comments } from "src/comments/comments.schema";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
 import { notes } from "src/notes/notes.schema";
 import { tasks } from "src/tasks/tasks.schema";
-import { updates } from "src/updates/updates.schema";
 
 export type GetPocketbookContentCountsInput = {
   pocketbookId: string;
@@ -13,7 +13,7 @@ export type GetPocketbookContentCountsResult = {
   noteCount: number;
   bookmarkedCount: number;
   taskCount: number;
-  updateCount: number;
+  commentCount: number;
 };
 
 createIpcHandler(
@@ -48,13 +48,13 @@ createIpcHandler(
         .where(eq(tasks.pocketbook, pocketbookId))
         .get()?.count ?? 0;
 
-    const updateCount =
+    const commentCount =
       db
         .select({ count: sql<number>`count(*)` })
-        .from(updates)
-        .where(eq(updates.pocketbook, pocketbookId))
+        .from(comments)
+        .where(eq(comments.pocketbook, pocketbookId))
         .get()?.count ?? 0;
 
-    return { noteCount, bookmarkedCount, taskCount, updateCount };
+    return { noteCount, bookmarkedCount, taskCount, commentCount };
   },
 );

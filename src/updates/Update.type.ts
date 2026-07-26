@@ -1,30 +1,14 @@
-import type { UpdateSchema } from "./updates.schema";
 import type { Dayjs } from "dayjs";
-import type { Prettify } from "src/common/types/Prettify.type";
+import type { Comment } from "src/comments/Comment.type";
 import type { Note } from "src/notes/Note.type";
 import type { Task } from "src/tasks/Task.type";
-
-export type UpdateTint = "red" | "yellow" | "green" | "blue";
-
-export type Update = Prettify<
-  Omit<
-    UpdateSchema,
-    "content" | "tint" | "pocketbook" | "user" | "created" | "updated"
-  > & {
-    content: string;
-    tint: UpdateTint | null;
-    notes: Note[];
-    created: Dayjs;
-    updated: Dayjs;
-  }
->;
 
 interface CommentUpdate {
   id: string;
   type: "comment";
   action: "created";
   date: Dayjs;
-  data: Update;
+  data: Comment;
 }
 
 interface TaskUpdate {
@@ -43,9 +27,9 @@ interface NoteUpdate {
   data: Note;
 }
 
-export type UpdateProper = CommentUpdate | TaskUpdate | NoteUpdate;
+export type Update = CommentUpdate | TaskUpdate | NoteUpdate;
 
 export type UpdateGroup = {
   date: Dayjs;
-  updates: UpdateProper[];
+  updates: Update[];
 };

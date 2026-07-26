@@ -1,17 +1,14 @@
+import type { Comment } from "src/comments/Comment.type";
 import type { Note } from "src/notes/Note.type";
 import type { Task } from "src/tasks/Task.type";
-import type {
-  Update,
-  UpdateGroup,
-  UpdateProper,
-} from "src/updates/Update.type";
+import type { UpdateGroup, Update } from "src/updates/Update.type";
 
 export const groupUpdates = (
-  comments: Update[],
+  comments: Comment[],
   tasks: Task[],
   notes: Note[],
 ): UpdateGroup[] => {
-  const commentUpdates: UpdateProper[] = comments.map((comment) => ({
+  const commentUpdates: Update[] = comments.map((comment) => ({
     id: comment.id,
     type: "comment",
     action: "created",
@@ -19,27 +16,24 @@ export const groupUpdates = (
     data: comment,
   }));
 
-  const taskUpdates: UpdateProper[] = tasks.reduce<UpdateProper[]>(
-    (acc, task) => {
-      const date = task.completedDate ?? task.cancelledDate;
-      if (!date) {
-        return acc;
-      }
-
-      acc.push({
-        id: task.id,
-        type: "task",
-        action: task.completedDate ? "completed" : "cancelled",
-        date,
-        data: task,
-      });
-
+  const taskUpdates: Update[] = tasks.reduce<Update[]>((acc, task) => {
+    const date = task.completedDate ?? task.cancelledDate;
+    if (!date) {
       return acc;
-    },
-    [],
-  );
+    }
 
-  const noteUpdates: UpdateProper[] = notes.map((note) => ({
+    acc.push({
+      id: task.id,
+      type: "task",
+      action: task.completedDate ? "completed" : "cancelled",
+      date,
+      data: task,
+    });
+
+    return acc;
+  }, []);
+
+  const noteUpdates: Update[] = notes.map((note) => ({
     id: note.id,
     type: "note",
     action: "created",

@@ -1,4 +1,9 @@
 import { contextBridge, ipcRenderer } from "electron";
+import type { CreateCommentInput } from "src/comments/ipc/createComment";
+import type { DeleteCommentInput } from "src/comments/ipc/deleteComment";
+import type { GetCommentInput } from "src/comments/ipc/getComment";
+import type { GetCommentsInput } from "src/comments/ipc/getComments";
+import type { UpdateCommentInput } from "src/comments/ipc/updateComment";
 import type { CreateNoteInput } from "src/notes/ipc/createNote";
 import type { DeleteNoteInput } from "src/notes/ipc/deleteNote";
 import type { GetNoteInput } from "src/notes/ipc/getNote";
@@ -22,11 +27,6 @@ import type { DeleteTaskInput } from "src/tasks/ipc/deleteTask";
 import type { GetTaskInput } from "src/tasks/ipc/getTask";
 import type { GetTasksInput } from "src/tasks/ipc/getTasks";
 import type { UpdateTaskInput } from "src/tasks/ipc/updateTask";
-import type { CreateUpdateInput } from "src/updates/ipc/createUpdate";
-import type { DeleteUpdateInput } from "src/updates/ipc/deleteUpdate";
-import type { GetUpdateInput } from "src/updates/ipc/getUpdate";
-import type { GetUpdatesInput } from "src/updates/ipc/getUpdates";
-import type { UpdateUpdateInput } from "src/updates/ipc/updateUpdate";
 
 contextBridge.exposeInMainWorld("api", {
   createNote: (data: CreateNoteInput) =>
@@ -70,14 +70,14 @@ contextBridge.exposeInMainWorld("api", {
   deleteTagGroup: (data: DeleteTagGroupInput) =>
     ipcRenderer.invoke("tagGroups:delete", data),
 
-  createUpdate: (data: CreateUpdateInput) =>
-    ipcRenderer.invoke("updates:create", data),
-  getUpdates: (data: GetUpdatesInput) =>
-    ipcRenderer.invoke("updates:getAll", data),
-  getUpdate: (data: GetUpdateInput) =>
-    ipcRenderer.invoke("updates:getOne", data),
-  updateUpdate: (data: UpdateUpdateInput) =>
-    ipcRenderer.invoke("updates:update", data),
-  deleteUpdate: (data: DeleteUpdateInput) =>
-    ipcRenderer.invoke("updates:delete", data),
+  createComment: (data: CreateCommentInput) =>
+    ipcRenderer.invoke("comments:create", data),
+  getComments: (data: GetCommentsInput) =>
+    ipcRenderer.invoke("comments:getAll", data),
+  getComment: (data: GetCommentInput) =>
+    ipcRenderer.invoke("comments:getOne", data),
+  updateComment: (data: UpdateCommentInput) =>
+    ipcRenderer.invoke("comments:update", data),
+  deleteComment: (data: DeleteCommentInput) =>
+    ipcRenderer.invoke("comments:delete", data),
 });

@@ -1,11 +1,11 @@
 import { eq } from "drizzle-orm";
+import { comments, commentNotes } from "src/comments/comments.schema";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
-import { updates, updateNotes } from "src/updates/updates.schema";
-import type { UpdateSchema } from "src/updates/updates.schema";
+import type { CommentSchema } from "src/comments/comments.schema";
 
-export type UpdateUpdateInput = {
-  updateId: string;
+export type UpdateCommentInput = {
+  commentId: string;
   content: string | null;
   tint: string | null;
   isWaypoint: boolean;
@@ -13,28 +13,28 @@ export type UpdateUpdateInput = {
 };
 
 createIpcHandler(
-  "updates:update",
+  "comments:update",
   ({
-    updateId,
+    commentId,
     content,
     tint,
     isWaypoint,
     noteIds,
-  }: UpdateUpdateInput): UpdateSchema => {
+  }: UpdateCommentInput): CommentSchema => {
     const now = new Date().toISOString();
 
     const [updated] = db
-      .update(updates)
+      .update(comments)
       .set({ content, tint, isWaypoint, updated: now })
-      .where(eq(updates.id, updateId))
+      .where(eq(comments.id, commentId))
       .returning()
       .all();
 
-    db.delete(updateNotes).where(eq(updateNotes.updateId, updateId)).run();
+    db.delete(commentNotes).where(eq(commentNotes.commentId, commentId)).run();
 
     if (noteIds.length > 0) {
-      db.insert(updateNotes)
-        .values(noteIds.map((noteId) => ({ updateId, noteId })))
+      db.insert(commentNotes)
+        .values(noteIds.map((noteId) => ({ commentId, noteId })))
         .run();
     }
 

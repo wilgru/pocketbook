@@ -1,41 +1,41 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
-type DeleteUpdateProps = {
-  updateId: string;
+type DeleteCommentProps = {
+  commentId: string;
 };
 
-type UseDeleteUpdateResponse = {
-  deleteUpdate: UseMutateAsyncFunction<
+type UseDeleteCommentResponse = {
+  deleteComment: UseMutateAsyncFunction<
     string | undefined,
     Error,
-    DeleteUpdateProps,
+    DeleteCommentProps,
     unknown
   >;
 };
 
-export const useDeleteUpdate = (): UseDeleteUpdateResponse => {
+export const useDeleteComment = (): UseDeleteCommentResponse => {
   const queryClient = useQueryClient();
 
   const mutationFn = async ({
-    updateId,
-  }: DeleteUpdateProps): Promise<string | undefined> => {
-    const response = await window.api.deleteUpdate({ updateId });
+    commentId,
+  }: DeleteCommentProps): Promise<string | undefined> => {
+    const response = await window.api.deleteComment({ commentId });
     if (!response.success) throw new Error(response.error);
-    return updateId;
+    return commentId;
   };
 
   const onSuccess = () => {
     queryClient.refetchQueries({
-      queryKey: ["updates.list"],
+      queryKey: ["comments.list"],
     });
   };
 
   const { mutateAsync } = useMutation({
-    mutationKey: ["updates.delete"],
+    mutationKey: ["comments.delete"],
     mutationFn,
     onSuccess,
   });
 
-  return { deleteUpdate: mutateAsync };
+  return { deleteComment: mutateAsync };
 };

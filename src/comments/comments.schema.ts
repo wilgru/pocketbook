@@ -3,7 +3,7 @@ import { notes } from "src/notes/notes.schema";
 import { pocketbooks } from "src/pocketbooks/pocketbooks.schema";
 import type { InferSelectModel } from "drizzle-orm/table";
 
-export const updates = sqliteTable("updates", {
+export const comments = sqliteTable("comments", {
   id: text("id").primaryKey(),
   content: text("content"),
   tint: text("tint"),
@@ -15,12 +15,12 @@ export const updates = sqliteTable("updates", {
   created: text("created").notNull(),
   updated: text("updated").notNull(),
 });
-export type UpdateSchema = InferSelectModel<typeof updates>;
+export type CommentSchema = InferSelectModel<typeof comments>;
 
-export const updateNotes = sqliteTable("update_notes", {
-  updateId: text("update_id")
+export const commentNotes = sqliteTable("comment_notes", {
+  commentId: text("comment_id")
     .notNull()
-    .references(() => updates.id),
+    .references(() => comments.id),
   noteId: text("note_id")
     .notNull()
     .references(() => notes.id),

@@ -4,6 +4,8 @@ import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
+import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
+import { useGetComments } from "src/comments/hooks/useGetComments";
 import {
   defaultNoteToolbarAtom,
   NoteToolbarAtom,
@@ -22,8 +24,6 @@ import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
 import { TagSelect } from "src/tags/components/TagSelect/TagSelect";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
-import { UpdateEditor } from "src/updates/components/UpdateEditor/UpdateEditor";
-import { useGetUpdates } from "src/updates/hooks/useGetUpdates";
 import { useDebouncedCallback } from "use-debounce";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
@@ -46,15 +46,15 @@ const NoteEditor = ({
   const { createTask } = useCreateTask();
   const { updateNote } = useUpdateNote();
   const { deleteNote } = useDeleteNote();
-  const { updates } = useGetUpdates({ noteId: note.id });
+  const { comments } = useGetComments({ noteId: note.id });
 
   const [noteToolbarAtom, setNoteToolbarAtom] = useAtom(NoteToolbarAtom);
 
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
-  const [showNewUpdate, setShowNewUpdate] = useState(false);
+  const [showNewComment, setShowNewComment] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
 
-  const newUpdateRef = useRef<HTMLDivElement>(null);
+  const newCommentRef = useRef<HTMLDivElement>(null);
   const titleRef = useAutoResize(editedNote.title);
 
   const debouncedSave = useDebouncedCallback(() => {
@@ -115,15 +115,15 @@ const NoteEditor = ({
     };
   }, [debouncedSave, setNoteToolbarAtom]);
 
-  // Scroll to the new update editor when it appears.
+  // Scroll to the new comment editor when it appears.
   useEffect(() => {
-    if (showNewUpdate) {
-      newUpdateRef.current?.scrollIntoView({
+    if (showNewComment) {
+      newCommentRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
       });
     }
-  }, [showNewUpdate]);
+  }, [showNewComment]);
 
   return (
     <div className="flex flex-col items-center gap-4 min-h-full w-full max-w-250">
@@ -164,7 +164,7 @@ const NoteEditor = ({
             size="sm"
             variant="ghost"
             colour={colour}
-            onClick={() => setShowNewUpdate(true)}
+            onClick={() => setShowNewComment(true)}
             iconName="chatCenteredText"
           />
 
@@ -274,31 +274,31 @@ const NoteEditor = ({
         />
       </div>
 
-      {(updates.length > 0 || showNewUpdate) && (
+      {(comments.length > 0 || showNewComment) && (
         <div className="w-full flex flex-col border-t border-slate-200">
-          {showNewUpdate && (
-            <div ref={newUpdateRef}>
-              <UpdateEditor
-                update={{ notes: [editedNote], tint: null }}
+          {showNewComment && (
+            <div ref={newCommentRef}>
+              <CommentEditor
+                comment={{ notes: [editedNote], tint: null }}
                 colour={colour}
                 showNotes={false}
                 autoFocus={true}
-                onCancel={() => setShowNewUpdate(false)}
-                onCreated={() => setShowNewUpdate(false)}
+                onCancel={() => setShowNewComment(false)}
+                onCreated={() => setShowNewComment(false)}
               />
             </div>
           )}
 
-          {updates.length > 0 &&
-            [...updates]
+          {comments.length > 0 &&
+            [...comments]
               .reverse()
-              .map((update) => (
-                <UpdateEditor
-                  key={update.id}
-                  update={update}
+              .map((comment) => (
+                <CommentEditor
+                  key={comment.id}
+                  comment={comment}
                   colour={colour}
                   showNotes={false}
-                  hideBottomLine={update === updates[0]}
+                  hideBottomLine={comment === comments[0]}
                 />
               ))}
         </div>

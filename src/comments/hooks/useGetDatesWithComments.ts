@@ -7,14 +7,14 @@ import type {
 } from "@tanstack/react-query";
 import type { DateWithNotes } from "src/notes/Note.type";
 
-type UseGetDatesWithUpdatesResponse = {
-  datesWithUpdates: DateWithNotes[];
-  refetchDatesWithUpdates: (
+type UseGetDatesWithCommentsResponse = {
+  datesWithComments: DateWithNotes[];
+  refetchDatesWithComments: (
     options?: RefetchOptions | undefined,
   ) => Promise<QueryObserverResult<DateWithNotes[], Error>>;
 };
 
-export const useGetDatesWithUpdates = (): UseGetDatesWithUpdatesResponse => {
+export const useGetDatesWithComments = (): UseGetDatesWithCommentsResponse => {
   const { pocketbookId: routePocketbookId } = useCurrentPocketbookId();
   const pocketbookId = routePocketbookId;
 
@@ -23,14 +23,14 @@ export const useGetDatesWithUpdates = (): UseGetDatesWithUpdatesResponse => {
       return [];
     }
 
-    const response = await window.api.getUpdates({ pocketbookId });
+    const response = await window.api.getComments({ pocketbookId });
     if (!response.success) throw new Error(response.error);
 
     const uniqueDates = new Map<string, string>();
-    for (const update of response.data.updates) {
-      const dateStr = update.created.split("T")[0];
+    for (const comment of response.data.comments) {
+      const dateStr = comment.created.split("T")[0];
       if (!uniqueDates.has(dateStr)) {
-        uniqueDates.set(dateStr, update.created);
+        uniqueDates.set(dateStr, comment.created);
       }
     }
 
@@ -44,10 +44,10 @@ export const useGetDatesWithUpdates = (): UseGetDatesWithUpdatesResponse => {
   };
 
   const { data, refetch } = useQuery({
-    queryKey: ["datesWithUpdates.list", pocketbookId],
+    queryKey: ["datesWithComments.list", pocketbookId],
     queryFn,
     enabled: Boolean(pocketbookId),
   });
 
-  return { datesWithUpdates: data ?? [], refetchDatesWithUpdates: refetch };
+  return { datesWithComments: data ?? [], refetchDatesWithComments: refetch };
 };
