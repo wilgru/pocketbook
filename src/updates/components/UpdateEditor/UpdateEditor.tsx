@@ -10,7 +10,6 @@ import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
-import { FormattingToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
 import { useCreateUpdate } from "src/updates/hooks/useCreateUpdate";
@@ -83,9 +82,14 @@ export const UpdateEditor = ({
     return null;
   }
 
-  const resolvedColour = colour ?? currentPocketbook.colour ?? colours.blue;
+  const resolvedColour = colour ?? currentPocketbook.colour ?? colours.orange;
 
   const onDone = async () => {
+    setNoteToolbarAtom((current) => ({
+      ...current,
+      isVisible: false,
+    }));
+
     if (editedUpdate.id) {
       const updated = await updateUpdate({
         updateId: editedUpdate.id,
@@ -118,6 +122,11 @@ export const UpdateEditor = ({
   };
 
   const onCancelEdit = () => {
+    setNoteToolbarAtom((current) => ({
+      ...current,
+      isVisible: false,
+    }));
+
     if (!editedUpdate.id) {
       onCancel?.();
     } else {
@@ -127,6 +136,11 @@ export const UpdateEditor = ({
   };
 
   const onDelete = async () => {
+    setNoteToolbarAtom((current) => ({
+      ...current,
+      isVisible: false,
+    }));
+
     if (editedUpdate.id) {
       await deleteUpdate({ updateId: editedUpdate.id });
     } else {
@@ -233,14 +247,18 @@ export const UpdateEditor = ({
           </div>
         )}
 
-        {isEditing && <FormattingToolbar />}
-
         <RichTextEditor
           size="md"
           className={cn(isEditing && "px-2")}
           value={editedUpdate.content}
           colour={resolvedColour}
-          onFocus={() => setIsEditing(true)}
+          onFocus={() => {
+            setIsEditing(true);
+            setNoteToolbarAtom((current) => ({
+              ...current,
+              isVisible: true,
+            }));
+          }}
           autoFocus={autoFocus}
           onChange={(delta) => onUpdateField({ content: delta })}
           onSelectedFormattingChange={(selectionFormatting) => {

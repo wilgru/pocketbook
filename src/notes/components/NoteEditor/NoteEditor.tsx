@@ -239,8 +239,8 @@ const NoteEditor = ({
           colour={colour}
           onChange={(content) => onUpdateNote({ content: content })}
           onSelectedFormattingChange={(selectionFormatting) => {
-            setNoteToolbarAtom((s) => ({
-              ...s,
+            setNoteToolbarAtom((current) => ({
+              ...current,
               toolbarFormatting: selectionFormatting,
             }));
           }}
