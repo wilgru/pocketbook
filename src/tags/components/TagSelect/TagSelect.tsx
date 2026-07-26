@@ -54,6 +54,7 @@ export const TagSelect = ({
         links: [],
         tagGroupId: null,
         colour: colours.orange,
+        layout: "list",
         icon: "tag",
         sortBy: "created",
         sortDirection: "desc",

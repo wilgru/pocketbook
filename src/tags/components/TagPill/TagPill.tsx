@@ -1,3 +1,4 @@
+import { cva } from "class-variance-authority";
 import { useState } from "react";
 import { Button } from "src/common/components/Button/Button";
 import { cn } from "src/common/utils/cn";
@@ -14,7 +15,98 @@ type TagPillProps = {
   onClick?: (id: string) => void;
 };
 
-// TODO: refactor to have use cva for styles like Button component
+const tagPillVariants = cva(
+  [
+    "h-fit",
+    "w-fit",
+    "flex",
+    "items-center",
+    "rounded-full",
+    "transition-colors",
+    "focus-visible:outline-solid",
+    "focus-visible:outline-2",
+    "focus-visible:outline-offset-2",
+    "focus-visible:outline-orange-500",
+  ],
+  {
+    variants: {
+      variant: {
+        block: null,
+        ghost: "text-slate-500",
+        "ghost-strong": "text-slate-400",
+        link: "underline-offset-4 hover:underline",
+      },
+      size: {
+        xs: "text-[0.625rem] font-normal gap-1",
+        sm: "text-xs font-normal gap-1.5",
+        md: "text-sm font-medium gap-2",
+        lg: "text-md font-medium gap-3",
+      },
+      content: {
+        text: null,
+        icon: null,
+        iconAndText: null,
+      },
+    },
+    compoundVariants: [
+      // icons only
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "icon",
+        size: "xs",
+        className: "p-0.5",
+      },
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "icon",
+        size: "sm",
+        className: "p-1",
+      },
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "icon",
+        size: "md",
+        className: "p-2",
+      },
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "icon",
+        size: "lg",
+        className: "p-3",
+      },
+      //  icons and text
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "iconAndText",
+        size: "xs",
+        className: "py-0.5 pl-1 pr-1.5",
+      },
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "iconAndText",
+        size: "sm",
+        className: "py-1 pl-1.5 pr-2",
+      },
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "iconAndText",
+        size: "md",
+        className: "py-2 pl-2 pr-3",
+      },
+      {
+        variant: ["block", "ghost", "ghost-strong"],
+        content: "iconAndText",
+        size: "lg",
+        className: "py-3 pl-3 pr-4",
+      },
+    ],
+    defaultVariants: {
+      variant: "block",
+      size: "md",
+    },
+  },
+);
+
 export const TagPill = ({
   tag,
   size = "sm",
@@ -54,18 +146,15 @@ export const TagPill = ({
           )}
         </Button>
       ) : (
-        // TODO: refactor to remove duplicate styling code between this and the Button version
         <div
           className={cn(
-            "h-fit w-fit flex items-center gap-2 rounded-full transition-colors",
-            size === "xs" && "text-[0.625rem] font-normal pl-1.5 pr-2",
-            size === "sm" && "text-xs font-normal py-1 pl-1 pr-2",
-            size === "md" && "text-sm font-medium py-2 pl-2 pr-3",
-            size === "lg" && "text-md font-medium py-3 pl-3 pr-4",
+            tagPillVariants({
+              size,
+              variant,
+              content: collapsed ? "icon" : "iconAndText",
+            }),
             variant === "block" && tag.colour.textPill,
             variant === "block" && tag.colour.backgroundPill,
-            variant === "block" && tag.colour.textPillInverted,
-            variant === "block" && tag.colour.backgroundPillInverted,
             variant === "ghost" && "text-slate-400",
             variant === "link" && "underline-offset-4",
           )}

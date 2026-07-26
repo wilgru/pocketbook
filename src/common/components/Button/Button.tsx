@@ -24,7 +24,6 @@ const buttonVariants = cva(
     "w-fit",
     "flex",
     "items-center",
-    "gap-2",
     "rounded-full",
     "transition-colors",
     "focus-visible:outline-solid",
@@ -41,10 +40,10 @@ const buttonVariants = cva(
         link: "underline-offset-4 hover:underline",
       },
       size: {
-        xs: "text-[0.625rem] font-normal",
-        sm: "text-xs font-normal",
-        md: "text-sm font-medium",
-        lg: "text-md font-medium",
+        xs: "text-[0.625rem] font-normal gap-1",
+        sm: "text-xs font-normal gap-1.5",
+        md: "text-sm font-medium gap-2",
+        lg: "text-md font-medium gap-3",
       },
       content: {
         text: null,
@@ -108,13 +107,13 @@ const buttonVariants = cva(
         variant: ["block", "ghost", "ghost-strong"],
         content: "iconAndText",
         size: "xs",
-        className: "py-0.5 pl-0.5 pr-1",
+        className: "py-0.5 pl-1 pr-1.5",
       },
       {
         variant: ["block", "ghost", "ghost-strong"],
         content: "iconAndText",
         size: "sm",
-        className: "py-1 pl-1 pr-2",
+        className: "py-1 pl-1.5 pr-2",
       },
       {
         variant: ["block", "ghost", "ghost-strong"],
