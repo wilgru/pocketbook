@@ -5,7 +5,6 @@ import { Button } from "src/common/components/Button/Button";
 import { NavItem } from "src/common/components/NavItem/NavItem";
 import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
 import { cn } from "src/common/utils/cn";
-import { Icon } from "src/icons/components/Icon/Icon";
 import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";
@@ -137,21 +136,20 @@ export const Sidebar = () => {
             ))}
           </SidebarTagSection>
         ))}
+      </div>
 
-        <hr className="w-full border-slate-200" />
-
+      <div className="py-2 ml-3 mr-1 border-t border-slate-200 bg-slate-50">
         <Dialog.Root>
           <Dialog.Trigger asChild>
-            <button
-              type="button"
-              className={cn(
-                "pl-0.5 mt-1 w-fit flex items-center gap-1 text-slate-400 transition-colors",
-                `hover:${currentPocketbook.colour.textPill}`,
-              )}
+            <Button
+              iconName="plus"
+              variant="ghost"
+              size="sm"
+              className="w-full"
+              colour={currentPocketbook.colour}
             >
-              <Icon iconName="plus" size="xs" />
-              <span className="text-xs">Add Tag Group</span>
-            </button>
+              Add Tag Group
+            </Button>
           </Dialog.Trigger>
 
           <CreateTagGroupModal />
