@@ -25,7 +25,7 @@ export const UpdatesSection = ({
 
   return (
     <section id={title} className="w-full flex flex-col">
-      <h2 className="font-title text-xl text-slate-400 py-0.5">{title}</h2>
+      <h2 className="font-title text-xl text-slate-500 py-0.5">{title}</h2>
 
       <div className="flex flex-col relative">
         {updateGroup.updates.map((update, index) => {
@@ -49,7 +49,7 @@ export const UpdatesSection = ({
                         to="/$pocketbookId/tasks"
                         params={{ pocketbookId: pocketbookId ?? "" }}
                         className={cn(
-                          "underline text-slate-600 hover:text-slate-800",
+                          "text-slate-700 hover:text-slate-800 hover:underline",
                           update.action === "cancelled" && "line-through",
                         )}
                       >
@@ -96,7 +96,7 @@ export const UpdatesSection = ({
                         to="/$pocketbookId/notes"
                         params={{ pocketbookId: pocketbookId ?? "" }}
                         search={{ noteId: update.data.id }}
-                        className="underline text-slate-600 hover:text-slate-800"
+                        className="text-slate-700 hover:text-slate-800 hover:underline"
                       >
                         {update.data.title ?? "Untitled Note"}
                       </Link>

@@ -183,7 +183,7 @@ export const CommentEditor = ({
                   to="/$pocketbookId/notes"
                   params={{ pocketbookId: pocketbookId ?? "" }}
                   search={{ noteId: note.id }}
-                  className="underline text-slate-600 hover:text-slate-800"
+                  className="text-slate-700 hover:text-slate-800 hover:underline"
                 >
                   {note.title ?? "Untitled Note"}
                 </Link>

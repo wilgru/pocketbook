@@ -138,7 +138,7 @@ export const Sidebar = () => {
         ))}
       </div>
 
-      <div className="py-2 ml-3 mr-1 border-t border-slate-200 bg-slate-50">
+      <div className="py-3 ml-3 mr-1 border-t border-slate-200 bg-slate-50">
         <Dialog.Root>
           <Dialog.Trigger asChild>
             <Button
