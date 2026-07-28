@@ -1,4 +1,5 @@
 import { cn } from "src/common/utils/cn";
+import { FloatingToolbar } from "../FloatingToolbar/FloatingToolbar";
 import type { ReactNode } from "react";
 
 type PaneWithInspectorLayoutProps = {
@@ -6,6 +7,7 @@ type PaneWithInspectorLayoutProps = {
   sidebar: ReactNode;
   content: ReactNode;
   showSidebarTopContentDivider?: boolean;
+  floatingToolbar?: ReactNode;
 };
 
 export const PaneWithInspectorLayout = ({
@@ -13,6 +15,7 @@ export const PaneWithInspectorLayout = ({
   sidebar,
   content,
   showSidebarTopContentDivider = false,
+  floatingToolbar,
 }: PaneWithInspectorLayoutProps) => {
   return (
     <div className="flex-1 min-h-0 w-full min-w-0 box-border">
@@ -20,6 +23,12 @@ export const PaneWithInspectorLayout = ({
         <section className="relative flex-1 min-h-0 overflow-y-scroll flex justify-center px-8">
           {content}
         </section>
+
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
+          <FloatingToolbar visible={!!floatingToolbar}>
+            {floatingToolbar}
+          </FloatingToolbar>
+        </div>
 
         <aside className="w-52 min-h-0 mb-2 mr-2 flex flex-col bg-white border border-slate-300 rounded-xl drop-shadow-sm ">
           {sidebarTopContent && (

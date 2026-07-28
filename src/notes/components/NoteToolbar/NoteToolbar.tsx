@@ -23,14 +23,14 @@ import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarComm
 import { FormattingToolbarButton } from "./NoteToolbarButton";
 import type { BaseSelection } from "lexical";
 
-export const FormattingToolbar = () => {
+export const NoteToolbar = () => {
   const [linkUrl, setLinkUrl] = useState("");
   const linkInputRef = useRef<HTMLInputElement | null>(null);
   const savedSelectionRef = useRef<BaseSelection | null>(null);
 
   const { editorContext, toolbarFormatting, colour, isToolbarBusy } =
     useAtomValue(NoteToolbarAtom);
-  const setFormattingToolbarAtom = useSetAtom(NoteToolbarAtom);
+  const setNoteToolbarAtom = useSetAtom(NoteToolbarAtom);
 
   useEffect(() => {
     if (isToolbarBusy) {
@@ -60,7 +60,7 @@ export const FormattingToolbar = () => {
   };
 
   const handleLinkPopoverOpenChange = (open: boolean) => {
-    setFormattingToolbarAtom((s) => ({ ...s, isToolbarBusy: open }));
+    setNoteToolbarAtom((current) => ({ ...current, isToolbarBusy: open }));
 
     if (open) {
       if (!savedSelectionRef.current) {

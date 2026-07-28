@@ -5,13 +5,12 @@ import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { taskToolbarAtom } from "src/common/atoms/taskToolbarAtom";
 import { BlankLayout } from "src/common/components/BlankLayout/BlankLayout";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
-import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTableSection";
-import { FormattingToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
+import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
 import { TaskToolbar } from "src/tasks/components/TaskToolbar/TaskToolbar";
@@ -73,14 +72,13 @@ export const NotesLayout = ({
   groupSortDirection = "desc",
   onCreateNote,
 }: NotesLayoutProps) => {
-  const { isVisible: isFormattingToolbarVisible } =
-    useAtomValue(NoteToolbarAtom);
+  const { isVisible: isNoteToolbarVisible } = useAtomValue(NoteToolbarAtom);
   const { isVisible: isTaskToolbarVisible } = useAtomValue(taskToolbarAtom);
 
   const activeToolbarContent = isTaskToolbarVisible ? (
     <TaskToolbar />
-  ) : isFormattingToolbarVisible ? (
-    <FormattingToolbar />
+  ) : isNoteToolbarVisible ? (
+    <NoteToolbar />
   ) : null;
 
   const effectiveNoteGroups = useMemo<NotesGroup[]>(() => {
@@ -158,13 +156,7 @@ export const NotesLayout = ({
               )}
             </>
           }
-          floatingToolbar={
-            <FloatingToolbar
-              visible={isTaskToolbarVisible || isFormattingToolbarVisible}
-            >
-              {activeToolbarContent}
-            </FloatingToolbar>
-          }
+          floatingToolbar={activeToolbarContent}
           content={
             <>
               {selectedNote ? (
@@ -225,13 +217,7 @@ export const NotesLayout = ({
               ))}
             </div>
           }
-          floatingToolbar={
-            <FloatingToolbar
-              visible={isTaskToolbarVisible || isFormattingToolbarVisible}
-            >
-              {activeToolbarContent}
-            </FloatingToolbar>
-          }
+          floatingToolbar={activeToolbarContent}
         />
       );
   }

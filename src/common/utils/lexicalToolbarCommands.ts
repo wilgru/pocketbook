@@ -141,6 +141,7 @@ export const executeLexicalToolbarAction = (
   url?: string,
   savedSelection?: BaseSelection | null,
 ): void => {
+  console.log("executeLexicalToolbarAction", editor);
   if (!editor) {
     return;
   }

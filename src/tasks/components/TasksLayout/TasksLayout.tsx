@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { taskToolbarAtom } from "src/common/atoms/taskToolbarAtom";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
-import { FloatingToolbar } from "src/common/components/FloatingToolbar/FloatingToolbar";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
@@ -75,11 +74,7 @@ export const TasksLayout = ({
           ))}
         </ListSection>
       }
-      floatingToolbar={
-        <FloatingToolbar visible={isVisible}>
-          <TaskToolbar />
-        </FloatingToolbar>
-      }
+      floatingToolbar={isVisible ? <TaskToolbar /> : null}
       content={
         <div className="h-full w-full max-w-200 flex flex-col gap-6">
           {effectiveTaskGroups.length === 0 && (

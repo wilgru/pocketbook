@@ -1,4 +1,5 @@
 import { cn } from "src/common/utils/cn";
+import { FloatingToolbar } from "../FloatingToolbar/FloatingToolbar";
 import type { ReactNode } from "react";
 
 type TwoPaneLayoutProps = {
@@ -45,7 +46,9 @@ export const TwoPaneLayout = ({
 
           {floatingToolbar && (
             <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-              {floatingToolbar}
+              <FloatingToolbar visible={!!floatingToolbar}>
+                {floatingToolbar}
+              </FloatingToolbar>
             </div>
           )}
         </div>

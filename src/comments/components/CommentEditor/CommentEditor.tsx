@@ -16,6 +16,7 @@ import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
+import type { LexicalEditor } from "node_modules/lexical/dist/LexicalEditor";
 import type { Colour } from "src/colours/Colour.type";
 import type { Comment, CommentTint } from "src/comments/Comment.type";
 import type { Note } from "src/notes/Note.type";
@@ -72,17 +73,13 @@ export const CommentEditor = ({
     getInitialComment(comment),
   );
   const [isEditing, setIsEditing] = useState(!comment.id);
-  const tintClasses = getTintClasses(editedComment.tint);
+  const [editorContext, setEditorContext] = useState<LexicalEditor | null>(
+    null,
+  );
 
   const onUpdateField = (fields: Partial<Comment>) => {
     setEditedComment((current) => ({ ...current, ...fields }));
   };
-
-  if (!currentPocketbook) {
-    return null;
-  }
-
-  const resolvedColour = colour ?? currentPocketbook.colour ?? colours.orange;
 
   const onDone = async () => {
     setNoteToolbarAtom((current) => ({
@@ -147,6 +144,13 @@ export const CommentEditor = ({
       onCancel?.();
     }
   };
+
+  if (!currentPocketbook) {
+    return null;
+  }
+
+  const tintClasses = getTintClasses(editedComment.tint);
+  const resolvedColour = colour ?? currentPocketbook.colour ?? colours.orange;
 
   const dateStr = editedComment.created
     ? showTimeOnly
@@ -258,11 +262,12 @@ export const CommentEditor = ({
             setIsEditing(true);
             setNoteToolbarAtom((current) => ({
               ...current,
+              editorContext,
               isVisible: true,
             }));
           }}
           autoFocus={autoFocus}
-          onChange={(delta) => onUpdateField({ content: delta })}
+          onChange={(content) => onUpdateField({ content })}
           onSelectedFormattingChange={(selectionFormatting) => {
             setNoteToolbarAtom((current) => ({
               ...current,
@@ -270,10 +275,7 @@ export const CommentEditor = ({
             }));
           }}
           onEditorContextReady={(editorContext) => {
-            setNoteToolbarAtom((current) => ({
-              ...current,
-              editorContext,
-            }));
+            setEditorContext(editorContext);
           }}
         />
 
