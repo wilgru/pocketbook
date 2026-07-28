@@ -8,20 +8,18 @@ import { Toggle } from "src/common/components/Toggle/Toggle";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { TaskDatePicker } from "src/tasks/components/TaskDatePicker/TaskDatePicker";
 import { useDeleteTask } from "src/tasks/hooks/useDeleteTask";
-import { useGetTasks } from "src/tasks/hooks/useGetTasks";
 import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
 import type { Task } from "src/tasks/Task.type";
 
 export const TaskToolbar = () => {
-  const { tasks } = useGetTasks({});
   const { deleteTask } = useDeleteTask();
   const { updateTask } = useUpdateTask();
 
   const [atom, setTaskToolbarAtom] = useAtom(taskToolbarAtom);
-  const { task, onUpdateTask, colour, refocusRef } = atom;
+  const { task, tasksForSorting, onUpdateTask, colour, refocusRef } = atom;
 
   const handlePopoverOpenChange = (open: boolean) => {
-    setTaskToolbarAtom((s) => ({ ...s, isToolbarBusy: open }));
+    setTaskToolbarAtom((current) => ({ ...current, isToolbarBusy: open }));
 
     if (!open) {
       refocusRef?.current?.focus();
@@ -31,6 +29,8 @@ export const TaskToolbar = () => {
   // have to use updateTask instead of onUpdateTask here because we need to update the sortOrder of both tasks, separately
   const swapTaskOrder = useCallback(
     (taskA: Task, taskB: Task) => {
+      console.log("Swapping task order", taskA, taskB);
+
       updateTask({
         taskId: taskA.id,
         updateTaskData: { ...taskA, sortOrder: taskB.sortOrder },
@@ -45,7 +45,7 @@ export const TaskToolbar = () => {
 
   const toolbarColour = colour ?? colours.orange;
 
-  if (!task) {
+  if (!task || !tasksForSorting) {
     return null;
   }
 
@@ -61,7 +61,9 @@ export const TaskToolbar = () => {
             task.sortOrder > 0
               ? swapTaskOrder(
                   task,
-                  tasks.find((t) => t.sortOrder === task.sortOrder - 1)!,
+                  tasksForSorting.find(
+                    (t) => t.sortOrder === task.sortOrder - 1,
+                  )!,
                 )
               : undefined
           }
@@ -73,14 +75,16 @@ export const TaskToolbar = () => {
           iconName="caretDown"
           colour={toolbarColour}
           onClick={() =>
-            task.sortOrder < tasks.length - 1
+            task.sortOrder < tasksForSorting.length - 1
               ? swapTaskOrder(
                   task,
-                  tasks.find((t) => t.sortOrder === task.sortOrder + 1)!,
+                  tasksForSorting.find(
+                    (t) => t.sortOrder === task.sortOrder + 1,
+                  )!,
                 )
               : undefined
           }
-          disabled={task.sortOrder >= tasks.length - 1}
+          disabled={task.sortOrder >= tasksForSorting.length - 1}
         />
       </div>
 
@@ -141,7 +145,14 @@ export const TaskToolbar = () => {
           size="sm"
           iconName="trash"
           colour={colours.red}
-          onClick={() => deleteTask({ taskId: task.id })}
+          onClick={() => {
+            deleteTask({ taskId: task.id });
+            setTaskToolbarAtom((current) => ({
+              ...current,
+              task: null,
+              isVisible: false,
+            }));
+          }}
         />
       </div>
     </div>

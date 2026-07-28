@@ -79,7 +79,6 @@ export const TaskDatePicker = ({
               selectedDate={dueDate}
               onSelectDate={(date) => {
                 onChange(date);
-                handleOpenChange(false);
               }}
             />
           </ControlPopover>

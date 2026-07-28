@@ -173,6 +173,7 @@ export const TasksSection = ({
           <TaskEditor
             key={task.id}
             task={task}
+            tasksForSorting={taskGroup.tasks}
             colour={colour}
             onCreateNextTask={() => onCreateTask(task.sortOrder)}
             autoFocusTitle={task.id === newTaskFocusId}

@@ -18,6 +18,7 @@ import type { Task } from "src/tasks/Task.type";
 
 type TaskEditorProps = {
   task?: Partial<Task>;
+  tasksForSorting?: Task[];
   onSave?: () => void;
   onCreate?: (task: Task) => void;
   onCreateNextTask?: () => void | Promise<void>;
@@ -48,6 +49,7 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
 
 export const TaskEditor = ({
   task,
+  tasksForSorting, // TODO: this needs to be updated whenever the task list changes so that we can update the sortOrder of tasks when moving them up or down multiple times
   onSave,
   onCreate,
   onCreateNextTask,
@@ -61,6 +63,7 @@ export const TaskEditor = ({
   const [taskToolbar, setTaskToolbarAtom] = useAtom(taskToolbarAtom);
 
   const [editedTask, setEditedTask] = useState<Task>(getInitialTask(task));
+  const [isFocused, setIsFocused] = useState(false);
   const titleRef = useAutoResize(editedTask.title);
   const descriptionRef = useAutoResize(editedTask.description);
 
@@ -98,26 +101,6 @@ export const TaskEditor = ({
     [debouncedSave],
   );
 
-  const onFocusTask = () => {
-    setTaskToolbarAtom((current) => ({
-      ...current,
-      task: editedTask,
-      refocusRef: titleRef,
-      onUpdateTask,
-      colour,
-      isVisible: true,
-    }));
-  };
-
-  const onBlurTask = () => {
-    if (taskToolbar.isToolbarBusy) {
-      return;
-    }
-
-    debouncedSave.flush();
-    setTaskToolbarAtom(defaultTaskToolbarAtom);
-  };
-
   const onCheckCircleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const wasCompleted = !!editedTask.completedDate;
     const wasCancelled = !!editedTask.cancelledDate;
@@ -138,7 +121,7 @@ export const TaskEditor = ({
 
   const isCompleted = !!editedTask.completedDate;
   const isCancelled = !!editedTask.cancelledDate;
-  const showDescription = !!editedTask.description;
+  const showDescription = isFocused || !!editedTask.description;
 
   const isDueDateOverdue =
     !!editedTask.dueDate &&
@@ -167,7 +150,41 @@ export const TaskEditor = ({
   }, [editedTask, setTaskToolbarAtom, taskToolbar?.task?.id]);
 
   return (
-    <div className="w-full flex gap-1 items-start">
+    <div
+      className="w-full flex gap-1 items-start"
+      onFocus={() => {
+        // TODO: This is a hacky way to ensure that the toolbar for a newly focused task is updated after blurring another task. Find a better way to handle this.
+        setTimeout(() => {
+          setIsFocused(true);
+          setTaskToolbarAtom((current) => ({
+            ...current,
+            task: editedTask,
+            tasksForSorting: tasksForSorting,
+            refocusRef: titleRef,
+            onUpdateTask,
+            colour,
+            isVisible: true,
+          }));
+        }, 1);
+      }}
+      onBlur={(e) => {
+        //TODO: This is a hacky way to check if the blur event is caused by clicking back and forth from title to description. Find a better way to handle this.
+        const taskEditorRoot = e.currentTarget;
+        setTimeout(() => {
+          if (
+            taskEditorRoot.contains(document.activeElement) ||
+            taskToolbar.isToolbarBusy
+          ) {
+            return;
+          }
+
+          debouncedSave.flush();
+
+          setTaskToolbarAtom(defaultTaskToolbarAtom);
+          setIsFocused(false);
+        }, 0);
+      }}
+    >
       <button
         className="pt-0.75 pl-px"
         onMouseDown={(e) => {
@@ -198,8 +215,6 @@ export const TaskEditor = ({
             name="title"
             value={editedTask.title ?? ""}
             placeholder="No Title"
-            onFocus={onFocusTask}
-            onBlur={onBlurTask}
             onKeyDown={async (e) => {
               if (e.key !== "Enter" || e.shiftKey) {
                 return;
@@ -263,8 +278,6 @@ export const TaskEditor = ({
             name="description"
             value={editedTask.description ?? ""}
             placeholder="No description"
-            onFocus={onFocusTask}
-            onBlur={onBlurTask}
             onChange={(e) =>
               onUpdateTask({
                 description: e.target.value,

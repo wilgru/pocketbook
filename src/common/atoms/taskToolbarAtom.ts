@@ -4,6 +4,7 @@ import type { Task } from "src/tasks/Task.type";
 
 type TaskToolbarAtom = {
   task: Task | null;
+  tasksForSorting: Task[] | undefined;
   onUpdateTask: ((updateTaskData: Partial<Task>) => void) | undefined;
   refocusRef: React.RefObject<HTMLTextAreaElement> | null;
   isVisible: boolean;
@@ -13,6 +14,7 @@ type TaskToolbarAtom = {
 
 export const defaultTaskToolbarAtom: TaskToolbarAtom = {
   task: null,
+  tasksForSorting: undefined,
   onUpdateTask: undefined,
   refocusRef: null,
   isVisible: false,

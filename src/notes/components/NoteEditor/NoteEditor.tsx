@@ -222,6 +222,7 @@ const NoteEditor = ({
             <TaskEditor
               key={task.id}
               task={task}
+              tasksForSorting={note.tasks}
               colour={colour}
               onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}

@@ -88,6 +88,7 @@ export const TasksLayout = ({
 
           {effectiveTaskGroups.map((group) => (
             <TasksSection
+              key={group.navigationId}
               taskGroup={group}
               colour={colour}
               noNoteEditorTrigger={
