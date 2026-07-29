@@ -4,6 +4,7 @@ import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
+import type { IconName } from "src/icons/Icon.type";
 
 type ButtonProps = {
   children?: React.ReactNode;
@@ -14,7 +15,7 @@ type ButtonProps = {
   className?: string;
   disabled?: boolean;
   onClick?: () => void;
-  iconName?: string;
+  iconName?: IconName | null;
   ariaLabel?: string;
 };
 
@@ -188,14 +189,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         onMouseLeave={() => setIsButtonHovered(false)}
         onClick={onClick}
       >
-        {iconName && (
-          <Icon
-            iconName={iconName}
-            size={size}
-            className={cn(isButtonHovered && colour.textPill)}
-            weight={isButtonHovered ? "fill" : "regular"}
-          />
-        )}
+        <Icon
+          iconName={iconName ?? null}
+          size={size}
+          className={cn(isButtonHovered && colour.textPill)}
+          weight={isButtonHovered ? "fill" : "regular"}
+        />
+
         {children}
       </button>
     );

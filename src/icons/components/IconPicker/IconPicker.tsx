@@ -1,13 +1,14 @@
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { icons } from "src/icons/icons.constant";
+import { customisationIcons } from "src/icons/customisationIcons.constant";
 import type { Colour } from "src/colours/Colour.type";
+import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
 
 type IconPickerProps = {
-  selectedIconName: string;
+  selectedIconName: CustomisationIconName | null;
   allowNoIcon?: boolean;
   colour: Colour;
-  onSelectIcon: (iconName: string) => void;
+  onSelectIcon: (iconName: CustomisationIconName | null) => void;
 };
 
 export default function IconPicker({
@@ -18,18 +19,21 @@ export default function IconPicker({
 }: IconPickerProps) {
   return (
     <div className="flex flex-wrap gap-2">
-      {icons.map((icon) => (
+      {customisationIcons.map((customisationIcon) => (
         <button
-          key={icon.name}
-          onClick={() => onSelectIcon(icon.name)}
+          key={customisationIcon.name}
+          onClick={() => onSelectIcon(customisationIcon.name)}
           className={cn(
             "flex justify-center items-center h-8 w-8 p-1 rounded-full",
-            selectedIconName === icon.name && colour.backgroundPill,
+            selectedIconName === customisationIcon.name &&
+              colour.backgroundPill,
           )}
         >
           <Icon
-            iconName={icon.name}
-            weight={selectedIconName === icon.name ? "fill" : "regular"}
+            iconName={customisationIcon.name}
+            weight={
+              selectedIconName === customisationIcon.name ? "fill" : "regular"
+            }
             className={cn(colour.textPill)}
           />
         </button>
@@ -37,17 +41,17 @@ export default function IconPicker({
 
       {allowNoIcon && (
         <button
-          onClick={() => onSelectIcon("")}
+          onClick={() => onSelectIcon(null)}
           className={cn(
             "flex justify-center items-center h-8 w-8 p-1 rounded-full",
-            selectedIconName === "" && "bg-gray-100",
+            selectedIconName === null && "bg-gray-100",
           )}
         >
           <Icon
             iconName="empty"
-            weight={selectedIconName === "" ? "fill" : "regular"}
+            weight={selectedIconName === null ? "fill" : "regular"}
             className={
-              selectedIconName === "" ? "fill-gray-400" : "fill-gray-300"
+              selectedIconName === null ? "fill-gray-400" : "fill-gray-300"
             }
           />
         </button>

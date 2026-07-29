@@ -4,11 +4,12 @@ import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
+import type { IconName } from "src/icons/Icon.type";
 
 type NavItemSize = "md" | "sm";
 
 type NavItemProps = {
-  iconName?: string;
+  iconName?: IconName | null;
   colour?: Colour;
   ghost?: boolean;
   title: string;
@@ -67,19 +68,17 @@ export const NavItem = ({
               (isHovered || isActive) && colour.textPill,
             )}
           >
-            {iconName && (
-              <Icon
-                iconName={iconName}
-                className={cn(
-                  "shrink-0",
-                  isHovered || isActive || (colour && !ghost)
-                    ? colour.textPill
-                    : "text-slate-500",
-                )}
-                size={iconSize}
-                weight={isHovered || isActive ? "fill" : "regular"}
-              />
-            )}
+            <Icon
+              iconName={iconName ?? null}
+              className={cn(
+                "shrink-0",
+                isHovered || isActive || (colour && !ghost)
+                  ? colour.textPill
+                  : "text-slate-500",
+              )}
+              size={iconSize}
+              weight={isHovered || isActive ? "fill" : "regular"}
+            />
 
             <span className="truncate">{title}</span>
           </div>

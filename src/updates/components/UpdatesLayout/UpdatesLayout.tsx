@@ -17,6 +17,7 @@ import { groupUpdates } from "src/updates/utils/groupUpdates";
 import type { Dayjs } from "dayjs";
 import type { Colour } from "src/colours/Colour.type";
 import type { Comment } from "src/comments/Comment.type";
+import type { IconName } from "src/icons/Icon.type";
 import type { Note } from "src/notes/Note.type";
 import type { Task } from "src/tasks/Task.type";
 import type { UpdateGroup } from "src/updates/Update.type";
@@ -58,7 +59,7 @@ export const UpdatesLayout = ({
     items: {
       title: string;
       navigationId: string;
-      icons: { iconName: string; colour: Colour }[];
+      icons: { iconName: IconName; colour: Colour }[];
     }[];
   }[] = useMemo(() => {
     return updateGroups.reduce<
@@ -67,7 +68,7 @@ export const UpdatesLayout = ({
         items: {
           title: string;
           navigationId: string;
-          icons: { iconName: string; colour: Colour }[];
+          icons: { iconName: IconName; colour: Colour }[];
         }[];
       }[]
     >((acc, updateGroup) => {
@@ -76,7 +77,7 @@ export const UpdatesLayout = ({
         title: updateGroup.date.format("D dddd"),
         navigationId: getRelativeDateTitle(updateGroup.date, false, false),
         icons: updateGroup.updates.reduce<
-          { iconName: string; colour: Colour }[]
+          { iconName: IconName; colour: Colour }[]
         >((icons, update) => {
           if (update.type !== "comment" || !update.data?.isWaypoint) {
             return icons;

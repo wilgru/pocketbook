@@ -2,6 +2,7 @@ import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { pocketbooks } from "src/pocketbooks/pocketbooks.schema";
 import type { InferSelectModel } from "drizzle-orm/table";
 import type { ColourName } from "src/colours/Colour.type";
+import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
 
 export const tagGroups = sqliteTable("tag_groups", {
   id: text("id").primaryKey(),
@@ -17,7 +18,7 @@ export const tags = sqliteTable("tags", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   colour: text("colour").notNull().$type<ColourName>(),
-  icon: text("icon").notNull().default(""),
+  icon: text("icon").$type<CustomisationIconName>(),
   layout: text("layout").notNull().default("list"),
   description: text("description"),
   groupBy: text("group_by"),

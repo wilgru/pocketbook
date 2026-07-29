@@ -1,11 +1,12 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import type { InferSelectModel } from "drizzle-orm/table";
 import type { ColourName } from "src/colours/Colour.type";
+import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
 
 export const pocketbooks = sqliteTable("pocketbooks", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
-  icon: text("icon").notNull().default(""),
+  icon: text("icon").$type<CustomisationIconName>(),
   colour: text("colour").notNull().$type<ColourName>(),
   notesLayout: text("notes_layout").notNull().default("list"),
   notesSortBy: text("notes_sort_by").notNull().default("created"),

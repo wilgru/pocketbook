@@ -71,6 +71,13 @@
       "when": 1785050121816,
       "tag": "0009_rename_updates_to_comments",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1785365163632,
+      "tag": "0010_made_icons_optional",
+      "breakpoints": true
     }
   ]
 }

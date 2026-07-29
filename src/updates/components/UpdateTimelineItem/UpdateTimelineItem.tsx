@@ -3,9 +3,10 @@ import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { ReactNode } from "react";
 import type { Colour } from "src/colours/Colour.type";
+import type { IconName } from "src/icons/Icon.type";
 
 type UpdateTimelineItemProps = {
-  iconName: string;
+  iconName: IconName;
   iconColour?: Colour;
   strongIcon?: boolean;
   headline?: ReactNode;

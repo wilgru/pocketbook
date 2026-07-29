@@ -3,10 +3,11 @@ import { useState } from "react";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
+import type { IconName } from "src/icons/Icon.type";
 
 type TableOfContentsListItemProps = {
   title: string;
-  icons?: { iconName: string; colour: Colour }[];
+  icons?: { iconName: IconName; colour: Colour }[];
   navigationId: string | null;
   onJumpTo: (id: string) => void;
   isActive?: boolean; // not using for now

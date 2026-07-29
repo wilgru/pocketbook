@@ -97,6 +97,7 @@ export const PocketbookSwitcher = ({
                   params={{
                     pocketbookId: pocketbook.id,
                   }}
+                  search={{ noteId: null }}
                   onClick={() => {
                     localStorage.setItem("lastUsedPocketbookId", pocketbook.id);
                     setIsOpen(false);

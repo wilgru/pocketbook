@@ -7,6 +7,7 @@ import { Input } from "src/common/components/Input/Input";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useCreatePocketbook } from "src/pocketbooks/hooks/useCreatePocketbook";
 import type { Colour } from "src/colours/Colour.type";
+import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
 
 export const Route = createFileRoute("/create-pocketbook")({
   component: RouteComponent,
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/create-pocketbook")({
 
 type PocketbookToCreate = {
   title: string;
-  icon: string;
+  icon: CustomisationIconName | null;
   colour: Colour;
 };
 
@@ -73,7 +74,7 @@ function RouteComponent() {
             <label className="text-sm font-medium leading-6 ">Icon</label>
             <div>
               <IconPicker
-                onSelectIcon={(iconName: string) => {
+                onSelectIcon={(iconName: CustomisationIconName | null) => {
                   setPocketbookToCreate((currentPocketbookToCreate) => {
                     return { ...currentPocketbookToCreate, icon: iconName };
                   });

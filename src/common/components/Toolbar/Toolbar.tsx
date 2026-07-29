@@ -7,9 +7,10 @@ import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteSearchBar } from "src/notes/components/NoteSearchBar/NoteSearchBar";
 import type { Colour } from "src/colours/Colour.type";
+import type { IconName } from "src/icons/Icon.type";
 
 type ToolbarProps = {
-  iconName?: string;
+  iconName?: IconName | null;
   title: string;
   colour?: Colour;
   pocketbookColour?: Colour;

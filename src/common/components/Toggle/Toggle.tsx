@@ -5,6 +5,7 @@ import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
+import type { IconName } from "src/icons/Icon.type";
 
 type ToggleProps = {
   className?: string;
@@ -14,7 +15,7 @@ type ToggleProps = {
   isToggled: boolean;
   disabled?: boolean;
   onClick?: () => void;
-  iconName?: string;
+  iconName?: IconName | null;
 };
 
 const toggleVariants = cva(
@@ -70,14 +71,12 @@ export const Toggle = ({
       onMouseLeave={() => setIsToggleHovered(false)}
       pressed={isToggled}
     >
-      {iconName && (
-        <Icon
-          className={cn(isToggleHovered && colour.textPill)}
-          iconName={iconName}
-          size={size}
-          weight={isToggled || isToggleHovered ? "fill" : "regular"}
-        />
-      )}
+      <Icon
+        className={cn(isToggleHovered && colour.textPill)}
+        iconName={iconName ?? null}
+        size={size}
+        weight={isToggled || isToggleHovered ? "fill" : "regular"}
+      />
       {children}
     </TogglePrimitive.Root>
   );
