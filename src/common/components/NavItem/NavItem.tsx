@@ -65,7 +65,7 @@ export const NavItem = ({
           <div
             className={cn(
               "flex items-center gap-2 min-w-0",
-              (isHovered || isActive) && colour.primary.text,
+              isHovered || isActive ? colour.primary.text : "text-slate-600",
             )}
           >
             <Icon
