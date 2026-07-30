@@ -119,7 +119,7 @@ export const TagSelect = ({
                   <Icon
                     iconName={tag.icon}
                     size="sm"
-                    className={tag.colour.textPill}
+                    className={tag.colour.primary.text}
                     weight="regular"
                   />
                   {tag.name}

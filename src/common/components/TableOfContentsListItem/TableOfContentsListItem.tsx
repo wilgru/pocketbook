@@ -28,8 +28,7 @@ export const TableOfContentsListItem = ({
     <div
       className={cn(
         "w-full flex items-center gap-2 px-2 py-1 rounded-lg text-sm transition-colors cursor-pointer",
-
-        isHovered && colour.backgroundPill,
+        isHovered && colour.primary.background,
       )}
       key={title}
       onMouseOver={() => setIsHovered(true)}
@@ -45,7 +44,7 @@ export const TableOfContentsListItem = ({
       <p
         className={cn(
           "min-w-0 overflow-x-hidden whitespace-nowrap text-ellipsis",
-          isHovered && colour.textPill,
+          isHovered && colour.primary.text,
         )}
       >
         {title}

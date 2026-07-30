@@ -33,8 +33,10 @@ export const UpdateTimelineItem = ({
 
         <div
           className={cn(
-            "rounded-full p-1 border border-slate-300",
-            strongIcon ? iconColour.background : "bg-white",
+            "rounded-full p-1 border",
+            strongIcon
+              ? [iconColour.background, iconColour.border]
+              : "bg-white border-slate-300",
           )}
         >
           <Icon
@@ -42,7 +44,7 @@ export const UpdateTimelineItem = ({
             size="xs"
             className={cn(
               "shrink-0",
-              strongIcon ? "fill-white" : iconColour.textPill,
+              strongIcon ? "fill-white" : iconColour.primary.text,
             )}
             weight={strongIcon ? "fill" : "regular"}
           />

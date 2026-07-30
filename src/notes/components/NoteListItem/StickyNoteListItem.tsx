@@ -45,14 +45,14 @@ export const StickyNoteListItem = ({
     >
       {({ isActive }: { isActive: boolean }) => {
         const stickyMetaColourClass =
-          isActive || isHovered ? colour.textPill : "text-yellow-600";
+          isActive || isHovered ? colour.primary.text : "text-yellow-600";
 
         return (
           <div
             className={cn(
               "flex flex-col gap-2 px-3 py-2 rounded-xs shadow-sm",
               isActive || isHovered
-                ? cn(colour.textPill, colour.backgroundPill)
+                ? cn(colour.primary.text, colour.primary.background)
                 : "bg-yellow-200",
             )}
           >
@@ -78,7 +78,7 @@ export const StickyNoteListItem = ({
                     collapsed={true}
                     iconClassName={
                       isActive || isHovered
-                        ? tag.colour.textPill
+                        ? tag.colour.primary.text
                         : "text-yellow-600"
                     }
                   />

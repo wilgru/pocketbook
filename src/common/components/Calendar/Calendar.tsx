@@ -113,14 +113,12 @@ export const Calendar = ({
 
   return (
     <div>
-      <div
-        className={cn("flex justify-between items-center mb-1")}
-      >
-        <h3 className={cn("text-slate-400 ml-1.5 text-xs")}>
+      <div className="flex justify-between items-center mb-1">
+        <h3 className="text-slate-400 ml-1.5 text-xs">
           {MONTH_NAMES[displayMonth]} {displayYear}
         </h3>
 
-        <div className={cn("flex items-center gap-0.5")}>
+        <div className="flex items-center gap-0.5">
           <Button
             onClick={handlePrevMonth}
             colour={colour}
@@ -138,11 +136,11 @@ export const Calendar = ({
         </div>
       </div>
 
-      <div className={cn("grid grid-cols-7 gap-px")}>
+      <div className="grid grid-cols-7 gap-px">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
           <span
             key={d}
-            className={cn("font-medium text-slate-500 text-center text-[10px] py-0")}
+            className="font-medium text-slate-500 text-center text-[10px] py-0"
           >
             {d}
           </span>
@@ -186,12 +184,12 @@ export const Calendar = ({
                   !isSelected &&
                   !isDisabled &&
                   "text-slate-700",
-                isToday && !isSelected && colour.textPill,
+                isToday && !isSelected && colour.primary.text,
                 isSelected && colour.background,
                 isSelected && "text-white",
                 isDisabled && "cursor-not-allowed text-slate-300",
-                !isSelected && `hover:${colour.backgroundPill}`,
-                !isSelected && `hover:${colour.textPill}`,
+                !isSelected && colour.secondary.backgroundHovered,
+                !isSelected && colour.secondary.textHovered,
                 isDisabled &&
                   "hover:bg-transparent hover:text-slate-300 pointer-events-none",
               )}
@@ -199,7 +197,9 @@ export const Calendar = ({
               <span>{calendarDay.day.date()}</span>
               {hasDots && (
                 <span
-                  className={cn("mt-0.5 flex items-center justify-center gap-0.5")}
+                  className={cn(
+                    "mt-0.5 flex items-center justify-center gap-0.5",
+                  )}
                 >
                   {dotsForDay
                     .slice(0, MAX_VISIBLE_DOTS)

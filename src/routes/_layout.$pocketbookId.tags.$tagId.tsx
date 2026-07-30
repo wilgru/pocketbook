@@ -165,8 +165,8 @@ export default function TagComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.backgroundPill}`,
-                      `data-[highlighted]:${tag.colour.textPill}`,
+                      `data-[highlighted]:${tag.colour.primary.background}`,
+                      `data-[highlighted]:${tag.colour.primary.text}`,
                     )}
                     value="null"
                   >
@@ -179,8 +179,8 @@ export default function TagComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.backgroundPill}`,
-                      `data-[highlighted]:${tag.colour.textPill}`,
+                      `data-[highlighted]:${tag.colour.primary.background}`,
+                      `data-[highlighted]:${tag.colour.primary.text}`,
                     )}
                     value="created"
                   >
@@ -192,8 +192,8 @@ export default function TagComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.backgroundPill}`,
-                      `data-[highlighted]:${tag.colour.textPill}`,
+                      `data-[highlighted]:${tag.colour.primary.background}`,
+                      `data-[highlighted]:${tag.colour.primary.text}`,
                     )}
                     value="tag"
                   >
@@ -225,8 +225,8 @@ export default function TagComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.backgroundPill}`,
-                      `data-[highlighted]:${tag.colour.textPill}`,
+                      `data-[highlighted]:${tag.colour.primary.background}`,
+                      `data-[highlighted]:${tag.colour.primary.text}`,
                     )}
                     value="created"
                   >
@@ -238,8 +238,8 @@ export default function TagComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.backgroundPill}`,
-                      `data-[highlighted]:${tag.colour.textPill}`,
+                      `data-[highlighted]:${tag.colour.primary.background}`,
+                      `data-[highlighted]:${tag.colour.primary.text}`,
                     )}
                     value="alphabetical"
                   >
@@ -271,8 +271,8 @@ export default function TagComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.backgroundPill}`,
-                      `data-[highlighted]:${tag.colour.textPill}`,
+                      `data-[highlighted]:${tag.colour.primary.background}`,
+                      `data-[highlighted]:${tag.colour.primary.text}`,
                     )}
                     value="asc"
                   >
@@ -284,8 +284,8 @@ export default function TagComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.backgroundPill}`,
-                      `data-[highlighted]:${tag.colour.textPill}`,
+                      `data-[highlighted]:${tag.colour.primary.background}`,
+                      `data-[highlighted]:${tag.colour.primary.text}`,
                     )}
                     value="desc"
                   >

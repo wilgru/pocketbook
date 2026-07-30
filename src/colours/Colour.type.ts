@@ -15,10 +15,18 @@ export enum ColourName {
 export type Colour = {
   name: ColourName;
   text: string;
-  textPill: string;
-  textPillInverted: string;
   background: string;
-  backgroundPill: string;
-  backgroundPillInverted: string;
-  backgroundGlow: string;
+  border: string;
+  primary: {
+    text: string;
+    textHovered: string;
+    background: string;
+    backgroundHovered: string;
+  };
+  secondary: {
+    textHovered: string;
+    background: string;
+    backgroundHovered: string;
+    border: string;
+  };
 };

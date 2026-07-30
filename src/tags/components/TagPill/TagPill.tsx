@@ -153,8 +153,8 @@ export const TagPill = ({
               variant,
               content: collapsed ? "icon" : "iconAndText",
             }),
-            variant === "block" && tag.colour.textPill,
-            variant === "block" && tag.colour.backgroundPill,
+            variant === "block" && tag.colour.primary.text,
+            variant === "block" && tag.colour.primary.background,
             variant === "ghost" && "text-slate-400",
             variant === "link" && "underline-offset-4",
           )}

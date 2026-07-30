@@ -22,10 +22,10 @@ export const FormattingToolbarButton = ({
       onMouseDown={(event) => event.preventDefault()}
       className={cn(
         "rounded-md text-slate-400 px-2 py-1",
-        `hover:${colour.backgroundPill}`,
-        `hover:${colour.textPill}`,
-        `data-[state=on]:${colour.backgroundPill}`,
-        `data-[state=on]:${colour.textPill}`,
+        `data-[state=on]:${colour.primary.background}`,
+        `data-[state=on]:${colour.primary.text}`,
+        colour.secondary.backgroundHovered,
+        colour.secondary.textHovered,
       )}
       value={value}
     >

@@ -184,7 +184,11 @@ const NoteEditor = ({
 
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              className={`ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5 hover:${colour.textPill} hover:${colour.backgroundPill}`}
+              className={cn(
+                "ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5",
+                colour.secondary.textHovered,
+                colour.secondary.backgroundHovered,
+              )}
               aria-label="Open note actions"
             >
               <Icon iconName="dotsThreeOutline" size="xs" />

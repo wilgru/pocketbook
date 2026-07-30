@@ -53,33 +53,7 @@ export default {
   },
   plugins: [],
   safelist: [
-    // hover textPill
-    "hover:text-orange-500",
-    "hover:text-red-500",
-    "hover:text-yellow-500",
-    "hover:text-lime-500",
-    "hover:text-green-500",
-    "hover:text-blue-500",
-    "hover:text-cyan-500",
-    "hover:text-purple-500",
-    "hover:text-pink-500",
-    "hover:text-amber-700",
-    "hover:text-gray-500",
-
-    // hover backgroundPill
-    "hover:bg-orange-100",
-    "hover:bg-red-100",
-    "hover:bg-yellow-100",
-    "hover:bg-lime-100",
-    "hover:bg-green-100",
-    "hover:bg-blue-100",
-    "hover:bg-cyan-100",
-    "hover:bg-purple-100",
-    "hover:bg-pink-100",
-    "hover:bg-amber-200",
-    "hover:bg-gray-200",
-
-    // data on textPill
+    // data on primaryText
     "data-[state=on]:text-orange-400",
     "data-[state=on]:text-red-400",
     "data-[state=on]:text-yellow-400",
@@ -92,7 +66,7 @@ export default {
     "data-[state=on]:text-amber-600",
     "data-[state=on]:text-gray-400",
 
-    // data highlighted textPill
+    // data highlighted primaryText
     "data-[highlighted]:text-orange-500",
     "data-[highlighted]:text-red-500",
     "data-[highlighted]:text-yellow-500",
@@ -105,7 +79,7 @@ export default {
     "data-[highlighted]:text-amber-700",
     "data-[highlighted]:text-gray-500",
 
-    // data highlighted backgroundPill
+    // data highlighted primaryBackground
     "data-[highlighted]:bg-orange-100",
     "data-[highlighted]:bg-red-100",
     "data-[highlighted]:bg-yellow-100",
@@ -118,7 +92,7 @@ export default {
     "data-[highlighted]:bg-amber-200",
     "data-[highlighted]:bg-gray-200",
 
-    // data on backgroundPill
+    // data on primaryBackground
     "data-[state=on]:bg-orange-100",
     "data-[state=on]:bg-red-100",
     "data-[state=on]:bg-yellow-100",
@@ -131,7 +105,7 @@ export default {
     "data-[state=on]:bg-amber-200",
     "data-[state=on]:bg-gray-200",
 
-    // data on textPill
+    // data on primaryText
     "data-[state=on]:text-orange-500",
     "data-[state=on]:text-red-500",
     "data-[state=on]:text-yellow-500",

@@ -133,8 +133,8 @@ function NotesComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${currentPocketbook?.colour.backgroundPill}`,
-                      `data-[highlighted]:${currentPocketbook?.colour.textPill}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.background}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.text}`,
                     )}
                     value="null"
                   >
@@ -147,8 +147,8 @@ function NotesComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${currentPocketbook?.colour.backgroundPill}`,
-                      `data-[highlighted]:${currentPocketbook?.colour.textPill}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.background}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.text}`,
                     )}
                     value="created"
                   >
@@ -160,8 +160,8 @@ function NotesComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${currentPocketbook?.colour.backgroundPill}`,
-                      `data-[highlighted]:${currentPocketbook?.colour.textPill}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.background}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.text}`,
                     )}
                     value="tag"
                   >
@@ -193,8 +193,8 @@ function NotesComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${currentPocketbook?.colour.backgroundPill}`,
-                      `data-[highlighted]:${currentPocketbook?.colour.textPill}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.background}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.text}`,
                     )}
                     value="created"
                   >
@@ -206,8 +206,8 @@ function NotesComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${currentPocketbook?.colour.backgroundPill}`,
-                      `data-[highlighted]:${currentPocketbook?.colour.textPill}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.background}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.text}`,
                     )}
                     value="alphabetical"
                   >
@@ -239,8 +239,8 @@ function NotesComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${currentPocketbook?.colour.backgroundPill}`,
-                      `data-[highlighted]:${currentPocketbook?.colour.textPill}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.background}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.text}`,
                     )}
                     value="asc"
                   >
@@ -252,8 +252,8 @@ function NotesComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${currentPocketbook?.colour.backgroundPill}`,
-                      `data-[highlighted]:${currentPocketbook?.colour.textPill}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.background}`,
+                      `data-[highlighted]:${currentPocketbook?.colour.primary.text}`,
                     )}
                     value="desc"
                   >

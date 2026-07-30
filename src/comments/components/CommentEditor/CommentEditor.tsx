@@ -2,10 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
+import { getColour } from "src/colours/utils/getColour";
 import { useCreateComment } from "src/comments/hooks/useCreateComment";
 import { useDeleteComment } from "src/comments/hooks/useDeleteComment";
 import { useUpdateComment } from "src/comments/hooks/useUpdateComment";
-import { getTintClasses } from "src/comments/utils/getTintClasses";
 import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { Button } from "src/common/components/Button/Button";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
@@ -18,7 +18,7 @@ import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
 import type { LexicalEditor } from "node_modules/lexical/dist/LexicalEditor";
 import type { Colour } from "src/colours/Colour.type";
-import type { Comment, CommentTint } from "src/comments/Comment.type";
+import type { Comment } from "src/comments/Comment.type";
 import type { Note } from "src/notes/Note.type";
 
 type CommentEditorProps = {
@@ -33,12 +33,12 @@ type CommentEditorProps = {
   onCreated?: () => void;
 };
 
-const TINT_OPTIONS: Array<{ value: CommentTint; bg: string }> = [
-  { value: "red", bg: "bg-red-400" },
-  { value: "yellow", bg: "bg-yellow-400" },
-  { value: "green", bg: "bg-green-400" },
-  { value: "blue", bg: "bg-blue-400" },
-];
+const TINT_OPTIONS = [
+  colours.red,
+  colours.yellow,
+  colours.green,
+  colours.blue,
+] as const;
 
 const getInitialComment = (comment: Partial<Comment>): Partial<Comment> => ({
   id: comment.id ?? "",
@@ -149,8 +149,10 @@ export const CommentEditor = ({
     return null;
   }
 
-  const tintClasses = getTintClasses(editedComment.tint);
   const resolvedColour = colour ?? currentPocketbook.colour ?? colours.orange;
+  const commentColour = editedComment.tint
+    ? getColour(editedComment.tint)
+    : null;
 
   const dateStr = editedComment.created
     ? showTimeOnly
@@ -163,7 +165,9 @@ export const CommentEditor = ({
       iconName={
         editedComment.isWaypoint ? "flagBannerFold" : "chatCenteredText"
       }
-      iconColour={editedComment.isWaypoint ? tintClasses.colour : colours.grey}
+      iconColour={
+        editedComment.isWaypoint && commentColour ? commentColour : colours.grey
+      }
       strongIcon={editedComment.isWaypoint}
       dateText={dateStr}
       showBottomPadding={showBottomPadding}
@@ -197,10 +201,13 @@ export const CommentEditor = ({
     >
       <div
         className={cn(
-          "rounded-xl p-2 flex flex-col border drop-shadow-xs",
-          isEditing
-            ? "bg-white border-slate-200 gap-2"
-            : cn(tintClasses.card, tintClasses.border),
+          "rounded-xl p-2 flex flex-col border drop-shadow-xs gap-2",
+          !isEditing && commentColour
+            ? [
+                commentColour.secondary.background,
+                commentColour.secondary.border,
+              ]
+            : "bg-white border-gray-200",
         )}
       >
         {isEditing && (
@@ -220,7 +227,7 @@ export const CommentEditor = ({
                   })
                 }
                 size="sm"
-                colour={tintClasses.colour}
+                colour={commentColour ?? colours.grey}
                 iconName="flagBannerFold"
               />
 
@@ -235,18 +242,18 @@ export const CommentEditor = ({
                 title="No colour"
               />
 
-              {TINT_OPTIONS.map(({ value, bg }) => (
+              {TINT_OPTIONS.map((colour) => (
                 <button
-                  key={value}
-                  onClick={() => onUpdateField({ tint: value })}
+                  key={colour.name}
+                  onClick={() => onUpdateField({ tint: colour.name })}
                   className={cn(
                     "h-5 w-5 rounded-full border-2",
-                    bg,
-                    editedComment.tint === value
+                    colour.background,
+                    editedComment.tint === colour.name
                       ? "border-slate-600"
                       : "border-transparent",
                   )}
-                  title={value}
+                  title={colour.name}
                 />
               ))}
             </div>

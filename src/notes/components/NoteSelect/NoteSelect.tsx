@@ -57,9 +57,9 @@ export const NoteSelect = ({
             onClick={() => handleRemoveNote(note.id)}
             className={cn(
               "flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors",
-              colour.backgroundPill,
-              colour.textPill,
-              colour.backgroundPillInverted,
+              colour.primary.background,
+              colour.primary.text,
+              colour.primary.backgroundHovered,
             )}
           >
             <span className="max-w-30 truncate">
@@ -76,9 +76,9 @@ export const NoteSelect = ({
               type="button"
               className={cn(
                 "flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors",
-                colour.backgroundPill,
-                colour.textPill,
-                colour.backgroundPillInverted,
+                colour.primary.background,
+                colour.primary.text,
+                colour.primary.backgroundHovered,
               )}
             >
               <span className="max-w-30 truncate">

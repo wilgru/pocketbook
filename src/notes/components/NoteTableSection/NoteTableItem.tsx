@@ -44,10 +44,10 @@ export const NoteTableItem = ({
       tabIndex={0}
       className={cn(
         "cursor-pointer border-b border-slate-300 text-sm transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:ring-inset",
-        isHovered && colour.backgroundPill,
+        isHovered && colour.primary.background,
       )}
     >
-      <td className={cn("px-3 py-1.5", isHovered && colour.textPill)}>
+      <td className={cn("px-3 py-1.5", isHovered && colour.primary.text)}>
         <p className="truncate font-normal">
           {note.title === "" ? "Untitled Note" : note.title}
         </p>
@@ -63,7 +63,7 @@ export const NoteTableItem = ({
                 size="xs"
                 closable={false}
                 collapsed={false}
-                iconClassName={isHovered ? tag.colour.textPill : undefined}
+                iconClassName={isHovered ? tag.colour.primary.text : undefined}
               />
             ))}
 
@@ -76,7 +76,7 @@ export const NoteTableItem = ({
       <td
         className={cn(
           "px-3 py-1.5 text-xs text-slate-400 text-right whitespace-nowrap",
-          isHovered && colour.textPill,
+          isHovered && colour.primary.text,
         )}
       >
         {getRelativeDateTitle(note.created, false)}

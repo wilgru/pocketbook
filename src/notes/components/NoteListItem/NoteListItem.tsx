@@ -29,12 +29,12 @@ export const NoteListItem = ({
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       activeProps={{
-        className: cn(colour.textPill, colour.backgroundPill),
+        className: cn(colour.primary.text, colour.primary.background),
       }}
       className={cn(
         "w-full flex justify-between items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-colors",
-        isHovered && colour.textPill,
-        isHovered && colour.backgroundPill,
+        isHovered && colour.primary.text,
+        isHovered && colour.primary.background,
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
@@ -47,7 +47,7 @@ export const NoteListItem = ({
             <p
               className={cn(
                 "text-xs text-slate-400 pt-0.5 pr-1",
-                (isHovered || isActive) && colour.textPill,
+                (isHovered || isActive) && colour.primary.text,
               )}
             >
               {getRelativeDateTitle(note.created, false)}
@@ -63,7 +63,7 @@ export const NoteListItem = ({
                   closable={false}
                   collapsed={true}
                   iconClassName={
-                    isHovered || isActive ? tag.colour.textPill : undefined
+                    isHovered || isActive ? tag.colour.primary.text : undefined
                   }
                 />
               ))}

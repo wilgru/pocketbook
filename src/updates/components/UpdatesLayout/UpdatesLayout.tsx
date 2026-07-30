@@ -2,8 +2,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
+import { getColour } from "src/colours/utils/getColour";
 import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
-import { getTintClasses } from "src/comments/utils/getTintClasses";
 import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
@@ -85,7 +85,9 @@ export const UpdatesLayout = ({
 
           icons.push({
             iconName: "flagBannerFold",
-            colour: getTintClasses(update.data.tint).colour,
+            colour: update.data.tint
+              ? getColour(update.data.tint)
+              : colours.grey,
           });
           return icons;
         }, []),
@@ -135,8 +137,10 @@ export const UpdatesLayout = ({
         Record<string, number>
       >((waypointAcc, update) => {
         if (update.type === "comment" && update.data.isWaypoint) {
-          const colourClassName = getTintClasses(update.data.tint).colour
-            .background;
+          const colourClassName = update.data.tint
+            ? getColour(update.data.tint).background
+            : colours.grey.background;
+
           waypointAcc[colourClassName] =
             (waypointAcc[colourClassName] ?? 0) + 1;
         }

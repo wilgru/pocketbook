@@ -26,7 +26,7 @@ export default function IconPicker({
           className={cn(
             "flex justify-center items-center h-8 w-8 p-1 rounded-full",
             selectedIconName === customisationIcon.name &&
-              colour.backgroundPill,
+              colour.primary.background,
           )}
         >
           <Icon
@@ -34,7 +34,7 @@ export default function IconPicker({
             weight={
               selectedIconName === customisationIcon.name ? "fill" : "regular"
             }
-            className={cn(colour.textPill)}
+            className={cn(colour.primary.text)}
           />
         </button>
       ))}

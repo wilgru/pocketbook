@@ -49,7 +49,7 @@ export const PocketbookSwitcher = ({
     <div
       className={cn(
         "flex gap-2 justify-between border border-slate-300 rounded-xl p-1.5 relative",
-        `hover:${currentPocketbook.colour.backgroundPill}`,
+        currentPocketbook.colour.secondary.backgroundHovered,
       )}
     >
       <DropdownMenu.Root open={isOpen}>
@@ -62,8 +62,8 @@ export const PocketbookSwitcher = ({
               iconName={currentPocketbook.icon}
               className={cn(
                 "w-8 h-8 p-1.5 rounded-md",
-                currentPocketbook.colour.textPill,
-                currentPocketbook.colour.backgroundPill,
+                currentPocketbook.colour.primary.text,
+                currentPocketbook.colour.primary.background,
               )}
             />
 
@@ -105,16 +105,16 @@ export const PocketbookSwitcher = ({
                   className={cn(
                     "flex items-center gap-2 leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer transition-colors",
                     currentPocketbook.id === pocketbook.id
-                      ? pocketbook.colour.backgroundPill
-                      : `hover:${pocketbook.colour.backgroundPill}`,
+                      ? pocketbook.colour.primary.background
+                      : pocketbook.colour.secondary.backgroundHovered,
                   )}
                 >
                   <Icon
                     iconName={pocketbook.icon}
                     className={cn(
                       "w-8 h-8 p-1.5 rounded-md",
-                      pocketbook.colour.textPill,
-                      pocketbook.colour.backgroundPill,
+                      pocketbook.colour.primary.text,
+                      pocketbook.colour.primary.background,
                     )}
                   />
 

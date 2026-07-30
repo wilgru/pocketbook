@@ -134,8 +134,8 @@ function RouteComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.backgroundPill}`,
-                      `data-[highlighted]:${colours.red.textPill}`,
+                      `data-[highlighted]:${colours.red.primary.background}`,
+                      `data-[highlighted]:${colours.red.primary.text}`,
                     )}
                     value="null"
                   >
@@ -148,8 +148,8 @@ function RouteComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.backgroundPill}`,
-                      `data-[highlighted]:${colours.red.textPill}`,
+                      `data-[highlighted]:${colours.red.primary.background}`,
+                      `data-[highlighted]:${colours.red.primary.text}`,
                     )}
                     value="created"
                   >
@@ -161,8 +161,8 @@ function RouteComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.backgroundPill}`,
-                      `data-[highlighted]:${colours.red.textPill}`,
+                      `data-[highlighted]:${colours.red.primary.background}`,
+                      `data-[highlighted]:${colours.red.primary.text}`,
                     )}
                     value="tag"
                   >
@@ -194,8 +194,8 @@ function RouteComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.backgroundPill}`,
-                      `data-[highlighted]:${colours.red.textPill}`,
+                      `data-[highlighted]:${colours.red.primary.background}`,
+                      `data-[highlighted]:${colours.red.primary.text}`,
                     )}
                     value="created"
                   >
@@ -207,8 +207,8 @@ function RouteComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.backgroundPill}`,
-                      `data-[highlighted]:${colours.red.textPill}`,
+                      `data-[highlighted]:${colours.red.primary.background}`,
+                      `data-[highlighted]:${colours.red.primary.text}`,
                     )}
                     value="alphabetical"
                   >
@@ -240,8 +240,8 @@ function RouteComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.backgroundPill}`,
-                      `data-[highlighted]:${colours.red.textPill}`,
+                      `data-[highlighted]:${colours.red.primary.background}`,
+                      `data-[highlighted]:${colours.red.primary.text}`,
                     )}
                     value="asc"
                   >
@@ -253,8 +253,8 @@ function RouteComponent() {
                   <DropdownMenu.RadioItem
                     className={cn(
                       "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.backgroundPill}`,
-                      `data-[highlighted]:${colours.red.textPill}`,
+                      `data-[highlighted]:${colours.red.primary.background}`,
+                      `data-[highlighted]:${colours.red.primary.text}`,
                     )}
                     value="desc"
                   >

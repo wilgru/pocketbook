@@ -171,16 +171,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             variant,
             content,
           }),
-          variant === "block" && colour.textPill,
-          variant === "block" && colour.backgroundPill,
-          variant === "block" && colour.textPillInverted,
-          variant === "block" && colour.backgroundPillInverted,
-          variant === "ghost" && !disabled && `hover:${colour.textPill}`,
-          variant === "ghost" && !disabled && `hover:${colour.backgroundPill}`,
-          variant === "ghost-strong" && !disabled && `hover:${colour.textPill}`,
+          variant === "block" && colour.primary.text,
+          variant === "block" && colour.primary.background,
+          variant === "block" && colour.primary.textHovered,
+          variant === "block" && colour.primary.backgroundHovered,
+          variant === "ghost" && !disabled && colour.secondary.textHovered,
+          variant === "ghost" &&
+            !disabled &&
+            colour.secondary.backgroundHovered,
           variant === "ghost-strong" &&
             !disabled &&
-            `hover:${colour.backgroundPill}`,
+            colour.secondary.textHovered,
+          variant === "ghost-strong" &&
+            !disabled &&
+            colour.secondary.backgroundHovered,
           className,
         )}
         disabled={disabled}
@@ -192,7 +196,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         <Icon
           iconName={iconName ?? null}
           size={size}
-          className={cn(isButtonHovered && colour.textPill)}
+          className={cn(isButtonHovered && colour.primary.text)}
           weight={isButtonHovered ? "fill" : "regular"}
         />
 

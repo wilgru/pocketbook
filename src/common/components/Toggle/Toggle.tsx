@@ -62,7 +62,8 @@ export const Toggle = ({
     <TogglePrimitive.Root
       className={cn(
         toggleVariants({ size }),
-        `data-[state=on]:${colour.text} hover:${colour.backgroundPill}`,
+        `data-[state=on]:${colour.text}`,
+        colour.secondary.backgroundHovered,
         className,
       )}
       disabled={disabled}
@@ -72,7 +73,7 @@ export const Toggle = ({
       pressed={isToggled}
     >
       <Icon
-        className={cn(isToggleHovered && colour.textPill)}
+        className={cn(isToggleHovered && colour.primary.text)}
         iconName={iconName ?? null}
         size={size}
         weight={isToggled || isToggleHovered ? "fill" : "regular"}

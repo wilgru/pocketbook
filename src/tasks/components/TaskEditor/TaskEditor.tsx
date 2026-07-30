@@ -201,7 +201,7 @@ export const TaskEditor = ({
           className={cn(
             "transition-colors",
             isCompleted && !isCancelled
-              ? cn(colour.text, colour.textPillInverted)
+              ? cn(colour.text, colour.primary.textHovered)
               : "text-slate-400 hover:text-slate-600",
           )}
         />

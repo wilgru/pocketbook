@@ -51,13 +51,13 @@ export const NavItem = ({
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       activeProps={{
-        className: cn(colour.textPill, colour.backgroundPill),
+        className: cn(colour.primary.text, colour.primary.background),
       }}
       className={cn(
         "flex justify-between items-center gap-2 px-2 py-1 rounded-full transition-colors min-w-0",
         text,
-        isHovered && colour.textPill,
-        isHovered && colour.backgroundPill,
+        isHovered && colour.primary.text,
+        isHovered && colour.primary.background,
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
@@ -65,7 +65,7 @@ export const NavItem = ({
           <div
             className={cn(
               "flex items-center gap-2 min-w-0",
-              (isHovered || isActive) && colour.textPill,
+              (isHovered || isActive) && colour.primary.text,
             )}
           >
             <Icon
@@ -73,7 +73,7 @@ export const NavItem = ({
               className={cn(
                 "shrink-0",
                 isHovered || isActive || (colour && !ghost)
-                  ? colour.textPill
+                  ? colour.primary.text
                   : "text-slate-500",
               )}
               size={iconSize}
@@ -86,7 +86,7 @@ export const NavItem = ({
           <p
             className={cn(
               "text-xs text-start font-medium mr-1",
-              isHovered || isActive ? colour.textPill : "text-slate-400",
+              isHovered || isActive ? colour.primary.text : "text-slate-400",
             )}
           >
             {preview}
