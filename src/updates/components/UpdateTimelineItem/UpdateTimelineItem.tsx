@@ -29,7 +29,7 @@ export const UpdateTimelineItem = ({
   return (
     <div className="w-full flex gap-2 items-start">
       <div className="flex flex-col items-center self-stretch">
-        <div className="w-px h-3 bg-slate-300" />
+        <div className="w-px h-2 bg-slate-300" />
 
         <div
           className={cn(
@@ -55,7 +55,7 @@ export const UpdateTimelineItem = ({
 
       <div
         className={cn(
-          "flex flex-col gap-1 w-full py-3",
+          "flex flex-col gap-1 w-full py-2",
           showBottomPadding && "pb-10",
         )}
       >
