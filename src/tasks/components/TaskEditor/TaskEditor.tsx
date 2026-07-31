@@ -142,12 +142,25 @@ export const TaskEditor = ({
   // Update the task in the toolbar if the edited task changes to keep the toolbar in sync with the latest changes.
   useEffect(() => {
     if (editedTask.id === taskToolbar?.task?.id) {
+      if (titleRef.current !== taskToolbar?.refocusRef?.current) {
+        titleRef.current?.focus();
+      }
+
       setTaskToolbarAtom((current) => ({
         ...current,
+        onUpdateTask,
+        refocusRef: titleRef,
         task: editedTask,
       }));
     }
-  }, [editedTask, setTaskToolbarAtom, taskToolbar?.task?.id]);
+  }, [
+    editedTask,
+    setTaskToolbarAtom,
+    onUpdateTask,
+    taskToolbar?.task?.id,
+    titleRef,
+    taskToolbar?.refocusRef,
+  ]);
 
   return (
     <div

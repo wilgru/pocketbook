@@ -1,4 +1,4 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as Popover from "@radix-ui/react-popover";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
@@ -27,6 +27,7 @@ export const NoteSelect = ({
 }: NoteSelectProps) => {
   const { notes } = useGetNotes({});
   const [search, setSearch] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const selectedSingleNote = mode === "single" ? selectedNotes[0] : null;
 
   const filteredNotes = notes.filter(
@@ -37,10 +38,15 @@ export const NoteSelect = ({
       !selectedNotes.some((selected) => selected.id === note.id),
   );
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    onOpenChange?.(open);
+  };
+
   const handleSelectNote = (note: Note) => {
     const newNotes = mode === "single" ? [note] : [...selectedNotes, note];
-    onChange(newNotes);
     setSearch("");
+    onChange(newNotes);
   };
 
   const handleRemoveNote = (noteId: string) => {
@@ -69,8 +75,8 @@ export const NoteSelect = ({
           </button>
         ))}
 
-      <DropdownMenu.Root modal={false} onOpenChange={onOpenChange}>
-        <DropdownMenu.Trigger asChild>
+      <Popover.Root open={isOpen} onOpenChange={handleOpenChange}>
+        <Popover.Trigger asChild>
           {mode === "single" && selectedSingleNote ? (
             <button
               type="button"
@@ -99,10 +105,10 @@ export const NoteSelect = ({
               </Button>
             </div>
           )}
-        </DropdownMenu.Trigger>
+        </Popover.Trigger>
 
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
+        <Popover.Portal>
+          <Popover.Content
             className="z-50"
             sideOffset={6}
             align="center"
@@ -137,18 +143,22 @@ export const NoteSelect = ({
               )}
 
               {filteredNotes.map((note) => (
-                <DropdownMenu.Item
+                <button
                   key={note.id}
-                  className="rounded-lg px-2 py-1 cursor-pointer hover:bg-slate-100 text-sm truncate"
-                  onSelect={() => handleSelectNote(note)}
+                  className={cn(
+                    "rounded-lg px-2 py-1 cursor-pointer text-sm text-start truncate",
+                    colour.secondary.backgroundHovered,
+                    colour.secondary.textHovered,
+                  )}
+                  onClick={() => handleSelectNote(note)}
                 >
                   {note.title ?? "Untitled Note"}
-                </DropdownMenu.Item>
+                </button>
               ))}
             </ControlPopover>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-      </DropdownMenu.Root>
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
     </div>
   );
 };

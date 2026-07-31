@@ -65,14 +65,7 @@ export const TaskDatePicker = ({
           <ControlPopover
             className="p-3 w-52"
             clearActionLabel={dueDate ? "Clear date" : undefined}
-            onClearAction={
-              dueDate
-                ? () => {
-                    onChange(null);
-                    handleOpenChange(false);
-                  }
-                : undefined
-            }
+            onClearAction={dueDate ? () => onChange(null) : undefined}
           >
             <Calendar
               colour={colour}

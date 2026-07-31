@@ -121,6 +121,7 @@ export const TaskToolbar = () => {
             onUpdateTask?.({
               note: notes[0] ?? null,
             });
+            handlePopoverOpenChange(false);
           }}
           onOpenChange={handlePopoverOpenChange}
         />
@@ -134,6 +135,7 @@ export const TaskToolbar = () => {
             onUpdateTask?.({
               dueDate: date,
             });
+            handlePopoverOpenChange(false);
           }}
           onOpenChange={handlePopoverOpenChange}
         />
