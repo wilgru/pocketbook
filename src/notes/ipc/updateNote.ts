@@ -1,16 +1,19 @@
+import { Dayjs } from "dayjs";
 import { eq } from "drizzle-orm";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
 import { notes, noteTags } from "src/notes/notes.schema";
-import type { NoteSchema } from "src/notes/notes.schema";
+import type { Link } from "src/common/types/Link.type";
+import type { Note } from "src/notes/notes.schema";
+import type { Tag } from "src/tags/Tag.type";
 
 export type UpdateNoteInput = {
   noteId: string;
   title: string | null;
-  content: string | null;
+  content: string;
   isBookmarked: boolean;
-  tagIds: string[];
-  links: string;
+  tags: Tag[];
+  links: Link[];
 };
 
 createIpcHandler(
@@ -20,11 +23,9 @@ createIpcHandler(
     title,
     content,
     isBookmarked,
-    tagIds,
+    tags,
     links,
-  }: UpdateNoteInput): NoteSchema => {
-    const now = new Date().toISOString();
-
+  }: UpdateNoteInput): Note => {
     const [updated] = db
       .update(notes)
       .set({
@@ -32,7 +33,7 @@ createIpcHandler(
         content: content,
         isBookmarked: isBookmarked,
         links: links,
-        updated: now,
+        updated: new Dayjs(),
       })
       .where(eq(notes.id, noteId))
       .returning()
@@ -41,9 +42,9 @@ createIpcHandler(
     // Replace tags: delete existing, insert new
     db.delete(noteTags).where(eq(noteTags.noteId, noteId)).run();
 
-    if (tagIds.length > 0) {
+    if (tags.length > 0) {
       db.insert(noteTags)
-        .values(tagIds.map((tagId) => ({ noteId: noteId, tagId })))
+        .values(tags.map((tag) => ({ noteId: noteId, tagId: tag.id })))
         .run();
     }
 
@@ -58,6 +59,9 @@ createIpcHandler(
       deleted: updated.deleted,
       created: updated.created,
       updated: updated.updated,
+      tasks: [],
+      tags: [],
+      commentCount: 0,
     };
   },
 );
