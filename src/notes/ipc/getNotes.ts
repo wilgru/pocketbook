@@ -2,14 +2,17 @@ import { and, eq, gte, isNull, lte } from "drizzle-orm";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
 import { notes, noteTags } from "src/notes/notes.schema";
-import type { Dayjs } from "dayjs";
-import type { Note } from "src/notes/notes.schema";
+import type { NoteSchema } from "src/notes/notes.schema";
 
 export type GetNotesInput = {
   pocketbookId: string;
   isBookmarked?: boolean;
-  createdAfter?: Dayjs;
-  createdBefore?: Dayjs;
+  createdAfter?: string;
+  createdBefore?: string;
+};
+
+export type GetNotesResult = {
+  notes: Array<NoteSchema & { tagIds: string[] }>;
 };
 
 createIpcHandler(
@@ -19,7 +22,7 @@ createIpcHandler(
     isBookmarked,
     createdAfter,
     createdBefore,
-  }: GetNotesInput): Note[] => {
+  }: GetNotesInput): GetNotesResult => {
     const conditions = [
       eq(notes.pocketbook, pocketbookId),
       isNull(notes.deleted),
@@ -52,20 +55,20 @@ createIpcHandler(
       tagsByNoteId.set(noteTag.noteId, existing);
     }
 
-    return rows.map((row) => ({
-      id: row.id,
-      title: row.title,
-      content: row.content,
-      isBookmarked: row.isBookmarked,
-      links: row.links,
-      pocketbook: row.pocketbook,
-      user: row.user,
-      deleted: row.deleted,
-      created: row.created,
-      updated: row.updated,
-      tasks: [],
-      tags: [],
-      commentCount: 0,
-    }));
+    return {
+      notes: rows.map((row) => ({
+        id: row.id,
+        title: row.title,
+        content: row.content,
+        isBookmarked: row.isBookmarked,
+        links: row.links,
+        pocketbook: row.pocketbook,
+        user: row.user,
+        deleted: row.deleted,
+        created: row.created,
+        updated: row.updated,
+        tagIds: tagsByNoteId.get(row.id) ?? [],
+      })),
+    };
   },
 );

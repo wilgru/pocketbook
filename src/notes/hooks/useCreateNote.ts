@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "src/Users/hooks/useUser";
 import { useCurrentPocketbookId } from "../../pocketbooks/hooks/useCurrentPocketbookId";
+import { mapNote } from "../utils/mapNote";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Note } from "src/notes/Note.type";
 
@@ -32,15 +33,15 @@ export const useCreateNote = (): UseCreateNoteResponse => {
       title: createNoteData.title,
       content: createNoteData.content,
       isBookmarked: createNoteData.isBookmarked,
-      tags: createNoteData.tags,
-      links: createNoteData.links,
+      tagIds: createNoteData.tags.map((tag) => tag.id),
+      links: JSON.stringify(createNoteData.links),
       pocketbookId: pocketbookId ?? null,
       userId: user?.id ?? null,
     });
 
     if (!response.success) throw new Error(response.error);
 
-    return response.data;
+    return mapNote(response.data, { tags: createNoteData.tags });
   };
 
   const onSuccess = (data: Note | undefined) => {

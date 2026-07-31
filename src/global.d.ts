@@ -9,13 +9,13 @@ import type {
   GetCommentsInput,
   GetCommentsResult,
 } from "src/comments/ipc/getComments";
-import type { UpdateCommentInput } from "src/comments/ipc/updateComment";
 import type { IpcApiMethod } from "src/common/types/IpcApiMethod.type";
 import type { CreateNoteInput } from "src/notes/ipc/createNote";
 import type { DeleteNoteInput } from "src/notes/ipc/deleteNote";
-import type { GetNoteInput } from "src/notes/ipc/getNote";
+import type { GetNoteInput, GetNoteResult } from "src/notes/ipc/getNote";
+import type { GetNotesInput, GetNotesResult } from "src/notes/ipc/getNotes";
 import type { UpdateNoteInput } from "src/notes/ipc/updateNote";
-import type { Note } from "src/notes/notes.schema";
+import type { NoteSchema } from "src/notes/notes.schema";
 import type { CreatePocketbookInput } from "src/pocketbooks/ipc/createPocketbook";
 import type { DeletePocketbookInput } from "src/pocketbooks/ipc/deletePocketbook";
 import type { GetPocketbookInput } from "src/pocketbooks/ipc/getPocketbook";
@@ -40,14 +40,15 @@ import type { GetTaskInput } from "src/tasks/ipc/getTask";
 import type { GetTasksInput, GetTasksResult } from "src/tasks/ipc/getTasks";
 import type { UpdateTaskInput } from "src/tasks/ipc/updateTask";
 import type { TaskSchema } from "src/tasks/tasks.schema";
+import type { UpdateCommentInput } from "src/updates/ipc/updateComment";
 
 declare global {
   interface Window {
     api: {
-      createNote: IpcApiMethod<CreateNoteInput, Note>;
-      getNotes: IpcApiMethod<GetNotesInput, Note[]>;
-      getNote: IpcApiMethod<GetNoteInput, Note>;
-      updateNote: IpcApiMethod<UpdateNoteInput, Note>;
+      createNote: IpcApiMethod<CreateNoteInput, NoteSchema>;
+      getNotes: IpcApiMethod<GetNotesInput, GetNotesResult>;
+      getNote: IpcApiMethod<GetNoteInput, GetNoteResult>;
+      updateNote: IpcApiMethod<UpdateNoteInput, NoteSchema>;
       deleteNote: IpcApiMethod<DeleteNoteInput, string>;
 
       createPocketbook: IpcApiMethod<CreatePocketbookInput, PocketbookSchema>;

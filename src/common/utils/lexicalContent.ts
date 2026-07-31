@@ -1,4 +1,4 @@
-export const EMPTY_LEXICAL_CONTENT = JSON.stringify({
+const EMPTY_LEXICAL_CONTENT = JSON.stringify({
   root: {
     children: [
       {
@@ -94,8 +94,7 @@ export const getPlainTextFromLexicalContent = (
 
       if (root && typeof root === "object") {
         return extractPlainText((root as { children?: unknown }).children)
-          .split("\u0000")
-          .join("")
+          .split("\u0000").join("")
           .trimEnd();
       }
     }

@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import { useMemo } from "react";
+import { mapNote } from "src/notes/utils/mapNote";
 import { useGetTags } from "src/tags/hooks/useGetTags";
 import { useCurrentPocketbookId } from "../../pocketbooks/hooks/useCurrentPocketbookId";
 import type { Note } from "src/notes/Note.type";
+import type { GetNotesResult } from "src/notes/ipc/getNotes";
 
 type UseGetNotesResponse = {
   notes: Note[];
@@ -22,7 +24,7 @@ export const useGetNotes = ({
   const { pocketbookId } = useCurrentPocketbookId();
   const { tags: allTags } = useGetTags();
 
-  const queryFn = async (): Promise<Note[]> => {
+  const queryFn = async (): Promise<GetNotesResult> => {
     let createdAfter: string | undefined;
     let createdBefore: string | undefined;
 
@@ -65,12 +67,9 @@ export const useGetNotes = ({
 
   const notes = useMemo(
     () =>
-      (data ?? []).map((row) => {
+      (data?.notes ?? []).map((row) => {
         const tags = allTags.filter((tag) => row.tagIds.includes(tag.id));
-        return {
-          ...row,
-          tags,
-        };
+        return mapNote(row, { tags });
       }),
     [allTags, data],
   );

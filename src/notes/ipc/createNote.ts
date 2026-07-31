@@ -1,16 +1,14 @@
-import { Dayjs } from "dayjs";
 import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
 import { notes, noteTags } from "src/notes/notes.schema";
-import type { Link } from "src/common/types/Link.type";
-import type { Note } from "src/notes/notes.schema";
+import type { NoteSchema } from "src/notes/notes.schema";
 
 export type CreateNoteInput = {
   title: string | null;
-  content: string;
+  content: string | null;
   isBookmarked: boolean;
-  tags: string[];
-  links: Link[];
+  tagIds: string[];
+  links: string;
   pocketbookId: string | null;
   userId: string | null;
 };
@@ -21,12 +19,12 @@ createIpcHandler(
     title,
     content,
     isBookmarked,
-    tags,
+    tagIds,
     links,
     pocketbookId,
     userId,
-  }: CreateNoteInput): Note => {
-    const now = new Dayjs();
+  }: CreateNoteInput): NoteSchema => {
+    const now = new Date().toISOString();
     const id = crypto.randomUUID();
 
     const [inserted] = db
@@ -45,9 +43,9 @@ createIpcHandler(
       .returning()
       .all();
 
-    if (tags.length > 0) {
+    if (tagIds.length > 0) {
       db.insert(noteTags)
-        .values(tags.map((tag) => ({ noteId: id, tagId: tag })))
+        .values(tagIds.map((tagId) => ({ noteId: id, tagId })))
         .run();
     }
 
@@ -62,9 +60,6 @@ createIpcHandler(
       deleted: inserted.deleted,
       created: inserted.created,
       updated: inserted.updated,
-      tasks: [],
-      tags: [],
-      commentCount: 0,
     };
   },
 );
