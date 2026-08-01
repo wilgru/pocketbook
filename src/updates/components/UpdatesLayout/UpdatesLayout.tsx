@@ -210,9 +210,6 @@ export const UpdatesLayout = ({
               colour={colour}
               title={getRelativeDateTitle(updateGroup.date, false, false)}
               updateGroup={updateGroup}
-              hideBottomLine={
-                updateGroup === updateGroups[updateGroups.length - 1]
-              }
             />
           ))}
 

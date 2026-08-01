@@ -12,23 +12,23 @@ type UpdatesSectionProps = {
   title: string;
   updateGroup: UpdateGroup;
   colour: Colour;
-  hideBottomLine?: boolean;
 };
 
 export const UpdatesSection = ({
   title,
   updateGroup,
   colour,
-  hideBottomLine = false,
 }: UpdatesSectionProps) => {
   const { pocketbookId } = useCurrentPocketbook();
 
   return (
-    <section id={title} className="w-full flex flex-col">
-      <h2 className="font-title text-xl text-slate-500 py-0.5">{title}</h2>
+    <section id={title} className="w-full flex flex-col pb-10">
+      <h2 className="font-title text-xl text-slate-400 py-0.5">{title}</h2>
 
-      <div className="flex flex-col relative">
+      <div className="w-full flex flex-col relative border-t border-slate-200">
         {updateGroup.updates.map((update, index) => {
+          const isLastUpdate = index === updateGroup.updates.length - 1;
+
           switch (update.type) {
             case "task":
               return (
@@ -49,7 +49,7 @@ export const UpdatesSection = ({
                         to="/$pocketbookId/tasks"
                         params={{ pocketbookId: pocketbookId ?? "" }}
                         className={cn(
-                          "text-slate-700 hover:text-slate-800 hover:underline",
+                          "text-slate-700 font-medium hover:text-slate-800 hover:underline",
                           update.action === "cancelled" && "line-through",
                         )}
                       >
@@ -58,10 +58,7 @@ export const UpdatesSection = ({
                     </p>
                   }
                   dateText={update.date.format("h:mm a")}
-                  showBottomPadding={index === updateGroup.updates.length - 1}
-                  hideBottomLine={
-                    hideBottomLine && index === updateGroup.updates.length - 1
-                  }
+                  hideBottomLine={isLastUpdate}
                 >
                   {update.data.note && (
                     <p className="text-slate-400 text-xs pl-1">
@@ -96,17 +93,14 @@ export const UpdatesSection = ({
                         to="/$pocketbookId/notes"
                         params={{ pocketbookId: pocketbookId ?? "" }}
                         search={{ noteId: update.data.id }}
-                        className="text-slate-700 hover:text-slate-800 hover:underline"
+                        className="text-slate-700 font-medium hover:text-slate-800 hover:underline"
                       >
                         {update.data.title ?? "Untitled Note"}
                       </Link>
                     </p>
                   }
                   dateText={update.date.format("h:mm a")}
-                  showBottomPadding={index === updateGroup.updates.length - 1}
-                  hideBottomLine={
-                    hideBottomLine && index === updateGroup.updates.length - 1
-                  }
+                  hideBottomLine={isLastUpdate}
                 >
                   {!update.data.title && (
                     <div className="w-80 pl-0.5">
@@ -127,10 +121,7 @@ export const UpdatesSection = ({
                   comment={update.data}
                   colour={colour}
                   showTimeOnly
-                  showBottomPadding={index === updateGroup.updates.length - 1}
-                  hideBottomLine={
-                    hideBottomLine && index === updateGroup.updates.length - 1
-                  }
+                  hideBottomLine={isLastUpdate}
                 />
               );
             default:

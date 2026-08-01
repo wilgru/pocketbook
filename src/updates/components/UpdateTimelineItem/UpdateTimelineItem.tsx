@@ -12,7 +12,6 @@ type UpdateTimelineItemProps = {
   headline?: ReactNode;
   dateText?: string | null;
   hideBottomLine?: boolean;
-  showBottomPadding?: boolean;
   children?: ReactNode;
 };
 
@@ -23,20 +22,19 @@ export const UpdateTimelineItem = ({
   headline,
   dateText,
   hideBottomLine = false,
-  showBottomPadding = true,
   children,
 }: UpdateTimelineItemProps) => {
   return (
     <div className="w-full flex gap-2 items-start">
       <div className="flex flex-col items-center self-stretch">
-        <div className="w-px h-2 bg-slate-300" />
+        <div className="w-px h-2 bg-slate-200" />
 
         <div
           className={cn(
             "rounded-full p-1 border",
             strongIcon
               ? [iconColour.background, iconColour.border]
-              : "bg-white border-slate-300",
+              : "bg-white border-slate-200",
           )}
         >
           <Icon
@@ -50,15 +48,10 @@ export const UpdateTimelineItem = ({
           />
         </div>
 
-        {!hideBottomLine && <div className="w-px flex-1 bg-slate-300" />}
+        {!hideBottomLine && <div className="w-px flex-1 bg-slate-200" />}
       </div>
 
-      <div
-        className={cn(
-          "flex flex-col gap-1 w-full py-2",
-          showBottomPadding && "pb-10",
-        )}
-      >
+      <div className="flex flex-col gap-1 w-full py-2">
         {(headline || dateText) && (
           <div className="flex items-start justify-between gap-2 px-1">
             <div className="flex items-center gap-2 flex-wrap">{headline}</div>

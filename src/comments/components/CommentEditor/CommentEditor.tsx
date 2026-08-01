@@ -27,7 +27,6 @@ type CommentEditorProps = {
   showNotes?: boolean;
   autoFocus?: boolean;
   showTimeOnly?: boolean;
-  showBottomPadding?: boolean;
   hideBottomLine?: boolean;
   onCancel?: () => void;
   onCreated?: () => void;
@@ -55,7 +54,6 @@ export const CommentEditor = ({
   colour,
   showNotes = true,
   autoFocus = false,
-  showBottomPadding = false,
   hideBottomLine = false,
   showTimeOnly = false,
   onCancel,
@@ -170,7 +168,6 @@ export const CommentEditor = ({
       }
       strongIcon={editedComment.isWaypoint}
       dateText={dateStr}
-      showBottomPadding={showBottomPadding}
       hideBottomLine={hideBottomLine}
       headline={
         <p className="text-slate-500">
@@ -187,7 +184,7 @@ export const CommentEditor = ({
                   to="/$pocketbookId/notes"
                   params={{ pocketbookId: pocketbookId ?? "" }}
                   search={{ noteId: note.id }}
-                  className="text-slate-700 hover:text-slate-800 hover:underline"
+                  className="text-slate-700 font-medium hover:text-slate-800 hover:underline"
                 >
                   {note.title ?? "Untitled Note"}
                 </Link>
