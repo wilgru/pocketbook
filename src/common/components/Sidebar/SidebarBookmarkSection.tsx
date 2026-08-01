@@ -12,28 +12,22 @@ export const SidebarBookmarkSection = () => {
   }
 
   return (
-    <section className="flex flex-col gap-1">
-      <div>
-        <div className="flex flex-row items-center gap-1">
-          <h1 className="font-title text-slate-400 text-md">Bookmarks</h1>
-        </div>
+    <section className="flex flex-col gap-px">
+      <h1 className="font-title text-slate-400 text-md">Bookmarks</h1>
 
-        <div className="flex flex-col">
-          {notes.map((note) => (
-            <NavItem
-              key={note.id}
-              size="sm"
-              iconName="bookmark"
-              colour={colours.red}
-              title={note.title || "Untitled Note"}
-              to="/$pocketbookId/bookmarked"
-              params={{ pocketbookId }}
-              search={{ noteId: note.id }}
-              activeOptions={{ exact: true, includeSearch: true }}
-            />
-          ))}
-        </div>
-      </div>
+      {notes.map((note) => (
+        <NavItem
+          key={note.id}
+          size="sm"
+          iconName="bookmark"
+          colour={colours.red}
+          title={note.title || "Untitled Note"}
+          to="/$pocketbookId/bookmarked"
+          params={{ pocketbookId }}
+          search={{ noteId: note.id }}
+          activeOptions={{ exact: true, includeSearch: true }}
+        />
+      ))}
     </section>
   );
 };

@@ -1,7 +1,8 @@
-import * as Dialog from "@radix-ui/react-dialog";
+import { Root, Trigger, Close } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
+import { Dialog } from "src/common/components/Dialog/Dialog";
 import { Input } from "src/common/components/Input/Input";
 import { Label } from "src/common/components/Label/Label";
 import { DeleteTagGroupModal } from "src/tags/components/DeleteTagGroupModal/DeleteTagGroupModal";
@@ -24,55 +25,50 @@ export const EditTagGroupModal = ({ tagGroup }: EditTagGroupModalProps) => {
   };
 
   return (
-    <Dialog.Portal>
-      <Dialog.Overlay className="bg-black opacity-25 fixed inset-0 data-[state=open]:animate-overlayShow" />
-      <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-112.5 translate-x-[-50%] translate-y-[-50%] overflow-y-scroll p-4 focus:outline-hidden bg-white border border-slate-300 rounded-2xl shadow-2xl ">
-        <Dialog.Title className="mb-5 font-title text-xl">
-          Edit tag section
-        </Dialog.Title>
+    <Dialog
+      title="Edit Tag Section"
+      className="w-100"
+      hideDividers
+      footer={
+        <div className="flex justify-between">
+          <Root>
+            <Trigger asChild>
+              <Button colour={colours.red} variant="ghost" size="sm">
+                Delete
+              </Button>
+            </Trigger>
 
-        <div className="flex flex-col gap-3">
-          <div>
-            <Label title="Title" />
-            <Input
-              size="md"
-              value={editedTitle}
-              onChange={(e) => setEditedTitle(e.target.value)}
-            />
-          </div>
+            <DeleteTagGroupModal tagGroup={tagGroup} />
+          </Root>
+          <div className="flex gap-2 justify-end">
+            <Close asChild>
+              <Button aria-label="Close" size="sm" variant="ghost">
+                Discard
+              </Button>
+            </Close>
 
-          <div className="flex justify-between">
-            <Dialog.Root>
-              <Dialog.Trigger asChild>
-                <Button colour={colours.red} variant="ghost" size="sm">
-                  Delete
-                </Button>
-              </Dialog.Trigger>
-
-              <DeleteTagGroupModal tagGroup={tagGroup} />
-            </Dialog.Root>
-
-            <div className="flex gap-2 justify-end">
-              <Dialog.Close asChild>
-                <Button aria-label="Close" size="sm" variant="ghost">
-                  Discard
-                </Button>
-              </Dialog.Close>
-
-              <Dialog.Close asChild>
-                <Button
-                  aria-label="Confirm"
-                  colour={colours.green}
-                  size="sm"
-                  onClick={onSaveEdit}
-                >
-                  Save
-                </Button>
-              </Dialog.Close>
-            </div>
+            <Close asChild>
+              <Button
+                aria-label="Confirm"
+                colour={colours.green}
+                size="sm"
+                onClick={onSaveEdit}
+              >
+                Save
+              </Button>
+            </Close>
           </div>
         </div>
-      </Dialog.Content>
-    </Dialog.Portal>
+      }
+    >
+      <div className="flex flex-col p-3">
+        <Label title="Title" />
+        <Input
+          size="md"
+          value={editedTitle}
+          onChange={(e) => setEditedTitle(e.target.value)}
+        />
+      </div>
+    </Dialog>
   );
 };

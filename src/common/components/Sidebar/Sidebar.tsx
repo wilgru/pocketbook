@@ -68,7 +68,7 @@ export const Sidebar = () => {
           pocketbooks={pocketbooks}
         />
 
-        <section className="flex flex-col">
+        <section className="flex flex-col gap-px">
           <NavItem
             ghost
             iconName="pencil"

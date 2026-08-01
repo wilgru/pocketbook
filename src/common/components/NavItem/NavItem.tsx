@@ -54,17 +54,17 @@ export const NavItem = ({
         className: cn(colour.primary.text, colour.primary.background),
       }}
       className={cn(
-        "flex justify-between items-center gap-2 px-2 py-1 rounded-full transition-colors min-w-0",
+        "flex min-w-0 items-center justify-between gap-2 rounded-lg px-2 py-1 transition-colors",
         text,
-        isHovered && colour.primary.text,
-        isHovered && colour.primary.background,
+        colour.secondary.textHovered,
+        colour.secondary.backgroundHovered,
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
         <>
           <div
             className={cn(
-              "flex items-center gap-2 min-w-0",
+              "flex min-w-0 items-center gap-2",
               isHovered || isActive ? colour.primary.text : "text-slate-600",
             )}
           >
@@ -83,14 +83,16 @@ export const NavItem = ({
             <span className="truncate">{title}</span>
           </div>
 
-          <p
-            className={cn(
-              "text-xs text-start font-medium mr-1",
-              isHovered || isActive ? colour.primary.text : "text-slate-400",
-            )}
-          >
-            {preview}
-          </p>
+          {preview !== undefined && (
+            <p
+              className={cn(
+                "mr-1 text-start text-xs font-medium",
+                isHovered || isActive ? colour.primary.text : "text-slate-400",
+              )}
+            >
+              {preview}
+            </p>
+          )}
         </>
       )}
     </Link>

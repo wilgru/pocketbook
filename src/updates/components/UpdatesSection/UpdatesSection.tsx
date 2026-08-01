@@ -61,14 +61,14 @@ export const UpdatesSection = ({
                   hideBottomLine={isLastUpdate}
                 >
                   {update.data.note && (
-                    <p className="text-slate-400 text-xs pl-1">
+                    <p className="text-slate-500 text-xs pl-1">
                       From note{" "}
                       <Link
                         key={update.data.id}
                         to="/$pocketbookId/notes"
                         params={{ pocketbookId: pocketbookId ?? "" }}
                         search={{ noteId: update.data.id }}
-                        className="text-slate-400 hover:text-slate-600 hover:underline"
+                        className="text-slate-500 hover:text-slate-600 hover:underline"
                       >
                         {update.data.note.title ?? "Untitled Note"}
                       </Link>
