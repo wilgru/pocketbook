@@ -1,9 +1,9 @@
-import { Bookmark } from "@phosphor-icons/react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
+import { Icon } from "src/icons/components/Icon/Icon";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
@@ -69,7 +69,12 @@ export const NoteListItem = ({
               ))}
 
             {note.isBookmarked && (
-              <Bookmark className="fill-red-400 m-1" weight="fill" size={14} />
+              <Icon
+                iconName="bookmark"
+                className="fill-red-400 ml-1"
+                weight="fill"
+                size="xs"
+              />
             )}
           </div>
         </div>
