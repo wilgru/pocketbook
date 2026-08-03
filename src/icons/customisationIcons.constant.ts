@@ -132,7 +132,7 @@ export const customisationIcons = [
   { name: "pottedPlant", component: PottedPlantIcon },
   { name: "bug", component: BugIcon },
   { name: "bird", component: BirdIcon },
-  { name: "PenNib", component: PenNibIcon },
+  { name: "penNib", component: PenNibIcon },
   { name: "notebook", component: NotebookIcon },
   { name: "bookOpen", component: BookOpenIcon },
   { name: "magnifyingGlass", component: MagnifyingGlassIcon },

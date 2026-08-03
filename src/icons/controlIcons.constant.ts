@@ -41,6 +41,8 @@ import {
   CheckIcon,
   EmptyIcon,
   ChatCenteredTextIcon,
+  EyeSlashIcon,
+  EyeIcon,
 } from "@phosphor-icons/react";
 import type { IconType } from "./Icon.type";
 
@@ -52,7 +54,7 @@ export const controlIcons = [
   { name: "chatCenteredText", component: ChatCenteredTextIcon },
   { name: "x", component: XIcon, fixedWeight: "bold" },
   { name: "gear", component: GearIcon },
-  { name: "plus", component: PlusIcon, fixedWeight: "bold" },
+  { name: "plus", component: PlusIcon, fixedWeight: "regular" },
   { name: "plusSquare", component: PlusSquareIcon },
   { name: "dotsThree", component: DotsThreeIcon, fixedWeight: "bold" },
   { name: "chatCircle", component: ChatCircleIcon },
@@ -95,6 +97,8 @@ export const controlIcons = [
   { name: "flagBannerFold", component: FlagBannerFoldIcon },
   { name: "arrowUpRight", component: ArrowUpRightIcon },
   { name: "empty", component: EmptyIcon, fixedWeight: "regular" },
+  { name: "eyeSlash", component: EyeSlashIcon },
+  { name: "eye", component: EyeIcon },
 ] as const satisfies IconType[];
 
 export type ControlIconName = (typeof controlIcons)[number]["name"];

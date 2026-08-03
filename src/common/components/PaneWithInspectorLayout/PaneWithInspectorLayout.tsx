@@ -36,7 +36,7 @@ export const PaneWithInspectorLayout = ({
           <div
             className={cn(
               "p-3",
-              showSidebarTopContentDivider && "border-b border-slate-100",
+              showSidebarTopContentDivider && "border-b border-slate-200",
             )}
           >
             {sidebarTopContent}

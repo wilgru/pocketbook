@@ -53,9 +53,19 @@ const NoteEditor = ({
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewComment, setShowNewComment] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
+  const [showCompletedTasks, setShowCompletedTasks] = useState(false);
 
   const newCommentRef = useRef<HTMLDivElement>(null);
   const titleRef = useAutoResize(editedNote.title);
+
+  const tasks = note.tasks ?? [];
+  const incompleteTaskCount = tasks.filter(
+    (task) => !task.completedDate && !task.cancelledDate,
+  ).length;
+  const completedTaskCount = tasks.length - incompleteTaskCount;
+  const visibleTasks = showCompletedTasks
+    ? tasks
+    : tasks.filter((task) => !task.completedDate && !task.cancelledDate);
 
   const debouncedSave = useDebouncedCallback(() => {
     if (editedNote.id) {
@@ -220,19 +230,38 @@ const NoteEditor = ({
         )}
       </div>
 
-      {note.tasks && note.tasks.length > 0 && (
-        <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-4">
-          {note.tasks.map((task) => (
+      {tasks.length > 0 && (
+        <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-3">
+          {visibleTasks.map((task) => (
             <TaskEditor
               key={task.id}
               task={task}
-              tasksForSorting={note.tasks}
+              tasksForSorting={tasks}
               colour={colour}
               onCreateNextTask={() => onCreateTask(task.sortOrder)}
               autoFocusTitle={task.id === newTaskFocusId}
               onAutoFocusComplete={() => setNewTaskFocusId(null)}
             />
           ))}
+
+          <div className="flex items-center justify-between pt-1.5 -ml-px">
+            {completedTaskCount > 0 && (
+              <Button
+                variant="ghost"
+                size="xs"
+                colour={colours.grey}
+                iconName={showCompletedTasks ? "eyeSlash" : "eye"}
+                onClick={() => setShowCompletedTasks((current) => !current)}
+              >
+                {showCompletedTasks ? "Hide completed " : "Show completed "}
+                {`(${completedTaskCount})`}
+              </Button>
+            )}
+
+            <span className="px-2.5 text-xs font-normal text-slate-400">
+              {`${incompleteTaskCount}${showCompletedTasks ? " (" + tasks.length + " total)" : ""}`}
+            </span>
+          </div>
         </div>
       )}
 

@@ -21,11 +21,24 @@ export const TasksSection = ({
   noNoteEditorTrigger,
 }: TasksSectionProps) => {
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
+  const [showCompleted, setShowCompleted] = useState(false);
   const { createTask } = useCreateTask();
   const { pocketbookId } = useCurrentPocketbookId();
   const handledToolbarTriggerRef = useRef(0);
 
   const note = taskGroup.relevantTaskData.note;
+  const incompleteTaskCount = taskGroup.tasks.reduce(
+    (count, task) =>
+      !task.completedDate && !task.cancelledDate ? count + 1 : count,
+    0,
+  );
+  const completedTaskCount = taskGroup.tasks.length - incompleteTaskCount;
+
+  const visibleTasks = showCompleted
+    ? taskGroup.tasks
+    : taskGroup.tasks.filter(
+        (task) => !task.completedDate && !task.cancelledDate,
+      );
 
   const onCreateTask = useCallback(
     async (insertAfterSortOrder?: number) => {
@@ -49,6 +62,7 @@ export const TasksSection = ({
     },
     [createTask, note],
   );
+
   // Create a new no-note task whenever the toolbar plus button fires.
   useEffect(() => {
     if (!noNoteEditorTrigger || noNoteEditorTrigger <= 0) {
@@ -63,70 +77,10 @@ export const TasksSection = ({
     onCreateTask();
   }, [noNoteEditorTrigger, onCreateTask]);
 
-  // const isNoNote = !note;
-
-  // if (isNoNote) {
-  //   return (
-  //     <section id="no-note">
-  //       <div className="flex flex-col gap-2 p-4 rounded-2xl bg-gray-50">
-  //         <div
-  //           className="flex gap-2 items-center"
-  //           onMouseOver={() => setIsTitleHovered(true)}
-  //           onMouseLeave={() => setIsTitleHovered(false)}
-  //         >
-  //           <p className="font-title text-3xl text-slate-400">
-  //             {taskGroup.title}
-  //           </p>
-
-  //           {isTitleHovered && (
-  //             <Button
-  //               variant="ghost-strong"
-  //               size="sm"
-  //               iconName="plus"
-  //               colour={colour}
-  //               onClick={() => onCreateTask()}
-  //             />
-  //           )}
-  //         </div>
-
-  //         {taskGroup.tasks.length === 0 && (
-  //           <div className="w-full p-3 flex flex-col gap-3 items-center">
-  //             <p className="text-slate-500">No task yet</p>
-
-  //             <div>
-  //               <Button
-  //                 variant="ghost"
-  //                 size="sm"
-  //                 className="w-full"
-  //                 iconName="plusSquare"
-  //                 onClick={() => onCreateTask()}
-  //               >
-  //                 Create your first task
-  //               </Button>
-  //             </div>
-  //           </div>
-  //         )}
-
-  //         {taskGroup.tasks.map((task, index) => (
-  //           <TaskEditor
-  //             key={task.id}
-  //             task={task}
-  //             colour={colour}
-  //             onCreateNextTask={() => onCreateTask(task.sortOrder)}
-  //             autoFocusTitle={task.id === newTaskFocusId}
-  //             onAutoFocusComplete={() => setNewTaskFocusId(null)}
-  //             {...getMoveCallbacks(index, taskGroup.tasks)}
-  //           />
-  //         ))}
-  //       </div>
-  //     </section>
-  //   );
-  // }
-
   return (
     <section
       id={note?.id ?? "no-note"}
-      className={cn("p-4", !note && "rounded-2xl bg-gray-50")}
+      className={cn("px-4 pt-4 pb-2", !note && "rounded-md bg-gray-50")}
     >
       <div className="flex flex-col mb-1 border-b border-slate-200">
         <h2
@@ -138,38 +92,57 @@ export const TasksSection = ({
           {taskGroup.title}
         </h2>
 
-        <div className="mb-1 flex gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            iconName="plus"
-            colour={colour}
-            onClick={() => onCreateTask()}
-          >
-            Add task
-          </Button>
-
-          {pocketbookId && note && (
-            <Link
-              to="/$pocketbookId/notes"
-              params={{ pocketbookId }}
-              search={{ noteId: note.id }}
+        <div className="mb-1 flex items-center justify-between gap-1">
+          <div className="flex gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              iconName="plus"
+              colour={colour}
+              onClick={() => onCreateTask()}
             >
+              Add task
+            </Button>
+
+            {completedTaskCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
-                iconName="arrowCircleRight"
                 colour={colour}
+                iconName={showCompleted ? "eyeSlash" : "eye"}
+                onClick={() => setShowCompleted((current) => !current)}
               >
-                Go to note
+                {showCompleted ? "Hide completed " : "Show completed "}
+                {`(${completedTaskCount})`}
               </Button>
-            </Link>
-          )}
+            )}
+
+            {pocketbookId && note && (
+              <Link
+                to="/$pocketbookId/notes"
+                params={{ pocketbookId }}
+                search={{ noteId: note.id }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  iconName="arrowCircleRight"
+                  colour={colour}
+                >
+                  Go to note
+                </Button>
+              </Link>
+            )}
+          </div>
+
+          <span className="px-2.5 text-xs font-normal text-slate-400">
+            {`${incompleteTaskCount}${showCompleted ? " (" + taskGroup.tasks.length + " total)" : ""}`}
+          </span>
         </div>
       </div>
 
       <div className="flex flex-col gap-1.5 p-1">
-        {taskGroup.tasks.map((task) => (
+        {visibleTasks.map((task) => (
           <TaskEditor
             key={task.id}
             task={task}
