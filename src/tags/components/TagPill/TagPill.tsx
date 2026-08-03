@@ -19,6 +19,8 @@ const tagPillVariants = cva(
   [
     "h-fit",
     "w-fit",
+    "min-w-0",
+    "max-w-full",
     "flex",
     "items-center",
     "rounded-full",
@@ -123,7 +125,7 @@ export const TagPill = ({
 
   return (
     <div
-      className="h-fit"
+      className="h-fit min-w-0 max-w-full"
       onMouseOver={() => setCloseButtonVisible(true)}
       onMouseOut={() => setCloseButtonVisible(false)}
     >
@@ -134,11 +136,12 @@ export const TagPill = ({
           size={size}
           onClick={handleClick}
           iconName={iconName}
+          className="min-w-0 max-w-full"
         >
           {!collapsed && (
             <span
               className={cn(
-                "inline-block overflow-hidden transition-all duration-300 ease-in-out max-w-40 opacity-100",
+                "min-w-0 flex-1 truncate transition-all duration-300 ease-in-out max-w-40 opacity-100",
               )}
             >
               {tag.name}
@@ -163,12 +166,12 @@ export const TagPill = ({
             iconName={iconName}
             size={size}
             weight="regular"
-            className={iconClassName}
+            className={cn("shrink-0", iconClassName)}
           />
           {!collapsed && (
             <span
               className={cn(
-                "inline-block overflow-hidden transition-all duration-300 ease-in-out max-w-40 opacity-100",
+                "min-w-0 flex-1 truncate transition-all duration-300 ease-in-out max-w-40 opacity-100",
               )}
             >
               {tag.name}

@@ -1,9 +1,9 @@
-import { Bookmark } from "@phosphor-icons/react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
+import { Icon } from "src/icons/components/Icon/Icon";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
@@ -12,12 +12,14 @@ type NoteTableItemProps = {
   note: Note;
   colour?: Colour;
   to?: string;
+  tagGroupIds: (string | null)[];
 };
 
 export const NoteTableItem = ({
   note,
   colour = colours.orange,
   to,
+  tagGroupIds,
 }: NoteTableItemProps) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -47,35 +49,55 @@ export const NoteTableItem = ({
         isHovered && colour.primary.background,
       )}
     >
-      <td className={cn("px-3 py-1.5", isHovered && colour.primary.text)}>
-        <p className="truncate font-normal">
-          {note.title === "" ? "Untitled Note" : note.title}
-        </p>
-      </td>
-
-      <td className="px-3 py-1.5">
-        <div className="flex gap-1 items-center flex-wrap">
-          {note.tags.length > 0 &&
-            note.tags.map((tag) => (
-              <TagPill
-                key={tag.id}
-                tag={tag}
-                size="xs"
-                closable={false}
-                collapsed={false}
-                iconClassName={isHovered ? tag.colour.primary.text : undefined}
-              />
-            ))}
+      <td
+        className={cn(
+          "align-top border-r border-slate-100 px-3 pt-1.5 pb-1",
+          isHovered && colour.primary.text,
+        )}
+      >
+        <div className="flex items-center gap-1">
+          <p className="truncate font-normal">
+            {note.title === "" ? "Untitled Note" : note.title}
+          </p>
 
           {note.isBookmarked && (
-            <Bookmark className="fill-red-400 m-1" weight="fill" size={14} />
+            <Icon
+              iconName="bookmark"
+              className="shrink-0 fill-red-400"
+              weight="fill"
+              size="xs"
+            />
           )}
         </div>
       </td>
 
+      {tagGroupIds.map((tagGroupId) => (
+        <td
+          key={tagGroupId}
+          className="align-top border-r border-slate-100 px-3 pt-1.5"
+        >
+          <div className="flex gap-1 items-center flex-wrap">
+            {note.tags
+              .filter((tag) => tag.tagGroupId === tagGroupId)
+              .map((tag) => (
+                <TagPill
+                  key={tag.id}
+                  tag={tag}
+                  size="xs"
+                  closable={false}
+                  collapsed={false}
+                  iconClassName={
+                    isHovered ? tag.colour.primary.text : undefined
+                  }
+                />
+              ))}
+          </div>
+        </td>
+      ))}
+
       <td
         className={cn(
-          "px-3 py-1.5 text-xs text-slate-400 text-right whitespace-nowrap",
+          "align-top px-3 pt-2 text-xs text-slate-400 text-right whitespace-nowrap",
           isHovered && colour.primary.text,
         )}
       >

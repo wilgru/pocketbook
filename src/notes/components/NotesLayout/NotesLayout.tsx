@@ -13,12 +13,13 @@ import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTabl
 import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
+import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
 import { TaskToolbar } from "src/tasks/components/TaskToolbar/TaskToolbar";
 import { NoteListItem } from "../NoteListItem/NoteListItem";
 import { StickyNoteListItem } from "../NoteListItem/StickyNoteListItem";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note, NotesGroup } from "src/notes/Note.type";
-import type { TagLink } from "src/tags/Tag.type";
+import type { TagGroup, TagLink } from "src/tags/Tag.type";
 
 type StickyNotesGridProps = {
   notes: Note[];
@@ -74,6 +75,7 @@ export const NotesLayout = ({
 }: NotesLayoutProps) => {
   const { isVisible: isNoteToolbarVisible } = useAtomValue(NoteToolbarAtom);
   const { isVisible: isTaskToolbarVisible } = useAtomValue(taskToolbarAtom);
+  const { tagGroups } = useGetTagGroups();
 
   const activeToolbarContent = isTaskToolbarVisible ? (
     <TaskToolbar />
@@ -104,6 +106,19 @@ export const NotesLayout = ({
       groupSortDirection,
     );
   }, [notes, groupNotesBy, title, prefillNewNoteData, groupSortDirection]);
+
+  // TODO: move the different layouts into their own components to reduce complexity and handle layout specific logic like this in their own components
+  const tableTagGroups = useMemo<TagGroup[]>(() => {
+    const tagGroupIds = new Set(
+      notes.flatMap((note) =>
+        note.tags
+          .map((tag) => tag.tagGroupId)
+          .filter((tagGroupId): tagGroupId is string => tagGroupId !== null),
+      ),
+    );
+
+    return tagGroups.filter((tagGroup) => tagGroupIds.has(tagGroup.id));
+  }, [notes, tagGroups]);
 
   switch (layout) {
     case "list":
@@ -204,7 +219,12 @@ export const NotesLayout = ({
                   }
                   columns={[
                     { key: "title", label: "Title" },
-                    { key: "details", label: "Tags" },
+                    { key: "tags", label: "Tags", tagGroupId: null },
+                    ...tableTagGroups.map((tagGroup) => ({
+                      key: tagGroup.id,
+                      label: tagGroup.title,
+                      tagGroupId: tagGroup.id,
+                    })),
                     {
                       key: "created",
                       label: "Created",
