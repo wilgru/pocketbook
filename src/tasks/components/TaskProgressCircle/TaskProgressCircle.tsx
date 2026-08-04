@@ -1,4 +1,6 @@
+import * as Popover from "@radix-ui/react-popover";
 import { colours } from "src/colours/colours.constant";
+import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { getColourHex } from "src/colours/utils/getColourHex";
 import type { Colour } from "src/colours/Colour.type";
 
@@ -8,6 +10,7 @@ export type TaskProgressCircleProps = {
   total: number;
   colour?: Colour;
   size?: number;
+  showInfoPopover?: boolean;
 };
 
 const TRACK_COLOUR = "#e2e8f0";
@@ -56,13 +59,18 @@ const buildPieSlicePath = (
   ].join(" ");
 };
 
-export const TaskProgressCircle = ({
+type CircleSvgProps = Pick<
+  TaskProgressCircleProps,
+  "completed" | "cancelled" | "total" | "colour" | "size"
+>;
+
+const CircleSvg = ({
   completed,
   cancelled,
   total,
   colour,
   size = 36,
-}: TaskProgressCircleProps) => {
+}: CircleSvgProps) => {
   const resolvedColour = colour ?? colours.orange;
   const cx = size / 2;
   const cy = size / 2;
@@ -95,4 +103,93 @@ export const TaskProgressCircle = ({
         ))}
     </svg>
   );
+};
+
+const TaskProgressCircleInfoPopover = ({
+  completed,
+  cancelled,
+  total,
+  colour,
+  children,
+}: Omit<TaskProgressCircleProps, "size" | "showInfoPopover"> & {
+  children: React.ReactNode;
+}) => {
+  const resolvedColour = colour ?? colours.orange;
+  const todo = total - completed - cancelled;
+
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>{children}</Popover.Trigger>
+
+      <Popover.Portal>
+        <Popover.Content
+          className="z-50"
+          sideOffset={6}
+          align="center"
+          onOpenAutoFocus={(event) => event.preventDefault()}
+        >
+          <ControlPopover className="p-3">
+            <div className="flex flex-col gap-1 text-xs text-slate-600 min-w-28">
+              <div className="flex justify-between gap-4">
+                <span className="text-slate-400">Todo</span>
+                <span className="font-medium">{todo}</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className={resolvedColour.primary.text}>Completed</span>
+                <span className="font-medium">{completed}</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-slate-400">Cancelled</span>
+                <span className="font-medium">{cancelled}</span>
+              </div>
+              <div className="mt-1 pt-1 border-t border-slate-100 flex justify-between gap-4">
+                <span className="text-slate-500">Total</span>
+                <span className="font-medium">{total}</span>
+              </div>
+            </div>
+          </ControlPopover>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+};
+
+export const TaskProgressCircle = ({
+  completed,
+  cancelled,
+  total,
+  colour,
+  size = 36,
+  showInfoPopover = false,
+}: TaskProgressCircleProps) => {
+  const svg = (
+    <CircleSvg
+      completed={completed}
+      cancelled={cancelled}
+      total={total}
+      colour={colour}
+      size={size}
+    />
+  );
+
+  if (showInfoPopover) {
+    return (
+      <TaskProgressCircleInfoPopover
+        completed={completed}
+        cancelled={cancelled}
+        total={total}
+        colour={colour}
+      >
+        <button
+          type="button"
+          className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+          aria-label="Show task progress details"
+        >
+          {svg}
+        </button>
+      </TaskProgressCircleInfoPopover>
+    );
+  }
+
+  return <div className="flex items-center">{svg}</div>;
 };
