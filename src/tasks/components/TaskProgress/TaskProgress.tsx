@@ -1,6 +1,7 @@
 import * as Popover from "@radix-ui/react-popover";
 import { colours } from "src/colours/colours.constant";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
+import { TaskProgressCircle } from "src/tasks/components/TaskProgressCircle/TaskProgressCircle";
 import type { Colour } from "src/colours/Colour.type";
 
 type TaskProgressType = "circle" | "bar";
@@ -12,71 +13,6 @@ type TaskProgressProps = {
   colour?: Colour;
   type?: TaskProgressType;
   showInfoPopover?: boolean;
-};
-
-const CIRCLE_SIZE = 36;
-const STROKE_WIDTH = 5;
-const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-const TaskProgressCircle = ({
-  completed,
-  cancelled,
-  total,
-  colour,
-}: Pick<TaskProgressProps, "completed" | "cancelled" | "total" | "colour">) => {
-  const resolvedColour = colour ?? colours.orange;
-  const activeFraction = total > 0 ? (completed + cancelled) / total : 0;
-  const activeDash = activeFraction * CIRCUMFERENCE;
-  const remainingDash = CIRCUMFERENCE - activeDash;
-
-  // Extract a hex/raw colour value from the Tailwind class for SVG stroke
-  const colourClassToHex: Record<string, string> = {
-    "bg-red-400": "#f87171",
-    "bg-orange-400": "#fb923c",
-    "bg-yellow-400": "#facc15",
-    "bg-lime-400": "#a3e635",
-    "bg-green-400": "#4ade80",
-    "bg-blue-400": "#60a5fa",
-    "bg-cyan-400": "#22d3ee",
-    "bg-pink-400": "#f472b6",
-    "bg-purple-400": "#c084fc",
-    "bg-amber-600": "#d97706",
-    "bg-gray-400": "#9ca3af",
-  };
-
-  const activeStrokeColour =
-    colourClassToHex[resolvedColour.background] ?? "#fb923c";
-
-  return (
-    <svg
-      width={CIRCLE_SIZE}
-      height={CIRCLE_SIZE}
-      viewBox={`0 0 ${CIRCLE_SIZE} ${CIRCLE_SIZE}`}
-      className="rotate-[-90deg]"
-    >
-      {/* Background track */}
-      <circle
-        cx={CIRCLE_SIZE / 2}
-        cy={CIRCLE_SIZE / 2}
-        r={RADIUS}
-        fill="none"
-        stroke="#e2e8f0"
-        strokeWidth={STROKE_WIDTH}
-      />
-      {/* Active segment */}
-      <circle
-        cx={CIRCLE_SIZE / 2}
-        cy={CIRCLE_SIZE / 2}
-        r={RADIUS}
-        fill="none"
-        stroke={activeStrokeColour}
-        strokeWidth={STROKE_WIDTH}
-        strokeDasharray={`${activeDash} ${remainingDash}`}
-        strokeLinecap="round"
-      />
-    </svg>
-  );
 };
 
 const TaskProgressBar = ({
