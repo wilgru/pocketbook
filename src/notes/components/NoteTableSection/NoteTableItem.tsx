@@ -14,6 +14,8 @@ type NoteTableItemProps = {
   colour?: Colour;
   to?: string;
   tagGroupIds: (string | null)[];
+  showTaskColumn?: boolean;
+  showLinksColumn?: boolean;
 };
 
 export const NoteTableItem = ({
@@ -21,6 +23,8 @@ export const NoteTableItem = ({
   colour = colours.orange,
   to,
   tagGroupIds,
+  showTaskColumn = false,
+  showLinksColumn = false,
 }: NoteTableItemProps) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -96,18 +100,42 @@ export const NoteTableItem = ({
         </td>
       ))}
 
-      <td className="align-top border-r border-slate-100 px-3 pt-2">
-        {note.tasks.length > 0 && (
-          <TaskProgressBar
-            cancelled={note.tasks.filter((task) => task.cancelledDate).length}
-            completed={note.tasks.filter((task) => task.completedDate).length}
-            total={note.tasks.length}
-            showInfoPopover={false}
-            colour={colour}
-            className="w-full"
-          />
-        )}
-      </td>
+      {showTaskColumn && (
+        <td className="align-top border-r border-slate-100 px-3 pt-2">
+          {note.tasks.length > 0 && (
+            <TaskProgressBar
+              cancelled={note.tasks.filter((task) => task.cancelledDate).length}
+              completed={note.tasks.filter((task) => task.completedDate).length}
+              total={note.tasks.length}
+              showInfoPopover={false}
+              colour={colour}
+              className="w-full"
+            />
+          )}
+        </td>
+      )}
+
+      {showLinksColumn && (
+        <td className="align-top border-r border-slate-100 px-3 pt-1.5">
+          <div className="flex gap-1 items-center flex-wrap">
+            {note.links.map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(event) => event.stopPropagation()}
+                className={cn(
+                  "text-xs text-slate-400 hover:underline",
+                  isHovered && colour.primary.text,
+                )}
+              >
+                {link.title}
+              </a>
+            ))}
+          </div>
+        </td>
+      )}
 
       <td
         className={cn(

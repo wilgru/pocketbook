@@ -77,6 +77,8 @@ export const NoteTableSection = ({
                   key={note.id}
                   note={note}
                   colour={colour}
+                  showTaskColumn={columns.some((column) => column.key === "tasks")}
+                  showLinksColumn={columns.some((column) => column.key === "links")}
                   tagGroupIds={columns
                     .map((column) => column.tagGroupId)
                     .filter(
