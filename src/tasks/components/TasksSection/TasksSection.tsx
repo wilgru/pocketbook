@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { cn } from "src/common/utils/cn";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
@@ -108,19 +109,6 @@ export const TasksSection = ({
               Add task
             </Button>
 
-            {completedTaskCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                colour={colour}
-                iconName={showCompleted ? "eyeSlash" : "eye"}
-                onClick={() => setShowCompleted((current) => !current)}
-              >
-                {showCompleted ? "Hide completed " : "Show completed "}
-                {`(${completedTaskCount})`}
-              </Button>
-            )}
-
             {pocketbookId && note && (
               <Link
                 to="/$pocketbookId/notes"
@@ -160,6 +148,19 @@ export const TasksSection = ({
             onAutoFocusComplete={() => setNewTaskFocusId(null)}
           />
         ))}
+
+        {completedTaskCount > 0 && (
+          <Button
+            variant="ghost"
+            size="xs"
+            colour={colours.grey}
+            iconName={showCompleted ? "eyeSlash" : "eye"}
+            onClick={() => setShowCompleted((current) => !current)}
+          >
+            {showCompleted ? "Hide completed " : "Show completed "}
+            {`(${completedTaskCount})`}
+          </Button>
+        )}
       </div>
     </section>
   );
