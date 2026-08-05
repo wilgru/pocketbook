@@ -1,6 +1,5 @@
-import * as Popover from "@radix-ui/react-popover";
+import { CheckCircleIcon } from "@phosphor-icons/react";
 import { colours } from "src/colours/colours.constant";
-import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { getColourHex } from "src/colours/utils/getColourHex";
 import type { Colour } from "src/colours/Colour.type";
 
@@ -10,10 +9,7 @@ export type TaskProgressCircleProps = {
   total: number;
   colour?: Colour;
   size?: number;
-  showInfoPopover?: boolean;
 };
-
-const TRACK_COLOUR = "#e2e8f0";
 
 /**
  * Computes the (x, y) point on the circle at the given angle (in radians),
@@ -72,15 +68,30 @@ const CircleSvg = ({
   size = 36,
 }: CircleSvgProps) => {
   const resolvedColour = colour ?? colours.orange;
+  const foregroundColour = getColourHex(resolvedColour.background);
+
+  if (total > 0 && completed + cancelled >= total) {
+    return (
+      <CheckCircleIcon
+        size={size}
+        color={foregroundColour}
+        weight="fill"
+        aria-label="100% complete"
+        role="img"
+      />
+    );
+  }
+
   const cx = size / 2;
   const cy = size / 2;
   const r = size / 2;
+  const foregroundRadius = Math.max(r - 1, 0);
 
   const activeFraction = total > 0 ? (completed + cancelled) / total : 0;
   const activeAngle = activeFraction * 2 * Math.PI;
-  const activeColour = getColourHex(resolvedColour);
+  const backgroundColour = getColourHex(resolvedColour.primary.background);
 
-  const slicePath = buildPieSlicePath(cx, cy, r, 0, activeAngle);
+  const slicePath = buildPieSlicePath(cx, cy, foregroundRadius, 0, activeAngle);
 
   return (
     <svg
@@ -91,66 +102,13 @@ const CircleSvg = ({
       role="img"
     >
       {/* Background circle (track) */}
-      <circle cx={cx} cy={cy} r={r} fill={TRACK_COLOUR} />
+      <circle cx={cx} cy={cy} r={r} fill={backgroundColour} />
 
       {/* Active pie slice */}
-      {activeFraction > 0 &&
-        (slicePath ? (
-          <path d={slicePath} fill={activeColour} />
-        ) : (
-          /* Full circle: render as a circle instead of a degenerate path */
-          <circle cx={cx} cy={cy} r={r} fill={activeColour} />
-        ))}
+      {activeFraction > 0 && slicePath && (
+        <path d={slicePath} fill={foregroundColour} />
+      )}
     </svg>
-  );
-};
-
-const TaskProgressCircleInfoPopover = ({
-  completed,
-  cancelled,
-  total,
-  colour,
-  children,
-}: Omit<TaskProgressCircleProps, "size" | "showInfoPopover"> & {
-  children: React.ReactNode;
-}) => {
-  const resolvedColour = colour ?? colours.orange;
-  const todo = total - completed - cancelled;
-
-  return (
-    <Popover.Root>
-      <Popover.Trigger asChild>{children}</Popover.Trigger>
-
-      <Popover.Portal>
-        <Popover.Content
-          className="z-50"
-          sideOffset={6}
-          align="center"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <ControlPopover className="p-3">
-            <div className="flex flex-col gap-1 text-xs text-slate-600 min-w-28">
-              <div className="flex justify-between gap-4">
-                <span className="text-slate-400">Todo</span>
-                <span className="font-medium">{todo}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className={resolvedColour.primary.text}>Completed</span>
-                <span className="font-medium">{completed}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-slate-400">Cancelled</span>
-                <span className="font-medium">{cancelled}</span>
-              </div>
-              <div className="mt-1 pt-1 border-t border-slate-100 flex justify-between gap-4">
-                <span className="text-slate-500">Total</span>
-                <span className="font-medium">{total}</span>
-              </div>
-            </div>
-          </ControlPopover>
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
   );
 };
 
@@ -160,7 +118,6 @@ export const TaskProgressCircle = ({
   total,
   colour,
   size = 36,
-  showInfoPopover = false,
 }: TaskProgressCircleProps) => {
   const svg = (
     <CircleSvg
@@ -172,24 +129,13 @@ export const TaskProgressCircle = ({
     />
   );
 
-  if (showInfoPopover) {
-    return (
-      <TaskProgressCircleInfoPopover
-        completed={completed}
-        cancelled={cancelled}
-        total={total}
-        colour={colour}
-      >
-        <button
-          type="button"
-          className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
-          aria-label="Show task progress details"
-        >
-          {svg}
-        </button>
-      </TaskProgressCircleInfoPopover>
-    );
-  }
-
-  return <div className="flex items-center">{svg}</div>;
+  return (
+    <button
+      type="button"
+      className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+      aria-label="Show task progress details"
+    >
+      {svg}
+    </button>
+  );
 };

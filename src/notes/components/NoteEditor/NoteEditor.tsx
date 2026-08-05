@@ -23,6 +23,7 @@ import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
 import { TagSelect } from "src/tags/components/TagSelect/TagSelect";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
+import { TaskProgressBar } from "src/tasks/components/TaskProgressBar/TaskProgressBar";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { useDebouncedCallback } from "use-debounce";
 import type { Colour } from "src/colours/Colour.type";
@@ -59,10 +60,8 @@ const NoteEditor = ({
   const titleRef = useAutoResize(editedNote.title);
 
   const tasks = note.tasks ?? [];
-  const incompleteTaskCount = tasks.filter(
-    (task) => !task.completedDate && !task.cancelledDate,
-  ).length;
-  const completedTaskCount = tasks.length - incompleteTaskCount;
+  const completedTaskCount = tasks.filter((task) => task.completedDate).length;
+  const cancelledTaskCount = tasks.filter((task) => task.cancelledDate).length;
   const visibleTasks = showCompletedTasks
     ? tasks
     : tasks.filter((task) => !task.completedDate && !task.cancelledDate);
@@ -232,6 +231,16 @@ const NoteEditor = ({
 
       {tasks.length > 0 && (
         <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-3">
+          <div className="flex flex-row items-center justify-between gap-2">
+            <h3 className="text-slate-400 text-sm">Tasks</h3>
+            <TaskProgressBar
+              cancelled={cancelledTaskCount}
+              completed={completedTaskCount}
+              total={tasks.length}
+              colour={colour}
+            />
+          </div>
+
           {visibleTasks.map((task) => (
             <TaskEditor
               key={task.id}
@@ -244,24 +253,18 @@ const NoteEditor = ({
             />
           ))}
 
-          <div className="flex items-center justify-between pt-1.5 -ml-px">
-            {completedTaskCount > 0 && (
-              <Button
-                variant="ghost"
-                size="xs"
-                colour={colours.grey}
-                iconName={showCompletedTasks ? "eyeSlash" : "eye"}
-                onClick={() => setShowCompletedTasks((current) => !current)}
-              >
-                {showCompletedTasks ? "Hide completed " : "Show completed "}
-                {`(${completedTaskCount})`}
-              </Button>
-            )}
-
-            <span className="px-2.5 text-xs font-normal text-slate-400">
-              {`${incompleteTaskCount}${showCompletedTasks ? " (" + tasks.length + " total)" : ""}`}
-            </span>
-          </div>
+          {completedTaskCount > 0 && (
+            <Button
+              variant="ghost"
+              size="xs"
+              colour={colours.grey}
+              iconName={showCompletedTasks ? "eyeSlash" : "eye"}
+              onClick={() => setShowCompletedTasks((current) => !current)}
+            >
+              {showCompletedTasks ? "Hide completed " : "Show completed "}
+              {`(${completedTaskCount})`}
+            </Button>
+          )}
         </div>
       )}
 

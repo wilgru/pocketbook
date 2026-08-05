@@ -4,6 +4,7 @@ import utc from "dayjs/plugin/utc.js";
 import { useMemo } from "react";
 import { mapNote } from "src/notes/utils/mapNote";
 import { useGetTags } from "src/tags/hooks/useGetTags";
+import { useGetTasks } from "src/tasks/hooks/useGetTasks";
 import { useCurrentPocketbookId } from "../../pocketbooks/hooks/useCurrentPocketbookId";
 import type { Note } from "src/notes/Note.type";
 import type { GetNotesResult } from "src/notes/ipc/getNotes";
@@ -23,6 +24,7 @@ export const useGetNotes = ({
 }): UseGetNotesResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
   const { tags: allTags } = useGetTags();
+  const { tasks: allTasks } = useGetTasks({});
 
   const queryFn = async (): Promise<GetNotesResult> => {
     let createdAfter: string | undefined;
@@ -69,9 +71,10 @@ export const useGetNotes = ({
     () =>
       (data?.notes ?? []).map((row) => {
         const tags = allTags.filter((tag) => row.tagIds.includes(tag.id));
-        return mapNote(row, { tags });
+        const tasks = allTasks.filter((task) => task.note?.id === row.id); // todo: perhaps move this to the backend, and jsut get a count of tasks for each note as so far thats all we need this for
+        return mapNote(row, { tags, tasks });
       }),
-    [allTags, data],
+    [allTags, allTasks, data],
   );
 
   return {

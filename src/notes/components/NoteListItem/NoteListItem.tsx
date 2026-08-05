@@ -4,6 +4,7 @@ import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
+import { TaskProgressCircle } from "src/tasks/components/TaskProgressCircle/TaskProgressCircle";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
@@ -67,6 +68,20 @@ export const NoteListItem = ({
                   }
                 />
               ))}
+
+            {note.tasks.length > 0 && (
+              <TaskProgressCircle
+                cancelled={
+                  note.tasks.filter((task) => task.cancelledDate).length
+                }
+                completed={
+                  note.tasks.filter((task) => task.completedDate).length
+                }
+                total={note.tasks.length}
+                size={12}
+                colour={colour}
+              />
+            )}
 
             {note.isBookmarked && (
               <Icon

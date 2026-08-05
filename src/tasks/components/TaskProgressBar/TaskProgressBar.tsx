@@ -23,10 +23,10 @@ const TaskProgressBarInner = ({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs font-medium text-slate-500 w-8 text-right tabular-nums">
+      <span className="text-xs text-slate-400 w-8 text-right tabular-nums">
         {activePercent}%
       </span>
-      <div className="w-24 h-2 rounded-full bg-slate-200 overflow-hidden">
+      <div className="w-40 h-1 rounded-full bg-slate-200 overflow-hidden">
         <div
           className={`h-full rounded-full transition-all ${resolvedColour.background}`}
           style={{ width: `${activePercent}%` }}

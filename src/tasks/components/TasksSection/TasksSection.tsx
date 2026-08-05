@@ -5,6 +5,7 @@ import { cn } from "src/common/utils/cn";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
+import { TaskProgressBar } from "../TaskProgressBar/TaskProgressBar";
 import type { Colour } from "src/colours/Colour.type";
 import type { TasksGroup } from "src/tasks/Task.type";
 
@@ -27,12 +28,15 @@ export const TasksSection = ({
   const handledToolbarTriggerRef = useRef(0);
 
   const note = taskGroup.relevantTaskData.note;
-  const incompleteTaskCount = taskGroup.tasks.reduce(
-    (count, task) =>
-      !task.completedDate && !task.cancelledDate ? count + 1 : count,
+
+  const completedTaskCount = taskGroup.tasks.reduce(
+    (count, task) => (task.completedDate ? count + 1 : count),
     0,
   );
-  const completedTaskCount = taskGroup.tasks.length - incompleteTaskCount;
+  const cancelledTaskCount = taskGroup.tasks.reduce(
+    (count, task) => (task.cancelledDate ? count + 1 : count),
+    0,
+  );
 
   const visibleTasks = showCompleted
     ? taskGroup.tasks
@@ -135,9 +139,12 @@ export const TasksSection = ({
             )}
           </div>
 
-          <span className="px-2.5 text-xs font-normal text-slate-400">
-            {`${incompleteTaskCount}${showCompleted ? " (" + taskGroup.tasks.length + " total)" : ""}`}
-          </span>
+          <TaskProgressBar
+            cancelled={cancelledTaskCount}
+            completed={completedTaskCount}
+            total={taskGroup.tasks.length}
+            colour={colour}
+          />
         </div>
       </div>
 
