@@ -4,6 +4,7 @@ import { colours } from "src/colours/colours.constant";
 import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
+import { TaskProgressBar } from "src/tasks/components/TaskProgressBar/TaskProgressBar";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
 import type { Note } from "src/notes/Note.type";
@@ -94,6 +95,19 @@ export const NoteTableItem = ({
           </div>
         </td>
       ))}
+
+      <td className="align-top border-r border-slate-100 px-3 pt-2">
+        {note.tasks.length > 0 && (
+          <TaskProgressBar
+            cancelled={note.tasks.filter((task) => task.cancelledDate).length}
+            completed={note.tasks.filter((task) => task.completedDate).length}
+            total={note.tasks.length}
+            showInfoPopover={false}
+            colour={colour}
+            className="w-full"
+          />
+        )}
+      </td>
 
       <td
         className={cn(

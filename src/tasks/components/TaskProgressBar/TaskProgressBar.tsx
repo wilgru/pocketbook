@@ -1,4 +1,5 @@
 import { colours } from "src/colours/colours.constant";
+import { cn } from "src/common/utils/cn";
 import { Tooltip } from "src/common/components/Tooltip/Tooltip";
 import type { Colour } from "src/colours/Colour.type";
 
@@ -8,6 +9,7 @@ export type TaskProgressBarProps = {
   total: number;
   colour?: Colour;
   showInfoPopover?: boolean;
+  className?: string;
 };
 
 const TaskProgressBarInner = ({
@@ -53,6 +55,7 @@ export const TaskProgressBar = ({
   total,
   colour,
   showInfoPopover = true,
+  className,
 }: TaskProgressBarProps) => {
   const todo = total - completed - cancelled;
 
@@ -89,10 +92,10 @@ export const TaskProgressBar = ({
 
     return (
       <Tooltip content={tooltipContent}>
-        <div className="flex items-center">{inner}</div>
+        <div className={cn("flex items-center", className)}>{inner}</div>
       </Tooltip>
     );
   }
 
-  return <div className="flex items-center">{inner}</div>;
+  return <div className={cn("flex items-center", className)}>{inner}</div>;
 };
