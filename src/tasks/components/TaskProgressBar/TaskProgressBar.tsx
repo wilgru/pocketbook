@@ -54,7 +54,6 @@ export const TaskProgressBar = ({
   colour,
   showInfoPopover = true,
 }: TaskProgressBarProps) => {
-  const resolvedColour = colour ?? colours.orange;
   const todo = total - completed - cancelled;
 
   const inner = (
@@ -70,20 +69,20 @@ export const TaskProgressBar = ({
     const tooltipContent = (
       <div className="flex flex-col gap-1 min-w-28">
         <div className="flex justify-between gap-4">
-          <span className="text-slate-400">Todo</span>
-          <span className="font-medium">{todo}</span>
+          <span className="text-slate-400">To do</span>
+          <span className="text-slate-100">{todo}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span className={resolvedColour.primary.text}>Completed</span>
-          <span className="font-medium">{completed}</span>
+          <span className="text-slate-400">Completed</span>
+          <span className="text-slate-100">{completed}</span>
         </div>
         <div className="flex justify-between gap-4">
           <span className="text-slate-400">Cancelled</span>
-          <span className="font-medium">{cancelled}</span>
+          <span className="text-slate-100">{cancelled}</span>
         </div>
         <div className="mt-1 pt-1 border-t border-slate-600 flex justify-between gap-4">
           <span className="text-slate-300">Total</span>
-          <span className="font-medium">{total}</span>
+          <span className="text-slate-100">{total}</span>
         </div>
       </div>
     );

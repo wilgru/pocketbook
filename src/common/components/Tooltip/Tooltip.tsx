@@ -12,7 +12,7 @@ export const Tooltip = ({
   sideOffset = 5,
 }: TooltipProps) => {
   return (
-    <RadixTooltip.Provider>
+    <RadixTooltip.Provider delayDuration={200}>
       <RadixTooltip.Root>
         <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
