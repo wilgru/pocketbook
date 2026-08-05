@@ -30,7 +30,13 @@ export const TasksLayout = ({
   noNoteEditorTrigger,
 }: TasksLayoutProps) => {
   const { isVisible } = useAtomValue(taskToolbarAtom);
-  const groupedTasks = useMemo(() => groupTasks(tasks, "note"), [tasks]);
+  const groupedTasks = useMemo(
+    () =>
+      groupTasks(tasks, "note").filter((group) =>
+        group.tasks.some((task) => !task.completedDate && !task.cancelledDate),
+      ),
+    [tasks],
+  );
 
   // When the toolbar plus button is clicked and there's no "No Note" group yet, synthesise one so TasksSection can receive the trigger and create a task.
   const effectiveTaskGroups = useMemo(() => {
