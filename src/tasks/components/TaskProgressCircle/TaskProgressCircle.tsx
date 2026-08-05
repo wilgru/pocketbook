@@ -129,13 +129,5 @@ export const TaskProgressCircle = ({
     />
   );
 
-  return (
-    <button
-      type="button"
-      className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
-      aria-label="Show task progress details"
-    >
-      {svg}
-    </button>
-  );
+  return <div className="flex items-center">{svg}</div>;
 };
