@@ -53,3 +53,13 @@ Optional: migrate a single note only:
 ```bash
 npx tsx scripts/migrateNotesQuillToLexical.ts --db-path=/var/lib/pocketbook/pocketbook.db --note-id=<NOTE_ID> --apply
 ```
+
+## Seed the development database
+
+To wipe the development database and create testing pocketbooks:
+
+```bash
+npm run seed:dev
+```
+
+The script requires typing `WIPE DEV DB` at the warning prompt before making changes.
