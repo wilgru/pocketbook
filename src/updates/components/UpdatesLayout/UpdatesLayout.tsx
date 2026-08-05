@@ -11,6 +11,7 @@ import { ListSection } from "src/common/components/ListSection/ListSection";
 import { PaneWithInspectorLayout } from "src/common/components/PaneWithInspectorLayout/PaneWithInspectorLayout";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
+import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
 import { groupUpdates } from "src/updates/utils/groupUpdates";
@@ -188,8 +189,23 @@ export const UpdatesLayout = ({
               navigationId={tableOfContentsItem.navigationId}
               onJumpTo={(id) => navigate({ to: `#${id}` })}
               colour={colour}
-              icons={tableOfContentsItem.icons}
-            />
+            >
+              {tableOfContentsItem.icons.length > 0 && (
+                <span
+                  className="flex items-center gap-1 shrink-0"
+                  aria-hidden="true"
+                >
+                  {tableOfContentsItem.icons.map((icon, index) => (
+                    <Icon
+                      key={`${tableOfContentsItem.title}-${icon.iconName}-${index}`}
+                      iconName={icon.iconName}
+                      size="sm"
+                      className={icon.colour.text}
+                    />
+                  ))}
+                </span>
+              )}
+            </TableOfContentsListItem>
           ))}
         </ListSection>
       ))}
