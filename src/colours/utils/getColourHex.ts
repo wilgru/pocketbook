@@ -1,19 +1,39 @@
-import type { Colour } from "src/colours/Colour.type";
-
-const COLOUR_HEX_MAP: Record<string, string> = {
-  red: "#ef4444",
-  orange: "#f97316",
-  yellow: "#eab308",
-  lime: "#84cc16",
-  green: "#22c55e",
-  blue: "#3b82f6",
-  cyan: "#06b6d4",
-  pink: "#ec4899",
-  purple: "#a855f7",
-  brown: "#d97706",
-  grey: "#6b7280",
+const TAILWIND_COLOUR_HEX_MAP: Record<string, string> = {
+  "text-red-500": "#ef4444",
+  "bg-red-400": "#f87171",
+  "bg-red-100": "#fee2e2",
+  "text-orange-500": "#f97316",
+  "bg-orange-400": "#fb923c",
+  "bg-orange-100": "#ffedd5",
+  "text-yellow-500": "#eab308",
+  "bg-yellow-400": "#facc15",
+  "bg-yellow-100": "#fef9c3",
+  "text-lime-500": "#84cc16",
+  "bg-lime-400": "#a3e635",
+  "bg-lime-100": "#ecfccb",
+  "text-green-500": "#22c55e",
+  "bg-green-400": "#4ade80",
+  "bg-green-100": "#dcfce7",
+  "text-blue-500": "#3b82f6",
+  "bg-blue-400": "#60a5fa",
+  "bg-blue-100": "#dbeafe",
+  "text-cyan-500": "#06b6d4",
+  "bg-cyan-400": "#22d3ee",
+  "bg-cyan-100": "#cffafe",
+  "text-pink-500": "#ec4899",
+  "bg-pink-400": "#f472b6",
+  "bg-pink-100": "#fce7f3",
+  "text-purple-500": "#a855f7",
+  "bg-purple-400": "#c084fc",
+  "bg-purple-100": "#f3e8ff",
+  "text-amber-700": "#b45309",
+  "bg-amber-600": "#d97706",
+  "bg-amber-200": "#fde68a",
+  "text-gray-500": "#6b7280",
+  "bg-gray-400": "#9ca3af",
+  "bg-gray-100": "#f3f4f6",
 };
 
-export const getColourHex = (colour: Colour): string => {
-  return COLOUR_HEX_MAP[colour.name] ?? "#f97316";
+export const getColourHex = (tailwindColour: string): string => {
+  return TAILWIND_COLOUR_HEX_MAP[tailwindColour] ?? "#f97316";
 };

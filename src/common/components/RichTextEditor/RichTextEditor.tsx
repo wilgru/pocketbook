@@ -256,7 +256,7 @@ export const RichTextEditor = ({
   onEditorContextReady,
 }: RichTextSurfaceProps) => {
   const linkColorStyle = colour
-    ? ({ "--link-color": getColourHex(colour) } as CSSProperties)
+    ? ({ "--link-color": getColourHex(colour.primary.text) } as CSSProperties)
     : undefined;
 
   return (

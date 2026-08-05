@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { cn } from "src/common/utils/cn";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
+import { TaskProgressBar } from "../TaskProgressBar/TaskProgressBar";
 import type { Colour } from "src/colours/Colour.type";
 import type { TasksGroup } from "src/tasks/Task.type";
 
@@ -27,12 +29,15 @@ export const TasksSection = ({
   const handledToolbarTriggerRef = useRef(0);
 
   const note = taskGroup.relevantTaskData.note;
-  const incompleteTaskCount = taskGroup.tasks.reduce(
-    (count, task) =>
-      !task.completedDate && !task.cancelledDate ? count + 1 : count,
+
+  const completedTaskCount = taskGroup.tasks.reduce(
+    (count, task) => (task.completedDate ? count + 1 : count),
     0,
   );
-  const completedTaskCount = taskGroup.tasks.length - incompleteTaskCount;
+  const cancelledTaskCount = taskGroup.tasks.reduce(
+    (count, task) => (task.cancelledDate ? count + 1 : count),
+    0,
+  );
 
   const visibleTasks = showCompleted
     ? taskGroup.tasks
@@ -104,19 +109,6 @@ export const TasksSection = ({
               Add task
             </Button>
 
-            {completedTaskCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                colour={colour}
-                iconName={showCompleted ? "eyeSlash" : "eye"}
-                onClick={() => setShowCompleted((current) => !current)}
-              >
-                {showCompleted ? "Hide completed " : "Show completed "}
-                {`(${completedTaskCount})`}
-              </Button>
-            )}
-
             {pocketbookId && note && (
               <Link
                 to="/$pocketbookId/notes"
@@ -135,9 +127,12 @@ export const TasksSection = ({
             )}
           </div>
 
-          <span className="px-2.5 text-xs font-normal text-slate-400">
-            {`${incompleteTaskCount}${showCompleted ? " (" + taskGroup.tasks.length + " total)" : ""}`}
-          </span>
+          <TaskProgressBar
+            cancelled={cancelledTaskCount}
+            completed={completedTaskCount}
+            total={taskGroup.tasks.length}
+            colour={colour}
+          />
         </div>
       </div>
 
@@ -153,6 +148,19 @@ export const TasksSection = ({
             onAutoFocusComplete={() => setNewTaskFocusId(null)}
           />
         ))}
+
+        {completedTaskCount > 0 && (
+          <Button
+            variant="ghost"
+            size="xs"
+            colour={colours.grey}
+            iconName={showCompleted ? "eyeSlash" : "eye"}
+            onClick={() => setShowCompleted((current) => !current)}
+          >
+            {showCompleted ? "Hide completed " : "Show completed "}
+            {`(${completedTaskCount})`}
+          </Button>
+        )}
       </div>
     </section>
   );
