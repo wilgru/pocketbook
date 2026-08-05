@@ -18,7 +18,9 @@ const TaskProgressBarInner = ({
   colour,
 }: Omit<TaskProgressBarProps, "showInfoPopover">) => {
   const resolvedColour = colour ?? colours.orange;
-  const activeFraction = total > 0 ? (completed + cancelled) / total : 0;
+  const completedFraction = total > 0 ? completed / total : 0;
+  const cancelledFraction = total > 0 ? cancelled / total : 0;
+  const activeFraction = completedFraction + cancelledFraction;
   const activePercent = Math.round(activeFraction * 100);
 
   return (
@@ -26,11 +28,21 @@ const TaskProgressBarInner = ({
       <span className="text-xs font-medium text-slate-500 w-8 text-right tabular-nums">
         {activePercent}%
       </span>
-      <div className="w-24 h-2 rounded-full bg-slate-200 overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all ${resolvedColour.background}`}
-          style={{ width: `${activePercent}%` }}
-        />
+      <div className="relative w-24 h-2 rounded-full bg-slate-200 overflow-hidden">
+        {/* Cancelled segment (darker grey), rendered behind completed */}
+        {cancelledFraction > 0 && (
+          <div
+            className="absolute inset-y-0 left-0 h-full bg-slate-400 transition-all"
+            style={{ width: `${Math.round((completedFraction + cancelledFraction) * 100)}%` }}
+          />
+        )}
+        {/* Completed segment (colour) */}
+        {completedFraction > 0 && (
+          <div
+            className={`absolute inset-y-0 left-0 h-full transition-all ${resolvedColour.background}`}
+            style={{ width: `${Math.round(completedFraction * 100)}%` }}
+          />
+        )}
       </div>
     </div>
   );
