@@ -9,6 +9,7 @@ import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
+import { NoteEditorModal } from "src/notes/components/NoteEditorModal/NoteEditorModal";
 import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTableSection";
 import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { groupNotes } from "src/notes/utils/groupNotes";
@@ -235,6 +236,14 @@ export const NotesLayout = ({
                   colour={colour}
                 />
               ))}
+
+              {selectedNote && (
+                <NoteEditorModal
+                  key={selectedNote.id}
+                  note={selectedNote}
+                  colour={colour}
+                />
+              )}
             </div>
           }
           floatingToolbar={activeToolbarContent}
