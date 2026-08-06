@@ -26,7 +26,7 @@ export const TableOfContentsListItem = ({
   return (
     <div
       className={cn(
-        "w-full flex items-center justify-between px-2 py-1 rounded-lg text-sm transition-colors cursor-pointer",
+        "w-full flex items-center justify-between gap-1 px-2 py-1 rounded-lg text-sm transition-colors cursor-pointer",
         isHovered && colour.primary.background,
       )}
       key={title}

@@ -120,6 +120,14 @@ export const NotesLayout = ({
 
     return tagGroups.filter((tagGroup) => tagGroupIds.has(tagGroup.id));
   }, [notes, tagGroups]);
+  const showTaskColumn = useMemo(
+    () => notes.some((note) => note.tasks.length > 0),
+    [notes],
+  );
+  const showLinksColumn = useMemo(
+    () => notes.some((note) => note.links.length > 0),
+    [notes],
+  );
 
   switch (layout) {
     case "list":
@@ -226,6 +234,12 @@ export const NotesLayout = ({
                       label: tagGroup.title,
                       tagGroupId: tagGroup.id,
                     })),
+                    ...(showTaskColumn
+                      ? [{ key: "tasks", label: "Tasks" }]
+                      : []),
+                    ...(showLinksColumn
+                      ? [{ key: "links", label: "Links" }]
+                      : []),
                     {
                       key: "created",
                       label: "Created",
