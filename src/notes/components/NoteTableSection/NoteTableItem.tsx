@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
@@ -28,30 +28,14 @@ export const NoteTableItem = ({
   showLinksColumn = false,
 }: NoteTableItemProps) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
-
-  const openNote = () => {
-    navigate({
-      to: to ?? location.pathname,
-      search: (old) => ({ ...old, noteId: note.id }),
-    });
-  };
 
   return (
     <tr
-      onClick={openNote}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          openNote();
-        }
-      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      tabIndex={0}
       className={cn(
-        "cursor-pointer border-b border-slate-300 text-sm transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:ring-inset",
+        "border-b border-slate-300 text-sm transition-colors",
         isHovered && colour.primary.background,
       )}
     >
@@ -61,7 +45,11 @@ export const NoteTableItem = ({
           isHovered && colour.primary.text,
         )}
       >
-        <div className="flex items-center gap-1">
+        <Link
+          to={to ?? location.pathname}
+          search={(old) => ({ ...old, noteId: note.id })}
+          className="flex items-center gap-1 w-full focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+        >
           <p className="truncate font-normal">
             {note.title === "" ? "Untitled Note" : note.title}
           </p>
@@ -74,7 +62,7 @@ export const NoteTableItem = ({
               size="xs"
             />
           )}
-        </div>
+        </Link>
       </td>
 
       {tagGroupIds.map((tagGroupId) => (

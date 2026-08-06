@@ -2,7 +2,8 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "src/common/utils/cn";
 
 type DialogProps = {
-  title: React.ReactNode;
+  title?: React.ReactNode;
+  accessibleTitle?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
@@ -15,12 +16,15 @@ type DialogProps = {
 
 export const Dialog = ({
   title,
+  accessibleTitle,
   children,
   footer,
   className,
   bodyScrollable = false,
   hideDividers = false,
 }: DialogProps) => {
+  const hasVisibleTitle = title !== undefined;
+
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 bg-black opacity-25 data-[state=open]:animate-overlayShow" />
@@ -30,14 +34,20 @@ export const Dialog = ({
           className,
         )}
       >
-        <DialogPrimitive.Title
-          className={cn(
-            "shrink-0 px-4 pt-3 pb-2 font-title text-xl",
-            !hideDividers && "border-b border-slate-200",
-          )}
-        >
-          {title}
-        </DialogPrimitive.Title>
+        {hasVisibleTitle ? (
+          <DialogPrimitive.Title
+            className={cn(
+              "shrink-0 px-4 pt-3 pb-2 font-title text-xl",
+              !hideDividers && "border-b border-slate-200",
+            )}
+          >
+            {title}
+          </DialogPrimitive.Title>
+        ) : (
+          <DialogPrimitive.Title className="sr-only">
+            {accessibleTitle ?? "Dialog"}
+          </DialogPrimitive.Title>
+        )}
 
         <div
           className={cn(

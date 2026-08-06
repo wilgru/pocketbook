@@ -48,7 +48,9 @@ export const useGetPocketbookContentCounts =
       return {
         noteCount: notesResponse.data.notes.length,
         bookmarkedCount: bookmarkedResponse.data.notes.length,
-        taskCount: tasksResponse.data.tasks.length,
+        taskCount: tasksResponse.data.tasks.filter(
+          (task) => !task.completedDate && !task.cancelledDate,
+        ).length,
         commentCount: commentsResponse.data.comments.length,
       };
     };

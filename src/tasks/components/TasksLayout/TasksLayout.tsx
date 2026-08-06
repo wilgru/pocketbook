@@ -70,7 +70,15 @@ export const TasksLayout = ({
               navigationId={effectiveGroup.navigationId}
               onJumpTo={() => undefined}
               colour={colour}
-            />
+            >
+              <span className="shrink-0 text-xs text-slate-400 tabular-nums">
+                {
+                  effectiveGroup.tasks.filter(
+                    (task) => !task.completedDate && !task.cancelledDate,
+                  ).length // TODO: move this calculation to the groupTasks util so we don't have to do it here
+                }
+              </span>
+            </TableOfContentsListItem>
           ))}
         </ListSection>
       }

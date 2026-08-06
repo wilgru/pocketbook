@@ -1,13 +1,12 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { cn } from "src/common/utils/cn";
-import { Icon } from "src/icons/components/Icon/Icon";
+import type { ReactNode } from "react";
 import type { Colour } from "src/colours/Colour.type";
-import type { IconName } from "src/icons/Icon.type";
 
 type TableOfContentsListItemProps = {
   title: string;
-  icons?: { iconName: IconName; colour: Colour }[];
+  children?: ReactNode;
   navigationId: string | null;
   onJumpTo: (id: string) => void;
   isActive?: boolean; // not using for now
@@ -16,7 +15,7 @@ type TableOfContentsListItemProps = {
 
 export const TableOfContentsListItem = ({
   title,
-  icons,
+  children,
   navigationId,
   onJumpTo,
   colour,
@@ -27,7 +26,7 @@ export const TableOfContentsListItem = ({
   return (
     <div
       className={cn(
-        "w-full flex items-center gap-2 px-2 py-1 rounded-lg text-sm transition-colors cursor-pointer",
+        "w-full flex items-center justify-between px-2 py-1 rounded-lg text-sm transition-colors cursor-pointer",
         isHovered && colour.primary.background,
       )}
       key={title}
@@ -50,18 +49,7 @@ export const TableOfContentsListItem = ({
         {title}
       </p>
 
-      {icons && icons.length > 0 && (
-        <span className="flex items-center gap-1 shrink-0" aria-hidden="true">
-          {icons.map((icon, index) => (
-            <Icon
-              key={`${title}-${icon.iconName}-${index}`}
-              iconName={icon.iconName}
-              size="sm"
-              className={icon.colour.text}
-            />
-          ))}
-        </span>
-      )}
+      {children}
     </div>
   );
 };
