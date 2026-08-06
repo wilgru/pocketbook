@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
+import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
@@ -107,9 +108,8 @@ export const NoteTableItem = ({
               cancelled={note.tasks.filter((task) => task.cancelledDate).length}
               completed={note.tasks.filter((task) => task.completedDate).length}
               total={note.tasks.length}
-              showInfoPopover={false}
               colour={colour}
-              className="w-full"
+              fullWidth
             />
           )}
         </td>
@@ -119,19 +119,7 @@ export const NoteTableItem = ({
         <td className="align-top border-r border-slate-100 px-3 pt-1.5">
           <div className="flex gap-1 items-center flex-wrap">
             {note.links.map((link) => (
-              <a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => event.stopPropagation()}
-                className={cn(
-                  "text-xs text-slate-400 hover:underline",
-                  isHovered && colour.primary.text,
-                )}
-              >
-                {link.title}
-              </a>
+              <LinkPill key={link.id} link={link} colour={colour} />
             ))}
           </div>
         </td>

@@ -1,6 +1,6 @@
 import { colours } from "src/colours/colours.constant";
-import { cn } from "src/common/utils/cn";
 import { Tooltip } from "src/common/components/Tooltip/Tooltip";
+import { cn } from "src/common/utils/cn";
 import type { Colour } from "src/colours/Colour.type";
 
 export type TaskProgressBarProps = {
@@ -9,7 +9,7 @@ export type TaskProgressBarProps = {
   total: number;
   colour?: Colour;
   showInfoPopover?: boolean;
-  className?: string;
+  fullWidth?: boolean;
 };
 
 const TaskProgressBarInner = ({
@@ -17,6 +17,7 @@ const TaskProgressBarInner = ({
   cancelled,
   total,
   colour,
+  fullWidth,
 }: Omit<TaskProgressBarProps, "showInfoPopover">) => {
   const resolvedColour = colour ?? colours.orange;
   const completedFraction = total > 0 ? completed / total : 0;
@@ -25,11 +26,16 @@ const TaskProgressBarInner = ({
   const activePercent = Math.round(activeFraction * 100);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center gap-2", fullWidth && "w-full")}>
       <span className="text-xs text-slate-400 w-8 text-right tabular-nums">
         {activePercent}%
       </span>
-      <div className="relative w-40 h-1 rounded-full bg-slate-200 overflow-hidden">
+      <div
+        className={cn(
+          "relative h-1 rounded-full bg-slate-200 overflow-hidden",
+          fullWidth ? "w-full" : "w-40",
+        )}
+      >
         {cancelledFraction > 0 && (
           <div
             className="absolute inset-y-0 left-0 h-full bg-slate-400 transition-all"
@@ -55,7 +61,7 @@ export const TaskProgressBar = ({
   total,
   colour,
   showInfoPopover = true,
-  className,
+  fullWidth = false,
 }: TaskProgressBarProps) => {
   const todo = total - completed - cancelled;
 
@@ -65,6 +71,7 @@ export const TaskProgressBar = ({
       cancelled={cancelled}
       total={total}
       colour={colour}
+      fullWidth={fullWidth}
     />
   );
 
@@ -92,10 +99,16 @@ export const TaskProgressBar = ({
 
     return (
       <Tooltip content={tooltipContent}>
-        <div className={cn("flex items-center", className)}>{inner}</div>
+        <div className={cn("flex items-center", fullWidth && "w-full")}>
+          {inner}
+        </div>
       </Tooltip>
     );
   }
 
-  return <div className={cn("flex items-center", className)}>{inner}</div>;
+  return (
+    <div className={cn("flex items-center", fullWidth && "w-full")}>
+      {inner}
+    </div>
+  );
 };

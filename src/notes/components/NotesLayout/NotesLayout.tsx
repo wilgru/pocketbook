@@ -228,13 +228,17 @@ export const NotesLayout = ({
                   columns={[
                     { key: "title", label: "Title" },
                     { key: "tags", label: "Tags", tagGroupId: null },
-                    ...(showTaskColumn ? [{ key: "tasks", label: "Tasks" }] : []),
-                    ...(showLinksColumn ? [{ key: "links", label: "Links" }] : []),
                     ...tableTagGroups.map((tagGroup) => ({
                       key: tagGroup.id,
                       label: tagGroup.title,
                       tagGroupId: tagGroup.id,
                     })),
+                    ...(showTaskColumn
+                      ? [{ key: "tasks", label: "Tasks" }]
+                      : []),
+                    ...(showLinksColumn
+                      ? [{ key: "links", label: "Links" }]
+                      : []),
                     {
                       key: "created",
                       label: "Created",
