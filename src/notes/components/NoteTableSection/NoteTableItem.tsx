@@ -41,7 +41,7 @@ export const NoteTableItem = ({
     >
       <td
         className={cn(
-          "align-top border-r border-slate-100 px-3 pt-1.5 pb-1",
+          "align-top border-r border-slate-100 px-3 py-0.5",
           isHovered && colour.primary.text,
         )}
       >
@@ -68,7 +68,7 @@ export const NoteTableItem = ({
       {tagGroupIds.map((tagGroupId) => (
         <td
           key={tagGroupId}
-          className="align-top border-r border-slate-100 px-3 pt-1.5"
+          className="align-top border-r border-slate-100 px-3 py-1"
         >
           <div className="flex gap-1 items-center flex-wrap">
             {note.tags
@@ -90,7 +90,7 @@ export const NoteTableItem = ({
       ))}
 
       {showTaskColumn && (
-        <td className="align-top border-r border-slate-100 px-3 pt-2">
+        <td className="align-top border-r border-slate-100 px-3 py-1">
           {note.tasks.length > 0 && (
             <TaskProgressBar
               cancelled={note.tasks.filter((task) => task.cancelledDate).length}
@@ -104,7 +104,7 @@ export const NoteTableItem = ({
       )}
 
       {showLinksColumn && (
-        <td className="align-top border-r border-slate-100 px-3 pt-1.5">
+        <td className="align-top border-r border-slate-100 px-3 py-1">
           <div className="flex gap-1 items-center flex-wrap">
             {note.links.map((link) => (
               <LinkPill key={link.id} link={link} colour={colour} />
@@ -115,7 +115,7 @@ export const NoteTableItem = ({
 
       <td
         className={cn(
-          "align-top px-3 pt-2 text-xs text-slate-400 text-right whitespace-nowrap",
+          "align-top px-3 py-1 text-xs text-slate-400 text-right whitespace-nowrap",
           isHovered && colour.primary.text,
         )}
       >
