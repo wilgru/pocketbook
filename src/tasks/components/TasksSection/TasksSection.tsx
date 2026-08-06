@@ -149,7 +149,7 @@ export const TasksSection = ({
           />
         ))}
 
-        {completedTaskCount > 0 && (
+        {(completedTaskCount > 0 || cancelledTaskCount > 0) && (
           <Button
             variant="ghost"
             size="xs"
@@ -158,7 +158,7 @@ export const TasksSection = ({
             onClick={() => setShowCompleted((current) => !current)}
           >
             {showCompleted ? "Hide completed " : "Show completed "}
-            {`(${completedTaskCount})`}
+            {`(${completedTaskCount + cancelledTaskCount})`}
           </Button>
         )}
       </div>

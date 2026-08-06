@@ -253,7 +253,7 @@ const NoteEditor = ({
             />
           ))}
 
-          {completedTaskCount > 0 && (
+          {(completedTaskCount > 0 || cancelledTaskCount > 0) && (
             <Button
               variant="ghost"
               size="xs"
@@ -262,7 +262,7 @@ const NoteEditor = ({
               onClick={() => setShowCompletedTasks((current) => !current)}
             >
               {showCompletedTasks ? "Hide completed " : "Show completed "}
-              {`(${completedTaskCount})`}
+              {`(${completedTaskCount + cancelledTaskCount})`}
             </Button>
           )}
         </div>
