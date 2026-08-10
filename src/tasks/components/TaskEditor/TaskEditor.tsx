@@ -400,6 +400,7 @@ export const TaskEditor = ({
               iconName="trash"
               colour={colours.red}
               onClick={() => {
+                debouncedSave.cancel();
                 deleteTask({ taskId: editedTask.id });
                 setIsFocused(false);
               }}
