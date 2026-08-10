@@ -105,22 +105,25 @@ export const TaskEditor = ({
 
   const swapTaskOrder = useCallback(
     (taskA: Task, taskB: Task) => {
+      const taskASortOrder = sortOrderOverrides[taskA.id] ?? taskA.sortOrder;
+      const taskBSortOrder = sortOrderOverrides[taskB.id] ?? taskB.sortOrder;
+
       updateTask({
         taskId: taskA.id,
-        updateTaskData: { ...taskA, sortOrder: taskB.sortOrder },
+        updateTaskData: { ...taskA, sortOrder: taskBSortOrder },
       });
       updateTask({
         taskId: taskB.id,
-        updateTaskData: { ...taskB, sortOrder: taskA.sortOrder },
+        updateTaskData: { ...taskB, sortOrder: taskASortOrder },
       });
 
       setSortOrderOverrides((currentOverrides) => ({
         ...currentOverrides,
-        [taskA.id]: taskB.sortOrder,
-        [taskB.id]: taskA.sortOrder,
+        [taskA.id]: taskBSortOrder,
+        [taskB.id]: taskASortOrder,
       }));
     },
-    [updateTask],
+    [sortOrderOverrides, updateTask],
   );
 
   const onCheckCircleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -239,6 +242,7 @@ export const TaskEditor = ({
           }
 
           debouncedSave.flush();
+          setSortOrderOverrides({});
           setIsFocused(false);
         }, 0);
       }}
