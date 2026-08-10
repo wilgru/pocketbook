@@ -93,7 +93,7 @@ export const Sidebar = () => {
             title="Updates"
             to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
-            preview={counts?.commentCount}
+            preview={counts?.updateDayCount}
           />
         </section>
 
