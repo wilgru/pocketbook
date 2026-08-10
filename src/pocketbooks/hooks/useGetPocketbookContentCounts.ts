@@ -17,7 +17,9 @@ export const useGetPocketbookContentCounts =
   (): UseGetPocketbookContentCountsResponse => {
     const { pocketbookId } = useCurrentPocketbookId();
 
-    const getDateKey = (dateString: string | null | undefined): string | null => {
+    const getDateKey = (
+      dateString: string | null | undefined,
+    ): string | null => {
       if (!dateString) {
         return null;
       }
