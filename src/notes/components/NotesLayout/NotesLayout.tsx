@@ -2,7 +2,6 @@ import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
-import { taskToolbarAtom } from "src/common/atoms/taskToolbarAtom";
 import { BlankLayout } from "src/common/components/BlankLayout/BlankLayout";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
@@ -15,7 +14,6 @@ import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
 import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
-import { TaskToolbar } from "src/tasks/components/TaskToolbar/TaskToolbar";
 import { NoteListItem } from "../NoteListItem/NoteListItem";
 import { StickyNoteListItem } from "../NoteListItem/StickyNoteListItem";
 import type { Colour } from "src/colours/Colour.type";
@@ -75,12 +73,9 @@ export const NotesLayout = ({
   onCreateNote,
 }: NotesLayoutProps) => {
   const { isVisible: isNoteToolbarVisible } = useAtomValue(NoteToolbarAtom);
-  const { isVisible: isTaskToolbarVisible } = useAtomValue(taskToolbarAtom);
   const { tagGroups } = useGetTagGroups();
 
-  const activeToolbarContent = isTaskToolbarVisible ? (
-    <TaskToolbar />
-  ) : isNoteToolbarVisible ? (
+  const activeToolbarContent = isNoteToolbarVisible ? (
     <NoteToolbar />
   ) : null;
 
