@@ -1,7 +1,5 @@
-import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
-import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { BlankLayout } from "src/common/components/BlankLayout/BlankLayout";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
@@ -10,7 +8,6 @@ import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { NoteEditorModal } from "src/notes/components/NoteEditorModal/NoteEditorModal";
 import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTableSection";
-import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
 import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
@@ -72,12 +69,7 @@ export const NotesLayout = ({
   groupSortDirection = "desc",
   onCreateNote,
 }: NotesLayoutProps) => {
-  const { isVisible: isNoteToolbarVisible } = useAtomValue(NoteToolbarAtom);
   const { tagGroups } = useGetTagGroups();
-
-  const activeToolbarContent = isNoteToolbarVisible ? (
-    <NoteToolbar />
-  ) : null;
 
   const effectiveNoteGroups = useMemo<NotesGroup[]>(() => {
     if (!notes || notes.length === 0) {
@@ -175,21 +167,22 @@ export const NotesLayout = ({
               )}
             </>
           }
-          floatingToolbar={activeToolbarContent}
           content={
-            <>
-              {selectedNote ? (
-                <NoteEditor
-                  key={selectedNote.id}
-                  note={selectedNote}
-                  colour={colour}
-                />
-              ) : (
-                <div className="h-full w-full flex flex-col justify-center items-center text-center">
-                  <h1 className="text-gray-400 text-lg">No note selected</h1>
-                </div>
-              )}
-            </>
+            <div className="relative flex-1 min-h-0">
+              <section className="h-full min-h-0 overflow-y-scroll flex justify-center px-8 pt-8">
+                {selectedNote ? (
+                  <NoteEditor
+                    key={selectedNote.id}
+                    note={selectedNote}
+                    colour={colour}
+                  />
+                ) : (
+                  <div className="h-full w-full flex flex-col justify-center items-center text-center">
+                    <h1 className="text-gray-400 text-lg">No note selected</h1>
+                  </div>
+                )}
+              </section>
+            </div>
           }
         />
       );
@@ -255,7 +248,6 @@ export const NotesLayout = ({
               )}
             </div>
           }
-          floatingToolbar={activeToolbarContent}
         />
       );
   }

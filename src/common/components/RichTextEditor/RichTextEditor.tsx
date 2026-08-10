@@ -49,6 +49,7 @@ type RichTextSurfaceProps = {
   style?: CSSProperties;
   colour?: Colour;
   size?: "sm" | "md" | "lg";
+  fillHeight?: boolean;
   value?: string;
   readOnly?: boolean;
   autoFocus?: boolean;
@@ -129,6 +130,7 @@ const editorStateToString = (editorState: EditorState): string => {
 
 const LexicalEditorBridge = ({
   value,
+  fillHeight = false,
   readOnly = false,
   autoFocus = false,
   onChange,
@@ -227,13 +229,13 @@ const LexicalEditorBridge = ({
     <RichTextPlugin
       contentEditable={
         <ContentEditable
-          className="editor-input outline-hidden"
+          className={cn(
+            "editor-input outline-hidden",
+            fillHeight && "h-full min-h-80", // TODO: for some reason h-full doesnt make the clickable area fill the height of the parent, so we need to set a fixed min-height to make it work.
+          )}
           onFocus={onFocus}
           onBlur={onBlur}
         />
-      }
-      placeholder={
-        <p className="text-slate-400">Start typing to add content...</p>
       }
       ErrorBoundary={LexicalErrorBoundary}
     />
@@ -245,6 +247,7 @@ export const RichTextEditor = ({
   style,
   colour,
   size = "md",
+  fillHeight = false,
   value,
   readOnly = false,
   autoFocus = false,
@@ -291,6 +294,7 @@ export const RichTextEditor = ({
         />
         <LexicalEditorBridge
           value={value}
+          fillHeight={fillHeight}
           readOnly={readOnly}
           autoFocus={autoFocus}
           onChange={onChange}
