@@ -18,7 +18,8 @@ const getDateKey = (dateString: string | null | undefined): string | null => {
     return null;
   }
 
-  return dateString.split("T")[0] ?? null;
+  const dateKey = dateString.split("T")[0];
+  return dateKey || null;
 };
 
 export const useGetPocketbookContentCounts =
