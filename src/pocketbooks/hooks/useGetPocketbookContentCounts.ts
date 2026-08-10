@@ -13,19 +13,17 @@ type UseGetPocketbookContentCountsResponse = {
   isFetching: boolean;
 };
 
+const getDateKey = (dateString: string | null | undefined): string | null => {
+  if (!dateString) {
+    return null;
+  }
+
+  return dateString.split("T")[0] ?? null;
+};
+
 export const useGetPocketbookContentCounts =
   (): UseGetPocketbookContentCountsResponse => {
     const { pocketbookId } = useCurrentPocketbookId();
-
-    const getDateKey = (
-      dateString: string | null | undefined,
-    ): string | null => {
-      if (!dateString) {
-        return null;
-      }
-
-      return dateString.split("T")[0] ?? null;
-    };
 
     const queryFn = async (): Promise<PocketbookContentCounts> => {
       if (!pocketbookId) {
@@ -65,9 +63,11 @@ export const useGetPocketbookContentCounts =
       }
 
       for (const task of tasksResponse.data.tasks) {
-        const dateKey = getDateKey(task.completedDate ?? task.cancelledDate);
-        if (dateKey) {
-          updateDateKeys.add(dateKey);
+        for (const taskDate of [task.completedDate, task.cancelledDate]) {
+          const dateKey = getDateKey(taskDate);
+          if (dateKey) {
+            updateDateKeys.add(dateKey);
+          }
         }
       }
 
