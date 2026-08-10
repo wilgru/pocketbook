@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
@@ -48,7 +48,7 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
 
 export const TaskEditor = ({
   task,
-  tasksForSorting, // TODO: this needs to be updated whenever the task list changes so that we can update the sortOrder of tasks when moving them up or down multiple times
+  tasksForSorting,
   onSave,
   onCreate,
   onCreateNextTask,
@@ -61,6 +61,9 @@ export const TaskEditor = ({
   const { deleteTask } = useDeleteTask();
 
   const [editedTask, setEditedTask] = useState<Task>(getInitialTask(task));
+  const [sortOrderOverrides, setSortOrderOverrides] = useState<
+    Record<string, number>
+  >({});
   const [isFocused, setIsFocused] = useState(false);
   const [isControlsBusy, setIsControlsBusy] = useState(false);
   const titleRef = useAutoResize(editedTask.title);
@@ -110,6 +113,12 @@ export const TaskEditor = ({
         taskId: taskB.id,
         updateTaskData: { ...taskB, sortOrder: taskA.sortOrder },
       });
+
+      setSortOrderOverrides((currentOverrides) => ({
+        ...currentOverrides,
+        [taskA.id]: taskB.sortOrder,
+        [taskB.id]: taskA.sortOrder,
+      }));
     },
     [updateTask],
   );
@@ -152,6 +161,21 @@ export const TaskEditor = ({
     onAutoFocusComplete?.();
   }, [autoFocusTitle, onAutoFocusComplete, titleRef]);
 
+  const sortingTasks = useMemo(
+    () =>
+      (tasksForSorting ?? []).map((currentTask) => ({
+        ...currentTask,
+        sortOrder:
+          sortOrderOverrides[currentTask.id] ?? currentTask.sortOrder,
+      })),
+    [tasksForSorting, sortOrderOverrides],
+  );
+
+  const effectiveSortOrder =
+    editedTask.id && sortOrderOverrides[editedTask.id] !== undefined
+      ? sortOrderOverrides[editedTask.id]
+      : task?.sortOrder ?? editedTask.sortOrder;
+
   const handlePopoverOpenChange = (open: boolean) => {
     setIsControlsBusy(open);
 
@@ -161,38 +185,42 @@ export const TaskEditor = ({
   };
 
   const moveTaskUp = () => {
-    if (!tasksForSorting || editedTask.sortOrder <= 0) {
+    if (sortingTasks.length === 0 || effectiveSortOrder <= 0) {
       return;
     }
 
-    const taskAbove = tasksForSorting.find(
-      (currentTask) => currentTask.sortOrder === editedTask.sortOrder - 1,
+    const taskAbove = sortingTasks.find(
+      (currentTask) =>
+        currentTask.id !== editedTask.id &&
+        currentTask.sortOrder === effectiveSortOrder - 1,
     );
 
     if (!taskAbove) {
       return;
     }
 
-    swapTaskOrder(editedTask, taskAbove);
+    swapTaskOrder({ ...editedTask, sortOrder: effectiveSortOrder }, taskAbove);
   };
 
   const moveTaskDown = () => {
     if (
-      !tasksForSorting ||
-      editedTask.sortOrder >= tasksForSorting.length - 1
+      sortingTasks.length === 0 ||
+      effectiveSortOrder >= sortingTasks.length - 1
     ) {
       return;
     }
 
-    const taskBelow = tasksForSorting.find(
-      (currentTask) => currentTask.sortOrder === editedTask.sortOrder + 1,
+    const taskBelow = sortingTasks.find(
+      (currentTask) =>
+        currentTask.id !== editedTask.id &&
+        currentTask.sortOrder === effectiveSortOrder + 1,
     );
 
     if (!taskBelow) {
       return;
     }
 
-    swapTaskOrder(editedTask, taskBelow);
+    swapTaskOrder({ ...editedTask, sortOrder: effectiveSortOrder }, taskBelow);
   };
 
   const showTaskControls = isFocused && !!editedTask.id;
@@ -328,7 +356,9 @@ export const TaskEditor = ({
               iconName="caretUp"
               colour={colour}
               onClick={moveTaskUp}
-              disabled={!tasksForSorting || editedTask.sortOrder === 0}
+              disabled={
+                sortingTasks.length === 0 || effectiveSortOrder === 0
+              }
             />
 
             <Button
@@ -338,8 +368,8 @@ export const TaskEditor = ({
               colour={colour}
               onClick={moveTaskDown}
               disabled={
-                !tasksForSorting ||
-                editedTask.sortOrder >= tasksForSorting.length - 1
+                sortingTasks.length === 0 ||
+                effectiveSortOrder >= sortingTasks.length - 1
               }
             />
 
