@@ -1,16 +1,17 @@
 import dayjs from "dayjs";
-import { useAtom } from "jotai";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import {
-  defaultTaskToolbarAtom,
-  taskToolbarAtom,
-} from "src/common/atoms/taskToolbarAtom";
+import { Button } from "src/common/components/Button/Button";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
+import { LinksPopover } from "src/common/components/LinksPopover/LinksPopover";
+import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
+import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
+import { TaskDatePicker } from "src/tasks/components/TaskDatePicker/TaskDatePicker";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
+import { useDeleteTask } from "src/tasks/hooks/useDeleteTask";
 import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
 import { useDebouncedCallback } from "use-debounce";
 import type { Colour } from "src/colours/Colour.type";
@@ -25,8 +26,6 @@ type TaskEditorProps = {
   autoFocusTitle?: boolean;
   onAutoFocusComplete?: () => void;
   colour?: Colour;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
 };
 
 const getInitialTask = (task: Partial<Task> | undefined): Task => {
@@ -49,7 +48,7 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
 
 export const TaskEditor = ({
   task,
-  tasksForSorting, // TODO: this needs to be updated whenever the task list changes so that we can update the sortOrder of tasks when moving them up or down multiple times
+  tasksForSorting,
   onSave,
   onCreate,
   onCreateNextTask,
@@ -59,11 +58,14 @@ export const TaskEditor = ({
 }: TaskEditorProps) => {
   const { createTask } = useCreateTask();
   const { updateTask } = useUpdateTask();
-
-  const [taskToolbar, setTaskToolbarAtom] = useAtom(taskToolbarAtom);
+  const { deleteTask } = useDeleteTask();
 
   const [editedTask, setEditedTask] = useState<Task>(getInitialTask(task));
+  const [sortOrderOverrides, setSortOrderOverrides] = useState<
+    Record<string, number>
+  >({});
   const [isFocused, setIsFocused] = useState(false);
+  const [isControlsBusy, setIsControlsBusy] = useState(false);
   const titleRef = useAutoResize(editedTask.title);
   const descriptionRef = useAutoResize(editedTask.description);
 
@@ -119,15 +121,61 @@ export const TaskEditor = ({
     }
   };
 
-  const isCompleted = !!editedTask.completedDate;
-  const isCancelled = !!editedTask.cancelledDate;
-  const showDescription = isFocused || !!editedTask.description;
+  const sortingTasks = useMemo(
+    () =>
+      (tasksForSorting ?? [])
+        .map((currentTask) => ({
+          ...currentTask,
+          sortOrder:
+            sortOrderOverrides[currentTask.id] ?? currentTask.sortOrder,
+        }))
+        .sort((taskA, taskB) => taskA.sortOrder - taskB.sortOrder),
+    [tasksForSorting, sortOrderOverrides],
+  );
 
-  const isDueDateOverdue =
-    !!editedTask.dueDate &&
-    editedTask.dueDate.isBefore(dayjs(), "day") &&
-    !isCompleted &&
-    !isCancelled;
+  const swapTaskOrder = useCallback(
+    (taskA: Task, taskB: Task) => {
+      const taskASortOrder = sortOrderOverrides[taskA.id] ?? taskA.sortOrder;
+      const taskBSortOrder = sortOrderOverrides[taskB.id] ?? taskB.sortOrder;
+
+      updateTask({
+        taskId: taskA.id,
+        updateTaskData: { ...taskA, sortOrder: taskBSortOrder },
+      });
+      updateTask({
+        taskId: taskB.id,
+        updateTaskData: { ...taskB, sortOrder: taskASortOrder },
+      });
+
+      setSortOrderOverrides((currentOverrides) => ({
+        ...currentOverrides,
+        [taskA.id]: taskBSortOrder,
+        [taskB.id]: taskASortOrder,
+      }));
+    },
+    [sortOrderOverrides, updateTask],
+  );
+
+  const handlePopoverOpenChange = (open: boolean) => {
+    setIsControlsBusy(open);
+
+    if (!open) {
+      titleRef.current?.focus();
+    }
+  };
+
+  const moveTask = (direction: -1 | 1) => {
+    const taskIndex = sortingTasks.findIndex(
+      (currentTask) => currentTask.id === editedTask.id,
+    );
+    const adjacentTask = sortingTasks[taskIndex + direction];
+
+    if (taskIndex === -1 || !adjacentTask) {
+      return;
+    }
+
+    swapTaskOrder(sortingTasks[taskIndex], adjacentTask);
+  };
 
   // Auto-focus title once for newly created tasks.
   useEffect(() => {
@@ -139,61 +187,36 @@ export const TaskEditor = ({
     onAutoFocusComplete?.();
   }, [autoFocusTitle, onAutoFocusComplete, titleRef]);
 
-  // Update the task in the toolbar if the edited task changes to keep the toolbar in sync with the latest changes.
-  useEffect(() => {
-    if (editedTask.id === taskToolbar?.task?.id) {
-      if (titleRef.current !== taskToolbar?.refocusRef?.current) {
-        titleRef.current?.focus();
-      }
+  const isCompleted = !!editedTask.completedDate;
+  const isCancelled = !!editedTask.cancelledDate;
 
-      setTaskToolbarAtom((current) => ({
-        ...current,
-        onUpdateTask,
-        refocusRef: titleRef,
-        task: editedTask,
-      }));
-    }
-  }, [
-    editedTask,
-    setTaskToolbarAtom,
-    onUpdateTask,
-    taskToolbar?.task?.id,
-    titleRef,
-    taskToolbar?.refocusRef,
-  ]);
+  const isDueDateOverdue =
+    !!editedTask.dueDate &&
+    editedTask.dueDate.isBefore(dayjs(), "day") &&
+    !isCompleted &&
+    !isCancelled;
+
+  const showDescription = isFocused || !!editedTask.description;
+  const showTaskControls = isFocused && !!editedTask.id;
 
   return (
     <div
       className="w-full flex gap-1 items-start"
       onFocus={() => {
-        // TODO: This is a hacky way to ensure that the toolbar for a newly focused task is updated after blurring another task. Find a better way to handle this.
-        setTimeout(() => {
-          setIsFocused(true);
-          setTaskToolbarAtom((current) => ({
-            ...current,
-            task: editedTask,
-            tasksForSorting: tasksForSorting,
-            refocusRef: titleRef,
-            onUpdateTask,
-            colour,
-            isVisible: true,
-          }));
-        }, 1);
+        setIsFocused(true);
       }}
       onBlur={(e) => {
-        //TODO: This is a hacky way to check if the blur event is caused by clicking back and forth from title to description. Find a better way to handle this.
         const taskEditorRoot = e.currentTarget;
         setTimeout(() => {
           if (
             taskEditorRoot.contains(document.activeElement) ||
-            taskToolbar.isToolbarBusy
+            isControlsBusy
           ) {
             return;
           }
 
           debouncedSave.flush();
-
-          setTaskToolbarAtom(defaultTaskToolbarAtom);
+          setSortOrderOverrides({});
           setIsFocused(false);
         }, 0);
       }}
@@ -254,32 +277,127 @@ export const TaskEditor = ({
           />
 
           <div className="flex flex-row flex-wrap items-center gap-2 pl-1">
-            {editedTask.links.map((link) => (
-              <LinkPill key={link.id} link={link} colour={colour} />
-            ))}
+            {showTaskControls ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  iconName="caretUp"
+                  colour={colour}
+                  onClick={() => moveTask(-1)}
+                  disabled={
+                    sortingTasks.findIndex(
+                      (currentTask) => currentTask.id === editedTask.id,
+                    ) <= 0
+                  }
+                />
 
-            {editedTask.isImportant && (
-              <Icon
-                iconName="warningCircle"
-                size="sm"
-                className={cn(
-                  "mt-0.5",
-                  isCompleted ? "text-slate-400" : "text-red-500",
-                )}
-              />
-            )}
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  iconName="caretDown"
+                  colour={colour}
+                  onClick={() => moveTask(1)}
+                  disabled={
+                    sortingTasks.findIndex(
+                      (currentTask) => currentTask.id === editedTask.id,
+                    ) ===
+                    sortingTasks.length - 1
+                  }
+                />
 
-            {!!editedTask.dueDate && (
-              <span
-                className={cn(
-                  "text-xs px-2 py-1 rounded-full",
-                  isDueDateOverdue
-                    ? "bg-red-100 text-red-500"
-                    : "bg-gray-100 text-gray-500",
+                <Toggle
+                  isToggled={editedTask.isImportant}
+                  size="sm"
+                  colour={colours.red}
+                  onClick={() =>
+                    onUpdateTask({
+                      isImportant: !editedTask.isImportant,
+                    })
+                  }
+                  iconName="warningCircle"
+                />
+
+                <LinksPopover
+                  links={editedTask.links}
+                  colour={colour}
+                  onChange={(links) =>
+                    onUpdateTask({
+                      links,
+                    })
+                  }
+                  onOpenChange={handlePopoverOpenChange}
+                />
+
+                <NoteSelect
+                  mode="single"
+                  selectedNotes={editedTask.note ? [editedTask.note] : []}
+                  colour={colour}
+                  onChange={(notes) => {
+                    onUpdateTask({
+                      note: notes[0] ?? null,
+                    });
+                    handlePopoverOpenChange(false);
+                  }}
+                  onOpenChange={handlePopoverOpenChange}
+                />
+
+                <TaskDatePicker
+                  dueDate={editedTask.dueDate}
+                  colour={colour}
+                  isCompleted={isCompleted}
+                  isCancelled={isCancelled}
+                  onChange={(date) => {
+                    onUpdateTask({
+                      dueDate: date,
+                    });
+                    handlePopoverOpenChange(false);
+                  }}
+                  onOpenChange={handlePopoverOpenChange}
+                />
+
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  iconName="trash"
+                  colour={colours.red}
+                  onClick={() => {
+                    debouncedSave.cancel();
+                    deleteTask({ taskId: editedTask.id });
+                    setIsFocused(false);
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                {editedTask.links.map((link) => (
+                  <LinkPill key={link.id} link={link} colour={colour} />
+                ))}
+
+                {editedTask.isImportant && (
+                  <Icon
+                    iconName="warningCircle"
+                    size="sm"
+                    className={cn(
+                      "mt-0.5",
+                      isCompleted ? "text-slate-400" : "text-red-500",
+                    )}
+                  />
                 )}
-              >
-                {editedTask.dueDate.format("MMM D, YYYY")}
-              </span>
+
+                {!!editedTask.dueDate && (
+                  <span
+                    className={cn(
+                      "text-xs px-2 py-1 rounded-full",
+                      isDueDateOverdue
+                        ? "bg-red-100 text-red-500"
+                        : "bg-gray-100 text-gray-500",
+                    )}
+                  >
+                    {editedTask.dueDate.format("MMM D, YYYY")}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
