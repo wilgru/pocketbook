@@ -23,8 +23,7 @@ function RouteComponent() {
   const [noNoteEditorTrigger, setNoNoteEditorTrigger] = useState(0);
 
   const completedOrCancelledTasks = useMemo(
-    () =>
-      tasks.filter((task) => !!task.completedDate || !!task.cancelledDate),
+    () => tasks.filter((task) => !!task.completedDate || !!task.cancelledDate),
     [tasks],
   );
 
@@ -36,27 +35,29 @@ function RouteComponent() {
         colour={currentPocketbook?.colour}
         pocketbookColour={currentPocketbook?.colour}
       >
-        <Dialog.Root>
-          <Dialog.Trigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
+        <>
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                colour={currentPocketbook?.colour}
+                iconName="checkCircle"
+              />
+            </Dialog.Trigger>
+            <CompletedTasksModal
+              tasks={completedOrCancelledTasks}
               colour={currentPocketbook?.colour}
-              iconName="checkCircle"
             />
-          </Dialog.Trigger>
-          <CompletedTasksModal
-            tasks={completedOrCancelledTasks}
+          </Dialog.Root>
+          <Button
+            variant="ghost"
+            size="sm"
             colour={currentPocketbook?.colour}
+            iconName="plus"
+            onClick={() => setNoNoteEditorTrigger((c) => c + 1)}
           />
-        </Dialog.Root>
-        <Button
-          variant="ghost"
-          size="sm"
-          colour={currentPocketbook?.colour}
-          iconName="plus"
-          onClick={() => setNoNoteEditorTrigger((c) => c + 1)}
-        />
+        </>
       </Toolbar>
 
       <TasksLayout
