@@ -43,6 +43,10 @@ export const useDeleteNote = (): UseDeleteNoteResponse => {
     queryClient.refetchQueries({
       queryKey: ["tags.get"],
     });
+
+    queryClient.invalidateQueries({
+      queryKey: ["pocketbookContentCounts"],
+    });
   };
 
   // TODO: consider time caching for better performance

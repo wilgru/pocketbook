@@ -29,6 +29,10 @@ export const useDeleteComment = (): UseDeleteCommentResponse => {
     queryClient.refetchQueries({
       queryKey: ["comments.list"],
     });
+
+    queryClient.invalidateQueries({
+      queryKey: ["pocketbookContentCounts"],
+    });
   };
 
   const { mutateAsync } = useMutation({

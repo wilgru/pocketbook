@@ -52,6 +52,10 @@ export const useCreateComment = (): UseCreateCommentResponse => {
     void queryClient.invalidateQueries({
       queryKey: ["comments.list"],
     });
+
+    void queryClient.invalidateQueries({
+      queryKey: ["pocketbookContentCounts"],
+    });
   };
 
   const { mutateAsync } = useMutation({

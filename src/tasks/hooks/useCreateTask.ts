@@ -57,6 +57,10 @@ export const useCreateTask = (): UseCreateTaskResponse => {
     queryClient.refetchQueries({
       queryKey: ["notes.get", data.note?.id],
     });
+
+    queryClient.invalidateQueries({
+      queryKey: ["pocketbookContentCounts"],
+    });
   };
 
   // TODO: consider time caching for better performance

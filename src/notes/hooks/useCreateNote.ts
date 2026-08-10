@@ -49,6 +49,7 @@ export const useCreateNote = (): UseCreateNoteResponse => {
 
     queryClient.refetchQueries({ queryKey: ["notes.list"] });
     queryClient.refetchQueries({ queryKey: ["tags.get"] });
+    queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
   // TODO: consider time caching for better performance
