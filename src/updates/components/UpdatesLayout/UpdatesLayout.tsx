@@ -1,10 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { getColour } from "src/colours/utils/getColour";
 import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
-import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { ListSection } from "src/common/components/ListSection/ListSection";
@@ -12,7 +10,6 @@ import { PaneWithInspectorLayout } from "src/common/components/PaneWithInspector
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
-import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
 import { groupUpdates } from "src/updates/utils/groupUpdates";
 import type { Dayjs } from "dayjs";
@@ -48,7 +45,6 @@ export const UpdatesLayout = ({
   onCreateNew,
 }: UpdatesLayoutProps) => {
   const navigate = useNavigate();
-  const { isVisible: isNoteToolbarVisible } = useAtomValue(NoteToolbarAtom);
 
   const updateGroups = useMemo(
     () => groupUpdates(comments, tasks, notes),
@@ -236,7 +232,6 @@ export const UpdatesLayout = ({
           <div aria-hidden="true" className="h-10 w-full shrink-0" />
         </div>
       }
-      floatingToolbar={isNoteToolbarVisible ? <NoteToolbar /> : null}
     />
   );
 };

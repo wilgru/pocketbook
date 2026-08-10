@@ -38,7 +38,7 @@ const TaskProgressBarInner = ({
       >
         {cancelledFraction > 0 && (
           <div
-            className="absolute inset-y-0 left-0 h-full bg-slate-400 transition-all"
+            className="absolute inset-y-0 left-0 h-full bg-slate-300 transition-all"
             style={{
               width: `${Math.round((completedFraction + cancelledFraction) * 100)}%`,
             }}

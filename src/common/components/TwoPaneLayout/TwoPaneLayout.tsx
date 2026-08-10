@@ -1,5 +1,4 @@
 import { cn } from "src/common/utils/cn";
-import { FloatingToolbar } from "../FloatingToolbar/FloatingToolbar";
 import type { ReactNode } from "react";
 
 type TwoPaneLayoutProps = {
@@ -7,7 +6,6 @@ type TwoPaneLayoutProps = {
   showSidebarTopContentDivider?: boolean;
   sidebar: ReactNode;
   content: ReactNode;
-  floatingToolbar?: ReactNode;
 };
 
 export const TwoPaneLayout = ({
@@ -15,7 +13,6 @@ export const TwoPaneLayout = ({
   showSidebarTopContentDivider = false,
   sidebar,
   content,
-  floatingToolbar,
 }: TwoPaneLayoutProps) => {
   return (
     <div className="flex-1 min-h-0 w-full min-w-0 pb-2 px-2 box-border">
@@ -39,19 +36,7 @@ export const TwoPaneLayout = ({
           </div>
         </aside>
 
-        <div className="relative flex-1 min-h-0">
-          <section className="h-full min-h-0 overflow-y-scroll flex justify-center px-8 pt-8">
-            {content}
-          </section>
-
-          {floatingToolbar && (
-            <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none z-10">
-              <FloatingToolbar visible={!!floatingToolbar}>
-                {floatingToolbar}
-              </FloatingToolbar>
-            </div>
-          )}
-        </div>
+        {content}
       </div>
     </div>
   );
