@@ -1,24 +1,21 @@
 import { Link } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { getColour } from "src/colours/utils/getColour";
+import { CommentToolbar } from "src/comments/components/CommentEditor/CommentToolbar";
 import { useCreateComment } from "src/comments/hooks/useCreateComment";
 import { useDeleteComment } from "src/comments/hooks/useDeleteComment";
 import { useUpdateComment } from "src/comments/hooks/useUpdateComment";
-import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
-import { Button } from "src/common/components/Button/Button";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
-import { Toggle } from "src/common/components/Toggle/Toggle";
 import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
-import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
-import type { LexicalEditor } from "node_modules/lexical/dist/LexicalEditor";
+import type { LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
 import type { Comment } from "src/comments/Comment.type";
+import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
 import type { Note } from "src/notes/Note.type";
 
 type CommentEditorProps = {
@@ -31,13 +28,6 @@ type CommentEditorProps = {
   onCancel?: () => void;
   onCreated?: () => void;
 };
-
-const TINT_OPTIONS = [
-  colours.red,
-  colours.yellow,
-  colours.green,
-  colours.blue,
-] as const;
 
 const getInitialComment = (comment: Partial<Comment>): Partial<Comment> => ({
   id: comment.id ?? "",
@@ -65,26 +55,26 @@ export const CommentEditor = ({
   const { updateComment } = useUpdateComment();
   const { deleteComment } = useDeleteComment();
 
-  const setNoteToolbarAtom = useSetAtom(NoteToolbarAtom);
-
-  const [editedComment, setEditedComment] = useState<Partial<Comment>>(
-    getInitialComment(comment),
+  const [draftComment, setDraftComment] = useState<Partial<Comment> | null>(
+    () => (comment.id ? null : getInitialComment(comment)),
   );
-  const [isEditing, setIsEditing] = useState(!comment.id);
   const [editorContext, setEditorContext] = useState<LexicalEditor | null>(
     null,
   );
+  const [toolbarFormatting, setToolbarFormatting] =
+    useState<LexicalToolbarFormatting>();
+
+  const editedComment = draftComment ?? comment;
+  const isEditing = draftComment !== null;
 
   const onUpdateField = (fields: Partial<Comment>) => {
-    setEditedComment((current) => ({ ...current, ...fields }));
+    setDraftComment((current) => ({
+      ...(current ?? getInitialComment(comment)),
+      ...fields,
+    }));
   };
 
   const onDone = async () => {
-    setNoteToolbarAtom((current) => ({
-      ...current,
-      isVisible: false,
-    }));
-
     if (editedComment.id) {
       const updated = await updateComment({
         commentId: editedComment.id,
@@ -96,9 +86,8 @@ export const CommentEditor = ({
         },
       });
       if (updated) {
-        setEditedComment(updated);
+        setDraftComment(null);
       }
-      setIsEditing(false);
     } else {
       // New comment — create explicitly now
       const created = await createComment({
@@ -110,32 +99,12 @@ export const CommentEditor = ({
         },
       });
       if (created) {
-        setEditedComment(created);
         onCreated?.();
       }
     }
   };
 
-  const onCancelEdit = () => {
-    setNoteToolbarAtom((current) => ({
-      ...current,
-      isVisible: false,
-    }));
-
-    if (!editedComment.id) {
-      onCancel?.();
-    } else {
-      setEditedComment(getInitialComment(comment));
-      setIsEditing(false);
-    }
-  };
-
   const onDelete = async () => {
-    setNoteToolbarAtom((current) => ({
-      ...current,
-      isVisible: false,
-    }));
-
     if (editedComment.id) {
       await deleteComment({ commentId: editedComment.id });
     } else {
@@ -207,113 +176,29 @@ export const CommentEditor = ({
             : "bg-white border-gray-200",
         )}
       >
-        {isEditing && (
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <NoteSelect
-              selectedNotes={(editedComment.notes ?? []) as Note[]}
-              colour={resolvedColour}
-              onChange={(notes) => onUpdateField({ notes })}
-            />
-
-            <div className="flex gap-1.5 items-center">
-              <Toggle
-                isToggled={editedComment.isWaypoint ?? false}
-                onClick={() =>
-                  onUpdateField({
-                    isWaypoint: !(editedComment.isWaypoint ?? false),
-                  })
-                }
-                size="sm"
-                colour={commentColour ?? colours.grey}
-                iconName="flagBannerFold"
-              />
-
-              <button
-                onClick={() => onUpdateField({ tint: null })}
-                className={cn(
-                  "h-5 w-5 rounded-full border-2 bg-slate-200",
-                  editedComment.tint === null
-                    ? "border-slate-500"
-                    : "border-transparent",
-                )}
-                title="No colour"
-              />
-
-              {TINT_OPTIONS.map((colour) => (
-                <button
-                  key={colour.name}
-                  onClick={() => onUpdateField({ tint: colour.name })}
-                  className={cn(
-                    "h-5 w-5 rounded-full border-2",
-                    colour.background,
-                    editedComment.tint === colour.name
-                      ? "border-slate-600"
-                      : "border-transparent",
-                  )}
-                  title={colour.name}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
         <RichTextEditor
           size="md"
-          className={cn(isEditing && "px-2")}
           value={editedComment.content}
           colour={resolvedColour}
           onFocus={() => {
-            setIsEditing(true);
-            setNoteToolbarAtom((current) => ({
-              ...current,
-              editorContext,
-              isVisible: true,
-            }));
+            setDraftComment((current) => current ?? getInitialComment(comment));
           }}
           autoFocus={autoFocus}
           onChange={(content) => onUpdateField({ content })}
-          onSelectedFormattingChange={(selectionFormatting) => {
-            setNoteToolbarAtom((current) => ({
-              ...current,
-              toolbarFormatting: selectionFormatting,
-            }));
-          }}
-          onEditorContextReady={(editorContext) => {
-            setEditorContext(editorContext);
-          }}
+          onSelectedFormattingChange={setToolbarFormatting}
+          onEditorContextReady={setEditorContext}
         />
 
         {isEditing && (
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <Button
-              size="sm"
-              variant="block"
-              colour={colours.red}
-              className="text-red-500"
-              onClick={onDelete}
-            >
-              Delete
-            </Button>
-
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="ghost"
-                colour={resolvedColour}
-                onClick={onCancelEdit}
-              >
-                Discard
-              </Button>
-              <Button
-                size="sm"
-                variant="block"
-                colour={resolvedColour}
-                onClick={onDone}
-              >
-                Save
-              </Button>
-            </div>
-          </div>
+          <CommentToolbar
+            editorContext={editorContext}
+            toolbarFormatting={toolbarFormatting}
+            colour={resolvedColour}
+            comment={editedComment}
+            onCommentChange={onUpdateField}
+            onDelete={() => void onDelete()}
+            onSave={() => void onDone()}
+          />
         )}
       </div>
     </UpdateTimelineItem>

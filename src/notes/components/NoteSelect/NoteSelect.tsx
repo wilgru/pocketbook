@@ -12,7 +12,6 @@ type NoteSelectProps = {
   selectedNotes: Note[];
   colour?: Colour;
   mode?: "single" | "multi";
-  showPlaceholderText?: boolean;
   onChange: (notes: Note[]) => void;
   onOpenChange?: (open: boolean) => void;
 };
@@ -21,7 +20,6 @@ export const NoteSelect = ({
   selectedNotes,
   colour = colours.orange,
   mode = "multi",
-  showPlaceholderText = true,
   onChange,
   onOpenChange,
 }: NoteSelectProps) => {
@@ -98,11 +96,7 @@ export const NoteSelect = ({
                 size="sm"
                 colour={colour}
                 iconName="pencil"
-              >
-                {showPlaceholderText && selectedNotes.length === 0 ? (
-                  <>Add note</>
-                ) : undefined}
-              </Button>
+              />
             </div>
           )}
         </Popover.Trigger>

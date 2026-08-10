@@ -14,23 +14,36 @@ import {
 } from "@phosphor-icons/react";
 import * as Popover from "@radix-ui/react-popover";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { useAtomValue, useSetAtom } from "jotai";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
-import { NoteToolbarAtom } from "src/common/atoms/noteToolbarStateAtom";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
+import { cn } from "src/common/utils/cn";
 import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarCommands";
 import { FormattingToolbarButton } from "./NoteToolbarButton";
-import type { BaseSelection } from "lexical";
+import type { BaseSelection, LexicalEditor } from "lexical";
+import type { Colour } from "src/colours/Colour.type";
+import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
 
-export const NoteToolbar = () => {
+type NoteToolbarProps = {
+  editorContext: LexicalEditor | null;
+  toolbarFormatting: LexicalToolbarFormatting | undefined;
+  colour: Colour;
+  fullWidth?: boolean;
+  isToolbarBusy: boolean;
+  onToolbarBusyChange: (isBusy: boolean) => void;
+};
+
+export const NoteToolbar = ({
+  editorContext,
+  toolbarFormatting,
+  colour,
+  fullWidth = true,
+  isToolbarBusy,
+  onToolbarBusyChange,
+}: NoteToolbarProps) => {
   const [linkUrl, setLinkUrl] = useState("");
   const linkInputRef = useRef<HTMLInputElement | null>(null);
   const savedSelectionRef = useRef<BaseSelection | null>(null);
-
-  const { editorContext, toolbarFormatting, colour, isToolbarBusy } =
-    useAtomValue(NoteToolbarAtom);
-  const setNoteToolbarAtom = useSetAtom(NoteToolbarAtom);
 
   useEffect(() => {
     if (isToolbarBusy) {
@@ -60,7 +73,7 @@ export const NoteToolbar = () => {
   };
 
   const handleLinkPopoverOpenChange = (open: boolean) => {
-    setNoteToolbarAtom((current) => ({ ...current, isToolbarBusy: open }));
+    onToolbarBusyChange(open);
 
     if (open) {
       if (!savedSelectionRef.current) {
@@ -91,8 +104,24 @@ export const NoteToolbar = () => {
     handleLinkPopoverOpenChange(false);
   };
 
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement | null;
+
+    if (target?.closest("input, textarea, select, [contenteditable='true']")) {
+      return;
+    }
+
+    event.preventDefault();
+  };
+
   return (
-    <div className="w-full h-fit" onMouseDown={(e) => e.preventDefault()}>
+    <div
+      className={cn(
+        "sticky bottom-0 z-10 mt-auto h-fit bg-white border-t border-slate-200 py-3",
+        fullWidth && "w-full",
+      )}
+      onMouseDown={handleMouseDown}
+    >
       <ToggleGroup.Root
         className="font-medium text-sm flex"
         type="multiple"
