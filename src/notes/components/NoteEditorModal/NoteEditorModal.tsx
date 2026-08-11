@@ -25,10 +25,10 @@ export const NoteEditorModal = ({ note, colour }: NoteEditorModalProps) => {
     <DialogPrimitive.Root open onOpenChange={(open) => !open && onClose()}>
       <Dialog
         accessibleTitle={note.title || "Note Editor"}
-        className="w-3xl max-w-[90vw]"
+        className="h-[90vh] w-3xl max-w-[90vw]"
         bodyScrollable
       >
-        <div className="p-6">
+        <div className="flex h-full min-h-0 flex-col px-6 pt-6">
           <NoteEditor key={note.id} note={note} colour={colour} />
         </div>
       </Dialog>

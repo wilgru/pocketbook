@@ -180,10 +180,13 @@ export const CommentEditor = ({
           size="md"
           value={editedComment.content}
           colour={resolvedColour}
-          onFocus={() => {
-            setDraftComment((current) => current ?? getInitialComment(comment));
+          readOnly={!isEditing}
+          onClick={() => {
+            if (!isEditing) {
+              setDraftComment(getInitialComment(comment));
+            }
           }}
-          autoFocus={autoFocus}
+          autoFocus={autoFocus || isEditing}
           onChange={(content) => onUpdateField({ content })}
           onSelectedFormattingChange={setToolbarFormatting}
           onEditorContextReady={setEditorContext}
