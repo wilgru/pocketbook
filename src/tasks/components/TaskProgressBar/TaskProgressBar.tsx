@@ -91,8 +91,8 @@ export const TaskProgressBar = ({
           <span className="text-slate-100">{todo}</span>
         </div>
         <div className="mt-1 pt-1 border-t border-slate-600 flex justify-between gap-4">
-          <span className="text-slate-400 italic">Total</span>
-          <span className="text-slate-100">{total}</span>
+          <span className="text-xs text-slate-400 italic">Total</span>
+          <span className="text-xs text-slate-400 italic">{total}</span>
         </div>
       </div>
     );
