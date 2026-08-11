@@ -64,9 +64,12 @@ const NoteEditor = ({
   const tasks = note.tasks ?? [];
   const completedTaskCount = tasks.filter((task) => task.completedDate).length;
   const cancelledTaskCount = tasks.filter((task) => task.cancelledDate).length;
-  const visibleTasks = showCompletedTasks
-    ? tasks
-    : tasks.filter((task) => !task.completedDate && !task.cancelledDate);
+  const activeTasks = tasks.filter(
+    (task) => !task.completedDate && !task.cancelledDate,
+  );
+  const completedOrCancelledTasks = tasks.filter(
+    (task) => task.completedDate || task.cancelledDate,
+  );
 
   const debouncedSave = useDebouncedCallback(() => {
     if (editedNote.id) {
@@ -235,6 +238,7 @@ const NoteEditor = ({
           <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-3">
             <div className="flex flex-row items-center justify-between gap-2">
               <h3 className="text-slate-400 text-sm">Tasks</h3>
+
               <TaskProgressBar
                 cancelled={cancelledTaskCount}
                 completed={completedTaskCount}
@@ -243,7 +247,7 @@ const NoteEditor = ({
               />
             </div>
 
-            {visibleTasks.map((task) => (
+            {activeTasks.map((task) => (
               <TaskEditor
                 key={task.id}
                 task={task}
@@ -260,13 +264,26 @@ const NoteEditor = ({
                 variant="ghost"
                 size="xs"
                 colour={colours.grey}
-                iconName={showCompletedTasks ? "eyeSlash" : "eye"}
+                iconName={showCompletedTasks ? "caretUp" : "caretDown"}
                 onClick={() => setShowCompletedTasks((current) => !current)}
               >
                 {showCompletedTasks ? "Hide completed " : "Show completed "}
                 {`(${completedTaskCount + cancelledTaskCount})`}
               </Button>
             )}
+
+            {showCompletedTasks &&
+              completedOrCancelledTasks.map((task) => (
+                <TaskEditor
+                  key={task.id}
+                  task={task}
+                  tasksForSorting={tasks}
+                  colour={colour}
+                  onCreateNextTask={() => onCreateTask(task.sortOrder)}
+                  autoFocusTitle={task.id === newTaskFocusId}
+                  onAutoFocusComplete={() => setNewTaskFocusId(null)}
+                />
+              ))}
           </div>
         )}
 
