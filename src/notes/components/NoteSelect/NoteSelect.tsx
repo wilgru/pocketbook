@@ -1,4 +1,3 @@
-import * as Popover from "@radix-ui/react-popover";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
@@ -73,9 +72,12 @@ export const NoteSelect = ({
           </button>
         ))}
 
-      <Popover.Root open={isOpen} onOpenChange={handleOpenChange}>
-        <Popover.Trigger asChild>
-          {mode === "single" && selectedSingleNote ? (
+      <ControlPopover
+        open={isOpen}
+        onOpenChange={handleOpenChange}
+        onCloseAutoFocus={(event) => event.preventDefault()}
+        trigger={
+          mode === "single" && selectedSingleNote ? (
             <button
               type="button"
               className={cn(
@@ -98,61 +100,45 @@ export const NoteSelect = ({
                 iconName="pencil"
               />
             </div>
-          )}
-        </Popover.Trigger>
+          )
+        }
+        className="flex flex-col gap-2 text-sm p-3 w-48"
+        clearActionLabel={
+          mode === "single" && selectedSingleNote ? "Clear note" : undefined
+        }
+        onClearAction={
+          mode === "single" && selectedSingleNote
+            ? () => onChange([])
+            : undefined
+        }
+      >
+        <input
+          type="text"
+          className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-hidden focus:border-orange-400"
+          placeholder="search for a note"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          onKeyDown={(event) => event.stopPropagation()}
+        />
 
-        <Popover.Portal>
-          <Popover.Content
-            className="z-50"
-            sideOffset={6}
-            align="center"
-            onCloseAutoFocus={(e) => e.preventDefault()}
+        {filteredNotes.length === 0 && (
+          <p className="text-xs text-slate-400 px-2 py-1">No notes found</p>
+        )}
+
+        {filteredNotes.map((note) => (
+          <button
+            key={note.id}
+            className={cn(
+              "rounded-lg px-2 py-1 cursor-pointer text-sm text-start truncate",
+              colour.secondary.backgroundHovered,
+              colour.secondary.textHovered,
+            )}
+            onClick={() => handleSelectNote(note)}
           >
-            <ControlPopover
-              className="flex flex-col gap-2 text-sm p-3 w-48"
-              clearActionLabel={
-                mode === "single" && selectedSingleNote
-                  ? "Clear note"
-                  : undefined
-              }
-              onClearAction={
-                mode === "single" && selectedSingleNote
-                  ? () => onChange([])
-                  : undefined
-              }
-            >
-              <input
-                type="text"
-                className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-hidden focus:border-orange-400"
-                placeholder="search for a note"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.stopPropagation()}
-              />
-
-              {filteredNotes.length === 0 && (
-                <p className="text-xs text-slate-400 px-2 py-1">
-                  No notes found
-                </p>
-              )}
-
-              {filteredNotes.map((note) => (
-                <button
-                  key={note.id}
-                  className={cn(
-                    "rounded-lg px-2 py-1 cursor-pointer text-sm text-start truncate",
-                    colour.secondary.backgroundHovered,
-                    colour.secondary.textHovered,
-                  )}
-                  onClick={() => handleSelectNote(note)}
-                >
-                  {note.title ?? "Untitled Note"}
-                </button>
-              ))}
-            </ControlPopover>
-          </Popover.Content>
-        </Popover.Portal>
-      </Popover.Root>
+            {note.title ?? "Untitled Note"}
+          </button>
+        ))}
+      </ControlPopover>
     </div>
   );
 };

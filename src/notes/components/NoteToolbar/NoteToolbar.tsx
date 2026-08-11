@@ -12,7 +12,6 @@ import {
   TextStrikethrough,
   TextUnderline,
 } from "@phosphor-icons/react";
-import * as Popover from "@radix-ui/react-popover";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
@@ -200,68 +199,60 @@ export const NoteToolbar = ({
         </div>
 
         <div className="flex flex-row gap-1 px-1 pr-1">
-          <Popover.Root onOpenChange={handleLinkPopoverOpenChange}>
-            <Popover.Trigger asChild>
+          <ControlPopover
+            onOpenChange={handleLinkPopoverOpenChange}
+            onOpenAutoFocus={(event) => event.preventDefault()}
+            trigger={
               <span onMouseDownCapture={handleLinkTriggerMouseDown}>
                 <FormattingToolbarButton value="link" colour={colour}>
                   <LinkSimple size={16} weight="bold" />
                 </FormattingToolbarButton>
               </span>
-            </Popover.Trigger>
+            }
+            className="p-3 w-90"
+          >
+            <div
+              className="flex items-center gap-1"
+              onMouseDown={(event) => event.stopPropagation()}
+            >
+              <input
+                ref={linkInputRef}
+                type="url"
+                value={linkUrl}
+                onChange={(event) => setLinkUrl(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    handleLinkSave();
+                  }
+                  if (event.key === "Escape") {
+                    handleLinkPopoverOpenChange(false);
+                  }
+                }}
+                placeholder="https://example.com"
+                className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
+              />
 
-            <Popover.Portal>
-              <Popover.Content
-                className="z-50"
-                sideOffset={6}
-                align="center"
-                onOpenAutoFocus={(e) => e.preventDefault()}
+              <button
+                type="button"
+                className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                onClick={handleLinkSave}
+                aria-label="Save link"
               >
-                <ControlPopover className="p-3 w-90">
-                  <div
-                    className="flex items-center gap-1"
-                    onMouseDown={(e) => e.stopPropagation()}
-                  >
-                    <input
-                      ref={linkInputRef}
-                      type="url"
-                      value={linkUrl}
-                      onChange={(e) => setLinkUrl(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleLinkSave();
-                        }
-                        if (e.key === "Escape") {
-                          handleLinkPopoverOpenChange(false);
-                        }
-                      }}
-                      placeholder="https://example.com"
-                      className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
-                    />
+                <Check size={16} weight="bold" />
+              </button>
 
-                    <button
-                      type="button"
-                      className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
-                      onClick={handleLinkSave}
-                      aria-label="Save link"
-                    >
-                      <Check size={16} weight="bold" />
-                    </button>
-
-                    {toolbarFormatting?.link && (
-                      <button
-                        type="button"
-                        className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
-                        onClick={handleLinkRemove}
-                        aria-label="Remove link"
-                      >
-                        <LinkBreak size={16} weight="bold" />
-                      </button>
-                    )}
-                  </div>
-                </ControlPopover>
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
+              {toolbarFormatting?.link && (
+                <button
+                  type="button"
+                  className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                  onClick={handleLinkRemove}
+                  aria-label="Remove link"
+                >
+                  <LinkBreak size={16} weight="bold" />
+                </button>
+              )}
+            </div>
+          </ControlPopover>
 
           <FormattingToolbarButton
             value="blockquote"

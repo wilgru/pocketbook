@@ -1,22 +1,33 @@
+import * as Popover from "@radix-ui/react-popover";
 import { cn } from "src/common/utils/cn";
 
 type ControlPopoverProps = {
   children: React.ReactNode;
+  trigger: React.ReactElement;
   className?: string;
   clearActionLabel?: string;
   onClearAction?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onOpenAutoFocus?: Popover.PopoverContentProps["onOpenAutoFocus"];
+  onCloseAutoFocus?: Popover.PopoverContentProps["onCloseAutoFocus"];
 };
 
 export const ControlPopover = ({
   children,
+  trigger,
   className,
   clearActionLabel,
   onClearAction,
+  open,
+  onOpenChange,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
 }: ControlPopoverProps) => {
-  return (
+  const content = (
     <div
       className={cn(
-        "bg-white border border-slate-200 rounded-2xl shadow-xl focus:outline-hidden",
+        "bg-white border border-slate-200 rounded-2xl shadow-lg focus:outline-hidden",
         className,
       )}
     >
@@ -35,5 +46,27 @@ export const ControlPopover = ({
         </div>
       )}
     </div>
+  );
+
+  return (
+    <Popover.Root open={open} onOpenChange={onOpenChange}>
+      <Popover.Trigger asChild>{trigger}</Popover.Trigger>
+
+      <Popover.Portal>
+        <Popover.Content
+          className="z-50"
+          sideOffset={6}
+          align="center"
+          onOpenAutoFocus={onOpenAutoFocus}
+          onCloseAutoFocus={onCloseAutoFocus}
+        >
+          <>
+            {content}
+
+            <Popover.Arrow className="fill-white stroke-slate-200 stroke-2" />
+          </>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 };

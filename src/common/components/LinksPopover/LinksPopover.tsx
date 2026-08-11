@@ -1,4 +1,3 @@
-import * as Popover from "@radix-ui/react-popover";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
@@ -60,27 +59,16 @@ export const LinksPopover = ({
   };
 
   return (
-    <Popover.Root open={isOpen} onOpenChange={handleOpenChange}>
-      <Popover.Trigger asChild>
+    <ControlPopover
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      onOpenAutoFocus={(event) => event.preventDefault()}
+      trigger={
         <Button colour={colour} variant="ghost" size="sm" iconName="link" />
-      </Popover.Trigger>
-
-      <Popover.Portal>
-        <Popover.Content
-          className="z-50"
-          sideOffset={6}
-          align="center"
-          onOpenAutoFocus={(e) => e.preventDefault()}
-        >
-          <ControlPopover className="p-3 w-90">
-            <LinkMultiInput
-              compact
-              links={draftLinks}
-              onChange={onChangeLink}
-            />
-          </ControlPopover>
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
+      }
+      className="p-3 w-90"
+    >
+      <LinkMultiInput compact links={draftLinks} onChange={onChangeLink} />
+    </ControlPopover>
   );
 };

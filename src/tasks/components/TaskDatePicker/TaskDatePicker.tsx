@@ -1,4 +1,3 @@
-import * as Popover from "@radix-ui/react-popover";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
@@ -52,31 +51,22 @@ export const TaskDatePicker = ({
   );
 
   return (
-    <Popover.Root open={isOpen} onOpenChange={handleOpenChange}>
-      <Popover.Trigger asChild>{trigger}</Popover.Trigger>
-
-      <Popover.Portal>
-        <Popover.Content
-          className="z-50"
-          sideOffset={6}
-          align="center"
-          onOpenAutoFocus={(e) => e.preventDefault()}
-        >
-          <ControlPopover
-            className="p-3 w-52"
-            clearActionLabel={dueDate ? "Clear date" : undefined}
-            onClearAction={dueDate ? () => onChange(null) : undefined}
-          >
-            <Calendar
-              colour={colour}
-              selectedDate={dueDate}
-              onSelectDate={(date) => {
-                onChange(date);
-              }}
-            />
-          </ControlPopover>
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
+    <ControlPopover
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      onOpenAutoFocus={(event) => event.preventDefault()}
+      trigger={trigger}
+      className="p-3 w-52"
+      clearActionLabel={dueDate ? "Clear date" : undefined}
+      onClearAction={dueDate ? () => onChange(null) : undefined}
+    >
+      <Calendar
+        colour={colour}
+        selectedDate={dueDate}
+        onSelectDate={(date) => {
+          onChange(date);
+        }}
+      />
+    </ControlPopover>
   );
 };

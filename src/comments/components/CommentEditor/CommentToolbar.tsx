@@ -12,7 +12,6 @@ import {
   TextStrikethrough,
   TextUnderline,
 } from "@phosphor-icons/react";
-import * as Popover from "@radix-ui/react-popover";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
@@ -141,135 +140,130 @@ export const CommentToolbar = ({
         aria-label="Text formatting"
       >
         <div className="flex flex-row gap-1 pr-1 border-r-2 border-slate-100">
-        <FormattingToolbarButton
-          value="bold"
-          colour={colour}
-          onClick={() => executeLexicalToolbarAction(editorContext, "bold")}
-        >
-          <TextB size={16} weight="bold" />
-        </FormattingToolbarButton>
-        <FormattingToolbarButton
-          value="italic"
-          colour={colour}
-          onClick={() => executeLexicalToolbarAction(editorContext, "italic")}
-        >
-          <TextItalic size={16} weight="bold" />
-        </FormattingToolbarButton>
-        <FormattingToolbarButton
-          value="underline"
-          colour={colour}
-          onClick={() =>
-            executeLexicalToolbarAction(editorContext, "underline")
-          }
-        >
-          <TextUnderline size={16} weight="bold" />
-        </FormattingToolbarButton>
-        <FormattingToolbarButton
-          value="strike"
-          colour={colour}
-          onClick={() => executeLexicalToolbarAction(editorContext, "strike")}
-        >
-          <TextStrikethrough size={16} weight="bold" />
-        </FormattingToolbarButton>
-        <FormattingToolbarButton
-          value="code"
-          colour={colour}
-          onClick={() => executeLexicalToolbarAction(editorContext, "code")}
-        >
-          <Code size={16} weight="bold" />
-        </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="bold"
+            colour={colour}
+            onClick={() => executeLexicalToolbarAction(editorContext, "bold")}
+          >
+            <TextB size={16} weight="bold" />
+          </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="italic"
+            colour={colour}
+            onClick={() => executeLexicalToolbarAction(editorContext, "italic")}
+          >
+            <TextItalic size={16} weight="bold" />
+          </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="underline"
+            colour={colour}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "underline")
+            }
+          >
+            <TextUnderline size={16} weight="bold" />
+          </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="strike"
+            colour={colour}
+            onClick={() => executeLexicalToolbarAction(editorContext, "strike")}
+          >
+            <TextStrikethrough size={16} weight="bold" />
+          </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="code"
+            colour={colour}
+            onClick={() => executeLexicalToolbarAction(editorContext, "code")}
+          >
+            <Code size={16} weight="bold" />
+          </FormattingToolbarButton>
         </div>
         <div className="flex flex-row gap-1 pr-1 border-r-2 border-slate-100">
-        <FormattingToolbarButton
-          value="ordered"
-          colour={colour}
-          onClick={() => executeLexicalToolbarAction(editorContext, "ordered")}
-        >
-          <ListNumbers size={16} weight="bold" />
-        </FormattingToolbarButton>
-        <FormattingToolbarButton
-          value="bullet"
-          colour={colour}
-          onClick={() => executeLexicalToolbarAction(editorContext, "bullet")}
-        >
-          <ListBullets size={16} weight="bold" />
-        </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="ordered"
+            colour={colour}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "ordered")
+            }
+          >
+            <ListNumbers size={16} weight="bold" />
+          </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="bullet"
+            colour={colour}
+            onClick={() => executeLexicalToolbarAction(editorContext, "bullet")}
+          >
+            <ListBullets size={16} weight="bold" />
+          </FormattingToolbarButton>
         </div>
         <div className="flex flex-row gap-1">
-        <Popover.Root onOpenChange={handleLinkPopoverOpenChange}>
-          <Popover.Trigger asChild>
-            <span onMouseDownCapture={saveSelectionSnapshot}>
-              <FormattingToolbarButton value="link" colour={colour}>
-                <LinkSimple size={16} weight="bold" />
-              </FormattingToolbarButton>
-            </span>
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content
-              className="z-50"
-              sideOffset={6}
-              align="center"
-              onOpenAutoFocus={(event) => event.preventDefault()}
+          <ControlPopover
+            onOpenChange={handleLinkPopoverOpenChange}
+            onOpenAutoFocus={(event) => event.preventDefault()}
+            trigger={
+              <span onMouseDownCapture={saveSelectionSnapshot}>
+                <FormattingToolbarButton value="link" colour={colour}>
+                  <LinkSimple size={16} weight="bold" />
+                </FormattingToolbarButton>
+              </span>
+            }
+            className="p-3 w-90"
+          >
+            <div
+              className="flex items-center gap-1"
+              onMouseDown={(event) => event.stopPropagation()}
             >
-              <ControlPopover className="p-3 w-90">
-                <div
-                  className="flex items-center gap-1"
-                  onMouseDown={(event) => event.stopPropagation()}
+              <input
+                ref={linkInputRef}
+                type="url"
+                value={linkUrl}
+                onChange={(event) => setLinkUrl(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") handleLinkSave();
+                  if (event.key === "Escape")
+                    handleLinkPopoverOpenChange(false);
+                }}
+                placeholder="https://example.com"
+                className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
+              />
+              <button
+                type="button"
+                className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                onClick={handleLinkSave}
+                aria-label="Save link"
+              >
+                <Check size={16} weight="bold" />
+              </button>
+              {toolbarFormatting?.link && (
+                <button
+                  type="button"
+                  className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                  onClick={handleLinkRemove}
+                  aria-label="Remove link"
                 >
-                  <input
-                    ref={linkInputRef}
-                    type="url"
-                    value={linkUrl}
-                    onChange={(event) => setLinkUrl(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") handleLinkSave();
-                      if (event.key === "Escape")
-                        handleLinkPopoverOpenChange(false);
-                    }}
-                    placeholder="https://example.com"
-                    className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
-                  />
-                  <button
-                    type="button"
-                    className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
-                    onClick={handleLinkSave}
-                    aria-label="Save link"
-                  >
-                    <Check size={16} weight="bold" />
-                  </button>
-                  {toolbarFormatting?.link && (
-                    <button
-                      type="button"
-                      className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
-                      onClick={handleLinkRemove}
-                      aria-label="Remove link"
-                    >
-                      <LinkBreak size={16} weight="bold" />
-                    </button>
-                  )}
-                </div>
-              </ControlPopover>
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover.Root>
-        <FormattingToolbarButton
-          value="blockquote"
-          colour={colour}
-          onClick={() =>
-            executeLexicalToolbarAction(editorContext, "blockquote")
-          }
-        >
-          <Quotes size={16} weight="bold" />
-        </FormattingToolbarButton>
-        <FormattingToolbarButton
-          value="code-block"
-          colour={colour}
-          onClick={() =>
-            executeLexicalToolbarAction(editorContext, "code-block")
-          }
-        >
-          <CodeBlock size={16} weight="bold" />
-        </FormattingToolbarButton>
+                  <LinkBreak size={16} weight="bold" />
+                </button>
+              )}
+            </div>
+          </ControlPopover>
+          <FormattingToolbarButton
+            value="blockquote"
+            colour={colour}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "blockquote")
+            }
+          >
+            <Quotes size={16} weight="bold" />
+          </FormattingToolbarButton>
+          <FormattingToolbarButton
+            value="code-block"
+            colour={colour}
+            onClick={() =>
+              executeLexicalToolbarAction(editorContext, "code-block")
+            }
+          >
+            <CodeBlock size={16} weight="bold" />
+          </FormattingToolbarButton>
         </div>
       </ToggleGroup.Root>
 
