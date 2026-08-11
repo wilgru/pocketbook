@@ -23,7 +23,7 @@ export const UpdatesSection = ({
 
   return (
     <section id={title} className="w-full flex flex-col pb-10">
-      <h2 className="font-title text-xl text-slate-400 py-0.5">{title}</h2>
+      <h2 className="font-title text-3xl pl-0.5">{title}</h2>
 
       <div className="w-full flex flex-col relative border-t border-slate-200">
         {updateGroup.updates.map((update, index) => {

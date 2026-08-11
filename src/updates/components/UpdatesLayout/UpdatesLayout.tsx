@@ -70,6 +70,7 @@ export const UpdatesLayout = ({
       }[]
     >((acc, updateGroup) => {
       const formattedDate = updateGroup.date.format("MMMM, YYYY");
+
       const item = {
         title: updateGroup.date.format("D dddd"),
         navigationId: getRelativeDateTitle(updateGroup.date, false, false),
@@ -86,11 +87,17 @@ export const UpdatesLayout = ({
               ? getColour(update.data.tint)
               : colours.grey,
           });
+
           return icons;
         }, []),
       };
 
+      if (item.icons.length === 0) {
+        return acc;
+      }
+
       const existingGroup = acc.find((group) => group.title === formattedDate);
+
       if (existingGroup) {
         existingGroup.items.push(item);
       } else {
@@ -102,17 +109,6 @@ export const UpdatesLayout = ({
 
       return acc;
     }, []);
-  }, [updateGroups]);
-
-  const navigationIdByDate = useMemo(() => {
-    return new Map(
-      updateGroups
-        .map((updateGroup) => [
-          getGroupDate(updateGroup)?.format("YYYY-MM-DD"),
-          updateGroup.date.format("YYYY-MM-DD"),
-        ])
-        .filter((entry): entry is [string, string] => Boolean(entry[0])),
-    );
   }, [updateGroups]);
 
   const availableDateKeys = useMemo(() => {
@@ -166,9 +162,7 @@ export const UpdatesLayout = ({
             !availableDateKeys.has(date.startOf("day").format("YYYY-MM-DD"))
           }
           onSelectDate={(date) => {
-            const dateKey = date.startOf("day").format("YYYY-MM-DD");
-            const targetNavigationId = navigationIdByDate.get(dateKey);
-            if (!targetNavigationId) return;
+            const targetNavigationId = getRelativeDateTitle(date, false, false);
             navigate({ to: `#${targetNavigationId}` });
           }}
         />
@@ -206,7 +200,7 @@ export const UpdatesLayout = ({
         </ListSection>
       ))}
       content={
-        <div className="h-full w-full max-w-200 flex flex-col pb-6">
+        <div className="h-full w-full max-w-200 flex flex-col gap-6">
           {pendingNew && (
             <CommentEditor
               comment={{ notes: [], tint: null }}

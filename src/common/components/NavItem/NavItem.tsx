@@ -65,7 +65,7 @@ export const NavItem = ({
           <div
             className={cn(
               "flex min-w-0 items-center gap-2",
-              isHovered || isActive ? colour.primary.text : "text-slate-600",
+              isHovered || isActive ? colour.primary.text : "text-slate-500",
             )}
           >
             <Icon
@@ -86,8 +86,8 @@ export const NavItem = ({
           {preview !== undefined && (
             <p
               className={cn(
-                "mr-1 text-start text-xs font-medium",
-                isHovered || isActive ? colour.primary.text : "text-slate-400",
+                "mr-1 text-start text-xs",
+                isHovered || isActive ? colour.primary.text : "text-slate-300",
               )}
             >
               {preview}

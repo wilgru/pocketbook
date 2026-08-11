@@ -27,7 +27,7 @@ const getPocketbookSummary = (pocketbook: Pocketbook): string => {
     parts.push(`${noteCount} note${noteCount === 1 ? "" : "s"}`);
   }
 
-  return parts.join(", ");
+  return parts.join(" · ");
 };
 
 export const PocketbookSwitcher = ({
@@ -46,39 +46,36 @@ export const PocketbookSwitcher = ({
   };
 
   return (
-    <div
-      className={cn(
-        "flex gap-2 justify-between border border-slate-300 rounded-xl p-1.5 relative",
-        currentPocketbook.colour.secondary.backgroundHovered,
-      )}
-    >
+    <div className="flex gap-2 pl-1.5 pr-1 justify-between items-center relative">
       <DropdownMenu.Root open={isOpen}>
-        <DropdownMenu.Trigger>
-          <button
-            className="flex items-center gap-2 w-full h-full"
-            onClick={() => setIsOpen(true)}
-          >
+        <div className="flex justify-center items-center gap-2">
+          <DropdownMenu.Trigger onClick={() => setIsOpen(true)}>
             <Icon
               iconName={currentPocketbook.icon}
               className={cn(
                 "w-8 h-8 p-1.5 rounded-md",
                 currentPocketbook.colour.primary.text,
+                currentPocketbook.colour.primary.textHovered,
                 currentPocketbook.colour.primary.background,
+                currentPocketbook.colour.primary.backgroundHovered,
               )}
             />
+          </DropdownMenu.Trigger>
 
-            <div className="flex flex-col items-start">
-              <h2 className="text-sm">{currentPocketbook.title}</h2>
-              <p className="text-xs text-slate-400">
-                {getPocketbookSummary(currentPocketbook)}
-              </p>
-            </div>
-          </button>
-        </DropdownMenu.Trigger>
+          <div className="flex flex-col items-start">
+            <h2 className="text-sm font-title font-medium">
+              {currentPocketbook.title}
+            </h2>
+
+            <p className="text-xs text-slate-400">
+              {getPocketbookSummary(currentPocketbook)}
+            </p>
+          </div>
+        </div>
 
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            sideOffset={-45}
+            sideOffset={4}
             alignOffset={-7}
             onInteractOutside={() => setIsOpen(false)}
             onCloseAutoFocus={() => setIsOpen(false)}
@@ -146,7 +143,7 @@ export const PocketbookSwitcher = ({
       <Button
         variant="ghost"
         size="sm"
-        iconName="gear"
+        iconName="dotsThreeVertical"
         colour={currentPocketbook.colour}
         onClick={onOpenSettingsModal}
       />

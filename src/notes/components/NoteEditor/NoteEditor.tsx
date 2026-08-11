@@ -207,7 +207,7 @@ const NoteEditor = ({
                 )}
                 aria-label="Open note actions"
               >
-                <Icon iconName="dotsThreeOutline" size="xs" />
+                <Icon iconName="dotsThree" size="xs" />
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
                 <DropdownMenu.Content

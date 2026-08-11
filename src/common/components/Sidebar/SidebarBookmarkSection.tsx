@@ -12,8 +12,8 @@ export const SidebarBookmarkSection = () => {
   }
 
   return (
-    <section className="flex flex-col gap-px">
-      <h1 className="font-title text-slate-400 text-md">Bookmarks</h1>
+    <section className="flex flex-col gap-px py-2 border-t border-b border-slate-200">
+      <h1 className="font-title text-slate-400 text-sm">Bookmarks</h1>
 
       {notes.map((note) => (
         <NavItem

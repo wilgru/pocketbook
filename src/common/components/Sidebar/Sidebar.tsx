@@ -71,7 +71,6 @@ export const Sidebar = () => {
         <section className="flex flex-col gap-px">
           <NavItem
             ghost
-            iconName="pencil"
             title="Notes"
             to={`/${pocketbookId}/notes/`}
             colour={currentPocketbook.colour}
@@ -80,7 +79,6 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            iconName="checkCircle"
             title="Tasks"
             to={`/${pocketbookId}/tasks/`}
             colour={currentPocketbook.colour}
@@ -89,8 +87,7 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            iconName="calendarDots"
-            title="Updates"
+            title="History"
             to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
             preview={counts?.updateDayCount}
@@ -108,7 +105,7 @@ export const Sidebar = () => {
             <NavItem
               colour={tag.colour}
               title={tag.name}
-              preview={tag.noteCount}
+              preview={tag.noteCount || undefined}
               to={`/${pocketbookId}/tags/${tag.id}`}
               key={tag.id}
               iconName={tag.icon}
@@ -129,7 +126,7 @@ export const Sidebar = () => {
                 iconName={tag.icon}
                 colour={tag.colour}
                 title={tag.name}
-                preview={tag.noteCount}
+                preview={tag.noteCount || undefined}
                 to={`/${pocketbookId}/tags/${tag.id}`}
                 key={tag.id}
               />

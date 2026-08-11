@@ -27,7 +27,7 @@ function UpdatesComponent() {
     <div className="h-full w-full flex flex-col items-center">
       <Toolbar
         iconName="calendarDots"
-        title="Updates"
+        title="History"
         colour={currentPocketbook?.colour}
       >
         <Button
