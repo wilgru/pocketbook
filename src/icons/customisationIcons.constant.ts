@@ -85,6 +85,7 @@ import {
   SunIcon,
   StorefrontIcon,
   ToiletPaperIcon,
+  ArrowsClockwiseIcon,
 } from "@phosphor-icons/react";
 import type { IconType } from "./Icon.type";
 
@@ -173,6 +174,10 @@ export const customisationIcons = [
   { name: "cube", component: CubeIcon },
   { name: "listNumbers", component: ListNumbersIcon },
   { name: "listChecks", component: ListChecksIcon },
+  {
+    name: "arrowsClockwise",
+    component: ArrowsClockwiseIcon,
+  },
   { name: "dotsNine", component: DotsNineIcon },
   { name: "questionMark", component: QuestionMarkIcon },
 ] as const satisfies IconType[];
