@@ -38,6 +38,8 @@ export const mapTask = (
     cancelledDate: task.cancelledDate
       ? dayjs.utc(task.cancelledDate).local()
       : null,
+    blockedComment: task.blockedComment,
+    blockedDate: task.blockedDate ? dayjs.utc(task.blockedDate).local() : null,
     created: dayjs.utc(task.created).local(),
     updated: dayjs.utc(task.updated).local(),
   };

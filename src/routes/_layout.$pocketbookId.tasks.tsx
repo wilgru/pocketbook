@@ -42,7 +42,7 @@ function RouteComponent() {
                 variant="ghost"
                 size="sm"
                 colour={currentPocketbook?.colour}
-                iconName="checkCircle"
+                iconName="listChecks"
               />
             </Dialog.Trigger>
             <CompletedTasksModal

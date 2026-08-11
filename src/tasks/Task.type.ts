@@ -11,6 +11,7 @@ export type Task = Prettify<
     | "dueDate"
     | "completedDate"
     | "cancelledDate"
+    | "blockedDate"
     | "pocketbook"
     | "user"
     | "created"
@@ -21,6 +22,7 @@ export type Task = Prettify<
     dueDate: Dayjs | null;
     completedDate: Dayjs | null;
     cancelledDate: Dayjs | null;
+    blockedDate: Dayjs | null;
     created: Dayjs;
     updated: Dayjs;
     links: Link[];

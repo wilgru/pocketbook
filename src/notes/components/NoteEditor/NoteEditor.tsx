@@ -92,6 +92,8 @@ const NoteEditor = ({
         dueDate: null,
         completedDate: null,
         cancelledDate: null,
+        blockedComment: null,
+        blockedDate: null,
       },
       insertAfterSortOrder,
     });

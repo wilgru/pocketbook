@@ -5,10 +5,12 @@ import { Button } from "src/common/components/Button/Button";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { LinksPopover } from "src/common/components/LinksPopover/LinksPopover";
 import { Toggle } from "src/common/components/Toggle/Toggle";
+import { Tooltip } from "src/common/components/Tooltip/Tooltip";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
+import { TaskBlockerPopover } from "src/tasks/components/TaskBlockerPopover/TaskBlockerPopover";
 import { TaskDatePicker } from "src/tasks/components/TaskDatePicker/TaskDatePicker";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { useDeleteTask } from "src/tasks/hooks/useDeleteTask";
@@ -39,6 +41,8 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
     dueDate: task?.dueDate || null,
     completedDate: task?.completedDate || null,
     cancelledDate: task?.cancelledDate || null,
+    blockedComment: task?.blockedComment || null,
+    blockedDate: task?.blockedDate || null,
     isImportant: task?.isImportant || false,
     sortOrder: task?.sortOrder ?? 0,
     created: task?.created || dayjs(),
@@ -189,6 +193,7 @@ export const TaskEditor = ({
 
   const isCompleted = !!editedTask.completedDate;
   const isCancelled = !!editedTask.cancelledDate;
+  const isBlocked = !!editedTask.blockedComment;
 
   const isDueDateOverdue =
     !!editedTask.dueDate &&
@@ -221,27 +226,58 @@ export const TaskEditor = ({
         }, 0);
       }}
     >
-      <button
-        className="pt-0.75 pl-px"
-        onMouseDown={(e) => {
-          e.preventDefault();
-        }}
-        onClick={onCheckCircleClick}
-      >
-        <Icon
-          iconName={
-            isCompleted ? "checkCircle" : isCancelled ? "xCircle" : "circle"
+      {isBlocked ? (
+        <Tooltip
+          content={
+            <div className="flex flex-col gap-1">
+              <p className="text-slate-200">{editedTask.blockedComment}</p>
+              <p className="mt-1 pt-1 border-t border-slate-600 flex justify-between gap-4 text-slate-400 italic text-xs">
+                Click to unblock
+              </p>
+            </div>
           }
-          size="sm"
-          weight={isCompleted || isCancelled ? "fill" : "regular"}
-          className={cn(
-            "transition-colors",
-            isCompleted && !isCancelled
-              ? cn(colour.text, colour.primary.textHovered)
-              : "text-slate-400 hover:text-slate-600",
-          )}
-        />
-      </button>
+        >
+          <button
+            className="pt-0.75 pl-px"
+            aria-label="Remove blocker"
+            onMouseDown={(e) => {
+              e.preventDefault();
+            }}
+            onClick={() =>
+              onUpdateTask({ blockedComment: null, blockedDate: null })
+            }
+          >
+            <Icon
+              iconName="handPalm"
+              weight="regular"
+              size="sm"
+              className="text-orange-400 hover:text-orange-600 transition-colors"
+            />
+          </button>
+        </Tooltip>
+      ) : (
+        <button
+          className="pt-0.75 pl-px"
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
+          onClick={onCheckCircleClick}
+        >
+          <Icon
+            iconName={
+              isCompleted ? "checkCircle" : isCancelled ? "xCircle" : "circle"
+            }
+            size="sm"
+            weight={isCompleted || isCancelled ? "fill" : "regular"}
+            className={cn(
+              "transition-colors",
+              isCompleted && !isCancelled
+                ? cn(colour.text, colour.primary.textHovered)
+                : "text-slate-400 hover:text-slate-600",
+            )}
+          />
+        </button>
+      )}
 
       <div className="w-full flex-col items-start">
         <div className="flex justify-between items-start">
@@ -276,7 +312,7 @@ export const TaskEditor = ({
             )}
           />
 
-          <div className="flex flex-row flex-wrap items-center gap-2 pl-1">
+          <div className="flex flex-row flex-wrap items-center gap-1 pl-1">
             {showTaskControls ? (
               <>
                 <Button
@@ -316,6 +352,17 @@ export const TaskEditor = ({
                     })
                   }
                   iconName="warningCircle"
+                />
+
+                <TaskBlockerPopover
+                  blockedComment={editedTask.blockedComment}
+                  onChange={(blockedComment) => {
+                    onUpdateTask({
+                      blockedComment,
+                      blockedDate: blockedComment ? dayjs() : null,
+                    });
+                  }}
+                  onOpenChange={handlePopoverOpenChange}
                 />
 
                 <LinksPopover
@@ -358,7 +405,7 @@ export const TaskEditor = ({
 
                 <Button
                   variant="ghost"
-                  size="xs"
+                  size="sm"
                   iconName="trash"
                   colour={colours.red}
                   onClick={() => {

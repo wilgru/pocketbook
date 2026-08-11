@@ -13,9 +13,11 @@ export const tasks = sqliteTable("tasks", {
     .notNull()
     .default(false),
   note: text("note").references(() => notes.id),
+  blockedComment: text("blocked_comment"),
   dueDate: text("due_date"),
   completedDate: text("completed_date"),
   cancelledDate: text("cancelled_date"),
+  blockedDate: text("blocked_date"),
   sortOrder: integer("sort_order").notNull().default(0),
   pocketbook: text("pocketbook").references(() => pocketbooks.id),
   user: text("user"),

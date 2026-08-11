@@ -15,6 +15,8 @@ export type UpdateTaskInput = {
   dueDate: string | null;
   completedDate: string | null;
   cancelledDate: string | null;
+  blockedComment: string | null;
+  blockedDate: string | null;
   sortOrder?: number;
 };
 
@@ -31,6 +33,8 @@ createIpcHandler(
     dueDate,
     completedDate,
     cancelledDate,
+    blockedComment,
+    blockedDate,
     sortOrder,
   }: UpdateTaskInput): TaskSchema => {
     const now = new Date().toISOString();
@@ -47,6 +51,8 @@ createIpcHandler(
         dueDate,
         completedDate,
         cancelledDate,
+        blockedComment,
+        blockedDate,
         ...(sortOrder !== undefined ? { sortOrder } : {}),
         updated: now,
       })

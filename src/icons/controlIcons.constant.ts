@@ -43,6 +43,7 @@ import {
   ChatCenteredTextIcon,
   EyeSlashIcon,
   EyeIcon,
+  HandPalmIcon,
 } from "@phosphor-icons/react";
 import type { IconType } from "./Icon.type";
 
@@ -99,6 +100,7 @@ export const controlIcons = [
   { name: "empty", component: EmptyIcon, fixedWeight: "regular" },
   { name: "eyeSlash", component: EyeSlashIcon },
   { name: "eye", component: EyeIcon },
+  { name: "handPalm", component: HandPalmIcon },
 ] as const satisfies IconType[];
 
 export type ControlIconName = (typeof controlIcons)[number]["name"];

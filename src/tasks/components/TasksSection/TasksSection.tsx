@@ -39,11 +39,12 @@ export const TasksSection = ({
     0,
   );
 
-  const visibleTasks = showCompleted
-    ? taskGroup.tasks
-    : taskGroup.tasks.filter(
-        (task) => !task.completedDate && !task.cancelledDate,
-      );
+  const activeTasks = taskGroup.tasks.filter(
+    (task) => !task.completedDate && !task.cancelledDate,
+  );
+  const completedOrCancelledTasks = taskGroup.tasks.filter(
+    (task) => task.completedDate || task.cancelledDate,
+  );
 
   const onCreateTask = useCallback(
     async (insertAfterSortOrder?: number) => {
@@ -58,6 +59,8 @@ export const TasksSection = ({
           dueDate: null,
           completedDate: null,
           cancelledDate: null,
+          blockedComment: null,
+          blockedDate: null,
         },
         insertAfterSortOrder,
       });
@@ -137,7 +140,7 @@ export const TasksSection = ({
       </div>
 
       <div className="flex flex-col gap-1.5 p-1">
-        {visibleTasks.map((task) => (
+        {activeTasks.map((task) => (
           <TaskEditor
             key={task.id}
             task={task}
@@ -154,13 +157,26 @@ export const TasksSection = ({
             variant="ghost"
             size="xs"
             colour={colours.grey}
-            iconName={showCompleted ? "eyeSlash" : "eye"}
+            iconName={showCompleted ? "caretUp" : "caretDown"}
             onClick={() => setShowCompleted((current) => !current)}
           >
             {showCompleted ? "Hide completed " : "Show completed "}
             {`(${completedTaskCount + cancelledTaskCount})`}
           </Button>
         )}
+
+        {showCompleted &&
+          completedOrCancelledTasks.map((task) => (
+            <TaskEditor
+              key={task.id}
+              task={task}
+              tasksForSorting={taskGroup.tasks}
+              colour={colour}
+              onCreateNextTask={() => onCreateTask(task.sortOrder)}
+              autoFocusTitle={task.id === newTaskFocusId}
+              onAutoFocusComplete={() => setNewTaskFocusId(null)}
+            />
+          ))}
       </div>
     </section>
   );
