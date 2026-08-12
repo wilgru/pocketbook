@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { colours } from "src/colours/colours.constant";
 import { getColour } from "src/colours/utils/getColour";
 import { CommentToolbar } from "src/comments/components/CommentEditor/CommentToolbar";
@@ -147,7 +147,7 @@ export const CommentEditor = ({
           {showNotes &&
             editedComment.notes &&
             editedComment.notes.map((note, index) => (
-              <>
+              <Fragment key={note.id}>
                 <Link
                   key={note.id}
                   to="/$pocketbookId/notes"
@@ -160,14 +160,14 @@ export const CommentEditor = ({
 
                 {index < (editedComment.notes?.length ?? 0) - 2 && ", "}
                 {index === (editedComment.notes?.length ?? 0) - 2 && " and "}
-              </>
+              </Fragment>
             ))}
         </p>
       }
     >
       <div
         className={cn(
-          "rounded-xl p-2 flex flex-col border drop-shadow-xs gap-2",
+          "rounded-xl p-2 flex flex-col border drop-shadow-sm gap-2",
           !isEditing && commentColour
             ? [
                 commentColour.secondary.background,
