@@ -44,7 +44,6 @@ export const LinkMultiInput = ({
           />
         </div>
       ))}
-
     </div>
   );
 };

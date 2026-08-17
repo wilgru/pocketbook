@@ -81,7 +81,7 @@ export const NoteSelect = ({
             <button
               type="button"
               className={cn(
-                "flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors",
+                "flex items-center gap-1 px-2 py-0.5 text-[11px] rounded-full transition-colors",
                 colour.primary.background,
                 colour.primary.text,
                 colour.primary.backgroundHovered,
@@ -95,14 +95,14 @@ export const NoteSelect = ({
             <div>
               <Button
                 variant="ghost"
-                size="sm"
+                size="xs"
                 colour={colour}
                 iconName="pencil"
               />
             </div>
           )
         }
-        className="flex flex-col gap-2 text-sm p-3 w-48"
+        className="flex flex-col text-sm pt-3 px-3 w-48"
         clearActionLabel={
           mode === "single" && selectedSingleNote ? "Clear note" : undefined
         }
@@ -121,23 +121,25 @@ export const NoteSelect = ({
           onKeyDown={(event) => event.stopPropagation()}
         />
 
-        {filteredNotes.length === 0 && (
-          <p className="text-xs text-slate-400 px-2 py-1">No notes found</p>
-        )}
+        <div className="flex flex-col gap-1 py-2 max-h-48 overflow-y-auto">
+          {filteredNotes.length === 0 && (
+            <p className="text-xs text-slate-400 px-2 py-1">No notes found</p>
+          )}
 
-        {filteredNotes.map((note) => (
-          <button
-            key={note.id}
-            className={cn(
-              "rounded-lg px-2 py-1 cursor-pointer text-sm text-start truncate",
-              colour.secondary.backgroundHovered,
-              colour.secondary.textHovered,
-            )}
-            onClick={() => handleSelectNote(note)}
-          >
-            {note.title ?? "Untitled Note"}
-          </button>
-        ))}
+          {filteredNotes.map((note) => (
+            <button
+              key={note.id}
+              className={cn(
+                "rounded-lg flex items-center px-2 py-1 cursor-pointer text-sm",
+                colour.secondary.backgroundHovered,
+                colour.secondary.textHovered,
+              )}
+              onClick={() => handleSelectNote(note)}
+            >
+              {note.title ?? "Untitled Note"}
+            </button>
+          ))}
+        </div>
       </ControlPopover>
     </div>
   );

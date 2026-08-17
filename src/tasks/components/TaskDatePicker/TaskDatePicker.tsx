@@ -40,14 +40,14 @@ export const TaskDatePicker = ({
     <button
       type="button"
       className={cn(
-        "text-xs px-2 py-1 rounded-full transition-colors",
+        "text-[11px] px-2 py-0.5 rounded-full transition-colors",
         isOverdue ? "bg-red-100 text-red-500" : "bg-gray-100 text-gray-500",
       )}
     >
       {dueDate.format("MMM D, YYYY")}
     </button>
   ) : (
-    <Button colour={colour} iconName="calendarDots" variant="ghost" size="sm" />
+    <Button colour={colour} iconName="calendarDots" variant="ghost" size="xs" />
   );
 
   return (

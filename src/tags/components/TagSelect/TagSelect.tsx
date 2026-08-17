@@ -86,7 +86,7 @@ export const TagSelect = ({
       ))}
 
       <ControlPopover
-        className="flex flex-col gap-2 text-sm p-3 w-48"
+        className="flex flex-col text-sm pt-3 px-3 w-48"
         trigger={
           <div>
             <Button variant="ghost" size="sm" colour={colour} iconName="tag" />
@@ -103,7 +103,7 @@ export const TagSelect = ({
           }}
         />
 
-        <div className="flex flex-col gap-1 max-h-48 overflow-y-auto">
+        <div className="flex flex-col gap-1 max-h-48 overflow-y-auto py-3">
           {filteredTags.map((tag) => (
             <div
               key={tag.id}

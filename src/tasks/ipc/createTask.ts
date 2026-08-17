@@ -46,8 +46,7 @@ createIpcHandler(
       let sortOrder = 0;
       if (insertAfterSortOrder !== null) {
         sortOrder = insertAfterSortOrder + 1;
-        tx
-          .update(tasks)
+        tx.update(tasks)
           .set({
             sortOrder: sql`${tasks.sortOrder} + 1`,
           })

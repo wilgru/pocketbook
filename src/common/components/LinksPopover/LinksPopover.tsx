@@ -64,7 +64,7 @@ export const LinksPopover = ({
       onOpenChange={handleOpenChange}
       onOpenAutoFocus={(event) => event.preventDefault()}
       trigger={
-        <Button colour={colour} variant="ghost" size="sm" iconName="link" />
+        <Button colour={colour} variant="ghost" size="xs" iconName="link" />
       }
       className="p-3 w-90"
     >

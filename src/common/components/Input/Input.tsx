@@ -12,9 +12,9 @@ type InputType = {
 };
 
 enum InputSize {
-  "xs" = "px-1 py-0.5 text-xs",
-  "md" = "p-1 text-sm",
-  "lg" = "p-2 text-md",
+  xs = "px-1 py-0.5 text-xs",
+  md = "p-1 text-sm",
+  lg = "p-2 text-md",
 }
 
 export const Input = ({

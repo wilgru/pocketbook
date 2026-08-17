@@ -206,7 +206,7 @@ export const TaskEditor = ({
 
   return (
     <div
-      className="w-full flex gap-1 items-start"
+      className="w-full flex gap-2 items-start"
       onFocus={() => {
         setIsFocused(true);
       }}
@@ -302,7 +302,7 @@ export const TaskEditor = ({
               })
             }
             className={cn(
-              "flex-1 tracking-tight text-md bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
+              "flex-1 tracking-tight text-sm pt-0.5 bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
               isCompleted || isCancelled
                 ? "text-slate-500"
                 : editedTask.isImportant
@@ -312,141 +312,37 @@ export const TaskEditor = ({
             )}
           />
 
-          <div className="flex flex-row flex-wrap items-center gap-1 pl-1">
-            {showTaskControls ? (
-              <>
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  iconName="caretUp"
-                  colour={colour}
-                  onClick={() => moveTask(-1)}
-                  disabled={
-                    sortingTasks.findIndex(
-                      (currentTask) => currentTask.id === editedTask.id,
-                    ) <= 0
-                  }
-                />
+          {!showTaskControls && (
+            <div className="flex flex-row flex-wrap items-center gap-1 pl-1">
+              {editedTask.links.map((link) => (
+                <LinkPill key={link.id} link={link} colour={colour} />
+              ))}
 
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  iconName="caretDown"
-                  colour={colour}
-                  onClick={() => moveTask(1)}
-                  disabled={
-                    sortingTasks.findIndex(
-                      (currentTask) => currentTask.id === editedTask.id,
-                    ) ===
-                    sortingTasks.length - 1
-                  }
-                />
-
-                <Toggle
-                  isToggled={editedTask.isImportant}
-                  size="sm"
-                  colour={colours.red}
-                  onClick={() =>
-                    onUpdateTask({
-                      isImportant: !editedTask.isImportant,
-                    })
-                  }
+              {editedTask.isImportant && (
+                <Icon
                   iconName="warningCircle"
-                />
-
-                <TaskBlockerPopover
-                  blockedComment={editedTask.blockedComment}
-                  onChange={(blockedComment) => {
-                    onUpdateTask({
-                      blockedComment,
-                      blockedDate: blockedComment ? dayjs() : null,
-                    });
-                  }}
-                  onOpenChange={handlePopoverOpenChange}
-                />
-
-                <LinksPopover
-                  links={editedTask.links}
-                  colour={colour}
-                  onChange={(links) =>
-                    onUpdateTask({
-                      links,
-                    })
-                  }
-                  onOpenChange={handlePopoverOpenChange}
-                />
-
-                <NoteSelect
-                  mode="single"
-                  selectedNotes={editedTask.note ? [editedTask.note] : []}
-                  colour={colour}
-                  onChange={(notes) => {
-                    onUpdateTask({
-                      note: notes[0] ?? null,
-                    });
-                    handlePopoverOpenChange(false);
-                  }}
-                  onOpenChange={handlePopoverOpenChange}
-                />
-
-                <TaskDatePicker
-                  dueDate={editedTask.dueDate}
-                  colour={colour}
-                  isCompleted={isCompleted}
-                  isCancelled={isCancelled}
-                  onChange={(date) => {
-                    onUpdateTask({
-                      dueDate: date,
-                    });
-                    handlePopoverOpenChange(false);
-                  }}
-                  onOpenChange={handlePopoverOpenChange}
-                />
-
-                <Button
-                  variant="ghost"
                   size="sm"
-                  iconName="trash"
-                  colour={colours.red}
-                  onClick={() => {
-                    debouncedSave.cancel();
-                    deleteTask({ taskId: editedTask.id });
-                    setIsFocused(false);
-                  }}
+                  className={cn(
+                    "mt-0.5",
+                    isCompleted ? "text-slate-400" : "text-red-500",
+                  )}
                 />
-              </>
-            ) : (
-              <>
-                {editedTask.links.map((link) => (
-                  <LinkPill key={link.id} link={link} colour={colour} />
-                ))}
+              )}
 
-                {editedTask.isImportant && (
-                  <Icon
-                    iconName="warningCircle"
-                    size="sm"
-                    className={cn(
-                      "mt-0.5",
-                      isCompleted ? "text-slate-400" : "text-red-500",
-                    )}
-                  />
-                )}
-
-                {!!editedTask.dueDate && (
-                  <span
-                    className={cn(
-                      "text-xs px-2 py-1 rounded-full",
-                      isDueDateOverdue
-                        ? "bg-red-100 text-red-500"
-                        : "bg-gray-100 text-gray-500",
-                    )}
-                  >
-                    {editedTask.dueDate.format("MMM D, YYYY")}
-                  </span>
-                )}
-              </>
-            )}
-          </div>
+              {!!editedTask.dueDate && (
+                <span
+                  className={cn(
+                    "text-xs px-2 py-1 rounded-full",
+                    isDueDateOverdue
+                      ? "bg-red-100 text-red-500"
+                      : "bg-gray-100 text-gray-500",
+                  )}
+                >
+                  {editedTask.dueDate.format("MMM D, YYYY")}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {showDescription && (
@@ -462,10 +358,113 @@ export const TaskEditor = ({
               })
             }
             className={cn(
-              "w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
+              "-mb-0.5 w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
               isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
             )}
           />
+        )}
+        {showTaskControls && (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="xs"
+              iconName="caretUp"
+              colour={colour}
+              onClick={() => moveTask(-1)}
+              disabled={
+                sortingTasks.findIndex(
+                  (currentTask) => currentTask.id === editedTask.id,
+                ) <= 0
+              }
+            />
+
+            <Button
+              variant="ghost"
+              size="xs"
+              iconName="caretDown"
+              colour={colour}
+              onClick={() => moveTask(1)}
+              disabled={
+                sortingTasks.findIndex(
+                  (currentTask) => currentTask.id === editedTask.id,
+                ) ===
+                sortingTasks.length - 1
+              }
+            />
+
+            <Toggle
+              isToggled={editedTask.isImportant}
+              size="xs"
+              colour={colours.red}
+              onClick={() =>
+                onUpdateTask({
+                  isImportant: !editedTask.isImportant,
+                })
+              }
+              iconName="warningCircle"
+            />
+
+            <TaskBlockerPopover
+              blockedComment={editedTask.blockedComment}
+              onChange={(blockedComment) => {
+                onUpdateTask({
+                  blockedComment,
+                  blockedDate: blockedComment ? dayjs() : null,
+                });
+              }}
+              onOpenChange={handlePopoverOpenChange}
+            />
+
+            <LinksPopover
+              links={editedTask.links}
+              colour={colour}
+              onChange={(links) =>
+                onUpdateTask({
+                  links,
+                })
+              }
+              onOpenChange={handlePopoverOpenChange}
+            />
+
+            <NoteSelect
+              mode="single"
+              selectedNotes={editedTask.note ? [editedTask.note] : []}
+              colour={colour}
+              onChange={(notes) => {
+                onUpdateTask({
+                  note: notes[0] ?? null,
+                });
+                handlePopoverOpenChange(false);
+              }}
+              onOpenChange={handlePopoverOpenChange}
+            />
+
+            <TaskDatePicker
+              dueDate={editedTask.dueDate}
+              colour={colour}
+              isCompleted={isCompleted}
+              isCancelled={isCancelled}
+              onChange={(date) => {
+                onUpdateTask({
+                  dueDate: date,
+                });
+                handlePopoverOpenChange(false);
+              }}
+              onOpenChange={handlePopoverOpenChange}
+            />
+
+            <Button
+              variant="ghost"
+              size="xs"
+              iconName="trash"
+              colour={colours.red}
+              onClick={() => {
+                debouncedSave.cancel();
+                deleteTask({ taskId: editedTask.id });
+                setIsFocused(false);
+              }}
+            />
+          </div>
         )}
       </div>
     </div>

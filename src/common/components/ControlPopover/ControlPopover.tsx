@@ -25,17 +25,11 @@ export const ControlPopover = ({
   onCloseAutoFocus,
 }: ControlPopoverProps) => {
   const content = (
-    <div
-      className={cn(
-        "bg-white border border-slate-200 rounded-2xl shadow-lg focus:outline-hidden",
-        className,
-      )}
-    >
-      {children}
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-lg focus:outline-hidden">
+      <div className={className}>{children}</div>
 
       {clearActionLabel && onClearAction && (
-        <div className="mt-2 flex flex-col items-center gap-1">
-          <div className="h-px bg-slate-100 w-full" />
+        <div className="flex flex-col items-center py-3 mx-3 gap-1 border-t border-slate-100">
           <button
             type="button"
             className="text-xs text-slate-400 hover:text-slate-600 transition-colors"

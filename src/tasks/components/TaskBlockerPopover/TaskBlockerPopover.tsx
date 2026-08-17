@@ -38,7 +38,7 @@ export const TaskBlockerPopover = ({
       trigger={
         <Button
           variant="ghost"
-          size="sm"
+          size="xs"
           iconName="handPalm"
           colour={colours.orange}
           ariaLabel="Add blocker"

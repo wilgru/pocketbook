@@ -94,7 +94,8 @@ export const getPlainTextFromLexicalContent = (
 
       if (root && typeof root === "object") {
         return extractPlainText((root as { children?: unknown }).children)
-          .split("\u0000").join("")
+          .split("\u0000")
+          .join("")
           .trimEnd();
       }
     }
