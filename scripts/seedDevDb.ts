@@ -5,10 +5,14 @@ import { createInterface } from "node:readline/promises";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import {
+  getDevDatabaseDirectory,
+  getMigrationsDirectory,
+} from "../src/db/paths";
 
-const devDbDirectory = path.join(process.cwd(), "dev-db");
+const devDbDirectory = getDevDatabaseDirectory();
 const devDbPath = path.join(devDbDirectory, "pocketbook.db");
-const migrationsDirectory = path.join(process.cwd(), "drizzle");
+const migrationsDirectory = getMigrationsDirectory();
 
 type SeedTag = {
   name: string;

@@ -9,13 +9,15 @@ const config: ForgeConfig = {
     icon: "resources/icon",
     extraResource: ["drizzle"],
     asar: {
-      unpack: "**/node_modules/{better-sqlite3,bindings,file-uri-to-path}/**",
+      unpack: "**/node_modules/better-sqlite3/**",
     },
   },
   outDir: "dist",
   hooks: {
     packageAfterCopy: async (_forgeConfig, buildPath) => {
-      const nativeDeps = ["better-sqlite3", "bindings", "file-uri-to-path"];
+      // better-sqlite3 ships a prebuilt Node-API binary that Vite does not
+      // bundle, so it is copied into the packaged app verbatim.
+      const nativeDeps = ["better-sqlite3"];
       for (const dep of nativeDeps) {
         const src = path.join(__dirname, "node_modules", dep);
         const dest = path.join(buildPath, "node_modules", dep);
@@ -24,7 +26,9 @@ const config: ForgeConfig = {
       }
     },
   },
-  rebuildConfig: {}, // This config wont rebuild better-sqlite3, we have to do it manually with electron-rebuild in the build script, see package.json
+  // better-sqlite3 v13+ is a Node-API addon, so its prebuilt binary is ABI
+  // stable across Node and Electron versions and needs no rebuild step.
+  rebuildConfig: {},
   makers: [
     {
       name: "@electron-forge/maker-zip",

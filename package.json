@@ -5,12 +5,12 @@
   "type": "module",
   "main": ".vite/build/main.cjs",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
-    "dev": "electron-rebuild -f -w better-sqlite3 && electron-forge start",
-    "build:mac": "electron-rebuild -f -w better-sqlite3 && electron-forge make --platform darwin",
-    "build:win": "electron-rebuild -f -w better-sqlite3 && electron-forge make --platform win32",
+    "dev": "electron-forge start",
+    "build:mac": "electron-forge make --platform darwin",
+    "build:win": "electron-forge make --platform win32",
     "seed:dev": "npx tsx scripts/seedDevDb.ts",
     "test": "echo 'No test runner specified'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -35,7 +35,7 @@
     "@tanstack/react-devtools": "^0.10.9",
     "@tanstack/react-query": "^5.101.4",
     "@tanstack/react-router": "^1.170.18",
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^13.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.21",
@@ -53,7 +53,6 @@
     "@electron-forge/cli": "^7.11.2",
     "@electron-forge/maker-zip": "^7.11.2",
     "@electron-forge/plugin-vite": "^7.11.2",
-    "@electron/rebuild": "^4.2.0",
     "@eslint/js": "^9.39.5",
     "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/router-plugin": "^1.168.23",
