@@ -29,7 +29,7 @@ export const useCreateNote = (): UseCreateNoteResponse => {
   const mutationFn = async ({
     createNoteData,
   }: CreateNoteProps): Promise<Note | undefined> => {
-    const response = await window.api.createNote({
+    const response = await bindings.createNote({
       title: createNoteData.title,
       content: createNoteData.content,
       isBookmarked: createNoteData.isBookmarked,

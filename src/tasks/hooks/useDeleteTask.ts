@@ -28,7 +28,7 @@ export const useDeleteTask = (): UseDeleteTaskResponse => {
       return;
     }
 
-    const response = await window.api.deleteTask({ taskId });
+    const response = await bindings.deleteTask({ taskId });
     if (!response.success) throw new Error(response.error);
 
     return taskId;

@@ -9,7 +9,7 @@ export const useDeleteTag = (): UseDeleteTagResponse => {
   const queryClient = useQueryClient();
 
   const mutationFn = async (tagId: string): Promise<string | undefined> => {
-    const response = await window.api.deleteTag({ tagId });
+    const response = await bindings.deleteTag({ tagId });
     if (!response.success) throw new Error(response.error);
     return tagId;
   };

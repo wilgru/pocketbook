@@ -26,7 +26,7 @@ export const useGetNote = ({
   const { tasks: allTasks } = useGetTasks({});
 
   const queryFn = async (): Promise<GetNoteResult> => {
-    const response = await window.api.getNote({ noteId: noteId ?? "" });
+    const response = await bindings.getNote({ noteId: noteId ?? "" });
     if (!response.success) throw new Error(response.error);
 
     return response.data;

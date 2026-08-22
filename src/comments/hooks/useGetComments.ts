@@ -20,8 +20,8 @@ export const useGetComments = ({
     if (!pocketbookId) return [];
 
     const [commentsResponse, notesResponse] = await Promise.all([
-      window.api.getComments({ pocketbookId }),
-      window.api.getNotes({ pocketbookId }),
+      bindings.getComments({ pocketbookId }),
+      bindings.getNotes({ pocketbookId }),
     ]);
 
     if (!commentsResponse.success) throw new Error(commentsResponse.error);

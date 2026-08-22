@@ -48,8 +48,8 @@ export const useGetTasks = ({
     }
 
     const [tasksResponse, notesResponse] = await Promise.all([
-      window.api.getTasks({ pocketbookId }),
-      window.api.getNotes({ pocketbookId }),
+      bindings.getTasks({ pocketbookId }),
+      bindings.getNotes({ pocketbookId }),
     ]);
 
     if (!tasksResponse.success) throw new Error(tasksResponse.error);

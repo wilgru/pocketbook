@@ -2,12 +2,13 @@ import { createIpcHandler } from "src/common/utils/createIpcHandler";
 import { db } from "src/db/connection";
 import { tags } from "src/tags/tags.schema";
 import type { ColourName } from "src/colours/Colour.type";
+import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
 import type { TagSchema } from "src/tags/tags.schema";
 
 export type CreateTagInput = {
   name: string;
   colour: ColourName;
-  icon: string;
+  icon: CustomisationIconName | null;
   description: string | null;
   tagGroupId: string | null;
   pocketbookId: string | null;
@@ -15,7 +16,7 @@ export type CreateTagInput = {
 };
 
 createIpcHandler(
-  "tags:create",
+  "createTag",
   ({
     name,
     colour,

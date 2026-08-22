@@ -26,7 +26,7 @@ export const useUpdateTask = (): UseUpdateTaskResponse => {
     updateTaskData,
     includeSortOrder = true,
   }: UpdateTaskProps): Promise<Task | undefined> => {
-    const response = await window.api.updateTask({
+    const response = await bindings.updateTask({
       taskId,
       title: updateTaskData.title,
       description: updateTaskData.description,

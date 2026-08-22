@@ -13,7 +13,7 @@ export type CreateCommentInput = {
 };
 
 createIpcHandler(
-  "comments:create",
+  "createComment",
   ({
     content,
     tint,

@@ -48,7 +48,7 @@ export const useGetNotes = ({
         .toISOString();
     }
 
-    const response = await window.api.getNotes({
+    const response = await bindings.getNotes({
       pocketbookId: pocketbookId ?? "",
       isBookmarked,
       createdAfter,

@@ -1,0 +1,31 @@
+{
+  "nodeModulesDir": "manual",
+  // The codebase uses extensionless, bundler-style imports (resolved by Vite
+  // and tsconfig's "moduleResolution": "bundler"). sloppy-imports lets Deno
+  // resolve them without rewriting every import in the project.
+  "unstable": ["sloppy-imports"],
+  "imports": {
+    "src/": "./src/",
+    "@std/http/": "jsr:/@std/http@^1.0.0/"
+  },
+  "tasks": {
+    "build:renderer": "vite build",
+    "dev": "deno task build:renderer && deno desktop -A --backend cef --node-modules-dir=manual --include dist --include drizzle --hmr desktop/main.ts",
+    "build:mac": "deno task build:renderer && deno desktop -A --backend cef --node-modules-dir=manual --include dist --include drizzle --icon resources/icon.icns -o dist-desktop/Pocketbook.app desktop/main.ts",
+    "check": "deno check desktop/main.ts"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window", "deno.desktop", "dom", "dom.iterable"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "exclude": [
+    ".denospike",
+    ".vite",
+    "dist",
+    "dist-desktop",
+    "node_modules",
+    "drizzle",
+    "dev-db"
+  ]
+}

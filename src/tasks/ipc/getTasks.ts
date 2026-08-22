@@ -15,7 +15,7 @@ export type GetTasksResult = {
 };
 
 createIpcHandler(
-  "tasks:getAll",
+  "getTasks",
   ({ pocketbookId, noteId, status }: GetTasksInput): GetTasksResult => {
     const conditions = [eq(tasks.pocketbook, pocketbookId)];
 

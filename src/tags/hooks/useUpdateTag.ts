@@ -25,7 +25,7 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
     tagId,
     updateTagData,
   }: UpdateTagProps): Promise<Tag | undefined> => {
-    const response = await window.api.updateTag({
+    const response = await bindings.updateTag({
       tagId,
       name: updateTagData.name,
       colour: updateTagData.colour.name,

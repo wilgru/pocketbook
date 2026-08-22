@@ -13,7 +13,7 @@ export type GetCommentsResult = {
 };
 
 createIpcHandler(
-  "comments:getAll",
+  "getComments",
   ({ pocketbookId }: GetCommentsInput): GetCommentsResult => {
     const rows = db
       .select()

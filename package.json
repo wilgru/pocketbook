@@ -3,14 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": ".vite/build/main.cjs",
   "engines": {
     "node": ">=24.0.0"
   },
   "scripts": {
-    "dev": "electron-forge start",
-    "build:mac": "electron-forge make --platform darwin",
-    "build:win": "electron-forge make --platform win32",
+    "dev": "deno task dev",
+    "build:renderer": "vite build",
+    "build:mac": "deno task build:mac",
     "seed:dev": "npx tsx scripts/seedDevDb.ts",
     "test": "echo 'No test runner specified'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -40,7 +39,6 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.21",
     "drizzle-orm": "^0.45.2",
-    "electron-log": "^5.4.4",
     "jotai": "^2.20.2",
     "lexical": "^0.48.0",
     "match-sorter": "^8.3.0",
@@ -50,9 +48,6 @@
     "use-debounce": "^10.1.1"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.11.2",
-    "@electron-forge/maker-zip": "^7.11.2",
-    "@electron-forge/plugin-vite": "^7.11.2",
     "@eslint/js": "^9.39.5",
     "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/router-plugin": "^1.168.23",
@@ -63,7 +58,6 @@
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^5.2.0",
     "drizzle-kit": "^0.31.10",
-    "electron": "^41.10.3",
     "eslint": "^9.39.5",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react-hooks": "^7.1.1",

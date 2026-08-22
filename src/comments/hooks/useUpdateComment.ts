@@ -25,7 +25,7 @@ export const useUpdateComment = (): UseUpdateCommentResponse => {
     commentId,
     commentData,
   }: UpdateCommentProps): Promise<Comment | undefined> => {
-    const response = await window.api.updateComment({
+    const response = await bindings.updateComment({
       commentId,
       content: commentData.content ?? null,
       tint: commentData.tint ?? null,

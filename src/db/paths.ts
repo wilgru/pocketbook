@@ -7,30 +7,21 @@ const APP_DIR_NAME = "Pocketbook";
 /**
  * Runtime-agnostic filesystem locations for the database and its migrations.
  *
- * This module deliberately avoids importing `electron` so that the data layer
- * can run under Electron, plain Node, or Deno. Electron-specific values are
- * read from `process` (which Electron augments at runtime) rather than from the
- * `electron` module, and every location can be overridden with an environment
- * variable so an embedding runtime can inject its own paths.
+ * The data layer runs inside the Deno desktop process, but is also loaded by
+ * plain Node tooling (the dev seed script). Nothing here depends on a specific
+ * runtime: locations are derived from `process` and can be overridden with
+ * environment variables so an embedding runtime can inject its own paths.
  */
 
-type MaybeElectronProcess = NodeJS.Process & {
-  /** Set by Electron when running an unpackaged app via the `electron` binary. */
-  defaultApp?: boolean;
-  /** Set by Electron to the packaged app's `resources` directory. */
-  resourcesPath?: string;
-};
-
-const runtimeProcess = process as MaybeElectronProcess;
-
-const isElectron = !!runtimeProcess.versions?.electron;
+const runtimeProcess = process;
 
 /**
- * Equivalent to Electron's `app.isPackaged`, which is itself derived from
- * `process.defaultApp`. Checking `process` directly keeps this module free of
- * an `electron` import.
+ * Whether the app is running from a packaged build rather than a dev checkout.
+ *
+ * Packaged builds have no reliable ambient signal, so the desktop entrypoint
+ * declares it explicitly with `POCKETBOOK_PACKAGED`.
  */
-export const isPackaged = isElectron && !runtimeProcess.defaultApp;
+export const isPackaged = runtimeProcess.env.POCKETBOOK_PACKAGED === "1";
 
 function getUserDataDirectory(): string {
   const platform = runtimeProcess.platform;
@@ -80,18 +71,12 @@ export function getDatabasePath(): string {
 /**
  * Resolves the Drizzle migrations folder.
  *
- * Override with `POCKETBOOK_MIGRATIONS_DIR`.
+ * Override with `POCKETBOOK_MIGRATIONS_DIR`, which the desktop entrypoint sets
+ * so migrations are found inside the packaged bundle.
  */
 export function getMigrationsDirectory(): string {
-  const override = runtimeProcess.env.POCKETBOOK_MIGRATIONS_DIR;
-  if (override) {
-    return override;
-  }
-
-  // When packaged, migrations ship as an `extraResource` alongside the app.
-  if (isPackaged && runtimeProcess.resourcesPath) {
-    return path.join(runtimeProcess.resourcesPath, "drizzle");
-  }
-
-  return path.join(runtimeProcess.cwd(), "drizzle");
+  return (
+    runtimeProcess.env.POCKETBOOK_MIGRATIONS_DIR ??
+    path.join(runtimeProcess.cwd(), "drizzle")
+  );
 }

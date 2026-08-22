@@ -34,11 +34,11 @@ button {
   cursor: pointer;
 }
 
-.electron-drag-region {
+.app-drag-region {
   -webkit-app-region: drag;
 }
 
-.electron-no-drag {
+.app-no-drag {
   -webkit-app-region: no-drag;
 }
 

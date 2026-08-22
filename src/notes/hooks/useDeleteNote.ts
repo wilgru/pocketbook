@@ -27,7 +27,7 @@ export const useDeleteNote = (): UseDeleteNoteResponse => {
     const noteToDelete = notes.find((note) => note.id === noteId);
     if (!noteToDelete) return;
 
-    const response = await window.api.deleteNote({ noteId });
+    const response = await bindings.deleteNote({ noteId });
 
     if (!response.success) throw new Error(response.error);
     if (noteToDelete.tags.length) await refetchTags();

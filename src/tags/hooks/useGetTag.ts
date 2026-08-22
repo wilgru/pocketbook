@@ -27,14 +27,14 @@ export const useGetTag = (tagId: string): UseTagResponse => {
   const { tasks: allTasks } = useGetTasks({});
 
   const queryFn = async (): Promise<RawTagData> => {
-    const tagResponse = await window.api.getTag({ tagId });
+    const tagResponse = await bindings.getTag({ tagId });
     if (!tagResponse.success) throw new Error(tagResponse.error);
 
     const pocketbookId = tagResponse.data.pocketbook;
     const [notesResponse, tagsResponse] = pocketbookId
       ? await Promise.all([
-          window.api.getNotes({ pocketbookId }),
-          window.api.getTags({ pocketbookId }),
+          bindings.getNotes({ pocketbookId }),
+          bindings.getTags({ pocketbookId }),
         ])
       : [
           { success: true, data: { notes: [] } },

@@ -7,7 +7,7 @@ import type { PocketbookSchema } from "src/pocketbooks/pocketbooks.schema";
 export type GetPocketbookInput = { pocketbookId: string };
 
 createIpcHandler(
-  "pocketbooks:getOne",
+  "getPocketbook",
   ({ pocketbookId }: GetPocketbookInput): PocketbookSchema => {
     const row = db
       .select()

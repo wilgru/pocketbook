@@ -20,7 +20,7 @@ export const useDeleteComment = (): UseDeleteCommentResponse => {
   const mutationFn = async ({
     commentId,
   }: DeleteCommentProps): Promise<string | undefined> => {
-    const response = await window.api.deleteComment({ commentId });
+    const response = await bindings.deleteComment({ commentId });
     if (!response.success) throw new Error(response.error);
     return commentId;
   };

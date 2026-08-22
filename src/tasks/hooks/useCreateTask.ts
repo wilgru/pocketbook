@@ -28,7 +28,7 @@ export const useCreateTask = (): UseCreateTaskResponse => {
     createTaskData,
     insertAfterSortOrder,
   }: CreateTaskProps): Promise<Task | undefined> => {
-    const response = await window.api.createTask({
+    const response = await bindings.createTask({
       title: createTaskData.title,
       description: createTaskData.description,
       link: createTaskData.link,

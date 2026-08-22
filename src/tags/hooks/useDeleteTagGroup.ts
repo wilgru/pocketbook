@@ -16,7 +16,7 @@ export const useDeleteTagGroup = (): UseDeleteTagGroupResponse => {
   const mutationFn = async (
     tagGroupId: string,
   ): Promise<string | undefined> => {
-    const response = await window.api.deleteTagGroup({ tagGroupId });
+    const response = await bindings.deleteTagGroup({ tagGroupId });
     if (!response.success) throw new Error(response.error);
     return tagGroupId;
   };

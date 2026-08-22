@@ -23,8 +23,8 @@ export const useGetTags = (): UseGetTagsResponse => {
     }
 
     const [tagsResponse, notesResponse] = await Promise.all([
-      window.api.getTags({ pocketbookId }),
-      window.api.getNotes({ pocketbookId }),
+      bindings.getTags({ pocketbookId }),
+      bindings.getNotes({ pocketbookId }),
     ]);
 
     if (!tagsResponse.success) throw new Error(tagsResponse.error);

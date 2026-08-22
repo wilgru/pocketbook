@@ -6,7 +6,7 @@ import { tagGroups } from "src/tags/tags.schema";
 export type DeleteTagGroupInput = { tagGroupId: string };
 
 createIpcHandler(
-  "tagGroups:delete",
+  "deleteTagGroup",
   ({ tagGroupId }: DeleteTagGroupInput): string => {
     db.delete(tagGroups).where(eq(tagGroups.id, tagGroupId)).run();
 

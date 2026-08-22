@@ -12,7 +12,7 @@ export type GetCommentResult = {
 };
 
 createIpcHandler(
-  "comments:getOne",
+  "getComment",
   ({ commentId }: GetCommentInput): GetCommentResult => {
     const row = db
       .select()

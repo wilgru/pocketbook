@@ -5,7 +5,7 @@ import { tasks } from "src/tasks/tasks.schema";
 
 export type DeleteTaskInput = { taskId: string };
 
-createIpcHandler("tasks:delete", ({ taskId }: DeleteTaskInput): string => {
+createIpcHandler("deleteTask", ({ taskId }: DeleteTaskInput): string => {
   db.delete(tasks).where(eq(tasks.id, taskId)).run();
 
   return taskId;

@@ -25,7 +25,7 @@ export const useCreatePocketbook = (): UseCreatePocketbookResponse => {
   const mutationFn = async ({
     createPocketbookData,
   }: CreatePocketbookProps): Promise<Pocketbook | undefined> => {
-    const response = await window.api.createPocketbook({
+    const response = await bindings.createPocketbook({
       title: createPocketbookData.title,
       icon: createPocketbookData.icon,
       colour: createPocketbookData.colour.name,

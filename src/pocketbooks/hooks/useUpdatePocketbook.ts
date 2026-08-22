@@ -38,7 +38,7 @@ export const useUpdatePocketbook = (): UseUpdatePocketbookResponse => {
     pocketbookId,
     updatePocketbookData,
   }: UpdatePocketbookProps): Promise<Pocketbook | undefined> => {
-    const response = await window.api.updatePocketbook({
+    const response = await bindings.updatePocketbook({
       pocketbookId,
       title: updatePocketbookData.title,
       icon: updatePocketbookData.icon,

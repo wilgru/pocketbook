@@ -14,7 +14,7 @@ export type CreateNoteInput = {
 };
 
 createIpcHandler(
-  "notes:create",
+  "createNote",
   ({
     title,
     content,

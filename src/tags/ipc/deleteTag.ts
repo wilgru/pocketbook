@@ -6,7 +6,7 @@ import { tags } from "src/tags/tags.schema";
 
 export type DeleteTagInput = { tagId: string };
 
-createIpcHandler("tags:delete", ({ tagId }: DeleteTagInput): string => {
+createIpcHandler("deleteTag", ({ tagId }: DeleteTagInput): string => {
   db.delete(noteTags).where(eq(noteTags.tagId, tagId)).run();
   db.delete(tags).where(eq(tags.id, tagId)).run();
 

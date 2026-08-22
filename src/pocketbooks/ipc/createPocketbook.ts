@@ -13,7 +13,7 @@ export type CreatePocketbookInput = {
 };
 
 createIpcHandler(
-  "pocketbooks:create",
+  "createPocketbook",
   ({
     title,
     icon,

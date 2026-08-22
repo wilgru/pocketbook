@@ -30,3 +30,5 @@ lerna-debug.log*
 .vite
 /dist
 /dist-cloud
+# deno desktop builds
+/dist-desktop

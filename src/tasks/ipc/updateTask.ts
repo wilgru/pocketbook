@@ -21,7 +21,7 @@ export type UpdateTaskInput = {
 };
 
 createIpcHandler(
-  "tasks:update",
+  "updateTask",
   ({
     taskId,
     title,

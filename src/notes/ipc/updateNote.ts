@@ -14,7 +14,7 @@ export type UpdateNoteInput = {
 };
 
 createIpcHandler(
-  "notes:update",
+  "updateNote",
   ({
     noteId,
     title,

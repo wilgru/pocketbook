@@ -6,7 +6,7 @@ import { pocketbooks } from "src/pocketbooks/pocketbooks.schema";
 export type DeletePocketbookInput = { pocketbookId: string };
 
 createIpcHandler(
-  "pocketbooks:delete",
+  "deletePocketbook",
   ({ pocketbookId }: DeletePocketbookInput): string => {
     db.delete(pocketbooks).where(eq(pocketbooks.id, pocketbookId)).run();
 

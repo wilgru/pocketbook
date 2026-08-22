@@ -17,7 +17,7 @@ export type GetPocketbooksResult = {
 };
 
 createIpcHandler(
-  "pocketbooks:getAll",
+  "getPocketbooks",
   ({ userId }: GetPocketbooksInput): GetPocketbooksResult => {
     const rows = db
       .select()

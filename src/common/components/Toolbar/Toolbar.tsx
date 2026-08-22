@@ -30,11 +30,11 @@ export const Toolbar = ({
   const shouldReserveWindowButtonSpace = isMac && !isSideBarVisible;
 
   return (
-    <div className=" w-full flex items-center justify-between p-2 electron-drag-region">
+    <div className=" w-full flex items-center justify-between p-2 app-drag-region">
       <div className="flex items-center gap-2">
         {shouldReserveWindowButtonSpace && <div className="h-8 w-18" />}
 
-        <div className="flex items-center gap-2 electron-no-drag">
+        <div className="flex items-center gap-2 app-no-drag">
           {!isSideBarVisible && (
             <Button
               variant="ghost"
@@ -61,7 +61,7 @@ export const Toolbar = ({
 
       <div
         className={cn(
-          "flex items-center gap-2 electron-no-drag",
+          "flex items-center gap-2 app-no-drag",
           isWindows && "mr-35",
         )}
       >

@@ -10,7 +10,7 @@ export type CreateTagGroupInput = {
 };
 
 createIpcHandler(
-  "tagGroups:create",
+  "createTagGroup",
   ({ title, pocketbookId, userId }: CreateTagGroupInput): TagGroupSchema => {
     const now = new Date().toISOString();
     const id = crypto.randomUUID();

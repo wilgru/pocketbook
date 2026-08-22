@@ -27,7 +27,7 @@ export const useCreateComment = (): UseCreateCommentResponse => {
   const mutationFn = async ({
     createCommentData,
   }: CreateCommentProps): Promise<Comment | undefined> => {
-    const response = await window.api.createComment({
+    const response = await bindings.createComment({
       content: createCommentData.content ?? null,
       tint: createCommentData.tint,
       isWaypoint: createCommentData.isWaypoint ?? false,

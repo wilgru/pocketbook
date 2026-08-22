@@ -18,7 +18,7 @@ export type CreateTaskInput = {
 };
 
 createIpcHandler(
-  "tasks:create",
+  "createTask",
   ({
     title,
     description,

@@ -36,7 +36,7 @@ export const useCreateTagGroup = (): UseCreateTagGroupResponse => {
   const mutationFn = async ({
     createTagGroupData,
   }: CreateTagGroupProps): Promise<TagGroup> => {
-    const response = await window.api.createTagGroup({
+    const response = await bindings.createTagGroup({
       title: createTagGroupData.title,
       pocketbookId: pocketbookId ?? null,
       userId: user?.id ?? null,

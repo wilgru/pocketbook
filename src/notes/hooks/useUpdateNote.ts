@@ -25,7 +25,7 @@ export const useUpdateNote = (): UseUpdateNoteResponse => {
     updateNoteData,
   }: UpdateNoteProps): Promise<Note | undefined> => {
     const tagIds = updateNoteData.tags.map((tag) => tag.id);
-    const response = await window.api.updateNote({
+    const response = await bindings.updateNote({
       noteId,
       title: updateNoteData.title,
       content: updateNoteData.content,

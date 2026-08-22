@@ -6,7 +6,7 @@ import type { TaskSchema } from "src/tasks/tasks.schema";
 
 export type GetTaskInput = { taskId: string };
 
-createIpcHandler("tasks:getOne", ({ taskId }: GetTaskInput): TaskSchema => {
+createIpcHandler("getTask", ({ taskId }: GetTaskInput): TaskSchema => {
   const row = db.select().from(tasks).where(eq(tasks.id, taskId)).get();
 
   if (!row) {

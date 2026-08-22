@@ -16,7 +16,7 @@ export type GetNotesResult = {
 };
 
 createIpcHandler(
-  "notes:getAll",
+  "getNotes",
   ({
     pocketbookId,
     isBookmarked,

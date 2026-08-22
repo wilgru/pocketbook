@@ -42,10 +42,10 @@ export const useGetPocketbookContentCounts =
         tasksResponse,
         commentsResponse,
       ] = await Promise.all([
-        window.api.getNotes({ pocketbookId }),
-        window.api.getNotes({ pocketbookId, isBookmarked: true }),
-        window.api.getTasks({ pocketbookId }),
-        window.api.getComments({ pocketbookId }),
+        bindings.getNotes({ pocketbookId }),
+        bindings.getNotes({ pocketbookId, isBookmarked: true }),
+        bindings.getTasks({ pocketbookId }),
+        bindings.getComments({ pocketbookId }),
       ]);
 
       if (!notesResponse.success) throw new Error(notesResponse.error);

@@ -18,7 +18,7 @@ export type GetDatesWithCommentResult = {
 };
 
 createIpcHandler(
-  "comments:getDatesWithComment",
+  "getDatesWithComments",
   ({ pocketbookId }: GetDatesWithCommentInput): GetDatesWithCommentResult => {
     const rows = db
       .select({ created: comments.created })

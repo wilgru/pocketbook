@@ -30,7 +30,7 @@ export const useCreateTag = (): UseCreateTagResponse => {
   const mutationFn = async ({
     createTagData,
   }: CreateTagProps): Promise<Tag> => {
-    const response = await window.api.createTag({
+    const response = await bindings.createTag({
       name: createTagData.name,
       colour: createTagData.colour.name,
       icon: createTagData.icon,
@@ -41,7 +41,7 @@ export const useCreateTag = (): UseCreateTagResponse => {
     });
     if (!response.success) throw new Error(response.error);
 
-    const updateResponse = await window.api.updateTag({
+    const updateResponse = await bindings.updateTag({
       tagId: response.data.id,
       name: createTagData.name,
       colour: createTagData.colour.name,

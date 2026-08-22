@@ -24,7 +24,7 @@ export const useUpdateTagGroup = (): UseUpdateTagGroupResponse => {
     tagGroupId,
     updateTagGroupData,
   }: UpdateTagGroupProps): Promise<TagGroup | undefined> => {
-    const response = await window.api.updateTagGroup({
+    const response = await bindings.updateTagGroup({
       tagGroupId,
       title: updateTagGroupData.title,
     });

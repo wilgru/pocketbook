@@ -23,7 +23,7 @@ export const useGetDatesWithComments = (): UseGetDatesWithCommentsResponse => {
       return [];
     }
 
-    const response = await window.api.getComments({ pocketbookId });
+    const response = await bindings.getComments({ pocketbookId });
     if (!response.success) throw new Error(response.error);
 
     const uniqueDates = new Map<string, string>();

@@ -1,28 +1,30 @@
-import { ipcMain } from "electron";
-import log from "electron-log";
+/**
+ * Registry of backend handlers exposed to the webview.
+ *
+ * Handler modules call `createIpcHandler` for its side effect of registering
+ * themselves here. The desktop entrypoint then imports those modules and binds
+ * every entry onto its window (see `desktop/registerBindings.ts`).
+ *
+ * This module is deliberately free of both Electron and Deno APIs so it can be
+ * type-checked by the renderer's `tsc` pass as well as by Deno.
+ */
+
+export type RegisteredHandler = (input: never) => unknown;
+
+const handlers = new Map<string, RegisteredHandler>();
 
 export const createIpcHandler = <Input, Output>(
-  channel: string,
+  name: string,
   handler: (input: Input) => Output,
-) => {
-  ipcMain.handle(channel, (_event, ...args) => {
-    try {
-      const result = handler(...(args as [Input]));
+): void => {
+  if (handlers.has(name)) {
+    throw new Error(`A handler named "${name}" is already registered.`);
+  }
 
-      log.info(
-        `Handled IPC channel "${channel}" with input:`,
-        args,
-        "and result:",
-        result,
-      );
-      return { success: true, data: result };
-    } catch (error) {
-      log.error(`Error in IPC handler for channel "${channel}":`, error);
-
-      return {
-        success: false,
-        error: (error as Error).message || "An unknown error occurred",
-      };
-    }
-  });
+  handlers.set(name, handler as RegisteredHandler);
 };
+
+export const getRegisteredHandlers = (): ReadonlyMap<
+  string,
+  RegisteredHandler
+> => handlers;

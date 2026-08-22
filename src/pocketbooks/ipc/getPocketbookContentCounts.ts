@@ -17,7 +17,7 @@ export type GetPocketbookContentCountsResult = {
 };
 
 createIpcHandler(
-  "pocketbooks:getContentCounts",
+  "getPocketbookContentCounts",
   ({
     pocketbookId,
   }: GetPocketbookContentCountsInput): GetPocketbookContentCountsResult => {

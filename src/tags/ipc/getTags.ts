@@ -14,7 +14,7 @@ export type GetTagsResult = {
 };
 
 createIpcHandler(
-  "tags:getAll",
+  "getTags",
   ({ pocketbookId }: GetTagsInput): GetTagsResult => {
     const tagRows = db
       .select()

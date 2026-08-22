@@ -13,7 +13,7 @@ export type UpdateCommentInput = {
 };
 
 createIpcHandler(
-  "comments:update",
+  "updateComment",
   ({
     commentId,
     content,

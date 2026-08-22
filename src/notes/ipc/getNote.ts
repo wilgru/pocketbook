@@ -11,7 +11,7 @@ export type GetNoteResult = {
   tagIds: string[];
 };
 
-createIpcHandler("notes:getOne", ({ noteId }: GetNoteInput): GetNoteResult => {
+createIpcHandler("getNote", ({ noteId }: GetNoteInput): GetNoteResult => {
   const row = db.select().from(notes).where(eq(notes.id, noteId)).get();
 
   if (!row) {

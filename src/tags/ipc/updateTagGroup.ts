@@ -10,7 +10,7 @@ export type UpdateTagGroupInput = {
 };
 
 createIpcHandler(
-  "tagGroups:update",
+  "updateTagGroup",
   ({ tagGroupId, title }: UpdateTagGroupInput): TagGroupSchema => {
     const now = new Date().toISOString();
 
