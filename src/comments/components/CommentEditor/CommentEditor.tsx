@@ -21,7 +21,7 @@ import type { Note } from "src/notes/Note.type";
 type CommentEditorProps = {
   comment: Partial<Comment>;
   colour?: Colour;
-  showNotes?: boolean;
+  thisNoteId?: string;
   autoFocus?: boolean;
   showTimeOnly?: boolean;
   hideBottomLine?: boolean;
@@ -42,7 +42,7 @@ const getInitialComment = (comment: Partial<Comment>): Partial<Comment> => ({
 export const CommentEditor = ({
   comment,
   colour,
-  showNotes = true,
+  thisNoteId,
   autoFocus = false,
   hideBottomLine = false,
   showTimeOnly = false,
@@ -127,29 +127,38 @@ export const CommentEditor = ({
       : getRelativeDateTitle(editedComment.created)
     : null;
 
+  const notes = editedComment.notes ?? [];
+  const hasThisNote = notes.some((n) => n.id === thisNoteId);
+  const sortedNotes = hasThisNote
+    ? [...notes].sort((a, b) => (a.id === thisNoteId ? -1 : b.id === thisNoteId ? 1 : 0))
+    : notes;
+
+  const headlinePrefix = notes.length === 0 ? "Left a general comment " : "Commented on ";
+
+  const iconName = editedComment.isWaypoint ? "flagBannerFold" : "chatCenteredText";
+  const iconColour = editedComment.isWaypoint && commentColour ? commentColour : colours.grey;
+
+  const editorBackground = !isEditing && commentColour
+    ? cn(commentColour.secondary.background, "p-2")
+    : "bg-white";
+
   return (
     <UpdateTimelineItem
-      iconName={
-        editedComment.isWaypoint ? "flagBannerFold" : "chatCenteredText"
-      }
-      iconColour={
-        editedComment.isWaypoint && commentColour ? commentColour : colours.grey
-      }
+      iconName={iconName}
+      iconColour={iconColour}
       strongIcon={editedComment.isWaypoint}
       dateText={dateStr}
       hideBottomLine={hideBottomLine}
       headline={
         <p className="text-slate-500">
-          {editedComment.notes?.length
-            ? "Commented on "
-            : "Left a general comment "}
+          {headlinePrefix}
 
-          {showNotes &&
-            editedComment.notes &&
-            editedComment.notes.map((note, index) => (
-              <Fragment key={note.id}>
+          {sortedNotes.map((note, index) => (
+            <Fragment key={note.id}>
+              {note.id === thisNoteId ? (
+                <span className="text-slate-500">this note</span>
+              ) : (
                 <Link
-                  key={note.id}
                   to="/$pocketbookId/notes"
                   params={{ pocketbookId: pocketbookId ?? "" }}
                   search={{ noteId: note.id }}
@@ -157,25 +166,16 @@ export const CommentEditor = ({
                 >
                   {note.title ?? "Untitled Note"}
                 </Link>
+              )}
 
-                {index < (editedComment.notes?.length ?? 0) - 2 && ", "}
-                {index === (editedComment.notes?.length ?? 0) - 2 && " and "}
-              </Fragment>
-            ))}
+              {index < sortedNotes.length - 2 && ", "}
+              {index === sortedNotes.length - 2 && " and "}
+            </Fragment>
+          ))}
         </p>
       }
     >
-      <div
-        className={cn(
-          "rounded-xl p-2 flex flex-col border drop-shadow-sm gap-2",
-          !isEditing && commentColour
-            ? [
-                commentColour.secondary.background,
-                commentColour.secondary.border,
-              ]
-            : "bg-white border-gray-200",
-        )}
-      >
+      <div className={cn("rounded-xl flex flex-col gap-2 pl-1", editorBackground)}>
         <RichTextEditor
           size="md"
           value={editedComment.content}

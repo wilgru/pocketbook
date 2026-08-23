@@ -318,7 +318,7 @@ const NoteEditor = ({
               <CommentEditor
                 comment={{ notes: [editedNote], tint: null }}
                 colour={colour}
-                showNotes={false}
+                thisNoteId={editedNote.id}
                 autoFocus={true}
                 onCancel={() => setShowNewComment(false)}
                 onCreated={() => setShowNewComment(false)}
@@ -334,7 +334,7 @@ const NoteEditor = ({
                   key={comment.id}
                   comment={comment}
                   colour={colour}
-                  showNotes={false}
+                  thisNoteId={editedNote.id}
                   hideBottomLine={comment === comments[0]}
                 />
               ))}

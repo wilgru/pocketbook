@@ -27,19 +27,19 @@ export const UpdateTimelineItem = ({
   return (
     <div className="w-full flex gap-2 items-start">
       <div className="flex flex-col items-center self-stretch">
-        <div className="w-px h-3 bg-slate-200" />
+        <div className="w-px h-2.5 bg-slate-200" />
 
         <div
           className={cn(
             "rounded-full p-1 border",
             strongIcon
               ? [iconColour.background, iconColour.border]
-              : "bg-white border-slate-200",
+              : "bg-white border-white",
           )}
         >
           <Icon
             iconName={iconName}
-            size="xs"
+            size="sm"
             className={cn(
               "shrink-0",
               strongIcon ? "fill-white" : iconColour.primary.text,

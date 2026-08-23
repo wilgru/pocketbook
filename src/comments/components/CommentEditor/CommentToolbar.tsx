@@ -111,7 +111,7 @@ export const CommentToolbar = ({
 
   return (
     <div
-      className="flex flex-row flex-wrap items-center gap-1.5 border-t border-slate-200 pt-2 mt-2"
+      className="flex flex-row flex-wrap items-center gap-1.5 border-t border-slate-200 pt-2"
       onMouseDown={(event) => {
         const target = event.target as HTMLElement | null;
 
