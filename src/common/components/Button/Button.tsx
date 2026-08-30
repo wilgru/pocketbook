@@ -14,10 +14,11 @@ type ButtonProps = {
   type?: "button" | "submit";
   className?: string;
   disabled?: boolean;
-  onClick?: () => void;
+  active?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   iconName?: IconName | null;
   ariaLabel?: string;
-};
+} & Omit<React.ComponentPropsWithoutRef<"button">, "color">;
 
 const buttonVariants = cva(
   [
@@ -146,13 +147,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       colour = colours.orange,
       className,
       disabled = false,
+      active = false,
       onClick,
       iconName,
       ariaLabel,
+      ...rest
     },
     ref,
   ) => {
     const [isButtonHovered, setIsButtonHovered] = useState(false);
+    const isActive = isButtonHovered || active;
 
     const content =
       iconName && children
@@ -179,12 +183,28 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === "ghost" &&
             !disabled &&
             colour.secondary.backgroundHovered,
+          variant === "ghost" &&
+            !disabled &&
+            active &&
+            colour.secondary.backgroundHovered.replace("hover:", ""),
+          variant === "ghost" &&
+            !disabled &&
+            active &&
+            colour.secondary.textHovered.replace("hover:", ""),
           variant === "ghost-strong" &&
             !disabled &&
             colour.secondary.textHovered,
           variant === "ghost-strong" &&
             !disabled &&
             colour.secondary.backgroundHovered,
+          variant === "ghost-strong" &&
+            !disabled &&
+            active &&
+            colour.secondary.backgroundHovered.replace("hover:", ""),
+          variant === "ghost-strong" &&
+            !disabled &&
+            active &&
+            colour.secondary.textHovered.replace("hover:", ""),
           className,
         )}
         disabled={disabled}
@@ -192,12 +212,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         onMouseEnter={() => setIsButtonHovered(true)}
         onMouseLeave={() => setIsButtonHovered(false)}
         onClick={onClick}
+        {...rest}
       >
         <Icon
           iconName={iconName ?? null}
           size={size}
-          className={cn(isButtonHovered && colour.primary.text)}
-          weight={isButtonHovered ? "fill" : "regular"}
+          className={cn(isActive && colour.primary.text)}
+          weight={isActive ? "fill" : "regular"}
         />
 
         {children}

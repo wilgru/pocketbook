@@ -1,12 +1,16 @@
-import { Check } from "@phosphor-icons/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import requireClientAuth from "src/Users/utils/requireClientAuth";
 import { Button } from "src/common/components/Button/Button";
+import {
+  Dropdown,
+  DropdownLabel,
+  DropdownRadioGroup,
+  DropdownRadioItem,
+} from "src/common/components/Dropdown/Dropdown";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
-import { cn } from "src/common/utils/cn";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { sortNotes } from "src/common/utils/sortNotes";
 import { NotesLayout } from "src/notes/components/NotesLayout/NotesLayout";
@@ -42,6 +46,7 @@ export default function TagComponent() {
   const { updateTag } = useUpdateTag();
   const { currentPocketbook } = useCurrentPocketbook();
   const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false);
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   const sortBy = tag?.sortBy ?? "created";
   const sortDirection = tag?.sortDirection ?? "desc";
@@ -122,181 +127,101 @@ export default function TagComponent() {
               <EditTagModal tag={tag} onDeleted={onDeleteTag} />
             </Dialog.Root>
           </div>
-          <DropdownMenu.Root>
+          <DropdownMenu.Root onOpenChange={setIsSortDropdownOpen}>
             <DropdownMenu.Trigger asChild>
-              <div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  colour={tag.colour}
-                  iconName="arrowsDownUp"
-                />
-              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                colour={tag.colour}
+                iconName="arrowsDownUp"
+                active={isSortDropdownOpen}
+              />
             </DropdownMenu.Trigger>
 
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                className="flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 w-40 drop-shadow-sm"
-                sideOffset={2}
-                align="start"
+            <Dropdown className="w-40" sideOffset={2} align="start">
+              <DropdownRadioGroup
+                value={tag.groupBy || "null"}
+                onValueChange={(value) => {
+                  if (
+                    value === "null" ||
+                    value === "created" ||
+                    value === "tag"
+                  ) {
+                    updateTag({
+                      tagId: tag.id,
+                      updateTagData: {
+                        ...tag,
+                        groupBy: value === "null" ? null : value,
+                      },
+                    });
+                  }
+                }}
               >
-                <DropdownMenu.RadioGroup
-                  value={tag.groupBy || "null"}
-                  onValueChange={(value) => {
-                    if (
-                      value === "null" ||
-                      value === "created" ||
-                      value === "tag"
-                    ) {
-                      updateTag({
-                        tagId: tag.id,
-                        updateTagData: {
-                          ...tag,
-                          groupBy: value === "null" ? null : value,
-                        },
-                      });
-                    }
-                  }}
-                >
-                  <DropdownMenu.Label className="pl-2 text-xs text-slate-400">
-                    Group by
-                  </DropdownMenu.Label>
+                <DropdownLabel>Group by</DropdownLabel>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.primary.background}`,
-                      `data-[highlighted]:${tag.colour.primary.text}`,
-                    )}
-                    value="null"
-                  >
-                    None
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
+                <DropdownRadioItem colour={tag.colour} value="null">
+                  None
+                </DropdownRadioItem>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.primary.background}`,
-                      `data-[highlighted]:${tag.colour.primary.text}`,
-                    )}
-                    value="created"
-                  >
-                    Created
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.primary.background}`,
-                      `data-[highlighted]:${tag.colour.primary.text}`,
-                    )}
-                    value="tag"
-                  >
-                    Tag
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                </DropdownMenu.RadioGroup>
+                <DropdownRadioItem colour={tag.colour} value="created">
+                  Created
+                </DropdownRadioItem>
 
-                <DropdownMenu.RadioGroup
-                  value={tag.sortBy}
-                  onValueChange={(value) => {
-                    if (value === "created" || value === "alphabetical") {
-                      updateTag({
-                        tagId: tag.id,
-                        updateTagData: {
-                          ...tag,
-                          sortBy: value,
-                        },
-                      });
-                    }
-                  }}
-                >
-                  <DropdownMenu.Label className="pl-2 text-xs text-slate-400">
-                    Sort by
-                  </DropdownMenu.Label>
+                <DropdownRadioItem colour={tag.colour} value="tag">
+                  Tag
+                </DropdownRadioItem>
+              </DropdownRadioGroup>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.primary.background}`,
-                      `data-[highlighted]:${tag.colour.primary.text}`,
-                    )}
-                    value="created"
-                  >
-                    Created
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.primary.background}`,
-                      `data-[highlighted]:${tag.colour.primary.text}`,
-                    )}
-                    value="alphabetical"
-                  >
-                    Alphabetical
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                </DropdownMenu.RadioGroup>
+              <DropdownRadioGroup
+                value={tag.sortBy}
+                onValueChange={(value) => {
+                  if (value === "created" || value === "alphabetical") {
+                    updateTag({
+                      tagId: tag.id,
+                      updateTagData: {
+                        ...tag,
+                        sortBy: value,
+                      },
+                    });
+                  }
+                }}
+              >
+                <DropdownLabel>Sort by</DropdownLabel>
 
-                <DropdownMenu.RadioGroup
-                  value={tag.sortDirection}
-                  onValueChange={(value) => {
-                    if (value === "asc" || value === "desc") {
-                      updateTag({
-                        tagId: tag.id,
-                        updateTagData: {
-                          ...tag,
-                          sortDirection: value,
-                        },
-                      });
-                    }
-                  }}
-                >
-                  <DropdownMenu.Label className="pl-2 text-xs text-slate-400">
-                    Sort direction
-                  </DropdownMenu.Label>
+                <DropdownRadioItem colour={tag.colour} value="created">
+                  Created
+                </DropdownRadioItem>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.primary.background}`,
-                      `data-[highlighted]:${tag.colour.primary.text}`,
-                    )}
-                    value="asc"
-                  >
-                    Ascending
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${tag.colour.primary.background}`,
-                      `data-[highlighted]:${tag.colour.primary.text}`,
-                    )}
-                    value="desc"
-                  >
-                    Descending
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                </DropdownMenu.RadioGroup>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
+                <DropdownRadioItem colour={tag.colour} value="alphabetical">
+                  Alphabetical
+                </DropdownRadioItem>
+              </DropdownRadioGroup>
+
+              <DropdownRadioGroup
+                value={tag.sortDirection}
+                onValueChange={(value) => {
+                  if (value === "asc" || value === "desc") {
+                    updateTag({
+                      tagId: tag.id,
+                      updateTagData: {
+                        ...tag,
+                        sortDirection: value,
+                      },
+                    });
+                  }
+                }}
+              >
+                <DropdownLabel>Sort direction</DropdownLabel>
+
+                <DropdownRadioItem colour={tag.colour} value="asc">
+                  Ascending
+                </DropdownRadioItem>
+
+                <DropdownRadioItem colour={tag.colour} value="desc">
+                  Descending
+                </DropdownRadioItem>
+              </DropdownRadioGroup>
+            </Dropdown>
           </DropdownMenu.Root>
           <Button
             variant="ghost"

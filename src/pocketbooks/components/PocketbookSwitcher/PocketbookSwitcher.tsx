@@ -1,7 +1,14 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownLabel,
+  DropdownSeparator,
+} from "src/common/components/Dropdown/Dropdown";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
@@ -73,71 +80,67 @@ export const PocketbookSwitcher = ({
           </div>
         </div>
 
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            sideOffset={4}
-            alignOffset={-7}
-            onInteractOutside={() => setIsOpen(false)}
-            onCloseAutoFocus={() => setIsOpen(false)}
-            onEscapeKeyDown={() => setIsOpen(false)}
-            align="start"
-            className="w-56 flex flex-col grow gap-2 bg-white border border-slate-200 rounded-2xl p-2 drop-shadow-sm"
-          >
-            <DropdownMenu.Label className="pl-2 text-xs text-slate-400">
-              Pocketbooks
-            </DropdownMenu.Label>
+        <Dropdown
+          className="w-56 grow"
+          sideOffset={4}
+          alignOffset={-7}
+          onInteractOutside={() => setIsOpen(false)}
+          onCloseAutoFocus={() => setIsOpen(false)}
+          onEscapeKeyDown={() => setIsOpen(false)}
+          align="start"
+        >
+          <DropdownLabel>Pocketbooks</DropdownLabel>
 
-            {pocketbooks.map((pocketbook) => (
-              <DropdownMenu.Item key={pocketbook.id}>
-                <Link
-                  to="/$pocketbookId/notes"
-                  params={{
-                    pocketbookId: pocketbook.id,
-                  }}
-                  search={{ noteId: null }}
-                  onClick={() => {
-                    localStorage.setItem("lastUsedPocketbookId", pocketbook.id);
-                    setIsOpen(false);
-                  }}
-                  className={cn(
-                    "flex items-center gap-2 leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer transition-colors",
-                    currentPocketbook.id === pocketbook.id
-                      ? pocketbook.colour.primary.background
-                      : pocketbook.colour.secondary.backgroundHovered,
-                  )}
-                >
-                  <Icon
-                    iconName={pocketbook.icon}
-                    className={cn(
-                      "w-8 h-8 p-1.5 rounded-md",
-                      pocketbook.colour.primary.text,
-                      pocketbook.colour.primary.background,
-                    )}
-                  />
-
-                  <div className="flex flex-col items-start">
-                    <h2 className="text-sm">{pocketbook.title}</h2>
-                    <p className="text-xs text-slate-400">
-                      {getPocketbookSummary(pocketbook)}
-                    </p>
-                  </div>
-                </Link>
-              </DropdownMenu.Item>
-            ))}
-
-            <DropdownMenu.Separator className="my-1 border-t border-slate-200" />
-
-            <DropdownMenu.Item className="flex items-center gap-2 leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer data-highlighted:bg-orange-100 data-highlighted:text-orange-500 transition-colors">
+          {pocketbooks.map((pocketbook) => (
+            <DropdownItem key={pocketbook.id}>
               <Link
-                to={"/create-pocketbook"}
-                className="flex items-center gap-2"
+                to="/$pocketbookId/notes"
+                params={{
+                  pocketbookId: pocketbook.id,
+                }}
+                search={{ noteId: null }}
+                onClick={() => {
+                  localStorage.setItem("lastUsedPocketbookId", pocketbook.id);
+                  setIsOpen(false);
+                }}
+                className={cn(
+                  "flex items-center gap-2 leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer transition-colors",
+                  currentPocketbook.id === pocketbook.id
+                    ? pocketbook.colour.primary.background
+                    : pocketbook.colour.secondary.backgroundHovered,
+                )}
               >
-                <Icon iconName="plus" size="sm" />
-                Create new pocketbook
+                <Icon
+                  iconName={pocketbook.icon}
+                  className={cn(
+                    "w-8 h-8 p-1.5 rounded-md",
+                    pocketbook.colour.primary.text,
+                    pocketbook.colour.primary.background,
+                  )}
+                />
+
+                <div className="flex flex-col items-start">
+                  <h2 className="text-sm">{pocketbook.title}</h2>
+                  <p className="text-xs text-slate-400">
+                    {getPocketbookSummary(pocketbook)}
+                  </p>
+                </div>
               </Link>
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
+            </DropdownItem>
+          ))}
+
+          <DropdownSeparator />
+
+          <DropdownItem colour={colours.orange} className="flex items-center gap-2">
+            <Link
+              to={"/create-pocketbook"}
+              className="flex items-center gap-2"
+            >
+              <Icon iconName="plus" size="sm" />
+              Create new pocketbook
+            </Link>
+          </DropdownItem>
+        </Dropdown>
       </DropdownMenu.Root>
 
       <Button

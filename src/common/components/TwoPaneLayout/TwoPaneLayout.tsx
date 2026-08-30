@@ -28,8 +28,8 @@ export const TwoPaneLayout = ({
 
           <div
             className={cn(
-              "min-h-0 flex-1 flex flex-col gap-3 px-3 pb-6 overflow-y-scroll",
-              (!sidebarTopContent || showSidebarTopContentDivider) && "pt-3",
+              "min-h-0 flex-1 flex flex-col gap-3 px-2 pb-6 overflow-y-scroll",
+              (!sidebarTopContent || showSidebarTopContentDivider) && "pt-2",
             )}
           >
             {sidebar}

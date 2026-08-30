@@ -1,12 +1,16 @@
-import { Check } from "@phosphor-icons/react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import requireClientAuth from "src/Users/utils/requireClientAuth";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
+import {
+  Dropdown,
+  DropdownLabel,
+  DropdownRadioGroup,
+  DropdownRadioItem,
+} from "src/common/components/Dropdown/Dropdown";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
-import { cn } from "src/common/utils/cn";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { sortNotes } from "src/common/utils/sortNotes";
 import { NotesLayout } from "src/notes/components/NotesLayout/NotesLayout";
@@ -35,6 +39,7 @@ function RouteComponent() {
   const { currentPocketbook } = useCurrentPocketbook();
   const { createNote } = useCreateNote();
   const navigate = useNavigate();
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   const { notes } = useGetNotes({
     isBookmarked: true,
@@ -91,181 +96,101 @@ function RouteComponent() {
         title={"Bookmarked"}
       >
         <>
-          <DropdownMenu.Root>
+          <DropdownMenu.Root onOpenChange={setIsSortDropdownOpen}>
             <DropdownMenu.Trigger asChild>
-              <div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  colour={colours.red}
-                  iconName="arrowsDownUp"
-                />
-              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                colour={colours.red}
+                iconName="arrowsDownUp"
+                active={isSortDropdownOpen}
+              />
             </DropdownMenu.Trigger>
 
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                className="flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 w-40 drop-shadow-sm"
-                sideOffset={2}
-                align="start"
+            <Dropdown className="w-40" sideOffset={2} align="start">
+              <DropdownRadioGroup
+                value={groupBy || "null"}
+                onValueChange={(value) => {
+                  if (
+                    value === "null" ||
+                    value === "created" ||
+                    value === "tag"
+                  ) {
+                    updatePocketbook({
+                      pocketbookId: currentPocketbook.id,
+                      updatePocketbookData: {
+                        ...currentPocketbook,
+                        bookmarkedGroupBy: value === "null" ? null : value,
+                      },
+                    });
+                  }
+                }}
               >
-                <DropdownMenu.RadioGroup
-                  value={groupBy || "null"}
-                  onValueChange={(value) => {
-                    if (
-                      value === "null" ||
-                      value === "created" ||
-                      value === "tag"
-                    ) {
-                      updatePocketbook({
-                        pocketbookId: currentPocketbook.id,
-                        updatePocketbookData: {
-                          ...currentPocketbook,
-                          bookmarkedGroupBy: value === "null" ? null : value,
-                        },
-                      });
-                    }
-                  }}
-                >
-                  <DropdownMenu.Label className="pl-2 text-xs text-slate-400">
-                    Group by
-                  </DropdownMenu.Label>
+                <DropdownLabel>Group by</DropdownLabel>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.primary.background}`,
-                      `data-[highlighted]:${colours.red.primary.text}`,
-                    )}
-                    value="null"
-                  >
-                    None
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
+                <DropdownRadioItem colour={colours.red} value="null">
+                  None
+                </DropdownRadioItem>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.primary.background}`,
-                      `data-[highlighted]:${colours.red.primary.text}`,
-                    )}
-                    value="created"
-                  >
-                    Created
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.primary.background}`,
-                      `data-[highlighted]:${colours.red.primary.text}`,
-                    )}
-                    value="tag"
-                  >
-                    Tag
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                </DropdownMenu.RadioGroup>
+                <DropdownRadioItem colour={colours.red} value="created">
+                  Created
+                </DropdownRadioItem>
 
-                <DropdownMenu.RadioGroup
-                  value={sortBy}
-                  onValueChange={(value) => {
-                    if (value === "created" || value === "alphabetical") {
-                      updatePocketbook({
-                        pocketbookId: currentPocketbook.id,
-                        updatePocketbookData: {
-                          ...currentPocketbook,
-                          bookmarkedSortBy: value,
-                        },
-                      });
-                    }
-                  }}
-                >
-                  <DropdownMenu.Label className="pl-2 text-xs text-slate-400">
-                    Sort by
-                  </DropdownMenu.Label>
+                <DropdownRadioItem colour={colours.red} value="tag">
+                  Tag
+                </DropdownRadioItem>
+              </DropdownRadioGroup>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.primary.background}`,
-                      `data-[highlighted]:${colours.red.primary.text}`,
-                    )}
-                    value="created"
-                  >
-                    Created
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.primary.background}`,
-                      `data-[highlighted]:${colours.red.primary.text}`,
-                    )}
-                    value="alphabetical"
-                  >
-                    Alphabetical
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                </DropdownMenu.RadioGroup>
+              <DropdownRadioGroup
+                value={sortBy}
+                onValueChange={(value) => {
+                  if (value === "created" || value === "alphabetical") {
+                    updatePocketbook({
+                      pocketbookId: currentPocketbook.id,
+                      updatePocketbookData: {
+                        ...currentPocketbook,
+                        bookmarkedSortBy: value,
+                      },
+                    });
+                  }
+                }}
+              >
+                <DropdownLabel>Sort by</DropdownLabel>
 
-                <DropdownMenu.RadioGroup
-                  value={sortDirection}
-                  onValueChange={(value) => {
-                    if (value === "asc" || value === "desc") {
-                      updatePocketbook({
-                        pocketbookId: currentPocketbook.id,
-                        updatePocketbookData: {
-                          ...currentPocketbook,
-                          bookmarkedSortDirection: value,
-                        },
-                      });
-                    }
-                  }}
-                >
-                  <DropdownMenu.Label className="pl-2 text-xs text-slate-400">
-                    Sort direction
-                  </DropdownMenu.Label>
+                <DropdownRadioItem colour={colours.red} value="created">
+                  Created
+                </DropdownRadioItem>
 
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.primary.background}`,
-                      `data-[highlighted]:${colours.red.primary.text}`,
-                    )}
-                    value="asc"
-                  >
-                    Ascending
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    className={cn(
-                      "leading-none text-sm p-2 flex justify-between items-center outline-hidden rounded-xl cursor-pointer transition-colors",
-                      `data-[highlighted]:${colours.red.primary.background}`,
-                      `data-[highlighted]:${colours.red.primary.text}`,
-                    )}
-                    value="desc"
-                  >
-                    Descending
-                    <DropdownMenu.ItemIndicator>
-                      <Check />
-                    </DropdownMenu.ItemIndicator>
-                  </DropdownMenu.RadioItem>
-                </DropdownMenu.RadioGroup>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
+                <DropdownRadioItem colour={colours.red} value="alphabetical">
+                  Alphabetical
+                </DropdownRadioItem>
+              </DropdownRadioGroup>
+
+              <DropdownRadioGroup
+                value={sortDirection}
+                onValueChange={(value) => {
+                  if (value === "asc" || value === "desc") {
+                    updatePocketbook({
+                      pocketbookId: currentPocketbook.id,
+                      updatePocketbookData: {
+                        ...currentPocketbook,
+                        bookmarkedSortDirection: value,
+                      },
+                    });
+                  }
+                }}
+              >
+                <DropdownLabel>Sort direction</DropdownLabel>
+
+                <DropdownRadioItem colour={colours.red} value="asc">
+                  Ascending
+                </DropdownRadioItem>
+
+                <DropdownRadioItem colour={colours.red} value="desc">
+                  Descending
+                </DropdownRadioItem>
+              </DropdownRadioGroup>
+            </Dropdown>
           </DropdownMenu.Root>
           <Button
             variant="ghost"

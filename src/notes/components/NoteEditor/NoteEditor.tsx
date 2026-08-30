@@ -1,4 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { Dropdown, DropdownItem } from "src/common/components/Dropdown/Dropdown";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
@@ -51,6 +52,7 @@ const NoteEditor = ({
   const [showNewComment, setShowNewComment] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
   const [showCompletedTasks, setShowCompletedTasks] = useState(false);
+  const [isActionsDropdownOpen, setIsActionsDropdownOpen] = useState(false);
   const [editorContext, setEditorContext] = useState<LexicalEditor | null>(
     null,
   );
@@ -198,32 +200,32 @@ const NoteEditor = ({
               {editedNote.created.format("D MMMM YYYY, hh:mm a")}
             </p>
 
-            <DropdownMenu.Root>
+            <DropdownMenu.Root onOpenChange={setIsActionsDropdownOpen}>
               <DropdownMenu.Trigger
                 className={cn(
                   "ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5",
                   colour.secondary.textHovered,
                   colour.secondary.backgroundHovered,
+                  isActionsDropdownOpen && colour.secondary.textHovered.replace("hover:", ""),
+                  isActionsDropdownOpen && colour.secondary.backgroundHovered.replace("hover:", ""),
                 )}
                 aria-label="Open note actions"
               >
-                <Icon iconName="dotsThree" size="xs" />
+                <Icon
+                  iconName="dotsThree"
+                  size="xs"
+                  className={cn(isActionsDropdownOpen && colour.primary.text)}
+                  weight={isActionsDropdownOpen ? "fill" : "regular"}
+                />
               </DropdownMenu.Trigger>
-              <DropdownMenu.Portal>
-                <DropdownMenu.Content
-                  className="w-40 flex flex-col gap-2 bg-white border border-slate-200 rounded-2xl p-2 drop-shadow-sm"
-                  side="bottom"
-                  align="start"
-                  sideOffset={6}
+              <Dropdown className="w-40" side="bottom" align="start" sideOffset={6}>
+                <DropdownItem
+                  onSelect={() => void onDeleteNote()}
+                  colour={colours.red}
                 >
-                  <DropdownMenu.Item
-                    onSelect={() => void onDeleteNote()}
-                    className="leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer transition-colors hover:bg-red-100"
-                  >
-                    Delete
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Portal>
+                  Delete
+                </DropdownItem>
+              </Dropdown>
             </DropdownMenu.Root>
           </div>
 
