@@ -21,15 +21,16 @@ export const useGetPocketbooks = (): UseGetPocketbooksResponse => {
   };
 
   // TODO: consider time caching for better performance
-  const { data, isPending } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["pocketbooks.list"],
     queryFn,
+    retry: 1,
     // staleTime: 2 * 60 * 1000,
     // gcTime: 2 * 60 * 1000,
   });
 
   return {
     pocketbooks: data?.pocketbooks ?? [],
-    isFetching: isPending,
+    isFetching: isLoading,
   };
 };
