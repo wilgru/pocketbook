@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateTaskServerFn } from "src/tasks/serverFunctions/updateTask";
 import { mapTask } from "src/tasks/utils/mapTask";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Task } from "src/tasks/Task.type";
@@ -26,42 +27,33 @@ export const useUpdateTask = (): UseUpdateTaskResponse => {
     updateTaskData,
     includeSortOrder = true,
   }: UpdateTaskProps): Promise<Task | undefined> => {
-    const response = await window.api.updateTask({
-      taskId,
-      title: updateTaskData.title,
-      description: updateTaskData.description,
-      link: updateTaskData.link,
-      links: JSON.stringify(updateTaskData.links),
-      isImportant: updateTaskData.isImportant,
-      noteId: updateTaskData.note?.id ?? null,
-      dueDate: updateTaskData.dueDate?.toISOString() ?? null,
-      completedDate: updateTaskData.completedDate?.toISOString() ?? null,
-      cancelledDate: updateTaskData.cancelledDate?.toISOString() ?? null,
-      blockedComment: updateTaskData.blockedComment,
-      blockedDate: updateTaskData.blockedDate?.toISOString() ?? null,
-      sortOrder: includeSortOrder ? updateTaskData.sortOrder : undefined,
+    const data = await updateTaskServerFn({
+      data: {
+        taskId,
+        title: updateTaskData.title,
+        description: updateTaskData.description,
+        link: updateTaskData.link,
+        links: JSON.stringify(updateTaskData.links),
+        isImportant: updateTaskData.isImportant,
+        noteId: updateTaskData.note?.id ?? null,
+        dueDate: updateTaskData.dueDate?.toISOString() ?? null,
+        completedDate: updateTaskData.completedDate?.toISOString() ?? null,
+        cancelledDate: updateTaskData.cancelledDate?.toISOString() ?? null,
+        blockedComment: updateTaskData.blockedComment,
+        blockedDate: updateTaskData.blockedDate?.toISOString() ?? null,
+        sortOrder: includeSortOrder ? updateTaskData.sortOrder : undefined,
+      },
     });
-    if (!response.success) throw new Error(response.error);
 
-    return mapTask(response.data, { note: updateTaskData.note ?? null });
+    return mapTask(data, { note: updateTaskData.note ?? null });
   };
 
   const onSuccess = (data: Task | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
-    queryClient.refetchQueries({
-      queryKey: ["tasks.list"],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["tags.get"],
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: ["pocketbookContentCounts"],
-    });
+    queryClient.refetchQueries({ queryKey: ["tasks.list"] });
+    queryClient.refetchQueries({ queryKey: ["tags.get"] });
+    queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
   // TODO: consider time caching for better performance
@@ -69,8 +61,6 @@ export const useUpdateTask = (): UseUpdateTaskResponse => {
     mutationKey: ["tasks.update"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { updateTask: mutateAsync };

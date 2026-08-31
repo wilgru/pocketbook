@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "src/Users/hooks/useUser";
-import { useCurrentPocketbookId } from "../../pocketbooks/hooks/useCurrentPocketbookId";
-import { mapNote } from "../utils/mapNote";
+import { createNoteServerFn } from "src/notes/serverFunctions/createNote";
+import { mapNote } from "src/notes/utils/mapNote";
+import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Note } from "src/notes/Note.type";
 
@@ -29,19 +30,19 @@ export const useCreateNote = (): UseCreateNoteResponse => {
   const mutationFn = async ({
     createNoteData,
   }: CreateNoteProps): Promise<Note | undefined> => {
-    const response = await window.api.createNote({
-      title: createNoteData.title,
-      content: createNoteData.content,
-      isBookmarked: createNoteData.isBookmarked,
-      tagIds: createNoteData.tags.map((tag) => tag.id),
-      links: JSON.stringify(createNoteData.links),
-      pocketbookId: pocketbookId ?? null,
-      userId: user?.id ?? null,
+    const data = await createNoteServerFn({
+      data: {
+        title: createNoteData.title,
+        content: createNoteData.content,
+        isBookmarked: createNoteData.isBookmarked,
+        tagIds: createNoteData.tags.map((tag) => tag.id),
+        links: JSON.stringify(createNoteData.links),
+        pocketbookId: pocketbookId ?? null,
+        userId: user?.id ?? null,
+      },
     });
 
-    if (!response.success) throw new Error(response.error);
-
-    return mapNote(response.data, { tags: createNoteData.tags });
+    return mapNote(data, { tags: createNoteData.tags });
   };
 
   const onSuccess = (data: Note | undefined) => {
@@ -57,8 +58,6 @@ export const useCreateNote = (): UseCreateNoteResponse => {
     mutationKey: ["notes.create"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { createNote: mutateAsync };

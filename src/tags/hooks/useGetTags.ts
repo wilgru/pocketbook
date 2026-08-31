@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
 import { mapTag } from "src/tags/utils/mapTag";
 import type {
   QueryObserverResult,
@@ -18,26 +20,21 @@ export const useGetTags = (): UseGetTagsResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
 
   const queryFn = async (): Promise<Tag[]> => {
-    if (!pocketbookId) {
-      return [];
-    }
+    if (!pocketbookId) return [];
 
-    const [tagsResponse, notesResponse] = await Promise.all([
-      window.api.getTags({ pocketbookId }),
-      window.api.getNotes({ pocketbookId }),
+    const [tagsData, notesData] = await Promise.all([
+      getTagsServerFn({ data: { pocketbookId } }),
+      getNotesServerFn({ data: { pocketbookId } }),
     ]);
 
-    if (!tagsResponse.success) throw new Error(tagsResponse.error);
-    if (!notesResponse.success) throw new Error(notesResponse.error);
-
     const noteCountByTag = new Map<string, number>();
-    for (const note of notesResponse.data.notes) {
+    for (const note of notesData.notes) {
       for (const tagId of note.tagIds) {
         noteCountByTag.set(tagId, (noteCountByTag.get(tagId) ?? 0) + 1);
       }
     }
 
-    return tagsResponse.data.tags.map((tag) =>
+    return tagsData.tags.map((tag) =>
       mapTag(tag, { noteCount: noteCountByTag.get(tag.id) ?? 0 }),
     );
   };
@@ -46,8 +43,6 @@ export const useGetTags = (): UseGetTagsResponse => {
   const { data, refetch } = useQuery({
     queryKey: ["tags.list", pocketbookId],
     queryFn,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { tags: data ?? [], refetchTags: refetch };

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
 import { mapNote } from "src/notes/utils/mapNote";
 import { useGetTags } from "src/tags/hooks/useGetTags";
 import { useGetTasks } from "src/tasks/hooks/useGetTasks";
@@ -8,7 +9,8 @@ import type {
   RefetchOptions,
 } from "@tanstack/react-query";
 import type { Note } from "src/notes/Note.type";
-import type { GetNoteResult } from "src/notes/ipc/getNote";
+
+type GetNoteResult = Awaited<ReturnType<typeof getNoteServerFn>>;
 
 type UseGetNoteResponse = {
   note: Note | undefined;
@@ -26,10 +28,7 @@ export const useGetNote = ({
   const { tasks: allTasks } = useGetTasks({});
 
   const queryFn = async (): Promise<GetNoteResult> => {
-    const response = await window.api.getNote({ noteId: noteId ?? "" });
-    if (!response.success) throw new Error(response.error);
-
-    return response.data;
+    return getNoteServerFn({ data: { noteId: noteId ?? "" } });
   };
 
   const { data, refetch } = useQuery({
@@ -39,9 +38,7 @@ export const useGetNote = ({
   });
 
   const note = useMemo(() => {
-    if (!data) {
-      return undefined;
-    }
+    if (!data) return undefined;
 
     const tags = allTags.filter((tag) => data.tagIds.includes(tag.id));
     const tasks = allTasks.filter((task) => task.note?.id === data.note.id);
@@ -49,8 +46,5 @@ export const useGetNote = ({
     return mapNote(data.note, { tags, tasks });
   }, [allTags, allTasks, data]);
 
-  return {
-    note,
-    refetchNote: refetch,
-  };
+  return { note, refetchNote: refetch };
 };

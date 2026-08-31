@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateTagGroupServerFn } from "src/tags/serverFunctions/updateTagGroup";
 import { mapTagGroup } from "src/tags/utils/mapTagGroup";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { TagGroup } from "src/tags/Tag.type";
@@ -24,23 +25,16 @@ export const useUpdateTagGroup = (): UseUpdateTagGroupResponse => {
     tagGroupId,
     updateTagGroupData,
   }: UpdateTagGroupProps): Promise<TagGroup | undefined> => {
-    const response = await window.api.updateTagGroup({
-      tagGroupId,
-      title: updateTagGroupData.title,
+    const data = await updateTagGroupServerFn({
+      data: { tagGroupId, title: updateTagGroupData.title },
     });
-    if (!response.success) throw new Error(response.error);
 
-    return mapTagGroup(response.data);
+    return mapTagGroup(data);
   };
 
   const onSuccess = (data: TagGroup | undefined) => {
-    if (!data) {
-      return;
-    }
-
-    queryClient.refetchQueries({
-      queryKey: ["tagGroups.list"],
-    });
+    if (!data) return;
+    queryClient.refetchQueries({ queryKey: ["tagGroups.list"] });
   };
 
   const { mutateAsync } = useMutation({

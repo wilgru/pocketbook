@@ -1,7 +1,13 @@
 // import { TanStackDevtools } from "@tanstack/react-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { createRootRoute, Navigate, Outlet } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  HeadContent,
+  Navigate,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
 // import { TanStackRouterDevtoolsPanel } from "@tanstack/router-devtools";
 import { useState } from "react";
 import requireClientAuth from "src/Users/utils/requireClientAuth";
@@ -34,25 +40,40 @@ function RootComponent() {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />
-      {/* <TanStackDevtools
-            plugins={[
-              {
-                name: "TanStack Query",
-                render: <ReactQueryDevtoolsPanel />,
-              },
-              {
-                name: "TanStack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-            ]}
-          /> */}
-    </QueryClientProvider>
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+          {/* <TanStackDevtools
+                plugins={[
+                  {
+                    name: "TanStack Query",
+                    render: <ReactQueryDevtoolsPanel />,
+                  },
+                  {
+                    name: "TanStack Router",
+                    render: <TanStackRouterDevtoolsPanel />,
+                  },
+                ]}
+              /> */}
+        </QueryClientProvider>
+        <Scripts />
+      </body>
+    </html>
   );
 }
 
 export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1.0" },
+      { title: "Pocketbook" },
+    ],
+  }),
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });

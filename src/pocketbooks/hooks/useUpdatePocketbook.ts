@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updatePocketbookServerFn } from "src/pocketbooks/serverFunctions/updatePocketbook";
 import { mapPocketbook } from "src/pocketbooks/utils/mapPocketbook";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
@@ -40,40 +41,36 @@ export const useUpdatePocketbook = (): UseUpdatePocketbookResponse => {
     pocketbookId,
     updatePocketbookData,
   }: UpdatePocketbookProps): Promise<Pocketbook | undefined> => {
-    const response = await window.api.updatePocketbook({
-      pocketbookId,
-      title: updatePocketbookData.title,
-      icon: updatePocketbookData.icon,
-      colour: updatePocketbookData.colour.name,
-      notesLayout: updatePocketbookData.notesLayout ?? "list",
-      notesSortBy: updatePocketbookData.notesSortBy ?? "created",
-      notesSortDirection: updatePocketbookData.notesSortDirection ?? "desc",
-      notesGroupBy: updatePocketbookData.notesGroupBy ?? null,
-      notesGroupByTagGroupId: updatePocketbookData.notesGroupByTagGroupId ?? null,
-      bookmarkedLayout: updatePocketbookData.bookmarkedLayout ?? "list",
-      bookmarkedSortBy: updatePocketbookData.bookmarkedSortBy ?? "created",
-      bookmarkedSortDirection:
-        updatePocketbookData.bookmarkedSortDirection ?? "desc",
-      bookmarkedGroupBy: updatePocketbookData.bookmarkedGroupBy ?? null,
-      bookmarkedGroupByTagGroupId: updatePocketbookData.bookmarkedGroupByTagGroupId ?? null,
+    const data = await updatePocketbookServerFn({
+      data: {
+        pocketbookId,
+        title: updatePocketbookData.title,
+        icon: updatePocketbookData.icon,
+        colour: updatePocketbookData.colour.name,
+        notesLayout: updatePocketbookData.notesLayout ?? "list",
+        notesSortBy: updatePocketbookData.notesSortBy ?? "created",
+        notesSortDirection: updatePocketbookData.notesSortDirection ?? "desc",
+        notesGroupBy: updatePocketbookData.notesGroupBy ?? null,
+        notesGroupByTagGroupId:
+          updatePocketbookData.notesGroupByTagGroupId ?? null,
+        bookmarkedLayout: updatePocketbookData.bookmarkedLayout ?? "list",
+        bookmarkedSortBy: updatePocketbookData.bookmarkedSortBy ?? "created",
+        bookmarkedSortDirection:
+          updatePocketbookData.bookmarkedSortDirection ?? "desc",
+        bookmarkedGroupBy: updatePocketbookData.bookmarkedGroupBy ?? null,
+        bookmarkedGroupByTagGroupId:
+          updatePocketbookData.bookmarkedGroupByTagGroupId ?? null,
+      },
     });
-    if (!response.success) throw new Error(response.error);
 
-    return mapPocketbook(response.data);
+    return mapPocketbook(data);
   };
 
   const onSuccess = (data: Pocketbook | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
-    queryClient.refetchQueries({
-      queryKey: ["pocketbooks.list"],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["pocketbooks.get"],
-    });
+    queryClient.refetchQueries({ queryKey: ["pocketbooks.list"] });
+    queryClient.refetchQueries({ queryKey: ["pocketbooks.get"] });
   };
 
   const { mutateAsync, isPending } = useMutation({

@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { mapComment } from "src/comments/utils/mapComment";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { mapNote } from "src/notes/utils/mapNote";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import type { Comment } from "src/comments/Comment.type";
@@ -19,22 +21,19 @@ export const useGetComments = ({
   const queryFn = async (): Promise<Comment[]> => {
     if (!pocketbookId) return [];
 
-    const [commentsResponse, notesResponse] = await Promise.all([
-      window.api.getComments({ pocketbookId }),
-      window.api.getNotes({ pocketbookId }),
+    const [commentsData, notesData] = await Promise.all([
+      getCommentsServerFn({ data: { pocketbookId } }),
+      getNotesServerFn({ data: { pocketbookId } }),
     ]);
 
-    if (!commentsResponse.success) throw new Error(commentsResponse.error);
-    if (!notesResponse.success) throw new Error(notesResponse.error);
-
     const filteredComments = noteId
-      ? commentsResponse.data.comments.filter((comment) =>
+      ? commentsData.comments.filter((comment) =>
           comment.noteIds.includes(noteId),
         )
-      : commentsResponse.data.comments;
+      : commentsData.comments;
 
     const noteMap = new Map(
-      notesResponse.data.notes.map((note) => [note.id, mapNote(note)]),
+      notesData.notes.map((note) => [note.id, mapNote(note)]),
     );
 
     return filteredComments.map((comment) => {

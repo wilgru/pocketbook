@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "src/Users/hooks/useUser";
+import { getPocketbooksServerFn } from "src/pocketbooks/serverFunctions/getPocketbooks";
 import { mapPocketbook } from "src/pocketbooks/utils/mapPocketbook";
 import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
 
@@ -11,19 +12,12 @@ type UseGetPocketbooksResponse = {
 export const useGetPocketbooks = (): UseGetPocketbooksResponse => {
   const { user } = useUser();
 
-  const queryFn = async (): Promise<{
-    pocketbooks: Pocketbook[];
-  }> => {
-    const response = await window.api.getPocketbooks({
-      userId: user?.id ?? null,
+  const queryFn = async (): Promise<{ pocketbooks: Pocketbook[] }> => {
+    const data = await getPocketbooksServerFn({
+      data: { userId: user?.id ?? null },
     });
-    if (!response.success) throw new Error(response.error);
 
-    const pocketbooks = response.data.pocketbooks.map((pocketbook) =>
-      mapPocketbook(pocketbook),
-    );
-
-    return { pocketbooks };
+    return { pocketbooks: data.pocketbooks.map(mapPocketbook) };
   };
 
   // TODO: consider time caching for better performance
@@ -36,7 +30,6 @@ export const useGetPocketbooks = (): UseGetPocketbooksResponse => {
 
   return {
     pocketbooks: data?.pocketbooks ?? [],
-    // Only treat the very first load as blocking; background refetches should not blank UI.
     isFetching: isPending,
   };
 };

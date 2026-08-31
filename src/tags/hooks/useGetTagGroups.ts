@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
 import { mapTag } from "src/tags/utils/mapTag";
 import { mapTagGroup } from "src/tags/utils/mapTagGroup";
 import type {
@@ -13,10 +15,7 @@ type UseGetTagGroupsResponse = {
   tagGroups: TagGroup[];
   refetchTagGroups: (options?: RefetchOptions | undefined) => Promise<
     QueryObserverResult<
-      {
-        ungroupedTags: Tag[];
-        tagGroups: TagGroup[];
-      },
+      { ungroupedTags: Tag[]; tagGroups: TagGroup[] },
       Error
     >
   >;
@@ -29,30 +28,22 @@ export const useGetTagGroups = (): UseGetTagGroupsResponse => {
     ungroupedTags: Tag[];
     tagGroups: TagGroup[];
   }> => {
-    if (!pocketbookId) {
-      return {
-        ungroupedTags: [],
-        tagGroups: [],
-      };
-    }
+    if (!pocketbookId) return { ungroupedTags: [], tagGroups: [] };
 
-    const [tagsResponse, notesResponse] = await Promise.all([
-      window.api.getTags({ pocketbookId }),
-      window.api.getNotes({ pocketbookId }),
+    const [tagsData, notesData] = await Promise.all([
+      getTagsServerFn({ data: { pocketbookId } }),
+      getNotesServerFn({ data: { pocketbookId } }),
     ]);
 
-    if (!tagsResponse.success) throw new Error(tagsResponse.error);
-    if (!notesResponse.success) throw new Error(notesResponse.error);
-
     const noteCountByTag = new Map<string, number>();
-    for (const note of notesResponse.data.notes) {
+    for (const note of notesData.notes) {
       for (const tagId of note.tagIds) {
         noteCountByTag.set(tagId, (noteCountByTag.get(tagId) ?? 0) + 1);
       }
     }
 
-    const mappedTagGroups = tagsResponse.data.tagGroups.map(mapTagGroup);
-    const mappedTags = tagsResponse.data.tags.map((tag) =>
+    const mappedTagGroups = tagsData.tagGroups.map(mapTagGroup);
+    const mappedTags = tagsData.tags.map((tag) =>
       mapTag(tag, { noteCount: noteCountByTag.get(tag.id) ?? 0 }),
     );
 
@@ -70,18 +61,13 @@ export const useGetTagGroups = (): UseGetTagGroupsResponse => {
       }
     });
 
-    return {
-      ungroupedTags,
-      tagGroups: mappedTagGroups,
-    };
+    return { ungroupedTags, tagGroups: mappedTagGroups };
   };
 
   // TODO: consider time caching for better performance
   const { data, refetch } = useQuery({
     queryKey: ["tagGroups.list", pocketbookId],
     queryFn,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return {

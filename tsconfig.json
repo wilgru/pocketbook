@@ -20,9 +20,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "types": ["@cloudflare/workers-types"]
   },
   "include": ["src", "electron"],
-  "exclude": ["src/server.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

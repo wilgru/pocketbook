@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { mapNote } from "src/notes/utils/mapNote";
 import { useGetTasks } from "src/tasks/hooks/useGetTasks";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
+import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
 import { mapTag } from "src/tags/utils/mapTag";
 import type {
   QueryObserverResult,
@@ -27,27 +30,20 @@ export const useGetTag = (tagId: string): UseTagResponse => {
   const { tasks: allTasks } = useGetTasks({});
 
   const queryFn = async (): Promise<RawTagData> => {
-    const tagResponse = await window.api.getTag({ tagId });
-    if (!tagResponse.success) throw new Error(tagResponse.error);
+    const tagData = await getTagServerFn({ data: { tagId } });
 
-    const pocketbookId = tagResponse.data.pocketbook;
-    const [notesResponse, tagsResponse] = pocketbookId
+    const pocketbookId = tagData.pocketbook;
+    const [notesData, tagsData] = pocketbookId
       ? await Promise.all([
-          window.api.getNotes({ pocketbookId }),
-          window.api.getTags({ pocketbookId }),
+          getNotesServerFn({ data: { pocketbookId } }),
+          getTagsServerFn({ data: { pocketbookId } }),
         ])
-      : [
-          { success: true, data: { notes: [] } },
-          { success: true, data: { tags: [], tagGroups: [] } },
-        ];
+      : [{ notes: [] }, { tags: [], tagGroups: [] }];
 
-    if (!notesResponse.success) throw new Error(notesResponse.error);
-    if (!tagsResponse.success) throw new Error(tagsResponse.error);
-
-    const allTags = tagsResponse.data.tags.map((t) => mapTag(t));
+    const allTags = tagsData.tags.map((t) => mapTag(t));
     const tagById = new Map<string, Tag>(allTags.map((t) => [t.id, t]));
 
-    const noteRows = notesResponse.data.notes.filter((note) =>
+    const noteRows = notesData.notes.filter((note) =>
       note.tagIds.includes(tagId),
     );
 
@@ -61,7 +57,7 @@ export const useGetTag = (tagId: string): UseTagResponse => {
       };
     });
 
-    const tag = mapTag(tagResponse.data, { noteCount: notes.length });
+    const tag = mapTag(tagData, { noteCount: notes.length });
 
     return { tag, notes };
   };
@@ -70,8 +66,6 @@ export const useGetTag = (tagId: string): UseTagResponse => {
   const { data, refetch } = useQuery({
     queryKey: ["tags.get", tagId],
     queryFn,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   const notes = useMemo(
@@ -83,9 +77,5 @@ export const useGetTag = (tagId: string): UseTagResponse => {
     [data, allTasks],
   );
 
-  return {
-    tag: data?.tag,
-    notes,
-    refetchTag: refetch,
-  };
+  return { tag: data?.tag, notes, refetchTag: refetch };
 };

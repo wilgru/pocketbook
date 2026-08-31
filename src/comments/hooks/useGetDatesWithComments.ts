@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { mapDateWithNotes } from "src/notes/utils/mapDateWithNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import type {
@@ -15,19 +16,15 @@ type UseGetDatesWithCommentsResponse = {
 };
 
 export const useGetDatesWithComments = (): UseGetDatesWithCommentsResponse => {
-  const { pocketbookId: routePocketbookId } = useCurrentPocketbookId();
-  const pocketbookId = routePocketbookId;
+  const { pocketbookId } = useCurrentPocketbookId();
 
   const queryFn = async (): Promise<DateWithNotes[]> => {
-    if (!pocketbookId) {
-      return [];
-    }
+    if (!pocketbookId) return [];
 
-    const response = await window.api.getComments({ pocketbookId });
-    if (!response.success) throw new Error(response.error);
+    const data = await getCommentsServerFn({ data: { pocketbookId } });
 
     const uniqueDates = new Map<string, string>();
-    for (const comment of response.data.comments) {
+    for (const comment of data.comments) {
       const dateStr = comment.created.split("T")[0];
       if (!uniqueDates.has(dateStr)) {
         uniqueDates.set(dateStr, comment.created);

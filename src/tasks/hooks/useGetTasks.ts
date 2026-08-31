@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import { mapNote } from "src/notes/utils/mapNote";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTasksServerFn } from "src/tasks/serverFunctions/getTasks";
 import { mapTask } from "src/tasks/utils/mapTask";
 import type {
   QueryObserverResult,
@@ -10,7 +12,7 @@ import type {
 } from "@tanstack/react-query";
 import type { Task } from "src/tasks/Task.type";
 
-type UseGetTacksResponse = {
+type UseGetTasksResponse = {
   tasks: Task[];
   refetchTags: (
     options?: RefetchOptions | undefined,
@@ -25,13 +27,11 @@ export const useGetTasks = ({
 }: {
   isImportant?: boolean;
   dateString?: string;
-}): UseGetTacksResponse => {
+}): UseGetTasksResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
 
   const queryFn = async (): Promise<Task[]> => {
-    if (!pocketbookId) {
-      return [];
-    }
+    if (!pocketbookId) return [];
 
     let createdAfter: dayjs.Dayjs | undefined;
     let createdBefore: dayjs.Dayjs | undefined;
@@ -47,19 +47,16 @@ export const useGetTasks = ({
       createdBefore = localDateMidday.utc().add(12, "hour");
     }
 
-    const [tasksResponse, notesResponse] = await Promise.all([
-      window.api.getTasks({ pocketbookId }),
-      window.api.getNotes({ pocketbookId }),
+    const [tasksData, notesData] = await Promise.all([
+      getTasksServerFn({ data: { pocketbookId } }),
+      getNotesServerFn({ data: { pocketbookId } }),
     ]);
 
-    if (!tasksResponse.success) throw new Error(tasksResponse.error);
-    if (!notesResponse.success) throw new Error(notesResponse.error);
-
     const notesById = new Map(
-      notesResponse.data.notes.map((row) => [row.id, mapNote(row)]),
+      notesData.notes.map((row) => [row.id, mapNote(row)]),
     );
 
-    let filteredTasks = tasksResponse.data.tasks;
+    let filteredTasks = tasksData.tasks;
 
     if (isImportant !== undefined) {
       filteredTasks = filteredTasks.filter(
@@ -84,8 +81,6 @@ export const useGetTasks = ({
   const { data, refetch } = useQuery({
     queryKey: ["tasks.list", pocketbookId, isImportant, dateString],
     queryFn,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { tasks: data ?? [], refetchTags: refetch };

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateNoteServerFn } from "src/notes/serverFunctions/updateNote";
 import { mapNote } from "src/notes/utils/mapNote";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Note } from "src/notes/Note.type";
@@ -24,40 +25,29 @@ export const useUpdateNote = (): UseUpdateNoteResponse => {
     noteId,
     updateNoteData,
   }: UpdateNoteProps): Promise<Note | undefined> => {
-    const tagIds = updateNoteData.tags.map((tag) => tag.id);
-    const response = await window.api.updateNote({
-      noteId,
-      title: updateNoteData.title,
-      content: updateNoteData.content,
-      isBookmarked: updateNoteData.isBookmarked,
-      tagIds,
-      links: JSON.stringify(updateNoteData.links),
+    const data = await updateNoteServerFn({
+      data: {
+        noteId,
+        title: updateNoteData.title,
+        content: updateNoteData.content,
+        isBookmarked: updateNoteData.isBookmarked,
+        tagIds: updateNoteData.tags.map((tag) => tag.id),
+        links: JSON.stringify(updateNoteData.links),
+      },
     });
 
-    if (!response.success) throw new Error(response.error);
-
-    return mapNote(response.data, {
+    return mapNote(data, {
       tags: updateNoteData.tags,
       tasks: updateNoteData.tasks,
     });
   };
 
   const onSuccess = (data: Note | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
-    queryClient.refetchQueries({
-      queryKey: ["notes.list"],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["notes.get", data.id],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["tags.get"],
-    });
+    queryClient.refetchQueries({ queryKey: ["notes.list"] });
+    queryClient.refetchQueries({ queryKey: ["notes.get", data.id] });
+    queryClient.refetchQueries({ queryKey: ["tags.get"] });
   };
 
   // TODO: consider time caching for better performance
@@ -65,8 +55,6 @@ export const useUpdateNote = (): UseUpdateNoteResponse => {
     mutationKey: ["notes.update"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { updateNote: mutateAsync };

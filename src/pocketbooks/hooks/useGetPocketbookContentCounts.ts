@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTasksServerFn } from "src/tasks/serverFunctions/getTasks";
 
 type PocketbookContentCounts = {
   noteCount: number;
@@ -14,12 +17,8 @@ type UseGetPocketbookContentCountsResponse = {
 };
 
 const getDateKey = (dateString: string | null | undefined): string | null => {
-  if (!dateString) {
-    return null;
-  }
-
-  const dateKey = dateString.split("T")[0];
-  return dateKey || null;
+  if (!dateString) return null;
+  return dateString.split("T")[0] || null;
 };
 
 export const useGetPocketbookContentCounts =
@@ -28,61 +27,40 @@ export const useGetPocketbookContentCounts =
 
     const queryFn = async (): Promise<PocketbookContentCounts> => {
       if (!pocketbookId) {
-        return {
-          noteCount: 0,
-          bookmarkedCount: 0,
-          taskCount: 0,
-          updateDayCount: 0,
-        };
+        return { noteCount: 0, bookmarkedCount: 0, taskCount: 0, updateDayCount: 0 };
       }
 
-      const [
-        notesResponse,
-        bookmarkedResponse,
-        tasksResponse,
-        commentsResponse,
-      ] = await Promise.all([
-        window.api.getNotes({ pocketbookId }),
-        window.api.getNotes({ pocketbookId, isBookmarked: true }),
-        window.api.getTasks({ pocketbookId }),
-        window.api.getComments({ pocketbookId }),
-      ]);
-
-      if (!notesResponse.success) throw new Error(notesResponse.error);
-      if (!bookmarkedResponse.success)
-        throw new Error(bookmarkedResponse.error);
-      if (!tasksResponse.success) throw new Error(tasksResponse.error);
-      if (!commentsResponse.success) throw new Error(commentsResponse.error);
+      const [notesData, bookmarkedData, tasksData, commentsData] =
+        await Promise.all([
+          getNotesServerFn({ data: { pocketbookId } }),
+          getNotesServerFn({ data: { pocketbookId, isBookmarked: true } }),
+          getTasksServerFn({ data: { pocketbookId } }),
+          getCommentsServerFn({ data: { pocketbookId } }),
+        ]);
 
       const updateDateKeys = new Set<string>();
 
-      for (const note of notesResponse.data.notes) {
+      for (const note of notesData.notes) {
         const dateKey = getDateKey(note.created);
-        if (dateKey) {
-          updateDateKeys.add(dateKey);
-        }
+        if (dateKey) updateDateKeys.add(dateKey);
       }
 
-      for (const task of tasksResponse.data.tasks) {
+      for (const task of tasksData.tasks) {
         for (const taskDate of [task.completedDate, task.cancelledDate]) {
           const dateKey = getDateKey(taskDate);
-          if (dateKey) {
-            updateDateKeys.add(dateKey);
-          }
+          if (dateKey) updateDateKeys.add(dateKey);
         }
       }
 
-      for (const comment of commentsResponse.data.comments) {
+      for (const comment of commentsData.comments) {
         const dateKey = getDateKey(comment.created);
-        if (dateKey) {
-          updateDateKeys.add(dateKey);
-        }
+        if (dateKey) updateDateKeys.add(dateKey);
       }
 
       return {
-        noteCount: notesResponse.data.notes.length,
-        bookmarkedCount: bookmarkedResponse.data.notes.length,
-        taskCount: tasksResponse.data.tasks.filter(
+        noteCount: notesData.notes.length,
+        bookmarkedCount: bookmarkedData.notes.length,
+        taskCount: tasksData.tasks.filter(
           (task) => !task.completedDate && !task.cancelledDate,
         ).length,
         updateDayCount: updateDateKeys.size,
@@ -95,8 +73,5 @@ export const useGetPocketbookContentCounts =
       enabled: !!pocketbookId,
     });
 
-    return {
-      counts: data,
-      isFetching,
-    };
+    return { counts: data, isFetching };
   };

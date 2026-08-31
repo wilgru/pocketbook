@@ -2,12 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import { useMemo } from "react";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { mapNote } from "src/notes/utils/mapNote";
+import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { useGetTags } from "src/tags/hooks/useGetTags";
 import { useGetTasks } from "src/tasks/hooks/useGetTasks";
-import { useCurrentPocketbookId } from "../../pocketbooks/hooks/useCurrentPocketbookId";
 import type { Note } from "src/notes/Note.type";
-import type { GetNotesResult } from "src/notes/ipc/getNotes";
+import type { GetNotesInput } from "src/notes/serverFunctions/getNotes";
+
+type GetNotesResult = Awaited<ReturnType<typeof getNotesServerFn>>;
 
 type UseGetNotesResponse = {
   notes: Note[];
@@ -48,15 +51,14 @@ export const useGetNotes = ({
         .toISOString();
     }
 
-    const response = await window.api.getNotes({
+    const input: GetNotesInput = {
       pocketbookId: pocketbookId ?? "",
       isBookmarked,
       createdAfter,
       createdBefore,
-    });
+    };
 
-    if (!response.success) throw new Error(response.error);
-    return response.data;
+    return getNotesServerFn({ data: input });
   };
 
   // TODO: consider time caching for better performance
@@ -71,13 +73,11 @@ export const useGetNotes = ({
     () =>
       (data?.notes ?? []).map((row) => {
         const tags = allTags.filter((tag) => row.tagIds.includes(tag.id));
-        const tasks = allTasks.filter((task) => task.note?.id === row.id); // todo: perhaps move this to the backend, and jsut get a count of tasks for each note as so far thats all we need this for
+        const tasks = allTasks.filter((task) => task.note?.id === row.id);
         return mapNote(row, { tags, tasks });
       }),
     [allTags, allTasks, data],
   );
 
-  return {
-    notes,
-  };
+  return { notes };
 };

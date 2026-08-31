@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateCommentServerFn } from "src/comments/serverFunctions/updateComment";
 import { mapComment } from "src/comments/utils/mapComment";
 import { syncCommentLists } from "src/comments/utils/syncCommentLists";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
@@ -25,18 +26,17 @@ export const useUpdateComment = (): UseUpdateCommentResponse => {
     commentId,
     commentData,
   }: UpdateCommentProps): Promise<Comment | undefined> => {
-    const response = await window.api.updateComment({
-      commentId,
-      content: commentData.content ?? null,
-      tint: commentData.tint ?? null,
-      isWaypoint: commentData.isWaypoint ?? false,
-      noteIds: commentData.notes?.map((n) => n.id) ?? [],
+    const data = await updateCommentServerFn({
+      data: {
+        commentId,
+        content: commentData.content ?? null,
+        tint: commentData.tint ?? null,
+        isWaypoint: commentData.isWaypoint ?? false,
+        noteIds: commentData.notes?.map((n) => n.id) ?? [],
+      },
     });
-    if (!response.success) throw new Error(response.error);
 
-    const updatedComment = mapComment(response.data, {
-      notes: commentData.notes ?? [],
-    });
+    const updatedComment = mapComment(data, { notes: commentData.notes ?? [] });
 
     syncCommentLists(queryClient, updatedComment, {
       notes: commentData.notes ?? [],
@@ -46,9 +46,7 @@ export const useUpdateComment = (): UseUpdateCommentResponse => {
   };
 
   const onSuccess = () => {
-    void queryClient.invalidateQueries({
-      queryKey: ["comments.list"],
-    });
+    void queryClient.invalidateQueries({ queryKey: ["comments.list"] });
   };
 
   const { mutateAsync } = useMutation({

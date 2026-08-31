@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "src/Users/hooks/useUser";
+import { createCommentServerFn } from "src/comments/serverFunctions/createComment";
 import { mapComment } from "src/comments/utils/mapComment";
 import { syncCommentLists } from "src/comments/utils/syncCommentLists";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
@@ -27,19 +28,18 @@ export const useCreateComment = (): UseCreateCommentResponse => {
   const mutationFn = async ({
     createCommentData,
   }: CreateCommentProps): Promise<Comment | undefined> => {
-    const response = await window.api.createComment({
-      content: createCommentData.content ?? null,
-      tint: createCommentData.tint,
-      isWaypoint: createCommentData.isWaypoint ?? false,
-      noteIds: createCommentData.notes.map((n) => n.id),
-      pocketbookId: pocketbookId ?? null,
-      userId: user?.id ?? null,
+    const data = await createCommentServerFn({
+      data: {
+        content: createCommentData.content ?? null,
+        tint: createCommentData.tint,
+        isWaypoint: createCommentData.isWaypoint ?? false,
+        noteIds: createCommentData.notes.map((n) => n.id),
+        pocketbookId: pocketbookId ?? null,
+        userId: user?.id ?? null,
+      },
     });
-    if (!response.success) throw new Error(response.error);
 
-    const createdComment = mapComment(response.data, {
-      notes: createCommentData.notes,
-    });
+    const createdComment = mapComment(data, { notes: createCommentData.notes });
 
     syncCommentLists(queryClient, createdComment, {
       notes: createCommentData.notes,
@@ -49,13 +49,8 @@ export const useCreateComment = (): UseCreateCommentResponse => {
   };
 
   const onSuccess = () => {
-    void queryClient.invalidateQueries({
-      queryKey: ["comments.list"],
-    });
-
-    void queryClient.invalidateQueries({
-      queryKey: ["pocketbookContentCounts"],
-    });
+    void queryClient.invalidateQueries({ queryKey: ["comments.list"] });
+    void queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
   const { mutateAsync } = useMutation({

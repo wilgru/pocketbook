@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteTagServerFn } from "src/tags/serverFunctions/deleteTag";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
 type UseDeleteTagResponse = {
@@ -9,33 +10,20 @@ export const useDeleteTag = (): UseDeleteTagResponse => {
   const queryClient = useQueryClient();
 
   const mutationFn = async (tagId: string): Promise<string | undefined> => {
-    const response = await window.api.deleteTag({ tagId });
-    if (!response.success) throw new Error(response.error);
+    await deleteTagServerFn({ data: { tagId } });
     return tagId;
   };
 
   const onSuccess = async (data: string | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
-    queryClient.removeQueries({
-      queryKey: ["tags.get", data],
-    });
+    queryClient.removeQueries({ queryKey: ["tags.get", data] });
 
     await Promise.all([
-      queryClient.refetchQueries({
-        queryKey: ["tags.list"],
-      }),
-      queryClient.refetchQueries({
-        queryKey: ["tagGroups.list"],
-      }),
-      queryClient.refetchQueries({
-        queryKey: ["notes.list"],
-      }),
-      queryClient.refetchQueries({
-        queryKey: ["notes.get"],
-      }),
+      queryClient.refetchQueries({ queryKey: ["tags.list"] }),
+      queryClient.refetchQueries({ queryKey: ["tagGroups.list"] }),
+      queryClient.refetchQueries({ queryKey: ["notes.list"] }),
+      queryClient.refetchQueries({ queryKey: ["notes.get"] }),
     ]);
   };
 
@@ -44,8 +32,6 @@ export const useDeleteTag = (): UseDeleteTagResponse => {
     mutationKey: ["tags.delete"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { deleteTag: mutateAsync };

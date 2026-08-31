@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateTagServerFn } from "src/tags/serverFunctions/updateTag";
 import { mapTag } from "src/tags/utils/mapTag";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Note } from "src/notes/Note.type";
@@ -25,50 +26,38 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
     tagId,
     updateTagData,
   }: UpdateTagProps): Promise<Tag | undefined> => {
-    const response = await window.api.updateTag({
-      tagId,
-      name: updateTagData.name,
-      colour: updateTagData.colour.name,
-      icon: updateTagData.icon,
-      description: updateTagData.description,
-      layout: updateTagData.layout ?? "list",
-      groupBy: updateTagData.groupBy,
-      groupByTagGroupId: updateTagData.groupByTagGroupId ?? null,
-      sortBy: updateTagData.sortBy,
-      sortDirection: updateTagData.sortDirection,
-      links: JSON.stringify(updateTagData.links),
-      tagGroupId: updateTagData.tagGroupId ?? null,
+    const data = await updateTagServerFn({
+      data: {
+        tagId,
+        name: updateTagData.name,
+        colour: updateTagData.colour.name,
+        icon: updateTagData.icon,
+        description: updateTagData.description,
+        layout: updateTagData.layout ?? "list",
+        groupBy: updateTagData.groupBy,
+        groupByTagGroupId: updateTagData.groupByTagGroupId ?? null,
+        sortBy: updateTagData.sortBy,
+        sortDirection: updateTagData.sortDirection,
+        links: JSON.stringify(updateTagData.links),
+        tagGroupId: updateTagData.tagGroupId ?? null,
+      },
     });
-    if (!response.success) throw new Error(response.error);
 
-    return mapTag(response.data, { noteCount: updateTagData.noteCount });
+    return mapTag(data, { noteCount: updateTagData.noteCount });
   };
 
   const onSuccess = (data: Tag | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
-    queryClient.refetchQueries({
-      queryKey: ["tags.list"],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["tags.get"],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["tagGroups.list"],
-    });
+    queryClient.refetchQueries({ queryKey: ["tags.list"] });
+    queryClient.refetchQueries({ queryKey: ["tags.get"] });
+    queryClient.refetchQueries({ queryKey: ["tagGroups.list"] });
 
     // update tag in any notes that have it
     queryClient.setQueryData(["notes.list"], (currentNotes: Note[]) => {
       return currentNotes?.map((note) => {
         return note.tags.map((tag) => {
-          if (tag.id === data.id) {
-            return data;
-          }
-
+          if (tag.id === data.id) return data;
           return tag;
         });
       });
@@ -80,8 +69,6 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
     mutationKey: ["tags.update"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { updateTag: mutateAsync };
