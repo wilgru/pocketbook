@@ -12,6 +12,7 @@ import { CreateTagGroupModal } from "src/tags/components/CreateTagGroupModal/Cre
 import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
 import { SidebarBookmarkSection } from "./SidebarBookmarkSection";
 import { SidebarTagSection } from "./SidebarTagSection";
+import { colours } from "src/colours/colours.constant";
 
 export const Sidebar = () => {
   const { isWindows } = useElectronEnvironment();
@@ -95,6 +96,52 @@ export const Sidebar = () => {
         </section>
 
         <SidebarBookmarkSection />
+
+        {process.env.NODE_ENV === "development" && (
+          <section className="flex flex-col gap-px">
+            <h1 className="font-title text-slate-400 text-sm">Media</h1>
+
+            <NavItem
+              size="sm"
+              title="Images"
+              to={"/"}
+              colour={colours.grey}
+              iconName="image"
+            />
+
+            <NavItem
+              size="sm"
+              title="Audio"
+              to={"/"}
+              colour={colours.grey}
+              iconName="cassette"
+            />
+
+            <NavItem
+              size="sm"
+              title="Locations"
+              to={"/"}
+              colour={colours.grey}
+              iconName="mapPinArea"
+            />
+
+            <NavItem
+              size="sm"
+              title="Quotes"
+              to={"/"}
+              colour={colours.grey}
+              iconName="quotes"
+            />
+
+            <NavItem
+              size="sm"
+              title="Code"
+              to={"/"}
+              colour={colours.grey}
+              iconName="code"
+            />
+          </section>
+        )}
 
         <SidebarTagSection
           title={"Tags"}

@@ -44,6 +44,9 @@ import {
   EyeSlashIcon,
   EyeIcon,
   HandPalmIcon,
+  ImageIcon,
+  CassetteTapeIcon,
+  QuotesIcon,
 } from "@phosphor-icons/react";
 import type { IconType } from "./Icon.type";
 
@@ -106,6 +109,9 @@ export const controlIcons = [
   { name: "eyeSlash", component: EyeSlashIcon },
   { name: "eye", component: EyeIcon },
   { name: "handPalm", component: HandPalmIcon },
+  { name: "image", component: ImageIcon },
+  { name: "cassette", component: CassetteTapeIcon },
+  { name: "quotes", component: QuotesIcon },
 ] as const satisfies IconType[];
 
 export type ControlIconName = (typeof controlIcons)[number]["name"];
