@@ -10,10 +10,12 @@ export type Pocketbook = Prettify<
     | "notesSortBy"
     | "notesSortDirection"
     | "notesGroupBy"
+    | "notesGroupByTagGroupId"
     | "notesLayout"
     | "bookmarkedSortBy"
     | "bookmarkedSortDirection"
     | "bookmarkedGroupBy"
+    | "bookmarkedGroupByTagGroupId"
     | "bookmarkedLayout"
     | "user"
     | "created"
@@ -26,11 +28,13 @@ export type Pocketbook = Prettify<
     taskCount?: number;
     notesSortBy?: "alphabetical" | "created";
     notesSortDirection?: "asc" | "desc";
-    notesGroupBy?: "created" | "tag" | null;
+    notesGroupBy?: "created" | "tag" | "tagGroup" | null;
+    notesGroupByTagGroupId?: string | null;
     notesLayout?: "list" | "table";
     bookmarkedSortBy?: "alphabetical" | "created";
     bookmarkedSortDirection?: "asc" | "desc";
-    bookmarkedGroupBy?: "created" | "tag" | null;
+    bookmarkedGroupBy?: "created" | "tag" | "tagGroup" | null;
+    bookmarkedGroupByTagGroupId?: string | null;
     bookmarkedLayout?: "list" | "table";
   }
 >;

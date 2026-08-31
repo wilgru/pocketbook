@@ -6,6 +6,7 @@ const getGroup = (
   note: Note,
   groupBy: "created" | "tag",
   defaultGroupTitle: string | undefined = undefined,
+  tagsToGroupBy?: Tag[],
 ): {
   title: string | null;
   relevantNoteData: Partial<Note>;
@@ -59,11 +60,17 @@ const getGroup = (
       ];
     }
     case "tag": {
+      const relevantTags = tagsToGroupBy
+        ? note.tags.filter((tag) =>
+            tagsToGroupBy.some((groupTag) => groupTag.id === tag.id),
+          )
+        : note.tags;
+
       if (
-        note.tags.length === 1 &&
-        note.tags.at(0)?.name === defaultGroupTitle
+        relevantTags.length === 1 &&
+        relevantTags.at(0)?.name === defaultGroupTitle
       ) {
-        const defaultTag = note.tags.find(
+        const defaultTag = relevantTags.find(
           (tag) => tag.name === defaultGroupTitle,
         );
 
@@ -78,7 +85,7 @@ const getGroup = (
         ];
       }
 
-      return note.tags.reduce(
+      const resultingGroups = relevantTags.reduce(
         (
           acc: {
             title: string;
@@ -104,6 +111,18 @@ const getGroup = (
         },
         [],
       );
+
+      if (tagsToGroupBy && resultingGroups.length === 0) {
+        return [
+          {
+            title: null,
+            relevantNoteData: {},
+            sortOrder: getTagGroupSortOrder(null),
+          },
+        ];
+      }
+
+      return resultingGroups;
     }
 
     default:
@@ -127,9 +146,10 @@ export function groupNotes(
   defaultGroupTitle: string | undefined = undefined,
   relevantNoteData: Partial<Note>, // TODO: might not need this anymore?
   sortDirection: "asc" | "desc" = "desc",
+  tagsToGroupBy?: Tag[],
 ): NotesGroup[] {
   const groupedNotes = notes.reduce((acc: NotesGroup[], note: Note) => {
-    const groups = getGroup(note, groupBy, defaultGroupTitle);
+    const groups = getGroup(note, groupBy, defaultGroupTitle, tagsToGroupBy);
 
     for (const group of groups) {
       const existingGroup = acc.find(

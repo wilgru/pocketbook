@@ -16,6 +16,7 @@ export type UpdateTagInput = {
   sortBy: string;
   sortDirection: string;
   groupBy: string | null;
+  groupByTagGroupId: string | null;
   links: string;
 };
 
@@ -32,6 +33,7 @@ createIpcHandler(
     sortBy,
     sortDirection,
     groupBy,
+    groupByTagGroupId,
     links,
   }: UpdateTagInput): TagSchema => {
     const now = new Date().toISOString();
@@ -48,6 +50,7 @@ createIpcHandler(
         sortBy,
         sortDirection,
         groupBy,
+        groupByTagGroupId,
         links,
         updated: now,
       })

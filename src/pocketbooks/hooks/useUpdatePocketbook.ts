@@ -14,10 +14,12 @@ type UpdatePocketbookProps = {
     | "notesSortBy"
     | "notesSortDirection"
     | "notesGroupBy"
+    | "notesGroupByTagGroupId"
     | "bookmarkedLayout"
     | "bookmarkedSortBy"
     | "bookmarkedSortDirection"
     | "bookmarkedGroupBy"
+    | "bookmarkedGroupByTagGroupId"
   >;
 };
 
@@ -47,11 +49,13 @@ export const useUpdatePocketbook = (): UseUpdatePocketbookResponse => {
       notesSortBy: updatePocketbookData.notesSortBy ?? "created",
       notesSortDirection: updatePocketbookData.notesSortDirection ?? "desc",
       notesGroupBy: updatePocketbookData.notesGroupBy ?? null,
+      notesGroupByTagGroupId: updatePocketbookData.notesGroupByTagGroupId ?? null,
       bookmarkedLayout: updatePocketbookData.bookmarkedLayout ?? "list",
       bookmarkedSortBy: updatePocketbookData.bookmarkedSortBy ?? "created",
       bookmarkedSortDirection:
         updatePocketbookData.bookmarkedSortDirection ?? "desc",
       bookmarkedGroupBy: updatePocketbookData.bookmarkedGroupBy ?? null,
+      bookmarkedGroupByTagGroupId: updatePocketbookData.bookmarkedGroupByTagGroupId ?? null,
     });
     if (!response.success) throw new Error(response.error);
 

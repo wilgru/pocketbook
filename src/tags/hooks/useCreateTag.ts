@@ -49,6 +49,7 @@ export const useCreateTag = (): UseCreateTagResponse => {
       description: createTagData.description,
       layout: createTagData.layout ?? "list",
       groupBy: null,
+      groupByTagGroupId: createTagData.groupByTagGroupId ?? null,
       sortBy: createTagData.sortBy ?? "created",
       sortDirection: createTagData.sortDirection ?? "desc",
       links: JSON.stringify(createTagData.links),

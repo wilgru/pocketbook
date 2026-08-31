@@ -9,6 +9,9 @@ import {
   DropdownLabel,
   DropdownRadioGroup,
   DropdownRadioItem,
+  DropdownSub,
+  DropdownSubContent,
+  DropdownSubTrigger,
 } from "src/common/components/Dropdown/Dropdown";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
@@ -19,6 +22,7 @@ import { useGetNote } from "src/notes/hooks/useGetNote";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { EditTagModal } from "src/tags/components/EditTagModal/EditTagModal";
 import { useGetTag } from "src/tags/hooks/useGetTag";
+import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
 import { useUpdateTag } from "src/tags/hooks/useUpdateTag";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/tags/$tagId")({
@@ -45,6 +49,7 @@ export default function TagComponent() {
   const { createNote } = useCreateNote();
   const { updateTag } = useUpdateTag();
   const { currentPocketbook } = useCurrentPocketbook();
+  const { tagGroups } = useGetTagGroups();
   const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
@@ -140,7 +145,11 @@ export default function TagComponent() {
 
             <Dropdown className="w-40" sideOffset={2} align="start">
               <DropdownRadioGroup
-                value={tag.groupBy || "null"}
+                value={
+                  tag.groupBy === "tagGroup"
+                    ? `tagGroup:${tag.groupByTagGroupId}`
+                    : tag.groupBy || "null"
+                }
                 onValueChange={(value) => {
                   if (
                     value === "null" ||
@@ -152,6 +161,17 @@ export default function TagComponent() {
                       updateTagData: {
                         ...tag,
                         groupBy: value === "null" ? null : value,
+                        groupByTagGroupId: null,
+                      },
+                    });
+                  } else if (value.startsWith("tagGroup:")) {
+                    const tagGroupId = value.slice("tagGroup:".length);
+                    updateTag({
+                      tagId: tag.id,
+                      updateTagData: {
+                        ...tag,
+                        groupBy: "tagGroup",
+                        groupByTagGroupId: tagGroupId,
                       },
                     });
                   }
@@ -167,8 +187,39 @@ export default function TagComponent() {
                   Created
                 </DropdownRadioItem>
 
+                <DropdownSub>
+                  <DropdownSubTrigger
+                    colour={tag.colour}
+                    subText={
+                      tag.groupBy === "tagGroup"
+                        ? tagGroups.find(
+                            (tg) => tg.id === tag.groupByTagGroupId,
+                          )?.title
+                        : undefined
+                    }
+                  >
+                    Tag Group
+                  </DropdownSubTrigger>
+                  <DropdownSubContent className="w-40">
+                    {tagGroups.map((tagGroup) => (
+                      <DropdownRadioItem
+                        key={tagGroup.id}
+                        colour={tag.colour}
+                        value={`tagGroup:${tagGroup.id}`}
+                      >
+                        {tagGroup.title}
+                      </DropdownRadioItem>
+                    ))}
+                    {tagGroups.length === 0 && (
+                      <span className="text-xs text-slate-400 px-2 py-1">
+                        No tag groups
+                      </span>
+                    )}
+                  </DropdownSubContent>
+                </DropdownSub>
+
                 <DropdownRadioItem colour={tag.colour} value="tag">
-                  Tag
+                  All Tags
                 </DropdownRadioItem>
               </DropdownRadioGroup>
 
@@ -243,6 +294,7 @@ export default function TagComponent() {
         selectedNote={note || null}
         prefillNewNoteData={{ tags: [tag] }}
         groupNotesBy={tag.groupBy ?? undefined}
+        groupByTagGroupId={tag.groupByTagGroupId ?? null}
         groupSortDirection={sortDirection}
         onCreateNote={onCreateNote}
       />

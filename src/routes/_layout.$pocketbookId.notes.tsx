@@ -8,6 +8,9 @@ import {
   DropdownLabel,
   DropdownRadioGroup,
   DropdownRadioItem,
+  DropdownSub,
+  DropdownSubContent,
+  DropdownSubTrigger,
 } from "src/common/components/Dropdown/Dropdown";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
@@ -18,6 +21,7 @@ import { useGetNote } from "src/notes/hooks/useGetNote";
 import { useGetNotes } from "src/notes/hooks/useGetNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useUpdatePocketbook } from "src/pocketbooks/hooks/useUpdatePocketbook";
+import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/notes")({
   component: NotesComponent,
@@ -47,6 +51,7 @@ function NotesComponent() {
   const { noteId } = Route.useSearch(); // TODO: use in loaders?
   const { note } = useGetNote({ noteId });
   const { updatePocketbook } = useUpdatePocketbook();
+  const { tagGroups } = useGetTagGroups();
 
   const sortBy = currentPocketbook?.notesSortBy ?? "created";
   const sortDirection = currentPocketbook?.notesSortDirection ?? "desc";
@@ -108,7 +113,11 @@ function NotesComponent() {
 
             <Dropdown className="w-40" sideOffset={2} align="start">
               <DropdownRadioGroup
-                value={groupBy || "null"}
+                value={
+                  groupBy === "tagGroup"
+                    ? `tagGroup:${currentPocketbook.notesGroupByTagGroupId}`
+                    : groupBy || "null"
+                }
                 onValueChange={(value) => {
                   if (
                     value === "null" ||
@@ -120,6 +129,17 @@ function NotesComponent() {
                       updatePocketbookData: {
                         ...currentPocketbook,
                         notesGroupBy: value === "null" ? null : value,
+                        notesGroupByTagGroupId: null,
+                      },
+                    });
+                  } else if (value.startsWith("tagGroup:")) {
+                    const tagGroupId = value.slice("tagGroup:".length);
+                    updatePocketbook({
+                      pocketbookId: currentPocketbook.id,
+                      updatePocketbookData: {
+                        ...currentPocketbook,
+                        notesGroupBy: "tagGroup",
+                        notesGroupByTagGroupId: tagGroupId,
                       },
                     });
                   }
@@ -127,16 +147,58 @@ function NotesComponent() {
               >
                 <DropdownLabel>Group by</DropdownLabel>
 
-                <DropdownRadioItem colour={currentPocketbook?.colour} value="null">
+                <DropdownRadioItem
+                  colour={currentPocketbook?.colour}
+                  value="null"
+                >
                   None
                 </DropdownRadioItem>
 
-                <DropdownRadioItem colour={currentPocketbook?.colour} value="created">
+                <DropdownRadioItem
+                  colour={currentPocketbook?.colour}
+                  value="created"
+                >
                   Created
                 </DropdownRadioItem>
 
-                <DropdownRadioItem colour={currentPocketbook?.colour} value="tag">
-                  Tag
+                <DropdownSub>
+                  <DropdownSubTrigger
+                    colour={currentPocketbook?.colour}
+                    subText={
+                      groupBy === "tagGroup"
+                        ? tagGroups.find(
+                            (tg) =>
+                              tg.id ===
+                              currentPocketbook.notesGroupByTagGroupId,
+                          )?.title
+                        : undefined
+                    }
+                  >
+                    Tag Group
+                  </DropdownSubTrigger>
+                  <DropdownSubContent className="w-40">
+                    {tagGroups.map((tagGroup) => (
+                      <DropdownRadioItem
+                        key={tagGroup.id}
+                        colour={currentPocketbook?.colour}
+                        value={`tagGroup:${tagGroup.id}`}
+                      >
+                        {tagGroup.title}
+                      </DropdownRadioItem>
+                    ))}
+                    {tagGroups.length === 0 && (
+                      <span className="text-xs text-slate-400 px-2 py-1">
+                        No tag groups
+                      </span>
+                    )}
+                  </DropdownSubContent>
+                </DropdownSub>
+
+                <DropdownRadioItem
+                  colour={currentPocketbook?.colour}
+                  value="tag"
+                >
+                  All Tags
                 </DropdownRadioItem>
               </DropdownRadioGroup>
 
@@ -156,11 +218,17 @@ function NotesComponent() {
               >
                 <DropdownLabel>Sort by</DropdownLabel>
 
-                <DropdownRadioItem colour={currentPocketbook?.colour} value="created">
+                <DropdownRadioItem
+                  colour={currentPocketbook?.colour}
+                  value="created"
+                >
                   Created
                 </DropdownRadioItem>
 
-                <DropdownRadioItem colour={currentPocketbook?.colour} value="alphabetical">
+                <DropdownRadioItem
+                  colour={currentPocketbook?.colour}
+                  value="alphabetical"
+                >
                   Alphabetical
                 </DropdownRadioItem>
               </DropdownRadioGroup>
@@ -181,11 +249,17 @@ function NotesComponent() {
               >
                 <DropdownLabel>Sort direction</DropdownLabel>
 
-                <DropdownRadioItem colour={currentPocketbook?.colour} value="asc">
+                <DropdownRadioItem
+                  colour={currentPocketbook?.colour}
+                  value="asc"
+                >
                   Ascending
                 </DropdownRadioItem>
 
-                <DropdownRadioItem colour={currentPocketbook?.colour} value="desc">
+                <DropdownRadioItem
+                  colour={currentPocketbook?.colour}
+                  value="desc"
+                >
                   Descending
                 </DropdownRadioItem>
               </DropdownRadioGroup>
@@ -208,6 +282,7 @@ function NotesComponent() {
         selectedNote={note || null}
         description={null}
         groupNotesBy={groupBy ?? undefined}
+        groupByTagGroupId={currentPocketbook.notesGroupByTagGroupId ?? null}
         groupSortDirection={sortDirection}
         onCreateNote={onCreateNote}
       />

@@ -85,6 +85,13 @@
       "when": 1786442255893,
       "tag": "0011_huge_salo",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1788082004942,
+      "tag": "0012_add_group_by_tag_group_id",
+      "breakpoints": true
     }
   ]
 }

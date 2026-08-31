@@ -53,6 +53,7 @@ export const TagSelect = ({
         description: null,
         links: [],
         tagGroupId: null,
+        groupByTagGroupId: null,
         colour: colours.orange,
         layout: "list",
         icon: "tag",

@@ -51,7 +51,8 @@ type NotesLayoutProps = {
   description: string | null;
   links?: TagLink[];
   prefillNewNoteData?: Partial<Note>;
-  groupNotesBy?: "created" | "tag";
+  groupNotesBy?: "created" | "tag" | "tagGroup";
+  groupByTagGroupId?: string | null;
   groupSortDirection?: "asc" | "desc";
   onCreateNote?: () => void;
 };
@@ -66,6 +67,7 @@ export const NotesLayout = ({
   links,
   prefillNewNoteData,
   groupNotesBy,
+  groupByTagGroupId,
   groupSortDirection = "desc",
   onCreateNote,
 }: NotesLayoutProps) => {
@@ -86,6 +88,19 @@ export const NotesLayout = ({
       ];
     }
 
+    if (groupNotesBy === "tagGroup") {
+      const tagGroup = tagGroups.find((tg) => tg.id === groupByTagGroupId);
+
+      return groupNotes(
+        notes,
+        "tag",
+        title,
+        prefillNewNoteData ?? {},
+        groupSortDirection,
+        tagGroup?.tags,
+      );
+    }
+
     return groupNotes(
       notes,
       groupNotesBy,
@@ -93,7 +108,15 @@ export const NotesLayout = ({
       prefillNewNoteData ?? {},
       groupSortDirection,
     );
-  }, [notes, groupNotesBy, title, prefillNewNoteData, groupSortDirection]);
+  }, [
+    notes,
+    groupNotesBy,
+    groupByTagGroupId,
+    title,
+    prefillNewNoteData,
+    groupSortDirection,
+    tagGroups,
+  ]);
 
   // TODO: move the different layouts into their own components to reduce complexity and handle layout specific logic like this in their own components
   const tableTagGroups = useMemo<TagGroup[]>(() => {

@@ -108,12 +108,14 @@ type DropdownSubTriggerProps = React.ComponentPropsWithoutRef<
   typeof DropdownMenuPrimitive.SubTrigger
 > & {
   colour?: Colour;
+  subText?: string;
 };
 
 export const DropdownSubTrigger = ({
   className,
   children,
   colour,
+  subText,
   ...props
 }: DropdownSubTriggerProps) => {
   return (
@@ -128,7 +130,14 @@ export const DropdownSubTrigger = ({
       )}
       {...props}
     >
-      {children}
+      {subText ? (
+        <div className="flex flex-col gap-0.5">
+          {children}
+          <span className="text-xs text-slate-400 font-normal">{subText}</span>
+        </div>
+      ) : (
+        children
+      )}
       <CaretRight size={12} />
     </DropdownMenuPrimitive.SubTrigger>
   );
@@ -145,11 +154,13 @@ type DropdownSubContentProps = {
 export const DropdownSubContent = ({
   children,
   className,
+  sideOffset = 2,
   ...contentProps
 }: DropdownSubContentProps) => {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.SubContent
+        sideOffset={sideOffset}
         className={cn(
           "flex flex-col gap-1 bg-white border border-slate-200 rounded-xl p-1.5 drop-shadow-sm",
           className,

@@ -25,6 +25,7 @@ const getInitialTag = (tagGroupId?: string): NewTag => ({
   layout: "list",
   links: [],
   tagGroupId: tagGroupId ?? null,
+  groupByTagGroupId: null,
   sortBy: "created",
   sortDirection: "desc",
 });

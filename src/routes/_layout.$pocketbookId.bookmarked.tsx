@@ -9,6 +9,9 @@ import {
   DropdownLabel,
   DropdownRadioGroup,
   DropdownRadioItem,
+  DropdownSub,
+  DropdownSubContent,
+  DropdownSubTrigger,
 } from "src/common/components/Dropdown/Dropdown";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
@@ -19,6 +22,7 @@ import { useGetNote } from "src/notes/hooks/useGetNote";
 import { useGetNotes } from "src/notes/hooks/useGetNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useUpdatePocketbook } from "src/pocketbooks/hooks/useUpdatePocketbook";
+import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/bookmarked")({
   component: RouteComponent,
@@ -47,6 +51,7 @@ function RouteComponent() {
   const { noteId } = Route.useSearch(); // TODO: use in loaders?
   const { note } = useGetNote({ noteId });
   const { updatePocketbook } = useUpdatePocketbook();
+  const { tagGroups } = useGetTagGroups();
 
   const sortBy = currentPocketbook?.bookmarkedSortBy ?? "created";
   const sortDirection = currentPocketbook?.bookmarkedSortDirection ?? "desc";
@@ -109,7 +114,11 @@ function RouteComponent() {
 
             <Dropdown className="w-40" sideOffset={2} align="start">
               <DropdownRadioGroup
-                value={groupBy || "null"}
+                value={
+                  groupBy === "tagGroup"
+                    ? `tagGroup:${currentPocketbook.bookmarkedGroupByTagGroupId}`
+                    : groupBy || "null"
+                }
                 onValueChange={(value) => {
                   if (
                     value === "null" ||
@@ -121,6 +130,17 @@ function RouteComponent() {
                       updatePocketbookData: {
                         ...currentPocketbook,
                         bookmarkedGroupBy: value === "null" ? null : value,
+                        bookmarkedGroupByTagGroupId: null,
+                      },
+                    });
+                  } else if (value.startsWith("tagGroup:")) {
+                    const tagGroupId = value.slice("tagGroup:".length);
+                    updatePocketbook({
+                      pocketbookId: currentPocketbook.id,
+                      updatePocketbookData: {
+                        ...currentPocketbook,
+                        bookmarkedGroupBy: "tagGroup",
+                        bookmarkedGroupByTagGroupId: tagGroupId,
                       },
                     });
                   }
@@ -136,8 +156,41 @@ function RouteComponent() {
                   Created
                 </DropdownRadioItem>
 
+                <DropdownSub>
+                  <DropdownSubTrigger
+                    colour={colours.red}
+                    subText={
+                      groupBy === "tagGroup"
+                        ? tagGroups.find(
+                            (tg) =>
+                              tg.id ===
+                              currentPocketbook.bookmarkedGroupByTagGroupId,
+                          )?.title
+                        : undefined
+                    }
+                  >
+                    Tag Group
+                  </DropdownSubTrigger>
+                  <DropdownSubContent className="w-40">
+                    {tagGroups.map((tagGroup) => (
+                      <DropdownRadioItem
+                        key={tagGroup.id}
+                        colour={colours.red}
+                        value={`tagGroup:${tagGroup.id}`}
+                      >
+                        {tagGroup.title}
+                      </DropdownRadioItem>
+                    ))}
+                    {tagGroups.length === 0 && (
+                      <span className="text-xs text-slate-400 px-2 py-1">
+                        No tag groups
+                      </span>
+                    )}
+                  </DropdownSubContent>
+                </DropdownSub>
+
                 <DropdownRadioItem colour={colours.red} value="tag">
-                  Tag
+                  All Tags
                 </DropdownRadioItem>
               </DropdownRadioGroup>
 
@@ -210,6 +263,7 @@ function RouteComponent() {
         selectedNote={note || null}
         description={null}
         groupNotesBy={groupBy ?? undefined}
+        groupByTagGroupId={currentPocketbook.bookmarkedGroupByTagGroupId ?? null}
         groupSortDirection={sortDirection}
         onCreateNote={onCreateNote}
       />

@@ -12,12 +12,14 @@ export const pocketbooks = sqliteTable("pocketbooks", {
   notesSortBy: text("notes_sort_by").notNull().default("created"),
   notesSortDirection: text("notes_sort_direction").notNull().default("desc"),
   notesGroupBy: text("notes_group_by"),
+  notesGroupByTagGroupId: text("notes_group_by_tag_group_id"),
   bookmarkedLayout: text("bookmarked_layout").notNull().default("list"),
   bookmarkedSortBy: text("bookmarked_sort_by").notNull().default("created"),
   bookmarkedSortDirection: text("bookmarked_sort_direction")
     .notNull()
     .default("desc"),
   bookmarkedGroupBy: text("bookmarked_group_by"),
+  bookmarkedGroupByTagGroupId: text("bookmarked_group_by_tag_group_id"),
   user: text("user"),
   created: text("created").notNull(),
   updated: text("updated").notNull(),

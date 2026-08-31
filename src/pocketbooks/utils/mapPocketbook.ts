@@ -21,14 +21,16 @@ export const mapPocketbook = (
       (pocketbook.notesSortBy as "alphabetical" | "created") ?? "created",
     notesSortDirection:
       (pocketbook.notesSortDirection as "asc" | "desc") ?? "desc",
-    notesGroupBy: (pocketbook.notesGroupBy as "created" | "tag" | null) ?? null,
+    notesGroupBy: (pocketbook.notesGroupBy as "created" | "tag" | "tagGroup" | null) ?? null,
+    notesGroupByTagGroupId: pocketbook.notesGroupByTagGroupId ?? null,
     bookmarkedLayout: pocketbook.bookmarkedLayout ?? "list",
     bookmarkedSortBy:
       (pocketbook.bookmarkedSortBy as "alphabetical" | "created") ?? "created",
     bookmarkedSortDirection:
       (pocketbook.bookmarkedSortDirection as "asc" | "desc") ?? "desc",
     bookmarkedGroupBy:
-      (pocketbook.bookmarkedGroupBy as "created" | "tag" | null) ?? null,
+      (pocketbook.bookmarkedGroupBy as "created" | "tag" | "tagGroup" | null) ?? null,
+    bookmarkedGroupByTagGroupId: pocketbook.bookmarkedGroupByTagGroupId ?? null,
     noteCount: pocketbook.noteCount,
     taskCount: pocketbook.taskCount,
   };

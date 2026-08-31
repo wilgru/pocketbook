@@ -33,6 +33,7 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
       description: updateTagData.description,
       layout: updateTagData.layout ?? "list",
       groupBy: updateTagData.groupBy,
+      groupByTagGroupId: updateTagData.groupByTagGroupId ?? null,
       sortBy: updateTagData.sortBy,
       sortDirection: updateTagData.sortDirection,
       links: JSON.stringify(updateTagData.links),

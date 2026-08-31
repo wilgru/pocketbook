@@ -23,7 +23,8 @@ export type Tag = Prettify<
   > & {
     colour: Colour;
     links: TagLink[];
-    groupBy: "created" | "tag" | null;
+    groupBy: "created" | "tag" | "tagGroup" | null;
+    groupByTagGroupId: string | null;
     sortBy: "alphabetical" | "created";
     sortDirection: "asc" | "desc";
     layout: "list" | "table";

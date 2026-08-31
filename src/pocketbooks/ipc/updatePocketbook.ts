@@ -14,10 +14,12 @@ export type UpdatePocketbookInput = {
   notesSortBy: string;
   notesSortDirection: string;
   notesGroupBy: string | null;
+  notesGroupByTagGroupId: string | null;
   bookmarkedLayout: string;
   bookmarkedSortBy: string;
   bookmarkedSortDirection: string;
   bookmarkedGroupBy: string | null;
+  bookmarkedGroupByTagGroupId: string | null;
 };
 
 createIpcHandler(
@@ -31,10 +33,12 @@ createIpcHandler(
     notesSortBy,
     notesSortDirection,
     notesGroupBy,
+    notesGroupByTagGroupId,
     bookmarkedLayout,
     bookmarkedSortBy,
     bookmarkedSortDirection,
     bookmarkedGroupBy,
+    bookmarkedGroupByTagGroupId,
   }: UpdatePocketbookInput): PocketbookSchema => {
     const now = new Date().toISOString();
 
@@ -48,10 +52,12 @@ createIpcHandler(
         notesSortBy,
         notesSortDirection,
         notesGroupBy,
+        notesGroupByTagGroupId,
         bookmarkedLayout,
         bookmarkedSortBy,
         bookmarkedSortDirection,
         bookmarkedGroupBy,
+        bookmarkedGroupByTagGroupId,
         updated: now,
       })
       .where(eq(pocketbooks.id, pocketbookId))

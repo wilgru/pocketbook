@@ -22,6 +22,7 @@ export const tags = sqliteTable("tags", {
   layout: text("layout").notNull().default("list"),
   description: text("description"),
   groupBy: text("group_by"),
+  groupByTagGroupId: text("group_by_tag_group_id").references(() => tagGroups.id),
   sortBy: text("sort_by").notNull().default("created"),
   sortDirection: text("sort_direction").notNull().default("desc"),
   links: text("links").notNull().default("[]"),
