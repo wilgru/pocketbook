@@ -72,6 +72,11 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1.0" },
       { title: "Pocketbook" },
+      { name: "theme-color", content: "#000000" },
+    ],
+    links: [
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "icon", type: "image/png", href: "/icon.png" },
     ],
   }),
   component: RootComponent,
