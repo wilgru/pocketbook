@@ -22,6 +22,7 @@ export const useDeleteComment = (): UseDeleteCommentResponse => {
     commentId,
   }: DeleteCommentProps): Promise<string | undefined> => {
     await deleteCommentServerFn({ data: { commentId } });
+
     return commentId;
   };
 
@@ -30,6 +31,7 @@ export const useDeleteComment = (): UseDeleteCommentResponse => {
     queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
+  // TODO: consider time caching for better performance
   const { mutateAsync } = useMutation({
     mutationKey: ["comments.delete"],
     mutationFn,

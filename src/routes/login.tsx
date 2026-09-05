@@ -1,7 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { useLogin } from "src/Users/hooks/useLogin";
-import { useUser } from "src/Users/hooks/useUser";
+import { useCallback, useState, type FormEvent } from "react";
 import { Button } from "src/common/components/Button/Button";
 import { Input } from "src/common/components/Input/Input";
 
@@ -21,8 +19,6 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginIndexComponent(): JSX.Element {
-  const { login, loginLoading, loginError } = useLogin();
-  const { user } = useUser();
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
@@ -49,25 +45,25 @@ function LoginIndexComponent(): JSX.Element {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await login({ email: formData.email, password: formData.password });
+    // await login({ email: formData.email, password: formData.password });
 
     // redirect on successful login
     navigateAfterAuth();
   };
 
-  useEffect(() => {
-    if (user) {
-      navigateAfterAuth();
-    }
-  }, [navigateAfterAuth, user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     navigateAfterAuth();
+  //   }
+  // }, [navigateAfterAuth, user]);
 
   return (
     <div className="flex flex-col gap-6 justify-center items-center h-screen w-screen bg-slate-100">
-      {!!loginError && (
+      {/* {!!loginError && (
         <div className="p-6 border border-red-500 rounded-lg bg-red-100 text-red-500 max-w-sm w-full">
           Incorrect email or password.
         </div>
-      )}
+      )} */}
       <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow-sm">
         <h1 className="text-4xl font-normal font-title tracking-tight ">
           Pocketbook
@@ -103,9 +99,9 @@ function LoginIndexComponent(): JSX.Element {
           </div>
 
           <div>
-            <Button disabled={loginLoading} type="submit">
+            {/* <Button disabled={loginLoading} type="submit">
               {loginLoading ? "Loading..." : "Log in"}
-            </Button>
+            </Button> */}
           </div>
 
           <div className="flex items-baseline">

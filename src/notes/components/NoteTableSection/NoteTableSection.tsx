@@ -2,7 +2,7 @@ import { cn } from "src/common/utils/cn";
 import { NoteTableItem } from "src/notes/components/NoteTableSection/NoteTableItem";
 import type { ReactNode } from "react";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type TableColumn = {
   key: string;

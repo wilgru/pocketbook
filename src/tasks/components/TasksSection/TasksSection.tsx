@@ -8,7 +8,7 @@ import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { TaskProgressBar } from "../TaskProgressBar/TaskProgressBar";
 import type { Colour } from "src/colours/Colour.type";
-import type { TasksGroup } from "src/tasks/Task.type";
+import type { TasksGroup } from "src/tasks/tasks.schema";
 
 type TasksSectionProps = {
   taskGroup: TasksGroup;
@@ -50,7 +50,8 @@ export const TasksSection = ({
     async (insertAfterSortOrder?: number) => {
       const createdTask = await createTask({
         createTaskData: {
-          note: note ?? null,
+          noteId: note?.id ?? null,
+          pocketbookId,
           title: "",
           isImportant: false,
           link: null,

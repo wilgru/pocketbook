@@ -7,7 +7,7 @@ import { Input } from "src/common/components/Input/Input";
 import { Label } from "src/common/components/Label/Label";
 import { DeleteTagGroupModal } from "src/tags/components/DeleteTagGroupModal/DeleteTagGroupModal";
 import { useUpdateTagGroup } from "src/tags/hooks/useUpdateTagGroup";
-import type { TagGroup } from "src/tags/Tag.type";
+import type { TagGroup } from "src/tags/tags.schema";
 
 type EditTagGroupModalProps = {
   tagGroup: TagGroup;

@@ -16,7 +16,6 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { getColour } from "src/colours/utils/getColour";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { Toggle } from "src/common/components/Toggle/Toggle";
@@ -26,7 +25,7 @@ import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { FormattingToolbarButton } from "src/notes/components/NoteToolbar/NoteToolbarButton";
 import type { BaseSelection, LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
-import type { Comment } from "src/comments/Comment.type";
+import type { Comment } from "src/comments/comments.schema";
 import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
 
 type CommentToolbarProps = {
@@ -60,8 +59,8 @@ export const CommentToolbar = ({
   const savedSelectionRef = useRef<BaseSelection | null>(null);
   const selectedNotes = comment.notes ?? [];
   const isWaypoint = comment.isWaypoint ?? false;
-  const tint = comment.tint ?? null;
-  const waypointColour = tint ? getColour(tint) : colours.grey;
+  const tint = comment.colour ?? null;
+  const waypointColour = tint ?? colours.grey;
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -282,7 +281,7 @@ export const CommentToolbar = ({
         />
         <button
           type="button"
-          onClick={() => onCommentChange({ tint: null })}
+          onClick={() => onCommentChange({ colour: null })}
           className={cn(
             "h-5 w-5 rounded-full border-2 bg-slate-200",
             tint === null ? "border-slate-500" : "border-transparent",
@@ -293,11 +292,11 @@ export const CommentToolbar = ({
           <button
             key={tintOption.name}
             type="button"
-            onClick={() => onCommentChange({ tint: tintOption.name })}
+            onClick={() => onCommentChange({ colour: tintOption })}
             className={cn(
               "h-5 w-5 rounded-full border-2",
               tintOption.background,
-              tint === tintOption.name
+              tint?.name === tintOption.name
                 ? "border-slate-600"
                 : "border-transparent",
             )}

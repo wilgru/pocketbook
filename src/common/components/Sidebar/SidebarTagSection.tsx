@@ -5,7 +5,7 @@ import { Button } from "src/common/components/Button/Button";
 import { CreateTagModal } from "src/tags/components/CreateTagModal/CreateTagModal";
 import { EditTagGroupModal } from "src/tags/components/EditTagGroupModal/EditTagGroupModal";
 import type { Colour } from "src/colours/Colour.type";
-import type { TagGroup } from "src/tags/Tag.type";
+import type { TagGroup } from "src/tags/tags.schema";
 
 export const SidebarTagSection = ({
   title,

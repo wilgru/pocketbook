@@ -5,17 +5,20 @@ import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { NoteEditorModal } from "src/notes/components/NoteEditorModal/NoteEditorModal";
 import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTableSection";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
-import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
+import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 import { NoteListItem } from "../NoteListItem/NoteListItem";
 import { StickyNoteListItem } from "../NoteListItem/StickyNoteListItem";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note, NotesGroup } from "src/notes/Note.type";
-import type { TagGroup, TagLink } from "src/tags/Tag.type";
+import type { Link } from "src/common/types/Link.type";
+import type { Note, NotesGroup } from "src/notes/notes.schema";
+import type { TagGroup } from "src/tags/tags.schema";
 
 type StickyNotesGridProps = {
   notes: Note[];
@@ -49,7 +52,7 @@ type NotesLayoutProps = {
   notes: Note[];
   selectedNote: Note | null;
   description: string | null;
-  links?: TagLink[];
+  links?: Link[];
   prefillNewNoteData?: Partial<Note>;
   groupNotesBy?: "created" | "tag" | "tagGroup";
   groupByTagGroupId?: string | null;
@@ -71,7 +74,11 @@ export const NotesLayout = ({
   groupSortDirection = "desc",
   onCreateNote,
 }: NotesLayoutProps) => {
-  const { tagGroups } = useGetTagGroups();
+  const { pocketbookId } = useCurrentPocketbookId();
+
+  const { data: tagGroupsData } = useServerQuery(getTagGroupsServerFn, {
+    pocketbookId,
+  });
 
   const effectiveNoteGroups = useMemo<NotesGroup[]>(() => {
     if (!notes || notes.length === 0) {
@@ -89,7 +96,9 @@ export const NotesLayout = ({
     }
 
     if (groupNotesBy === "tagGroup") {
-      const tagGroup = tagGroups.find((tg) => tg.id === groupByTagGroupId);
+      const tagGroup = tagGroupsData?.tagGroups.find(
+        (tagGroup) => tagGroup.id === groupByTagGroupId,
+      );
 
       return groupNotes(
         notes,
@@ -111,11 +120,11 @@ export const NotesLayout = ({
   }, [
     notes,
     groupNotesBy,
-    groupByTagGroupId,
     title,
     prefillNewNoteData,
     groupSortDirection,
-    tagGroups,
+    tagGroupsData,
+    groupByTagGroupId,
   ]);
 
   // TODO: move the different layouts into their own components to reduce complexity and handle layout specific logic like this in their own components
@@ -128,8 +137,12 @@ export const NotesLayout = ({
       ),
     );
 
-    return tagGroups.filter((tagGroup) => tagGroupIds.has(tagGroup.id));
-  }, [notes, tagGroups]);
+    return tagGroupsData
+      ? tagGroupsData?.tagGroups.filter((tagGroup) =>
+          tagGroupIds.has(tagGroup.id),
+        )
+      : [];
+  }, [notes, tagGroupsData]);
   const showTaskColumn = useMemo(
     () => notes.some((note) => note.tasks.length > 0),
     [notes],

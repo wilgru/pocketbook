@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "src/Users/hooks/useUser";
 import { createCommentServerFn } from "src/comments/serverFunctions/createComment";
-import { mapComment } from "src/comments/utils/mapComment";
-import { syncCommentLists } from "src/comments/utils/syncCommentLists";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Comment } from "src/comments/Comment.type";
+import type { Comment } from "src/comments/comments.schema";
 
 type CreateCommentProps = {
-  createCommentData: Omit<Comment, "id" | "created" | "updated">;
+  createCommentData: Omit<
+    Comment,
+    "id" | "created" | "updated" | "pocketbookId"
+  >;
 };
 
 type UseCreateCommentResponse = {
@@ -23,36 +23,31 @@ type UseCreateCommentResponse = {
 export const useCreateComment = (): UseCreateCommentResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
   const queryClient = useQueryClient();
-  const { user } = useUser();
 
   const mutationFn = async ({
     createCommentData,
   }: CreateCommentProps): Promise<Comment | undefined> => {
     const data = await createCommentServerFn({
       data: {
-        content: createCommentData.content ?? null,
-        tint: createCommentData.tint,
-        isWaypoint: createCommentData.isWaypoint ?? false,
+        content: createCommentData.content,
+        colour: createCommentData.colour,
+        isWaypoint: createCommentData.isWaypoint,
         noteIds: createCommentData.notes.map((n) => n.id),
         pocketbookId: pocketbookId ?? null,
-        userId: user?.id ?? null,
       },
     });
 
-    const createdComment = mapComment(data, { notes: createCommentData.notes });
-
-    syncCommentLists(queryClient, createdComment, {
-      notes: createCommentData.notes,
-    });
-
-    return createdComment;
+    return data;
   };
 
-  const onSuccess = () => {
-    void queryClient.invalidateQueries({ queryKey: ["comments.list"] });
-    void queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
+  const onSuccess = (data: Comment | undefined) => {
+    if (!data) return;
+
+    queryClient.refetchQueries({ queryKey: ["comments.list"] });
+    queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
+  // TODO: consider time caching for better performance
   const { mutateAsync } = useMutation({
     mutationKey: ["comments.create"],
     mutationFn,

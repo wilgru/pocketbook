@@ -1,27 +1,36 @@
 import { createServerFn } from "@tanstack/react-start";
-import { eq } from "drizzle-orm";
+import dayjs from "dayjs";
+import { eq, inArray } from "drizzle-orm";
 import { commentNotes, comments } from "src/comments/comments.schema";
+import { EMPTY_LEXICAL_CONTENT } from "src/common/utils/lexicalContent";
 import { getDb } from "src/db/connection";
+import { notes } from "src/notes/notes.schema";
+import type { Colour } from "src/colours/Colour.type";
+import type { Comment } from "src/comments/comments.schema";
+import type { Note } from "src/notes/notes.schema";
 
 export type UpdateCommentInput = {
   commentId: string;
   content: string | null;
-  tint: string | null;
+  colour: Colour | null;
   isWaypoint: boolean;
   noteIds: string[];
 };
 
-export const updateCommentServerFn = createServerFn({ method: "POST" })
+export const updateCommentServerFn = createServerFn({
+  method: "POST",
+  strict: { output: false },
+})
   .validator((input: UpdateCommentInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<Comment>>(async ({ data }) => {
     const db = getDb();
-    const now = new Date().toISOString();
+    const now = dayjs();
 
     const [updated] = await db
       .update(comments)
       .set({
-        content: data.content,
-        tint: data.tint,
+        content: data.content ?? EMPTY_LEXICAL_CONTENT,
+        colour: data.colour,
         isWaypoint: data.isWaypoint,
         updated: now,
       })
@@ -29,6 +38,7 @@ export const updateCommentServerFn = createServerFn({ method: "POST" })
       .returning()
       .all();
 
+    // Replace note links: delete existing, insert new
     await db
       .delete(commentNotes)
       .where(eq(commentNotes.commentId, data.commentId))
@@ -43,5 +53,21 @@ export const updateCommentServerFn = createServerFn({ method: "POST" })
         .run();
     }
 
-    return updated;
+    const noteRows =
+      data.noteIds.length > 0
+        ? await db
+            .select()
+            .from(notes)
+            .where(inArray(notes.id, data.noteIds))
+            .all()
+        : [];
+
+    const rowNotes: Note[] = noteRows.map((noteRow) => ({
+      ...noteRow,
+      tasks: [],
+      tags: [],
+      commentCount: 0,
+    }));
+
+    return { ...updated, notes: rowNotes };
   });

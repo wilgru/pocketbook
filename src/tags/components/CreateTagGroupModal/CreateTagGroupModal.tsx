@@ -5,8 +5,9 @@ import { Button } from "src/common/components/Button/Button";
 import { Dialog } from "src/common/components/Dialog/Dialog";
 import { Input } from "src/common/components/Input/Input";
 import { Label } from "src/common/components/Label/Label";
+import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { useCreateTagGroup } from "src/tags/hooks/useCreateTagGroup";
-import type { TagGroup } from "src/tags/Tag.type";
+import type { TagGroup } from "src/tags/tags.schema";
 
 type newTagGroup = Omit<
   TagGroup,
@@ -14,8 +15,10 @@ type newTagGroup = Omit<
 >;
 
 export const CreateTagGroupModal = () => {
+  const { pocketbookId } = useCurrentPocketbookId();
   const [newTagGroupToEdit, setNewTagGroupToEdit] = useState<newTagGroup>({
     title: "",
+    pocketbookId,
   });
   const { createTagGroup } = useCreateTagGroup();
 

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Dialog } from "src/common/components/Dialog/Dialog";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type NoteEditorModalProps = {
   note: Note;

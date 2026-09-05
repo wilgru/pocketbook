@@ -1,31 +1,39 @@
 import { createServerFn } from "@tanstack/react-start";
-import { eq } from "drizzle-orm";
+import dayjs from "dayjs";
+import { eq, isNull, count, and } from "drizzle-orm";
 import { getDb } from "src/db/connection";
+import { notes } from "src/notes/notes.schema";
 import { pocketbooks } from "src/pocketbooks/pocketbooks.schema";
-import type { ColourName } from "src/colours/Colour.type";
+import { tasks } from "src/tasks/tasks.schema";
+import type { Colour } from "src/colours/Colour.type";
+import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
+import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
 export type UpdatePocketbookInput = {
   pocketbookId: string;
   title: string;
-  icon: string;
-  colour: ColourName;
-  notesLayout: string;
-  notesSortBy: string;
-  notesSortDirection: string;
-  notesGroupBy: string | null;
+  icon: CustomisationIconName | null;
+  colour: Colour;
+  notesLayout: "list" | "table";
+  notesSortBy: "alphabetical" | "created";
+  notesSortDirection: "asc" | "desc";
+  notesGroupBy: "created" | "tag" | "tagGroup" | null;
   notesGroupByTagGroupId: string | null;
-  bookmarkedLayout: string;
-  bookmarkedSortBy: string;
-  bookmarkedSortDirection: string;
-  bookmarkedGroupBy: string | null;
+  bookmarkedLayout: "list" | "table";
+  bookmarkedSortBy: "alphabetical" | "created";
+  bookmarkedSortDirection: "asc" | "desc";
+  bookmarkedGroupBy: "created" | "tag" | "tagGroup" | null;
   bookmarkedGroupByTagGroupId: string | null;
 };
 
-export const updatePocketbookServerFn = createServerFn({ method: "POST" })
+export const updatePocketbookServerFn = createServerFn({
+  method: "POST",
+  strict: false,
+})
   .validator((input: UpdatePocketbookInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<Pocketbook>>(async ({ data }) => {
     const db = getDb();
-    const now = new Date().toISOString();
+    const now = dayjs();
 
     const [updated] = await db
       .update(pocketbooks)
@@ -49,5 +57,21 @@ export const updatePocketbookServerFn = createServerFn({ method: "POST" })
       .returning()
       .all();
 
-    return updated;
+    const noteCountRows = await db
+      .select({ count: count() })
+      .from(notes)
+      .where(and(isNull(notes.deleted), eq(notes.pocketbookId, updated.id)))
+      .all();
+
+    const taskCountRows = await db
+      .select({ count: count() })
+      .from(tasks)
+      .where(eq(tasks.pocketbookId, updated.id))
+      .all();
+
+    return {
+      ...updated,
+      taskCount: noteCountRows[0].count,
+      noteCount: taskCountRows[0].count,
+    };
   });

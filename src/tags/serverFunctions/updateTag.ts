@@ -1,29 +1,36 @@
 import { createServerFn } from "@tanstack/react-start";
+import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { tags } from "src/tags/tags.schema";
-import type { ColourName } from "src/colours/Colour.type";
+import type { Colour } from "src/colours/Colour.type";
+import type { Link } from "src/common/types/Link.type";
+import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
+import type { Tag } from "src/tags/tags.schema";
 
 export type UpdateTagInput = {
   tagId: string;
   name: string;
-  colour: ColourName;
-  icon: string;
+  colour: Colour;
+  icon: CustomisationIconName | null;
   description: string | null;
   tagGroupId: string | null;
-  layout: string;
-  sortBy: string;
-  sortDirection: string;
-  groupBy: string | null;
+  layout: "list" | "table"; // TODO extract this type to somewhere
+  sortBy: "created" | "alphabetical";
+  sortDirection: "desc" | "asc";
+  groupBy: "tag" | "created" | "tagGroup" | null;
   groupByTagGroupId: string | null;
-  links: string;
+  links: Link[];
 };
 
-export const updateTagServerFn = createServerFn({ method: "POST" })
+export const updateTagServerFn = createServerFn({
+  method: "POST",
+  strict: false,
+})
   .validator((input: UpdateTagInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<Tag>>(async ({ data }) => {
     const db = getDb();
-    const now = new Date().toISOString();
+    const now = dayjs();
 
     const [updated] = await db
       .update(tags)
@@ -32,7 +39,7 @@ export const updateTagServerFn = createServerFn({ method: "POST" })
         colour: data.colour,
         icon: data.icon,
         description: data.description,
-        tagGroup: data.tagGroupId,
+        tagGroupId: data.tagGroupId,
         layout: data.layout,
         sortBy: data.sortBy,
         sortDirection: data.sortDirection,
@@ -45,5 +52,5 @@ export const updateTagServerFn = createServerFn({ method: "POST" })
       .returning()
       .all();
 
-    return updated;
+    return { ...updated, noteCount: 0 }; // TODO: add note count
   });

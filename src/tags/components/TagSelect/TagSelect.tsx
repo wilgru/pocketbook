@@ -3,13 +3,15 @@ import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
+import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { TagPill } from "src/tags/components/TagPill/TagPill";
 import { useCreateTag } from "src/tags/hooks/useCreateTag";
-import { useGetTags } from "src/tags/hooks/useGetTags";
+import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
 import type { Colour } from "src/colours/Colour.type";
-import type { Tag } from "src/tags/Tag.type";
+import type { Tag } from "src/tags/tags.schema";
 
 type TagSelectProps = {
   initialTags: Tag[];
@@ -22,17 +24,19 @@ export const TagSelect = ({
   colour = colours.orange,
   onChange,
 }: TagSelectProps) => {
-  const { tags } = useGetTags();
+  const { pocketbookId } = useCurrentPocketbook();
+  const { data: tagsData } = useServerQuery(getTagsServerFn, { pocketbookId });
   const { createTag } = useCreateTag();
 
   const [selectedTags, setSelectedTags] = useState<Tag[]>(initialTags);
   const [search, setSearch] = useState("");
 
-  const filteredTags = tags.filter(
-    (tag) =>
-      tag.name.toLowerCase().includes(search.toLowerCase()) &&
-      !selectedTags.some((selectedTag) => selectedTag.id === tag.id),
-  );
+  const filteredTags =
+    tagsData?.tags.filter(
+      (tag) =>
+        tag.name.toLowerCase().includes(search.toLowerCase()) &&
+        !selectedTags.some((selectedTag) => selectedTag.id === tag.id),
+    ) ?? [];
 
   const handleSelectTag = (tag: Tag) => {
     const newTags = [...selectedTags, tag];
@@ -126,7 +130,7 @@ export const TagSelect = ({
           ))}
 
           {search.trim().length > 0 &&
-            !tags.some((tag) => tag.name === search) && (
+            !tagsData?.tags.some((tag) => tag.name === search) && (
               <div
                 className={cn(
                   "rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer text-sm",

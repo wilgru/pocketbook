@@ -1,18 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
+import dayjs from "dayjs";
 import { getDb } from "src/db/connection";
 import { tagGroups } from "src/tags/tags.schema";
+import type { TagGroup } from "src/tags/tags.schema";
 
 export type CreateTagGroupInput = {
   title: string;
   pocketbookId: string | null;
-  userId: string | null;
 };
 
-export const createTagGroupServerFn = createServerFn({ method: "POST" })
+export const createTagGroupServerFn = createServerFn({
+  method: "POST",
+  strict: false,
+})
   .validator((input: CreateTagGroupInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<TagGroup>>(async ({ data }) => {
     const db = getDb();
-    const now = new Date().toISOString();
+    const now = dayjs();
     const id = crypto.randomUUID();
 
     const [inserted] = await db
@@ -20,13 +24,12 @@ export const createTagGroupServerFn = createServerFn({ method: "POST" })
       .values({
         id,
         title: data.title,
-        pocketbook: data.pocketbookId,
-        user: data.userId,
+        pocketbookId: data.pocketbookId,
         created: now,
         updated: now,
       })
       .returning()
       .all();
 
-    return inserted;
+    return { ...inserted, tags: [] }; // TODO add tags?
   });

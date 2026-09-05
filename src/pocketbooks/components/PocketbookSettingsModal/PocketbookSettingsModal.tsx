@@ -13,7 +13,7 @@ import { Label } from "src/common/components/Label/Label";
 import { NavItem } from "src/common/components/NavItem/NavItem";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useUpdatePocketbook } from "src/pocketbooks/hooks/useUpdatePocketbook";
-import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
+import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 import type { PocketbookSettingsModalPage } from "src/routes/_layout.tsx";
 
 type PocketbookSettingsModalProps = {

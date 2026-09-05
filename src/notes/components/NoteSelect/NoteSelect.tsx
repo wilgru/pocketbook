@@ -2,10 +2,12 @@ import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { cn } from "src/common/utils/cn";
-import { useGetNotes } from "src/notes/hooks/useGetNotes";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
+import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type NoteSelectProps = {
   selectedNotes: Note[];
@@ -22,18 +24,22 @@ export const NoteSelect = ({
   onChange,
   onOpenChange,
 }: NoteSelectProps) => {
-  const { notes } = useGetNotes({});
+  const { pocketbookId } = useCurrentPocketbook();
+  const { data: notesData } = useServerQuery(getNotesServerFn, {
+    pocketbookId,
+  });
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const selectedSingleNote = mode === "single" ? selectedNotes[0] : null;
 
-  const filteredNotes = notes.filter(
-    (note) =>
-      (note.title ?? "Untitled Note")
-        .toLowerCase()
-        .includes(search.toLowerCase()) &&
-      !selectedNotes.some((selected) => selected.id === note.id),
-  );
+  const filteredNotes =
+    notesData?.notes.filter(
+      (note) =>
+        (note.title ?? "Untitled Note")
+          .toLowerCase()
+          .includes(search.toLowerCase()) &&
+        !selectedNotes.some((selected) => selected.id === note.id),
+    ) ?? [];
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);

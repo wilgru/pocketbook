@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { useDeleteTag } from "src/tags/hooks/useDeleteTag";
-import type { Tag } from "src/tags/Tag.type";
+import type { Tag } from "src/tags/tags.schema";
 
 type DeleteTagModalProps = {
   tag: Tag;

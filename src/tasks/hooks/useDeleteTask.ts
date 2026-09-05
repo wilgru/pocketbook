@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTaskServerFn } from "src/tasks/serverFunctions/deleteTask";
-import { useGetTasks } from "./useGetTasks";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
 type DeleteTaskProps = {
@@ -18,14 +17,10 @@ type UseDeleteTaskResponse = {
 
 export const useDeleteTask = (): UseDeleteTaskResponse => {
   const queryClient = useQueryClient();
-  const { tasks } = useGetTasks({});
 
   const mutationFn = async ({
     taskId,
   }: DeleteTaskProps): Promise<string | undefined> => {
-    const taskToDelete = tasks.find((task) => task.id === taskId);
-    if (!taskToDelete) return;
-
     await deleteTaskServerFn({ data: { taskId } });
 
     return taskId;

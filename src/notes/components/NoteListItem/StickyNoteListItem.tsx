@@ -7,7 +7,7 @@ import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type StickyNoteListItemProps = {
   note: Note;

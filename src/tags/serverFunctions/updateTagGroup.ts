@@ -1,18 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
+import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { tagGroups } from "src/tags/tags.schema";
+import type { TagGroup } from "src/tags/tags.schema";
 
 export type UpdateTagGroupInput = {
   tagGroupId: string;
   title: string;
 };
 
-export const updateTagGroupServerFn = createServerFn({ method: "POST" })
+export const updateTagGroupServerFn = createServerFn({
+  method: "POST",
+  strict: false,
+})
   .validator((input: UpdateTagGroupInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<TagGroup>>(async ({ data }) => {
     const db = getDb();
-    const now = new Date().toISOString();
+    const now = dayjs();
 
     const [updated] = await db
       .update(tagGroups)
@@ -21,5 +26,5 @@ export const updateTagGroupServerFn = createServerFn({ method: "POST" })
       .returning()
       .all();
 
-    return updated;
+    return { ...updated, tags: [] }; // TODO add tags
   });

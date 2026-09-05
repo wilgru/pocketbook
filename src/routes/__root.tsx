@@ -10,15 +10,16 @@ import {
 } from "@tanstack/react-router";
 // import { TanStackRouterDevtoolsPanel } from "@tanstack/router-devtools";
 import { useState } from "react";
-import requireClientAuth from "src/Users/utils/requireClientAuth";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { useNavigateToLastUsedPocketbook } from "src/pocketbooks/hooks/useGetLastUsedPocketbook";
+import { getPocketbooksServerFn } from "src/pocketbooks/serverFunctions/getPocketbooks";
 
 const NotFoundComponent = () => {
-  const { lastUsedPocketbook, isFetching } = useNavigateToLastUsedPocketbook();
+  const { data: pocketbooksData } = useServerQuery(getPocketbooksServerFn, {});
+  const { lastUsedPocketbook } = useNavigateToLastUsedPocketbook();
 
-  requireClientAuth();
-
-  if (isFetching) {
+  console.log(pocketbooksData);
+  if (pocketbooksData === undefined) {
     return <div>Loading pocketbooks...</div>; // TODO: handle this better, use a spinner/loading component?
   }
 

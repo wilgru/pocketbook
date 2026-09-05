@@ -10,7 +10,7 @@ import type { IconName } from "src/icons/Icon.type";
 type ToggleProps = {
   className?: string;
   children?: string | JSX.Element;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   colour?: Colour;
   isToggled: boolean;
   disabled?: boolean;
@@ -35,6 +35,7 @@ const toggleVariants = cva(
   {
     variants: {
       size: {
+        xs: "p-0.5 text-xs font-normal",
         sm: "p-1 text-xs font-normal",
         md: "p-2 text-sm font-medium",
         lg: "p-6 text-sm",

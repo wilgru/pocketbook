@@ -1,33 +1,43 @@
 import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
-import { notes, noteTags } from "src/notes/notes.schema";
+import { notes } from "src/notes/notes.schema";
+import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
+import { getTasksServerFn } from "src/tasks/serverFunctions/getTasks";
+import type { Note } from "src/notes/notes.schema";
 
 export type GetNoteInput = { noteId: string };
 
-export const getNoteServerFn = createServerFn({ method: "GET" })
+export const getNoteServerFn = createServerFn({
+  method: "GET",
+  strict: { output: false },
+})
   .validator((input: GetNoteInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<Note>>(async ({ data }) => {
     const db = getDb();
 
-    const row = await db
+    const noteRow = await db
       .select()
       .from(notes)
       .where(eq(notes.id, data.noteId))
       .get();
 
-    if (!row) {
+    if (!noteRow) {
       throw new Error(`Note not found: ${data.noteId}`);
     }
 
-    const tags = await db
-      .select()
-      .from(noteTags)
-      .where(eq(noteTags.noteId, data.noteId))
-      .all();
+    const { tasks } = await getTasksServerFn({
+      data: { pocketbookId: noteRow.pocketbookId },
+    });
+
+    const { tags } = await getTagsServerFn({
+      data: { pocketbookId: noteRow.pocketbookId, noteId: data.noteId },
+    });
 
     return {
-      note: row,
-      tagIds: tags.map((t) => t.tagId),
+      ...noteRow,
+      tasks,
+      tags,
+      commentCount: 0,
     };
   });

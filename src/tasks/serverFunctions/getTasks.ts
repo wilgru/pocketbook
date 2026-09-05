@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { and, asc, eq, isNotNull, isNull } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { tasks } from "src/tasks/tasks.schema";
+import type { Task } from "src/tasks/tasks.schema";
 
 export type GetTasksInput = {
   pocketbookId: string;
@@ -9,15 +10,18 @@ export type GetTasksInput = {
   status?: "incomplete" | "completed" | "cancelled";
 };
 
-export const getTasksServerFn = createServerFn({ method: "GET" })
+export const getTasksServerFn = createServerFn({
+  method: "GET",
+  strict: { output: false },
+})
   .validator((input: GetTasksInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<{ tasks: Task[] }>>(async ({ data }) => {
     const db = getDb();
 
-    const conditions = [eq(tasks.pocketbook, data.pocketbookId)];
+    const conditions = [eq(tasks.pocketbookId, data.pocketbookId)];
 
     if (data.noteId !== undefined) {
-      conditions.push(eq(tasks.note, data.noteId));
+      conditions.push(eq(tasks.noteId, data.noteId));
     }
 
     if (data.status === "incomplete") {
@@ -29,12 +33,12 @@ export const getTasksServerFn = createServerFn({ method: "GET" })
       conditions.push(isNotNull(tasks.cancelledDate));
     }
 
-    const rows = await db
+    const taskRows = await db
       .select()
       .from(tasks)
       .where(and(...conditions))
       .orderBy(asc(tasks.sortOrder))
       .all();
 
-    return { tasks: rows };
+    return { tasks: taskRows };
   });

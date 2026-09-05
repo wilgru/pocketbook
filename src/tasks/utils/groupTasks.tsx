@@ -1,4 +1,4 @@
-import type { Task, TasksGroup } from "src/tasks/Task.type";
+import type { Task, TasksGroup } from "src/tasks/tasks.schema";
 
 const getGroup = (
   task: Task,
@@ -21,7 +21,7 @@ const getGroup = (
           {
             title: "No Note",
             relevantTaskData: {
-              note: null,
+              noteId: null,
             },
           },
         ];

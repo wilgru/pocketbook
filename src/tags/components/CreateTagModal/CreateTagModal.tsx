@@ -9,7 +9,7 @@ import { Input } from "src/common/components/Input/Input";
 import { Label } from "src/common/components/Label/Label";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useCreateTag } from "src/tags/hooks/useCreateTag";
-import type { Tag } from "src/tags/Tag.type";
+import type { Tag } from "src/tags/tags.schema";
 
 type NewTag = Omit<Tag, "id" | "noteCount" | "groupBy" | "created" | "updated">;
 
@@ -18,6 +18,7 @@ type CreateTagModalProps = {
 };
 
 const getInitialTag = (tagGroupId?: string): NewTag => ({
+  pocketbookId: "",
   name: "",
   description: null,
   colour: colours.orange,
@@ -55,7 +56,7 @@ export const CreateTagModal = ({ tagGroupId }: CreateTagModalProps) => {
   //   });
   // };
 
-  // const onEditLinks = (updatedLink: TagLink) => {
+  // const onEditLinks = (updatedLink: Link) => {
   //   setEditedTag((currentTagToEdit) => {
   //     const updatedLinks = currentTagToEdit.links.map((link) =>
   //       link.id === updatedLink.id ? updatedLink : link

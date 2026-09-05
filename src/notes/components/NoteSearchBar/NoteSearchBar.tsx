@@ -2,13 +2,14 @@ import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { cn } from "src/common/utils/cn";
 import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
-import { useGetNotes } from "src/notes/hooks/useGetNotes";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useDebouncedCallback } from "use-debounce";
 import { NoteListItem } from "../NoteListItem/NoteListItem";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 export const NoteSearchBar = () => {
   const [inputValue, setInputValue] = useState("");
@@ -20,17 +21,19 @@ export const NoteSearchBar = () => {
   const { pocketbookId, currentPocketbook } = useCurrentPocketbook();
   const colour = currentPocketbook?.colour ?? colours.orange;
 
-  const { notes } = useGetNotes({});
+  const { data: notesData } = useServerQuery(getNotesServerFn, {
+    pocketbookId,
+  });
 
   const noteTextMap = useMemo(
     () =>
       new Map(
-        notes.map((note) => [
+        notesData?.notes.map((note) => [
           note.id,
           getPlainTextFromLexicalContent(note.content),
         ]),
       ),
-    [notes],
+    [notesData],
   );
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
@@ -51,8 +54,8 @@ export const NoteSearchBar = () => {
   };
 
   const searchResults: Note[] =
-    searchQuery.length > 0
-      ? matchSorter(notes, searchQuery, {
+    searchQuery.length > 0 && notesData
+      ? matchSorter(notesData.notes, searchQuery, {
           keys: ["title", (note: Note) => noteTextMap.get(note.id) ?? ""],
         }).slice(0, 10)
       : [];

@@ -1,9 +1,6 @@
-import {
-  createStartHandler,
-  defaultStreamHandler,
-} from "@tanstack/react-start/server";
-import { getRouter } from "./router";
+import { createStart } from "@tanstack/react-start";
+import { dayjsSerializer } from "./common/serialization/dayjs.serializer";
 
-export default createStartHandler({ createRouter: getRouter })(
-  defaultStreamHandler,
-);
+export const startInstance = createStart(() => ({
+  serializationAdapters: [dayjsSerializer],
+}));

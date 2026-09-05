@@ -1,23 +1,28 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Dropdown, DropdownItem } from "src/common/components/Dropdown/Dropdown";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
-import { useGetComments } from "src/comments/hooks/useGetComments";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { Button } from "src/common/components/Button/Button";
+import {
+  Dropdown,
+  DropdownItem,
+} from "src/common/components/Dropdown/Dropdown";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { LinksPopover } from "src/common/components/LinksPopover/LinksPopover";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
 import { useDeleteNote } from "src/notes/hooks/useDeleteNote";
 import { useUpdateNote } from "src/notes/hooks/useUpdateNote";
+import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TagSelect } from "src/tags/components/TagSelect/TagSelect";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { TaskProgressBar } from "src/tasks/components/TaskProgressBar/TaskProgressBar";
@@ -26,7 +31,7 @@ import { useDebouncedCallback } from "use-debounce";
 import type { LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
 import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type NoteEditorProps = {
   note: Note;
@@ -42,11 +47,17 @@ const NoteEditor = ({
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { pocketbookId } = useCurrentPocketbookId();
   const { createNote } = useCreateNote();
   const { createTask } = useCreateTask();
   const { updateNote } = useUpdateNote();
   const { deleteNote } = useDeleteNote();
-  const { comments } = useGetComments({ noteId: note.id });
+  const { data: commentsData } = useServerQuery(
+    getCommentsServerFn,
+    { pocketbookId, noteId: note.id },
+    { enabled: !!note.id },
+  );
+  const comments = commentsData?.comments ?? [];
 
   const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
   const [showNewComment, setShowNewComment] = useState(false);
@@ -96,6 +107,8 @@ const NoteEditor = ({
         cancelledDate: null,
         blockedComment: null,
         blockedDate: null,
+        noteId: null,
+        pocketbookId,
       },
       insertAfterSortOrder,
     });
@@ -206,8 +219,10 @@ const NoteEditor = ({
                   "ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5",
                   colour.secondary.textHovered,
                   colour.secondary.backgroundHovered,
-                  isActionsDropdownOpen && colour.secondary.textHovered.replace("hover:", ""),
-                  isActionsDropdownOpen && colour.secondary.backgroundHovered.replace("hover:", ""),
+                  isActionsDropdownOpen &&
+                    colour.secondary.textHovered.replace("hover:", ""),
+                  isActionsDropdownOpen &&
+                    colour.secondary.backgroundHovered.replace("hover:", ""),
                 )}
                 aria-label="Open note actions"
               >
@@ -218,7 +233,12 @@ const NoteEditor = ({
                   weight={isActionsDropdownOpen ? "fill" : "regular"}
                 />
               </DropdownMenu.Trigger>
-              <Dropdown className="w-40" side="bottom" align="start" sideOffset={6}>
+              <Dropdown
+                className="w-40"
+                side="bottom"
+                align="start"
+                sideOffset={6}
+              >
                 <DropdownItem
                   onSelect={() => void onDeleteNote()}
                   colour={colours.red}
@@ -318,7 +338,7 @@ const NoteEditor = ({
           {showNewComment && (
             <div ref={newCommentRef}>
               <CommentEditor
-                comment={{ notes: [editedNote], tint: null }}
+                comment={{ notes: [editedNote], colour: null }}
                 colour={colour}
                 thisNoteId={editedNote.id}
                 autoFocus={true}

@@ -17,7 +17,7 @@ import { useDeleteTask } from "src/tasks/hooks/useDeleteTask";
 import { useUpdateTask } from "src/tasks/hooks/useUpdateTask";
 import { useDebouncedCallback } from "use-debounce";
 import type { Colour } from "src/colours/Colour.type";
-import type { Task } from "src/tasks/Task.type";
+import type { Task } from "src/tasks/tasks.schema";
 
 type TaskEditorProps = {
   task?: Partial<Task>;
@@ -32,10 +32,11 @@ type TaskEditorProps = {
 
 const getInitialTask = (task: Partial<Task> | undefined): Task => {
   return {
+    pocketbookId: task?.pocketbookId || "",
     id: task?.id || "",
     title: task?.title || "",
     description: task?.description || "",
-    note: task?.note || null,
+    noteId: task?.noteId || null,
     link: task?.link || null,
     links: task?.links || [],
     dueDate: task?.dueDate || null,

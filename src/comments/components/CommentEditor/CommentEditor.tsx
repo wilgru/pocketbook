@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState, Fragment } from "react";
 import { colours } from "src/colours/colours.constant";
-import { getColour } from "src/colours/utils/getColour";
 import { CommentToolbar } from "src/comments/components/CommentEditor/CommentToolbar";
 import { useCreateComment } from "src/comments/hooks/useCreateComment";
 import { useDeleteComment } from "src/comments/hooks/useDeleteComment";
@@ -14,9 +13,9 @@ import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook
 import { UpdateTimelineItem } from "src/updates/components/UpdateTimelineItem/UpdateTimelineItem";
 import type { LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
-import type { Comment } from "src/comments/Comment.type";
+import type { Comment } from "src/comments/comments.schema";
 import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type CommentEditorProps = {
   comment: Partial<Comment>;
@@ -32,7 +31,7 @@ type CommentEditorProps = {
 const getInitialComment = (comment: Partial<Comment>): Partial<Comment> => ({
   id: comment.id ?? "",
   content: comment.content ?? createEmptyLexicalContent(),
-  tint: comment.tint ?? null,
+  colour: comment.colour ?? null,
   isWaypoint: comment.isWaypoint ?? false,
   notes: comment.notes ?? [],
   created: comment.created,
@@ -80,7 +79,7 @@ export const CommentEditor = ({
         commentId: editedComment.id,
         commentData: {
           content: editedComment.content,
-          tint: editedComment.tint,
+          colour: editedComment.colour,
           isWaypoint: editedComment.isWaypoint,
           notes: editedComment.notes as Note[],
         },
@@ -93,7 +92,7 @@ export const CommentEditor = ({
       const created = await createComment({
         createCommentData: {
           content: editedComment.content!,
-          tint: editedComment.tint ?? null,
+          colour: editedComment.colour ?? null,
           notes: (editedComment.notes ?? []) as Note[],
           isWaypoint: editedComment.isWaypoint ?? false,
         },
@@ -117,9 +116,7 @@ export const CommentEditor = ({
   }
 
   const resolvedColour = colour ?? currentPocketbook.colour ?? colours.orange;
-  const commentColour = editedComment.tint
-    ? getColour(editedComment.tint)
-    : null;
+  const commentColour = editedComment.colour ?? null;
 
   const dateStr = editedComment.created
     ? showTimeOnly
@@ -130,17 +127,24 @@ export const CommentEditor = ({
   const notes = editedComment.notes ?? [];
   const hasThisNote = notes.some((n) => n.id === thisNoteId);
   const sortedNotes = hasThisNote
-    ? [...notes].sort((a, b) => (a.id === thisNoteId ? -1 : b.id === thisNoteId ? 1 : 0))
+    ? [...notes].sort((a, b) =>
+        a.id === thisNoteId ? -1 : b.id === thisNoteId ? 1 : 0,
+      )
     : notes;
 
-  const headlinePrefix = notes.length === 0 ? "Left a general comment " : "Commented on ";
+  const headlinePrefix =
+    notes.length === 0 ? "Left a general comment " : "Commented on ";
 
-  const iconName = editedComment.isWaypoint ? "flagBannerFold" : "chatCenteredText";
-  const iconColour = editedComment.isWaypoint && commentColour ? commentColour : colours.grey;
+  const iconName = editedComment.isWaypoint
+    ? "flagBannerFold"
+    : "chatCenteredText";
+  const iconColour =
+    editedComment.isWaypoint && commentColour ? commentColour : colours.grey;
 
-  const editorBackground = !isEditing && commentColour
-    ? cn(commentColour.secondary.background, "p-2")
-    : "bg-white";
+  const editorBackground =
+    !isEditing && commentColour
+      ? cn(commentColour.secondary.background, "p-2")
+      : "bg-white";
 
   return (
     <UpdateTimelineItem
@@ -175,7 +179,9 @@ export const CommentEditor = ({
         </p>
       }
     >
-      <div className={cn("rounded-xl flex flex-col gap-2 pl-1", editorBackground)}>
+      <div
+        className={cn("rounded-xl flex flex-col gap-2 pl-1", editorBackground)}
+      >
         <RichTextEditor
           size="md"
           value={editedComment.content}

@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTaskServerFn } from "src/tasks/serverFunctions/updateTask";
-import { mapTask } from "src/tasks/utils/mapTask";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Task } from "src/tasks/Task.type";
+import type { Task } from "src/tasks/tasks.schema";
 
 type UpdateTaskProps = {
   taskId: string;
@@ -33,19 +32,19 @@ export const useUpdateTask = (): UseUpdateTaskResponse => {
         title: updateTaskData.title,
         description: updateTaskData.description,
         link: updateTaskData.link,
-        links: JSON.stringify(updateTaskData.links),
+        links: updateTaskData.links,
         isImportant: updateTaskData.isImportant,
         noteId: updateTaskData.note?.id ?? null,
-        dueDate: updateTaskData.dueDate?.toISOString() ?? null,
-        completedDate: updateTaskData.completedDate?.toISOString() ?? null,
-        cancelledDate: updateTaskData.cancelledDate?.toISOString() ?? null,
+        dueDate: updateTaskData.dueDate ?? null,
+        completedDate: updateTaskData.completedDate ?? null,
+        cancelledDate: updateTaskData.cancelledDate ?? null,
         blockedComment: updateTaskData.blockedComment,
-        blockedDate: updateTaskData.blockedDate?.toISOString() ?? null,
+        blockedDate: updateTaskData.blockedDate ?? null,
         sortOrder: includeSortOrder ? updateTaskData.sortOrder : undefined,
       },
     });
 
-    return mapTask(data, { note: updateTaskData.note ?? null });
+    return data;
   };
 
   const onSuccess = (data: Task | undefined) => {

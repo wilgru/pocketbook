@@ -1,36 +1,33 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useSetAtom } from "jotai";
+import { colours } from "src/colours/colours.constant";
 import { isSideBarVisibleAtom } from "src/common/atoms/isSidebarVisibleAtom";
 import { Button } from "src/common/components/Button/Button";
 import { NavItem } from "src/common/components/NavItem/NavItem";
 import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { cn } from "src/common/utils/cn";
 import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";
 import { CreateTagGroupModal } from "src/tags/components/CreateTagGroupModal/CreateTagGroupModal";
-import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
+import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 import { SidebarBookmarkSection } from "./SidebarBookmarkSection";
 import { SidebarTagSection } from "./SidebarTagSection";
-import { colours } from "src/colours/colours.constant";
 
 export const Sidebar = () => {
   const { isWindows } = useElectronEnvironment();
 
-  const {
+  const { pocketbookId, currentPocketbook, pocketbooks } =
+    useCurrentPocketbook();
+
+  const { data: tagGroupsData } = useServerQuery(getTagGroupsServerFn, {
     pocketbookId,
-    currentPocketbook,
-    pocketbooks,
-    isFetchingPocketbooks,
-  } = useCurrentPocketbook();
-  const { ungroupedTags, tagGroups } = useGetTagGroups();
+  });
+
   const { counts } = useGetPocketbookContentCounts();
 
   const setIsSidebarVisible = useSetAtom(isSideBarVisibleAtom);
-
-  if (isFetchingPocketbooks) {
-    return null;
-  }
 
   if (!pocketbookId || !currentPocketbook) {
     return null;
@@ -146,9 +143,9 @@ export const Sidebar = () => {
         <SidebarTagSection
           title={"Tags"}
           colour={currentPocketbook.colour}
-          isEmpty={ungroupedTags.length === 0}
+          isEmpty={tagGroupsData?.ungroupedTags.length === 0}
         >
-          {ungroupedTags.map((tag) => (
+          {tagGroupsData?.ungroupedTags.map((tag) => (
             <NavItem
               colour={tag.colour}
               title={tag.name}
@@ -160,7 +157,7 @@ export const Sidebar = () => {
           ))}
         </SidebarTagSection>
 
-        {tagGroups.map((tagGroup) => (
+        {tagGroupsData?.tagGroups.map((tagGroup) => (
           <SidebarTagSection
             title={tagGroup.title}
             tagGroup={tagGroup}

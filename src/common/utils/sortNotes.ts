@@ -1,4 +1,4 @@
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 export type NoteSortBy = "created" | "alphabetical";
 export type SortDirection = "asc" | "desc";

@@ -10,20 +10,21 @@ import { LinkMultiInput } from "src/common/components/LinkMultiInput/LinkMultiIn
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useUpdateTag } from "src/tags/hooks/useUpdateTag";
 import { DeleteTagModal } from "../DeleteTagModal/DeleteTagModal";
-import type { Tag, TagLink } from "src/tags/Tag.type";
+import type { Link } from "src/common/types/Link.type";
+import type { Tag } from "src/tags/tags.schema";
 
 type EditTagModalProps = {
   tag: Tag;
   onDeleted?: () => void | Promise<void>;
 };
 
-const createEmptyTagLink = (): TagLink => ({
+const createEmptyTagLink = (): Link => ({
   id: crypto.randomUUID(),
   title: undefined,
   link: "",
 });
 
-const toDraftTagLinks = (links: TagLink[]): TagLink[] => [
+const toDraftTagLinks = (links: Link[]): Link[] => [
   ...links.filter((link) => link.link.trim() !== ""),
   createEmptyTagLink(),
 ];
@@ -47,7 +48,7 @@ export const EditTagModal = ({ tag, onDeleted }: EditTagModalProps) => {
     }
   };
 
-  const onEditLinks = (updatedLink: TagLink) => {
+  const onEditLinks = (updatedLink: Link) => {
     setEditedTag((currentTagToEdit) => {
       const updatedLinks = toDraftTagLinks(
         currentTagToEdit.links.map((link) =>

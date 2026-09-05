@@ -14,15 +14,16 @@ import {
   DropdownSubTrigger,
 } from "src/common/components/Dropdown/Dropdown";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { sortNotes } from "src/common/utils/sortNotes";
 import { NotesLayout } from "src/notes/components/NotesLayout/NotesLayout";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
-import { useGetNote } from "src/notes/hooks/useGetNote";
-import { useGetNotes } from "src/notes/hooks/useGetNotes";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useUpdatePocketbook } from "src/pocketbooks/hooks/useUpdatePocketbook";
-import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
+import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/bookmarked")({
   component: RouteComponent,
@@ -41,25 +42,34 @@ export const Route = createFileRoute("/_layout/$pocketbookId/bookmarked")({
 function RouteComponent() {
   const { pocketbookId } = Route.useParams();
   const { currentPocketbook } = useCurrentPocketbook();
+  const { updatePocketbook } = useUpdatePocketbook();
   const { createNote } = useCreateNote();
-  const navigate = useNavigate();
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const { noteId } = Route.useSearch(); // TODO: use in loaders?
 
-  const { notes } = useGetNotes({
+  const { data: tagGroupsData } = useServerQuery(getTagGroupsServerFn, {
+    pocketbookId,
+  });
+  const { data: notesData } = useServerQuery(getNotesServerFn, {
+    pocketbookId,
     isBookmarked: true,
   });
-  const { noteId } = Route.useSearch(); // TODO: use in loaders?
-  const { note } = useGetNote({ noteId });
-  const { updatePocketbook } = useUpdatePocketbook();
-  const { tagGroups } = useGetTagGroups();
+  const { data: note } = useServerQuery(
+    getNoteServerFn,
+    { noteId: noteId ?? "" },
+    { enabled: !!noteId },
+  );
+
+  const navigate = useNavigate();
+
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   const sortBy = currentPocketbook?.bookmarkedSortBy ?? "created";
   const sortDirection = currentPocketbook?.bookmarkedSortDirection ?? "desc";
   const groupBy = currentPocketbook?.bookmarkedGroupBy ?? null;
 
   const sortedNotes = useMemo(
-    () => sortNotes(notes, sortBy, sortDirection),
-    [notes, sortBy, sortDirection],
+    () => sortNotes(notesData?.notes ?? [], sortBy, sortDirection),
+    [notesData, sortBy, sortDirection],
   );
 
   if (!currentPocketbook) {
@@ -161,7 +171,7 @@ function RouteComponent() {
                     colour={colours.red}
                     subText={
                       groupBy === "tagGroup"
-                        ? tagGroups.find(
+                        ? tagGroupsData?.tagGroups.find(
                             (tg) =>
                               tg.id ===
                               currentPocketbook.bookmarkedGroupByTagGroupId,
@@ -172,7 +182,7 @@ function RouteComponent() {
                     Tag Group
                   </DropdownSubTrigger>
                   <DropdownSubContent className="w-40">
-                    {tagGroups.map((tagGroup) => (
+                    {tagGroupsData?.tagGroups.map((tagGroup) => (
                       <DropdownRadioItem
                         key={tagGroup.id}
                         colour={colours.red}
@@ -181,7 +191,7 @@ function RouteComponent() {
                         {tagGroup.title}
                       </DropdownRadioItem>
                     ))}
-                    {tagGroups.length === 0 && (
+                    {tagGroupsData?.tagGroups.length === 0 && (
                       <span className="text-xs text-slate-400 px-2 py-1">
                         No tag groups
                       </span>
@@ -263,7 +273,9 @@ function RouteComponent() {
         selectedNote={note || null}
         description={null}
         groupNotesBy={groupBy ?? undefined}
-        groupByTagGroupId={currentPocketbook.bookmarkedGroupByTagGroupId ?? null}
+        groupByTagGroupId={
+          currentPocketbook.bookmarkedGroupByTagGroupId ?? null
+        }
         groupSortDirection={sortDirection}
         onCreateNote={onCreateNote}
       />

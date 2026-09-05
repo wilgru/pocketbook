@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "src/common/components/Button/Button";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import type { Tag } from "src/tags/Tag.type";
+import type { Tag } from "src/tags/tags.schema";
 
 type TagPillProps = {
   tag: Tag;

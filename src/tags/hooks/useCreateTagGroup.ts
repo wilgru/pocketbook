@@ -1,10 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "src/Users/hooks/useUser";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { createTagGroupServerFn } from "src/tags/serverFunctions/createTagGroup";
-import { mapTagGroup } from "src/tags/utils/mapTagGroup";
+import type { TagGroup } from "../tags.schema";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { TagGroup } from "src/tags/Tag.type";
 
 type CreateTagGroupProps = {
   createTagGroupData: Omit<
@@ -32,7 +30,6 @@ type UseCreateTagGroupResponse = {
 export const useCreateTagGroup = (): UseCreateTagGroupResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
   const queryClient = useQueryClient();
-  const { user } = useUser();
 
   const mutationFn = async ({
     createTagGroupData,
@@ -41,11 +38,10 @@ export const useCreateTagGroup = (): UseCreateTagGroupResponse => {
       data: {
         title: createTagGroupData.title,
         pocketbookId: pocketbookId ?? null,
-        userId: user?.id ?? null,
       },
     });
 
-    return mapTagGroup(data);
+    return data;
   };
 
   const onSuccess = () => {

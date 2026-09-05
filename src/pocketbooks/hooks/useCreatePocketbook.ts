@@ -1,12 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "src/Users/hooks/useUser";
 import { createPocketbookServerFn } from "src/pocketbooks/serverFunctions/createPocketbook";
-import { mapPocketbook } from "src/pocketbooks/utils/mapPocketbook";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
+import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
 type CreatePocketbookProps = {
-  createPocketbookData: Omit<Pocketbook, "id" | "created" | "updated">;
+  createPocketbookData: Omit<
+    Pocketbook,
+    | "id"
+    | "created"
+    | "updated"
+    | "notesLayout"
+    | "notesSortBy"
+    | "notesSortDirection"
+    | "notesGroupBy"
+    | "notesGroupByTagGroupId"
+    | "bookmarkedLayout"
+    | "bookmarkedSortBy"
+    | "bookmarkedSortDirection"
+    | "bookmarkedGroupBy"
+    | "bookmarkedGroupByTagGroupId"
+    | "taskCount"
+    | "noteCount"
+  >;
 };
 
 type UseCreatePocketbookResponse = {
@@ -21,21 +36,19 @@ type UseCreatePocketbookResponse = {
 
 export const useCreatePocketbook = (): UseCreatePocketbookResponse => {
   const queryClient = useQueryClient();
-  const { user } = useUser();
 
   const mutationFn = async ({
     createPocketbookData,
   }: CreatePocketbookProps): Promise<Pocketbook | undefined> => {
-    const data = await createPocketbookServerFn({
+    const pocketbook = await createPocketbookServerFn({
       data: {
         title: createPocketbookData.title,
         icon: createPocketbookData.icon,
-        colour: createPocketbookData.colour.name,
-        userId: user?.id ?? null,
+        colour: createPocketbookData.colour,
       },
     });
 
-    return mapPocketbook(data);
+    return pocketbook;
   };
 
   const onSuccess = (data: Pocketbook | undefined) => {

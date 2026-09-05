@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTagGroupServerFn } from "src/tags/serverFunctions/updateTagGroup";
-import { mapTagGroup } from "src/tags/utils/mapTagGroup";
+import type { TagGroup } from "../tags.schema";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { TagGroup } from "src/tags/Tag.type";
 
 type UpdateTagGroupProps = {
   tagGroupId: string;
@@ -29,7 +28,7 @@ export const useUpdateTagGroup = (): UseUpdateTagGroupResponse => {
       data: { tagGroupId, title: updateTagGroupData.title },
     });
 
-    return mapTagGroup(data);
+    return data;
   };
 
   const onSuccess = (data: TagGroup | undefined) => {

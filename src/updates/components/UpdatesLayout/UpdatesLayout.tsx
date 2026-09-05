@@ -1,7 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
-import { getColour } from "src/colours/utils/getColour";
 import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { EmptyState } from "src/common/components/EmptyState/EmptyState";
@@ -14,10 +13,10 @@ import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSec
 import { groupUpdates } from "src/updates/utils/groupUpdates";
 import type { Dayjs } from "dayjs";
 import type { Colour } from "src/colours/Colour.type";
-import type { Comment } from "src/comments/Comment.type";
+import type { Comment } from "src/comments/comments.schema";
 import type { IconName } from "src/icons/Icon.type";
-import type { Note } from "src/notes/Note.type";
-import type { Task } from "src/tasks/Task.type";
+import type { Note } from "src/notes/notes.schema";
+import type { Task } from "src/tasks/tasks.schema";
 import type { UpdateGroup } from "src/updates/Update.type";
 
 type UpdatesLayoutProps = {
@@ -83,9 +82,7 @@ export const UpdatesLayout = ({
 
           icons.push({
             iconName: "flagBannerFold",
-            colour: update.data.tint
-              ? getColour(update.data.tint)
-              : colours.grey,
+            colour: update.data.colour ?? colours.grey,
           });
 
           return icons;
@@ -130,9 +127,8 @@ export const UpdatesLayout = ({
         Record<string, number>
       >((waypointAcc, update) => {
         if (update.type === "comment" && update.data.isWaypoint) {
-          const colourClassName = update.data.tint
-            ? getColour(update.data.tint).background
-            : colours.grey.background;
+          const colourClassName =
+            update.data.colour?.background ?? colours.grey.background;
 
           waypointAcc[colourClassName] =
             (waypointAcc[colourClassName] ?? 0) + 1;
@@ -203,7 +199,7 @@ export const UpdatesLayout = ({
         <div className="h-full w-full max-w-200 flex flex-col gap-6">
           {pendingNew && (
             <CommentEditor
-              comment={{ notes: [], tint: null }}
+              comment={{ notes: [], colour: null }}
               colour={colour}
               onCancel={onCancelNew}
               onCreated={onCancelNew}

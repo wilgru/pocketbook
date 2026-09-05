@@ -1,34 +1,40 @@
 import { createServerFn } from "@tanstack/react-start";
+import dayjs from "dayjs";
 import { and, eq, gte, isNull, max, sql } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { tasks } from "src/tasks/tasks.schema";
+import type { Dayjs } from "dayjs";
+import type { Link } from "src/common/types/Link.type";
+import type { Task } from "src/tasks/tasks.schema";
 
 export type CreateTaskInput = {
   title: string;
   description: string;
-  link: string | null;
-  links: string;
+  link: string; // TODO: what is this link?
+  links: Link[];
   isImportant: boolean;
   noteId: string | null;
-  dueDate: string | null;
-  pocketbookId: string | null;
-  userId: string | null;
+  dueDate: Dayjs | null;
+  pocketbookId: string;
   insertAfterSortOrder: number | null;
 };
 
-export const createTaskServerFn = createServerFn({ method: "POST" })
+export const createTaskServerFn = createServerFn({
+  method: "POST",
+  strict: false,
+})
   .validator((input: CreateTaskInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<Task>>(async ({ data }) => {
     const db = getDb();
-    const now = new Date().toISOString();
+    const now = dayjs();
     const id = crypto.randomUUID();
 
     const groupCondition = data.noteId
-      ? eq(tasks.note, data.noteId)
+      ? eq(tasks.noteId, data.noteId)
       : and(
-          isNull(tasks.note),
+          isNull(tasks.noteId),
           data.pocketbookId
-            ? eq(tasks.pocketbook, data.pocketbookId)
+            ? eq(tasks.pocketbookId, data.pocketbookId)
             : undefined,
         );
 
@@ -62,11 +68,10 @@ export const createTaskServerFn = createServerFn({ method: "POST" })
         link: data.link,
         links: data.links,
         isImportant: data.isImportant,
-        note: data.noteId,
+        noteId: data.noteId,
         dueDate: data.dueDate,
         sortOrder,
-        pocketbook: data.pocketbookId,
-        user: data.userId,
+        pocketbookId: data.pocketbookId,
         created: now,
         updated: now,
       })

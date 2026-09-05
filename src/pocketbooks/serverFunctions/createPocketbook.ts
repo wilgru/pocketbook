@@ -1,21 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
+import dayjs from "dayjs";
 import { getDb } from "src/db/connection";
 import { pocketbooks } from "src/pocketbooks/pocketbooks.schema";
-import type { ColourName } from "src/colours/Colour.type";
+import type { Colour } from "src/colours/Colour.type";
 import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
+import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
 export type CreatePocketbookInput = {
   title: string;
   icon: CustomisationIconName | null;
-  colour: ColourName;
-  userId: string | null;
+  colour: Colour;
 };
 
-export const createPocketbookServerFn = createServerFn({ method: "POST" })
+export const createPocketbookServerFn = createServerFn({
+  method: "POST",
+  strict: false,
+})
   .validator((input: CreatePocketbookInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<Pocketbook>>(async ({ data }) => {
     const db = getDb();
-    const now = new Date().toISOString();
+    const now = dayjs();
     const id = crypto.randomUUID();
 
     const [inserted] = await db
@@ -25,12 +29,11 @@ export const createPocketbookServerFn = createServerFn({ method: "POST" })
         title: data.title,
         icon: data.icon,
         colour: data.colour,
-        user: data.userId,
         created: now,
         updated: now,
       })
       .returning()
       .all();
 
-    return inserted;
+    return { ...inserted, noteCount: 0, taskCount: 0 };
   });

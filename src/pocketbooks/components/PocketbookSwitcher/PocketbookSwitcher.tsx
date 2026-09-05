@@ -11,7 +11,7 @@ import {
 } from "src/common/components/Dropdown/Dropdown";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
+import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
 type PocketbookSwitcherProps = {
   currentPocketbook: Pocketbook;
@@ -131,11 +131,11 @@ export const PocketbookSwitcher = ({
 
           <DropdownSeparator />
 
-          <DropdownItem colour={colours.orange} className="flex items-center gap-2">
-            <Link
-              to={"/create-pocketbook"}
-              className="flex items-center gap-2"
-            >
+          <DropdownItem
+            colour={colours.orange}
+            className="flex items-center gap-2"
+          >
+            <Link to={"/create-pocketbook"} className="flex items-center gap-2">
               <Icon iconName="plus" size="sm" />
               Create new pocketbook
             </Link>

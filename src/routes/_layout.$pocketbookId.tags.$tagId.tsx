@@ -14,16 +14,18 @@ import {
   DropdownSubTrigger,
 } from "src/common/components/Dropdown/Dropdown";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { sortNotes } from "src/common/utils/sortNotes";
 import { NotesLayout } from "src/notes/components/NotesLayout/NotesLayout";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";
-import { useGetNote } from "src/notes/hooks/useGetNote";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { EditTagModal } from "src/tags/components/EditTagModal/EditTagModal";
-import { useGetTag } from "src/tags/hooks/useGetTag";
-import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
 import { useUpdateTag } from "src/tags/hooks/useUpdateTag";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
+import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/tags/$tagId")({
   component: TagComponent,
@@ -42,14 +44,31 @@ export const Route = createFileRoute("/_layout/$pocketbookId/tags/$tagId")({
 
 export default function TagComponent() {
   const { pocketbookId, tagId } = Route.useParams();
-  const { noteId } = Route.useSearch(); // TODO: use in loaders?
-  const navigate = useNavigate();
-  const { tag, notes } = useGetTag(tagId ?? "");
-  const { note } = useGetNote({ noteId });
   const { createNote } = useCreateNote();
   const { updateTag } = useUpdateTag();
   const { currentPocketbook } = useCurrentPocketbook();
-  const { tagGroups } = useGetTagGroups();
+  const { noteId } = Route.useSearch(); // TODO: use in loaders?
+
+  const { data: tagGroupsData } = useServerQuery(getTagGroupsServerFn, {
+    pocketbookId,
+  });
+  const { data: tag } = useServerQuery(
+    getTagServerFn,
+    { tagId: tagId ?? "" },
+    { enabled: !!tagId },
+  );
+  const { data: notesData } = useServerQuery(getNotesServerFn, {
+    pocketbookId,
+    tagIds: [tagId],
+  });
+  const { data: note } = useServerQuery(
+    getNoteServerFn,
+    { noteId: noteId ?? "" },
+    { enabled: !!noteId },
+  );
+
+  const navigate = useNavigate();
+
   const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
@@ -57,8 +76,8 @@ export default function TagComponent() {
   const sortDirection = tag?.sortDirection ?? "desc";
 
   const sortedNotes = useMemo(
-    () => sortNotes(notes, sortBy, sortDirection),
-    [notes, sortBy, sortDirection],
+    () => sortNotes(notesData?.notes ?? [], sortBy, sortDirection),
+    [notesData, sortBy, sortDirection],
   );
 
   if (!tag) {
@@ -192,7 +211,7 @@ export default function TagComponent() {
                     colour={tag.colour}
                     subText={
                       tag.groupBy === "tagGroup"
-                        ? tagGroups.find(
+                        ? tagGroupsData?.tagGroups.find(
                             (tg) => tg.id === tag.groupByTagGroupId,
                           )?.title
                         : undefined
@@ -201,7 +220,7 @@ export default function TagComponent() {
                     Tag Group
                   </DropdownSubTrigger>
                   <DropdownSubContent className="w-40">
-                    {tagGroups.map((tagGroup) => (
+                    {tagGroupsData?.tagGroups.map((tagGroup) => (
                       <DropdownRadioItem
                         key={tagGroup.id}
                         colour={tag.colour}
@@ -210,7 +229,7 @@ export default function TagComponent() {
                         {tagGroup.title}
                       </DropdownRadioItem>
                     ))}
-                    {tagGroups.length === 0 && (
+                    {tagGroupsData?.tagGroups.length === 0 && (
                       <span className="text-xs text-slate-400 px-2 py-1">
                         No tag groups
                       </span>

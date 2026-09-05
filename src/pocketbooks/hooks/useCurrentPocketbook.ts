@@ -1,26 +1,25 @@
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
-import { useGetPocketbooks } from "src/pocketbooks/hooks/useGetPocketbooks";
-import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
+import { type Pocketbook } from "src/pocketbooks/pocketbooks.schema";
+import { getPocketbooksServerFn } from "../serverFunctions/getPocketbooks";
 
 type UseCurrentPocketbookResponse = {
-  pocketbookId: string | undefined;
+  pocketbookId: string;
   currentPocketbook: Pocketbook | undefined;
   pocketbooks: Pocketbook[];
-  isFetchingPocketbooks: boolean;
 };
 
 export const useCurrentPocketbook = (): UseCurrentPocketbookResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
-  const { pocketbooks, isFetching } = useGetPocketbooks();
+  const { data: pocketbooksData } = useServerQuery(getPocketbooksServerFn, {});
 
-  const currentPocketbook = pocketbooks.find(
+  const currentPocketbook = pocketbooksData?.pocketbooks.find(
     (pocketbook) => pocketbook.id === pocketbookId,
   );
 
   return {
     pocketbookId,
     currentPocketbook,
-    pocketbooks,
-    isFetchingPocketbooks: isFetching,
+    pocketbooks: pocketbooksData?.pocketbooks ?? [],
   };
 };

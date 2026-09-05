@@ -3,6 +3,7 @@ import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { getTasksServerFn } from "src/tasks/serverFunctions/getTasks";
+import type { Dayjs } from "dayjs";
 
 type PocketbookContentCounts = {
   noteCount: number;
@@ -16,9 +17,9 @@ type UseGetPocketbookContentCountsResponse = {
   isFetching: boolean;
 };
 
-const getDateKey = (dateString: string | null | undefined): string | null => {
-  if (!dateString) return null;
-  return dateString.split("T")[0] || null;
+const getDateKey = (date: Dayjs | null | undefined): string | null => {
+  if (!date) return null;
+  return date.format("DD-MM-YYY") || null;
 };
 
 export const useGetPocketbookContentCounts =
@@ -27,7 +28,12 @@ export const useGetPocketbookContentCounts =
 
     const queryFn = async (): Promise<PocketbookContentCounts> => {
       if (!pocketbookId) {
-        return { noteCount: 0, bookmarkedCount: 0, taskCount: 0, updateDayCount: 0 };
+        return {
+          noteCount: 0,
+          bookmarkedCount: 0,
+          taskCount: 0,
+          updateDayCount: 0,
+        };
       }
 
       const [notesData, bookmarkedData, tasksData, commentsData] =

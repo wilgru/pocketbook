@@ -4,10 +4,11 @@ import { useMemo, useState } from "react";
 import requireClientAuth from "src/Users/utils/requireClientAuth";
 import { Button } from "src/common/components/Button/Button";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { CompletedTasksModal } from "src/tasks/components/CompletedTasksModal/CompletedTasksModal";
 import { TasksLayout } from "src/tasks/components/TasksLayout/TasksLayout";
-import { useGetTasks } from "src/tasks/hooks/useGetTasks";
+import { getTasksServerFn } from "src/tasks/serverFunctions/getTasks";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/tasks")({
   component: RouteComponent,
@@ -17,15 +18,22 @@ export const Route = createFileRoute("/_layout/$pocketbookId/tasks")({
 });
 
 function RouteComponent() {
+  const { pocketbookId } = Route.useParams();
   const { currentPocketbook } = useCurrentPocketbook();
 
-  const { tasks } = useGetTasks({});
+  const { data: tasksData } = useServerQuery(getTasksServerFn, {
+    pocketbookId,
+  });
+
   const [noNoteEditorTrigger, setNoNoteEditorTrigger] = useState(0);
 
   const completedOrCancelledTasks = useMemo(
-    () => tasks.filter((task) => !!task.completedDate || !!task.cancelledDate),
-    [tasks],
-  );
+    () =>
+      tasksData?.tasks.filter(
+        (task) => !!task.completedDate || !!task.cancelledDate,
+      ) ?? [],
+    [tasksData],
+  ); // TODO: add status groupby to getTasks, and just use that insteasd of this
 
   return (
     <div className="h-full w-full flex flex-col items-center">
@@ -61,7 +69,7 @@ function RouteComponent() {
       </Toolbar>
 
       <TasksLayout
-        tasks={tasks}
+        tasks={tasksData?.tasks ?? []}
         colour={currentPocketbook?.colour}
         noNoteEditorTrigger={noNoteEditorTrigger}
       />

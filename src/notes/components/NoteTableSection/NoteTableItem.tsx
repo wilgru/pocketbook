@@ -8,7 +8,7 @@ import { Icon } from "src/icons/components/Icon/Icon";
 import { TaskProgressBar } from "src/tasks/components/TaskProgressBar/TaskProgressBar";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type NoteTableItemProps = {
   note: Note;

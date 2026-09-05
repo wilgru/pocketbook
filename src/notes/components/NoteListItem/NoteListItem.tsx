@@ -7,7 +7,7 @@ import { Icon } from "src/icons/components/Icon/Icon";
 import { TaskProgressCircle } from "src/tasks/components/TaskProgressCircle/TaskProgressCircle";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type NoteListItemProps = {
   note: Note;

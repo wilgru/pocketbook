@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { useDeleteTagGroup } from "src/tags/hooks/useDeleteTagGroup";
-import type { TagGroup } from "src/tags/Tag.type";
+import type { TagGroup } from "src/tags/tags.schema";
 
 type DeleteTagGroupModalProps = {
   tagGroup: TagGroup;

@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTagServerFn } from "src/tags/serverFunctions/updateTag";
-import { mapTag } from "src/tags/utils/mapTag";
+import type { Tag } from "../tags.schema";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Note } from "src/notes/Note.type";
-import type { Tag } from "src/tags/Tag.type";
+import type { Note } from "src/notes/notes.schema";
 
 type UpdateTagProps = {
   tagId: string;
@@ -30,7 +29,7 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
       data: {
         tagId,
         name: updateTagData.name,
-        colour: updateTagData.colour.name,
+        colour: updateTagData.colour,
         icon: updateTagData.icon,
         description: updateTagData.description,
         layout: updateTagData.layout ?? "list",
@@ -38,12 +37,12 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
         groupByTagGroupId: updateTagData.groupByTagGroupId ?? null,
         sortBy: updateTagData.sortBy,
         sortDirection: updateTagData.sortDirection,
-        links: JSON.stringify(updateTagData.links),
+        links: updateTagData.links,
         tagGroupId: updateTagData.tagGroupId ?? null,
       },
     });
 
-    return mapTag(data, { noteCount: updateTagData.noteCount });
+    return data;
   };
 
   const onSuccess = (data: Tag | undefined) => {

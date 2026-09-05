@@ -5,19 +5,19 @@ import { getDb } from "src/db/connection";
 
 export type DeleteCommentInput = { commentId: string };
 
-export const deleteCommentServerFn = createServerFn({ method: "POST" })
+export const deleteCommentServerFn = createServerFn({
+  method: "POST",
+  strict: { output: false },
+})
   .validator((input: DeleteCommentInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<string>>(async ({ data }) => {
     const db = getDb();
 
     await db
       .delete(commentNotes)
       .where(eq(commentNotes.commentId, data.commentId))
       .run();
-    await db
-      .delete(comments)
-      .where(eq(comments.id, data.commentId))
-      .run();
+    await db.delete(comments).where(eq(comments.id, data.commentId)).run();
 
     return data.commentId;
   });

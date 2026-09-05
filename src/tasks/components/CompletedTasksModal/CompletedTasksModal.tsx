@@ -5,7 +5,7 @@ import { Dialog } from "src/common/components/Dialog/Dialog";
 import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
-import type { Task } from "src/tasks/Task.type";
+import type { Task } from "src/tasks/tasks.schema";
 
 type CompletedTasksModalProps = {
   tasks: Task[];

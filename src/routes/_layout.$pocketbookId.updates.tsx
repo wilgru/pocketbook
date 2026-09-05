@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import requireClientAuth from "src/Users/utils/requireClientAuth";
-import { useGetComments } from "src/comments/hooks/useGetComments";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { Button } from "src/common/components/Button/Button";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
-import { useGetNotes } from "src/notes/hooks/useGetNotes";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
-import { useGetTasks } from "src/tasks/hooks/useGetTasks";
+import { getTasksServerFn } from "src/tasks/serverFunctions/getTasks";
 import { UpdatesLayout } from "src/updates/components/UpdatesLayout/UpdatesLayout";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/updates")({
@@ -17,10 +18,19 @@ export const Route = createFileRoute("/_layout/$pocketbookId/updates")({
 });
 
 function UpdatesComponent() {
+  const { pocketbookId } = Route.useParams();
   const { currentPocketbook } = useCurrentPocketbook();
-  const { comments } = useGetComments();
-  const { notes } = useGetNotes({});
-  const { tasks } = useGetTasks({});
+
+  const { data: commentsData } = useServerQuery(getCommentsServerFn, {
+    pocketbookId,
+  });
+  const { data: notesData } = useServerQuery(getNotesServerFn, {
+    pocketbookId,
+  });
+  const { data: tasksData } = useServerQuery(getTasksServerFn, {
+    pocketbookId,
+  });
+
   const [pendingNew, setPendingNew] = useState(false);
 
   return (
@@ -40,9 +50,9 @@ function UpdatesComponent() {
       </Toolbar>
 
       <UpdatesLayout
-        notes={notes}
-        tasks={tasks}
-        comments={comments}
+        notes={notesData?.notes ?? []}
+        tasks={tasksData?.tasks ?? []}
+        comments={commentsData?.comments ?? []}
         colour={currentPocketbook?.colour}
         pendingNew={pendingNew}
         onCreateNew={() => setPendingNew(true)}

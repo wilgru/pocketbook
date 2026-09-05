@@ -1,13 +1,17 @@
 import { colours } from "src/colours/colours.constant";
 import { NavItem } from "src/common/components/NavItem/NavItem";
-import { useGetNotes } from "src/notes/hooks/useGetNotes";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 
 export const SidebarBookmarkSection = () => {
   const { pocketbookId } = useCurrentPocketbookId();
-  const { notes } = useGetNotes({ isBookmarked: true });
+  const { data: notesData } = useServerQuery(getNotesServerFn, {
+    pocketbookId,
+    isBookmarked: true,
+  });
 
-  if (!pocketbookId || notes.length === 0) {
+  if (!pocketbookId || notesData?.notes.length === 0) {
     return null;
   }
 
@@ -15,7 +19,7 @@ export const SidebarBookmarkSection = () => {
     <section className="flex flex-col gap-px py-2 border-t border-b border-slate-200">
       <h1 className="font-title text-slate-400 text-sm">Bookmarks</h1>
 
-      {notes.map((note) => (
+      {notesData?.notes.map((note) => (
         <NavItem
           key={note.id}
           size="sm"

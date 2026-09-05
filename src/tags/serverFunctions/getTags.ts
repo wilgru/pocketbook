@@ -1,28 +1,56 @@
 import { createServerFn } from "@tanstack/react-start";
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "src/db/connection";
-import { tagGroups, tags } from "src/tags/tags.schema";
+import { noteTags } from "src/notes/notes.schema";
+import { tags } from "src/tags/tags.schema";
+import type { Tag } from "src/tags/tags.schema";
 
 export type GetTagsInput = {
   pocketbookId: string;
+  noteId?: string;
+  tagGroupIds?: string[];
+  hasNoTagGroup?: boolean;
 };
 
-export const getTagsServerFn = createServerFn({ method: "GET" })
+export const getTagsServerFn = createServerFn({
+  method: "GET",
+  strict: { output: false },
+})
   .validator((input: GetTagsInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<{ tags: Tag[] }>>(async ({ data }) => {
     const db = getDb();
+
+    const conditions = [eq(tags.pocketbookId, data.pocketbookId)];
+
+    if (data.noteId) {
+      const noteTagRows = await db
+        .select({ tagId: noteTags.tagId })
+        .from(noteTags)
+        .where(eq(noteTags.noteId, data.noteId))
+        .all();
+
+      const noteTagIds = noteTagRows.map((r) => r.tagId);
+
+      conditions.push(inArray(tags.id, noteTagIds));
+    }
+
+    if (data.tagGroupIds) {
+      conditions.push(inArray(tags.tagGroupId, data.tagGroupIds));
+    }
+
+    if (data.hasNoTagGroup) {
+      conditions.push(eq(tags.tagGroupId, "")); // TODO check this actually works
+    }
 
     const tagRows = await db
       .select()
       .from(tags)
-      .where(eq(tags.pocketbook, data.pocketbookId))
+      .where(and(...conditions))
       .all();
 
-    const tagGroupRows = await db
-      .select()
-      .from(tagGroups)
-      .where(eq(tagGroups.pocketbook, data.pocketbookId))
-      .all();
-
-    return { tags: tagRows, tagGroups: tagGroupRows };
+    return {
+      tags: tagRows.map((tagRow) => {
+        return { ...tagRow, noteCount: 0 }; // TODO: get note counts
+      }),
+    };
   });

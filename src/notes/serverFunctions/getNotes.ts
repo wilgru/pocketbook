@@ -1,22 +1,26 @@
 import { createServerFn } from "@tanstack/react-start";
-import { and, eq, gte, isNull, lte } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { notes, noteTags } from "src/notes/notes.schema";
+import { tags } from "src/tags/tags.schema";
+import type { Note } from "src/notes/notes.schema";
 
 export type GetNotesInput = {
   pocketbookId: string;
   isBookmarked?: boolean;
-  createdAfter?: string;
-  createdBefore?: string;
+  tagIds?: string[];
 };
 
-export const getNotesServerFn = createServerFn({ method: "GET" })
+export const getNotesServerFn = createServerFn({
+  method: "GET",
+  strict: { output: false },
+})
   .validator((input: GetNotesInput) => input)
-  .handler(async ({ data }) => {
+  .handler<Promise<{ notes: Note[] }>>(async ({ data }) => {
     const db = getDb();
 
     const conditions = [
-      eq(notes.pocketbook, data.pocketbookId),
+      eq(notes.pocketbookId, data.pocketbookId),
       isNull(notes.deleted),
     ];
 
@@ -24,34 +28,30 @@ export const getNotesServerFn = createServerFn({ method: "GET" })
       conditions.push(eq(notes.isBookmarked, data.isBookmarked));
     }
 
-    if (data.createdAfter) {
-      conditions.push(gte(notes.created, data.createdAfter));
+    if (data.tagIds) {
+      const noteTagRows = await db
+        .select({ noteId: noteTags.noteId })
+        .from(noteTags)
+        .where(inArray(noteTags.tagId, data.tagIds))
+        .all();
+
+      const noteTagIds = noteTagRows.map((noteTagRow) => noteTagRow.noteId);
+
+      conditions.push(inArray(tags.id, noteTagIds));
     }
 
-    if (data.createdBefore) {
-      conditions.push(lte(notes.created, data.createdBefore));
-    }
-
-    const rows = await db
+    const noteRows = await db
       .select()
       .from(notes)
       .where(and(...conditions))
       .all();
 
-    const allNoteTags =
-      rows.length > 0 ? await db.select().from(noteTags).all() : [];
-
-    const tagsByNoteId = new Map<string, string[]>();
-    for (const noteTag of allNoteTags) {
-      const existing = tagsByNoteId.get(noteTag.noteId) ?? [];
-      existing.push(noteTag.tagId);
-      tagsByNoteId.set(noteTag.noteId, existing);
-    }
-
     return {
-      notes: rows.map((row) => ({
+      notes: noteRows.map((row) => ({
         ...row,
-        tagIds: tagsByNoteId.get(row.id) ?? [],
+        tags: [], // todo get tags?
+        tasks: [], // todo get tasks?
+        commentCount: 0,
       })),
     };
   });

@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updatePocketbookServerFn } from "src/pocketbooks/serverFunctions/updatePocketbook";
-import { mapPocketbook } from "src/pocketbooks/utils/mapPocketbook";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
+import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
 type UpdatePocketbookProps = {
   pocketbookId: string;
@@ -41,12 +40,12 @@ export const useUpdatePocketbook = (): UseUpdatePocketbookResponse => {
     pocketbookId,
     updatePocketbookData,
   }: UpdatePocketbookProps): Promise<Pocketbook | undefined> => {
-    const data = await updatePocketbookServerFn({
+    const pocketbook = await updatePocketbookServerFn({
       data: {
         pocketbookId,
         title: updatePocketbookData.title,
         icon: updatePocketbookData.icon,
-        colour: updatePocketbookData.colour.name,
+        colour: updatePocketbookData.colour,
         notesLayout: updatePocketbookData.notesLayout ?? "list",
         notesSortBy: updatePocketbookData.notesSortBy ?? "created",
         notesSortDirection: updatePocketbookData.notesSortDirection ?? "desc",
@@ -63,7 +62,7 @@ export const useUpdatePocketbook = (): UseUpdatePocketbookResponse => {
       },
     });
 
-    return mapPocketbook(data);
+    return pocketbook;
   };
 
   const onSuccess = (data: Pocketbook | undefined) => {
