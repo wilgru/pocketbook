@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "19a2d384-af39-43e0-9163-7b69086f23b5",
+  "id": "db451c04-af25-456b-9640-2362ccd2f065",
   "prevId": "927693eb-78d9-41a7-aa5c-6a90fed8c5b5",
   "tables": {
     "comment_notes": {
@@ -653,8 +653,8 @@
           "autoincrement": false,
           "default": false
         },
-        "noteId": {
-          "name": "noteId",
+        "note": {
+          "name": "note",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -727,12 +727,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "tasks_noteId_notes_id_fk": {
-          "name": "tasks_noteId_notes_id_fk",
+        "tasks_note_notes_id_fk": {
+          "name": "tasks_note_notes_id_fk",
           "tableFrom": "tasks",
           "tableTo": "notes",
           "columnsFrom": [
-            "noteId"
+            "note"
           ],
           "columnsTo": [
             "id"
@@ -764,9 +764,7 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {
-      "\"tasks\".\"note\"": "\"tasks\".\"noteId\""
-    }
+    "columns": {}
   },
   "internal": {
     "indexes": {}
