@@ -22,6 +22,14 @@ const inputClassName = cn(
   "disabled:cursor-not-allowed disabled:text-slate-300",
 );
 
+const selectClassName = cn(
+  "rounded-md border border-slate-300 bg-white px-1 py-0.5 text-[10px] text-slate-700",
+  "focus:border-slate-400 focus:bg-white focus:outline-hidden",
+  "disabled:cursor-not-allowed disabled:text-slate-300",
+);
+
+const getDigits = (value: string) => value.replace(/\D/g, "").slice(0, 2);
+
 export const TimeInput = ({
   hour,
   minute,
@@ -47,7 +55,7 @@ export const TimeInput = ({
         disabled={disabled}
         aria-label="Hour"
         onChange={(event) =>
-          onChange({ hour: event.target.value, minute, period })
+          onChange({ hour: getDigits(event.target.value), minute, period })
         }
         className={cn(
           inputClassName,
@@ -69,7 +77,7 @@ export const TimeInput = ({
         disabled={disabled}
         aria-label="Minute"
         onChange={(event) =>
-          onChange({ hour, minute: event.target.value, period })
+          onChange({ hour, minute: getDigits(event.target.value), period })
         }
         className={cn(
           inputClassName,
@@ -88,7 +96,7 @@ export const TimeInput = ({
             period: event.target.value as TimePeriod,
           })
         }
-        className={cn(inputClassName, "w-12 text-left pr-1", "focus:bg-white")}
+        className={cn(selectClassName, "w-12 pr-1")}
       >
         <option value="AM">AM</option>
         <option value="PM">PM</option>
