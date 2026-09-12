@@ -9,7 +9,11 @@ type TimeInputProps = {
   period: TimePeriod;
   disabled?: boolean;
   className?: string;
-  onChange: (value: { hour: string; minute: string; period: TimePeriod }) => void;
+  onChange: (value: {
+    hour: string;
+    minute: string;
+    period: TimePeriod;
+  }) => void;
 };
 
 const inputClassName = cn(
@@ -63,7 +67,9 @@ export const TimeInput = ({
         value={minute}
         disabled={disabled}
         aria-label="Minute"
-        onChange={(event) => onChange({ hour, minute: event.target.value, period })}
+        onChange={(event) =>
+          onChange({ hour, minute: event.target.value, period })
+        }
         className={cn(
           inputClassName,
           "w-8 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
@@ -81,11 +87,7 @@ export const TimeInput = ({
             period: event.target.value as TimePeriod,
           })
         }
-        className={cn(
-          inputClassName,
-          "w-12 text-left pr-1",
-          "focus:bg-white",
-        )}
+        className={cn(inputClassName, "w-12 text-left pr-1", "focus:bg-white")}
       >
         <option value="AM">AM</option>
         <option value="PM">PM</option>
