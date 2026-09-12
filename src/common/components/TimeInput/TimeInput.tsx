@@ -3,12 +3,12 @@ import { cn } from "src/common/utils/cn";
 type TimePeriod = "AM" | "PM";
 
 type TimeInputProps = {
-  id?: string;
   hour: string;
   minute: string;
   period: TimePeriod;
   disabled?: boolean;
   className?: string;
+  ariaLabel?: string;
   onChange: (value: {
     hour: string;
     minute: string;
@@ -23,18 +23,21 @@ const inputClassName = cn(
 );
 
 export const TimeInput = ({
-  id,
   hour,
   minute,
   period,
   disabled = false,
   className,
+  ariaLabel = "Time",
   onChange,
 }: TimeInputProps): JSX.Element => {
   return (
-    <div className={cn("flex items-center gap-0.5 text-xs", className)}>
+    <div
+      role="group"
+      aria-label={ariaLabel}
+      className={cn("flex items-center gap-0.5 text-xs", className)}
+    >
       <input
-        id={id}
         type="number"
         min={1}
         max={12}
