@@ -30,6 +30,40 @@ const selectClassName = cn(
 
 const getDigits = (value: string) => value.replace(/\D/g, "").slice(0, 2);
 
+const normalizeHour = (value: string) => {
+  const digits = getDigits(value);
+
+  if (!digits || digits === "0") {
+    return "";
+  }
+
+  if (digits.length === 1) {
+    return digits;
+  }
+
+  const hour = Number(digits);
+
+  if (hour < 1) {
+    return "01";
+  }
+
+  if (hour > 12) {
+    return "12";
+  }
+
+  return digits;
+};
+
+const normalizeMinute = (value: string) => {
+  const digits = getDigits(value);
+
+  if (digits.length <= 1) {
+    return digits;
+  }
+
+  return String(Math.min(Number(digits), 59)).padStart(2, "0");
+};
+
 export const TimeInput = ({
   hour,
   minute,
@@ -55,7 +89,7 @@ export const TimeInput = ({
         disabled={disabled}
         aria-label="Hour"
         onChange={(event) =>
-          onChange({ hour: getDigits(event.target.value), minute, period })
+          onChange({ hour: normalizeHour(event.target.value), minute, period })
         }
         className={cn(
           inputClassName,
@@ -77,7 +111,11 @@ export const TimeInput = ({
         disabled={disabled}
         aria-label="Minute"
         onChange={(event) =>
-          onChange({ hour, minute: getDigits(event.target.value), period })
+          onChange({
+            hour,
+            minute: normalizeMinute(event.target.value),
+            period,
+          })
         }
         className={cn(
           inputClassName,
