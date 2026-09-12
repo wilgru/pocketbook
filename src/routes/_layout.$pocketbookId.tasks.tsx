@@ -23,6 +23,7 @@ function RouteComponent() {
 
   const { data: tasksData } = useServerQuery(getTasksServerFn, {
     pocketbookId,
+    expandNotes: true,
   });
 
   const [noNoteEditorTrigger, setNoNoteEditorTrigger] = useState(0);

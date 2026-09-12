@@ -1,13 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
-import { and, asc, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNotNull, isNull } from "drizzle-orm";
 import { getDb } from "src/db/connection";
+import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { tasks } from "src/tasks/tasks.schema";
 import type { Task } from "src/tasks/tasks.schema";
 
 export type GetTasksInput = {
   pocketbookId: string;
-  noteId?: string;
+  noteIds?: string[];
   status?: "incomplete" | "completed" | "cancelled";
+  expandNotes?: boolean;
 };
 
 export const getTasksServerFn = createServerFn({
@@ -17,11 +19,10 @@ export const getTasksServerFn = createServerFn({
   .validator((input: GetTasksInput) => input)
   .handler<Promise<{ tasks: Task[] }>>(async ({ data }) => {
     const db = getDb();
-
     const conditions = [eq(tasks.pocketbookId, data.pocketbookId)];
 
-    if (data.noteId !== undefined) {
-      conditions.push(eq(tasks.noteId, data.noteId));
+    if (data.noteIds !== undefined) {
+      conditions.push(inArray(tasks.noteId, data.noteIds));
     }
 
     if (data.status === "incomplete") {
@@ -40,5 +41,25 @@ export const getTasksServerFn = createServerFn({
       .orderBy(asc(tasks.sortOrder))
       .all();
 
-    return { tasks: taskRows };
+    const tasksWithNotes: Task[] = taskRows.map((taskRow) => {
+      return { ...taskRow, note: null };
+    });
+
+    if (data.expandNotes) {
+      const { notes } = await getNotesServerFn({
+        data: { pocketbookId: data.pocketbookId },
+      });
+
+      tasksWithNotes.forEach((task) => {
+        if (task.noteId) {
+          const note = notes.find((note) => note.id === task.noteId);
+
+          if (note) {
+            task.note = note;
+          }
+        }
+      });
+    }
+
+    return { tasks: tasksWithNotes };
   });

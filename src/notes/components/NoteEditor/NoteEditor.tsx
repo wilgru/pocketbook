@@ -107,7 +107,7 @@ const NoteEditor = ({
         cancelledDate: null,
         blockedComment: null,
         blockedDate: null,
-        noteId: null,
+        noteId: note.id,
         pocketbookId,
       },
       insertAfterSortOrder,

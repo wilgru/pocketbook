@@ -29,7 +29,6 @@ export const getTagGroupsServerFn = createServerFn({
       });
 
       const ungroupedTags: Tag[] = [];
-
       const tagGroupsWithTags: TagGroup[] = tagGroupRows.map((tagGroupRow) => {
         return { ...tagGroupRow, tags: [] };
       });
@@ -50,7 +49,7 @@ export const getTagGroupsServerFn = createServerFn({
 
       return {
         tagGroups: tagGroupsWithTags,
-        ungroupedTags: tags,
+        ungroupedTags,
       };
     },
   );

@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNoteServerFn } from "src/notes/serverFunctions/createNote";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
+import { getNotesServerFn } from "../serverFunctions/getNotes";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Note } from "src/notes/notes.schema";
 
@@ -54,8 +56,8 @@ export const useCreateNote = (): UseCreateNoteResponse => {
   const onSuccess = (data: Note | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["notes.list"] });
-    queryClient.refetchQueries({ queryKey: ["tags.get"] });
+    queryClient.refetchQueries({ queryKey: [getNotesServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getTagServerFn.url] });
     queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 

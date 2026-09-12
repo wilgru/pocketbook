@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { createTaskServerFn } from "src/tasks/serverFunctions/createTask";
+import { getTasksServerFn } from "../serverFunctions/getTasks";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Task } from "src/tasks/tasks.schema";
 
@@ -33,7 +35,7 @@ export const useCreateTask = (): UseCreateTaskResponse => {
         link: "",
         links: createTaskData.links,
         isImportant: createTaskData.isImportant,
-        noteId: createTaskData.note?.id ?? null,
+        noteId: createTaskData.noteId ?? null,
         dueDate: createTaskData.dueDate ?? null,
         pocketbookId: pocketbookId,
         insertAfterSortOrder: insertAfterSortOrder ?? null,
@@ -46,8 +48,11 @@ export const useCreateTask = (): UseCreateTaskResponse => {
   const onSuccess = (data: Task | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["tasks.list"] });
-    queryClient.refetchQueries({ queryKey: ["notes.get", data.note?.id] });
+    console.log(getNoteServerFn.url, data.noteId);
+    queryClient.refetchQueries({ queryKey: [getTasksServerFn.url] });
+    queryClient.refetchQueries({
+      queryKey: [getNoteServerFn.url, data.noteId],
+    });
     queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 

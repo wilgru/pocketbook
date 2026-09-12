@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
+import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
 import { tagGroups } from "src/tags/tags.schema";
 import type { TagGroup } from "src/tags/tags.schema";
 
@@ -26,5 +27,14 @@ export const updateTagGroupServerFn = createServerFn({
       .returning()
       .all();
 
-    return { ...updated, tags: [] }; // TODO add tags
+    const { tags } = updated.pocketbookId
+      ? await getTagsServerFn({
+          data: {
+            pocketbookId: updated.pocketbookId,
+            tagGroupIds: [updated.id],
+          },
+        })
+      : { tags: [] };
+
+    return { ...updated, tags };
   });

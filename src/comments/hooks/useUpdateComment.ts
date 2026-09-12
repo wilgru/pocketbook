@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { updateCommentServerFn } from "src/comments/serverFunctions/updateComment";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Comment } from "src/comments/comments.schema";
@@ -42,7 +43,7 @@ export const useUpdateComment = (): UseUpdateCommentResponse => {
   const onSuccess = (data: Comment | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["comments.list"] });
+    queryClient.refetchQueries({ queryKey: [getCommentsServerFn.url] });
   };
 
   // TODO: consider time caching for better performance

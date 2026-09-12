@@ -44,11 +44,11 @@ export const updateNoteServerFn = createServerFn({
     await db.delete(noteTags).where(eq(noteTags.noteId, data.noteId)).run();
 
     const { tasks } = await getTasksServerFn({
-      data: { pocketbookId: updated.pocketbookId },
+      data: { pocketbookId: updated.pocketbookId, noteIds: [data.noteId] },
     });
 
     const { tags } = await getTagsServerFn({
-      data: { pocketbookId: updated.pocketbookId, noteId: data.noteId },
+      data: { pocketbookId: updated.pocketbookId, noteIds: [data.noteId] },
     });
 
     if (data.tagIds.length > 0) {

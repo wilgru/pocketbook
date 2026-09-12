@@ -22,6 +22,7 @@ const getDateKey = (date: Dayjs | null | undefined): string | null => {
   return date.format("DD-MM-YYY") || null;
 };
 
+// TODO: convert to a server function
 export const useGetPocketbookContentCounts =
   (): UseGetPocketbookContentCountsResponse => {
     const { pocketbookId } = useCurrentPocketbookId();

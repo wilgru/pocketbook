@@ -7,7 +7,7 @@ import type { Tag } from "src/tags/tags.schema";
 
 export type GetTagsInput = {
   pocketbookId: string;
-  noteId?: string;
+  noteIds?: string[];
   tagGroupIds?: string[];
   hasNoTagGroup?: boolean;
 };
@@ -22,14 +22,18 @@ export const getTagsServerFn = createServerFn({
 
     const conditions = [eq(tags.pocketbookId, data.pocketbookId)];
 
-    if (data.noteId) {
+    if (data.noteIds) {
       const noteTagRows = await db
         .select({ tagId: noteTags.tagId })
         .from(noteTags)
-        .where(eq(noteTags.noteId, data.noteId))
+        .where(inArray(noteTags.noteId, data.noteIds))
         .all();
 
       const noteTagIds = noteTagRows.map((r) => r.tagId);
+
+      if (noteTagIds.length === 0) {
+        return { tags: [] };
+      }
 
       conditions.push(inArray(tags.id, noteTagIds));
     }

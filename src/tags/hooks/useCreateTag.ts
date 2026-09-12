@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { createTagServerFn } from "src/tags/serverFunctions/createTag";
 import { updateTagServerFn } from "src/tags/serverFunctions/updateTag";
+import { getTagGroupsServerFn } from "../serverFunctions/getTagGroups";
+import { getTagsServerFn } from "../serverFunctions/getTags";
 import type { Tag } from "../tags.schema";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
@@ -61,8 +63,8 @@ export const useCreateTag = (): UseCreateTagResponse => {
   };
 
   const onSuccess = () => {
-    queryClient.refetchQueries({ queryKey: ["tags.list"] });
-    queryClient.refetchQueries({ queryKey: ["tagGroups.list"] });
+    queryClient.refetchQueries({ queryKey: [getTagsServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getTagGroupsServerFn.url] });
   };
 
   // TODO: consider time caching for better performance

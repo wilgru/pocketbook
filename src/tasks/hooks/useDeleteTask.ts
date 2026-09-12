@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
 import { deleteTaskServerFn } from "src/tasks/serverFunctions/deleteTask";
+import { getTasksServerFn } from "../serverFunctions/getTasks";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
 type DeleteTaskProps = {
@@ -27,8 +30,9 @@ export const useDeleteTask = (): UseDeleteTaskResponse => {
   };
 
   const onSuccess = () => {
-    queryClient.refetchQueries({ queryKey: ["tasks.list"] });
-    queryClient.refetchQueries({ queryKey: ["tags.get"] });
+    queryClient.refetchQueries({ queryKey: [getTasksServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getTagServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getNoteServerFn.url] });
     queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 

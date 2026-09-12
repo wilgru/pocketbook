@@ -7,6 +7,7 @@ import type { InferSelectModel } from "drizzle-orm/table";
 import type { Prettify } from "src/common/types/Prettify.type";
 import type { Note } from "src/notes/notes.schema";
 
+// TODO" rename var to 'tasksTable', and same for all other schemas (dont rename the DB table though)
 export const tasks = sqliteTable("tasks", {
   id: text("id").primaryKey(),
   title: text("title").notNull().default(""),
@@ -16,7 +17,7 @@ export const tasks = sqliteTable("tasks", {
   isImportant: integer("is_important", { mode: "boolean" })
     .notNull()
     .default(false),
-  noteId: text("noteId").references(() => notes.id),
+  noteId: text("note").references(() => notes.id), // TODO: rename table column to note_id, same for pocketbook_id, and so on across all schemas
   blockedComment: text("blocked_comment"),
   dueDate: dayjsColumn("due_date"),
   completedDate: dayjsColumn("completed_date"),
@@ -30,7 +31,9 @@ export const tasks = sqliteTable("tasks", {
   updated: dayjsColumn("updated").notNull(),
 });
 
-export type Task = Prettify<InferSelectModel<typeof tasks> & { note?: Note }>;
+export type Task = Prettify<
+  InferSelectModel<typeof tasks> & { note: Note | null }
+>;
 
 export type TasksGroup = {
   title: string;

@@ -37,6 +37,7 @@ const getInitialTask = (task: Partial<Task> | undefined): Task => {
     title: task?.title || "",
     description: task?.description || "",
     noteId: task?.noteId || null,
+    note: task?.note || null,
     link: task?.link || null,
     links: task?.links || [],
     dueDate: task?.dueDate || null,
@@ -434,6 +435,7 @@ export const TaskEditor = ({
               onChange={(notes) => {
                 onUpdateTask({
                   note: notes[0] ?? null,
+                  noteId: notes[0]?.id ?? null,
                 });
                 handlePopoverOpenChange(false);
               }}

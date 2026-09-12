@@ -28,7 +28,7 @@ import { getTagServerFn } from "src/tags/serverFunctions/getTag";
 import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/tags/$tagId")({
-  component: TagComponent,
+  component: RouteComponent,
   // loader: ({ params }) => fetch(params.tagId),
   beforeLoad: async ({ location }) => {
     requireClientAuth(location);
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/_layout/$pocketbookId/tags/$tagId")({
   },
 });
 
-export default function TagComponent() {
+function RouteComponent() {
   const { pocketbookId, tagId } = Route.useParams();
   const { createNote } = useCreateNote();
   const { updateTag } = useUpdateTag();

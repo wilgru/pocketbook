@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTagServerFn } from "src/tags/serverFunctions/updateTag";
+import { getTagServerFn } from "../serverFunctions/getTag";
+import { getTagGroupsServerFn } from "../serverFunctions/getTagGroups";
+import { getTagsServerFn } from "../serverFunctions/getTags";
 import type { Tag } from "../tags.schema";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Note } from "src/notes/notes.schema";
@@ -48,9 +51,9 @@ export const useUpdateTag = (): UseUpdateTagResponse => {
   const onSuccess = (data: Tag | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["tags.list"] });
-    queryClient.refetchQueries({ queryKey: ["tags.get"] });
-    queryClient.refetchQueries({ queryKey: ["tagGroups.list"] });
+    queryClient.refetchQueries({ queryKey: [getTagsServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getTagServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getTagGroupsServerFn.url] });
 
     // update tag in any notes that have it
     queryClient.setQueryData(["notes.list"], (currentNotes: Note[]) => {

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCommentServerFn } from "src/comments/serverFunctions/createComment";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Comment } from "src/comments/comments.schema";
@@ -43,7 +44,7 @@ export const useCreateComment = (): UseCreateCommentResponse => {
   const onSuccess = (data: Comment | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["comments.list"] });
+    queryClient.refetchQueries({ queryKey: [getCommentsServerFn.url] });
     queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 

@@ -50,11 +50,11 @@ export const createNoteServerFn = createServerFn({
     }
 
     const { tasks } = await getTasksServerFn({
-      data: { pocketbookId: inserted.pocketbookId },
+      data: { pocketbookId: inserted.pocketbookId, noteIds: [id] },
     });
 
     const { tags } = await getTagsServerFn({
-      data: { pocketbookId: inserted.pocketbookId, noteId: id },
+      data: { pocketbookId: inserted.pocketbookId, noteIds: [id] },
     });
 
     if (data.tagIds.length > 0) {

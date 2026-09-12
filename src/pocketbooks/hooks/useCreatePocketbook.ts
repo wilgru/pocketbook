@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPocketbookServerFn } from "src/pocketbooks/serverFunctions/createPocketbook";
+import { getPocketbookServerFn } from "../serverFunctions/getPocketbook";
+import { getPocketbooksServerFn } from "../serverFunctions/getPocketbooks";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
@@ -54,8 +56,8 @@ export const useCreatePocketbook = (): UseCreatePocketbookResponse => {
   const onSuccess = (data: Pocketbook | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["pocketbooks.list"] });
-    queryClient.refetchQueries({ queryKey: ["pocketbooks.get"] });
+    queryClient.refetchQueries({ queryKey: [getPocketbooksServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getPocketbookServerFn.url] });
   };
 
   const { mutateAsync, isPending } = useMutation({

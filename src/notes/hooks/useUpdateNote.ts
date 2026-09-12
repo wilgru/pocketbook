@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateNoteServerFn } from "src/notes/serverFunctions/updateNote";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
+import { getNoteServerFn } from "../serverFunctions/getNote";
+import { getNotesServerFn } from "../serverFunctions/getNotes";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 import type { Note } from "src/notes/notes.schema";
 
@@ -41,9 +44,9 @@ export const useUpdateNote = (): UseUpdateNoteResponse => {
   const onSuccess = (data: Note | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["notes.list"] });
-    queryClient.refetchQueries({ queryKey: ["notes.get", data.id] });
-    queryClient.refetchQueries({ queryKey: ["tags.get"] });
+    queryClient.refetchQueries({ queryKey: [getNotesServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getNoteServerFn.url, data.id] });
+    queryClient.refetchQueries({ queryKey: [getTagServerFn.url] });
   };
 
   // TODO: consider time caching for better performance

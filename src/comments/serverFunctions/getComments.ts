@@ -82,7 +82,7 @@ export const getCommentsServerFn = createServerFn({
         const rowNotes: Note[] = noteIds
           .map((noteId) => noteById.get(noteId))
           .filter((note): note is Note => note !== undefined)
-          .map((note) => ({ ...note, tasks: [], tags: [], commentCount: 0 }));
+          .map((note) => ({ ...note, tasks: [], tags: [], commentCount: 0 })); // Not returning actual tasks, tags, or comment count for now, as we probably dont need them in the context of comments (at least not yet)
 
         return { ...row, notes: rowNotes };
       }),
