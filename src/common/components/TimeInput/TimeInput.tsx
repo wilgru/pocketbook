@@ -38,11 +38,10 @@ export const TimeInput = ({
       className={cn("flex items-center gap-0.5 text-xs", className)}
     >
       <input
-        type="number"
-        min={1}
-        max={12}
+        type="text"
         inputMode="numeric"
         pattern="[0-9]*"
+        maxLength={2}
         placeholder="12"
         value={hour}
         disabled={disabled}
@@ -61,11 +60,10 @@ export const TimeInput = ({
       </span>
 
       <input
-        type="number"
-        min={0}
-        max={59}
+        type="text"
         inputMode="numeric"
         pattern="[0-9]*"
+        maxLength={2}
         placeholder="00"
         value={minute}
         disabled={disabled}
