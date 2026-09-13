@@ -17,9 +17,6 @@
   // The Access application is created in Zero Trust > Access > Applications.
   // After creating it, replace the placeholder values below with your real ones.
   "access": {
-    // Replace with the AUD tag from your Access application
-    // (Zero Trust > Access > Applications > <your app> > Overview > Application Audience (AUD) Tag)
-    "aud": "REPLACE_WITH_YOUR_ACCESS_AUD_TAG",
     // dev block: simulates an authenticated user when running `wrangler dev` locally.
     // Remove this block (or the whole "access" key) to simulate an unauthenticated request locally.
     "dev": {

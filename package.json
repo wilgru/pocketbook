@@ -10,11 +10,11 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "deploy": "npm run build && wrangler deploy --config dist/server/wrangler.json",
+    "deploy": "npm run build && npm run db:migrate:cloud && wrangler deploy --config dist/server/wrangler.json",
+    "db:seed": "npx tsx scripts/seedDevDb.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:migrate:cloud": "wrangler d1 migrations apply DB --remote --config dist/server/wrangler.json",
-    "db:seed": "npx tsx scripts/seedDevDb.ts",
     "cf-typegen": "wrangler types",
     "test": "echo 'No test runner specified'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
