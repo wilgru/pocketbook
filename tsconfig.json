@@ -20,7 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": "./",
     "types": ["@cloudflare/workers-types"]
   },
   "include": ["src", "electron", "worker-configuration.d.ts"],
