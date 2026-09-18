@@ -24,7 +24,7 @@ export const createTaskServerFn = createServerFn({
   strict: false, // todo: remove all these strict props from server functions now
 })
   .validator((input: CreateTaskInput) => input)
-  .handler<Promise<Task>>(async ({ data }) => {
+  .handler(async ({ data }): Promise<Task> => {
     const db = getDb();
     const now = dayjs();
     const id = crypto.randomUUID();
@@ -79,5 +79,5 @@ export const createTaskServerFn = createServerFn({
       .returning()
       .all();
 
-    return inserted;
+    return { ...inserted, note: null };
   });

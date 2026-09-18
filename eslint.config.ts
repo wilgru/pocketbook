@@ -12,7 +12,7 @@ export default defineConfig([
   tseslint.configs.recommended,
   importPlugin.flatConfigs.recommended,
   importPlugin.flatConfigs.typescript,
-  reactRefresh.configs.recommended,
+  reactRefresh.configs.vite,
   reactHooks.configs.flat.recommended,
   {
     languageOptions: {
@@ -22,6 +22,7 @@ export default defineConfig([
       parser: tsParser,
     },
     rules: {
+      "import/no-named-as-default": 0,
       "@typescript-eslint/consistent-type-imports": [
         "error",
         {
@@ -46,12 +47,12 @@ export default defineConfig([
           },
         },
       ],
-      "react-refresh/only-export-components": [
-        "warn",
-        {
-          allowConstantExport: true,
-        },
-      ],
+    },
+  },
+  {
+    files: ["src/routes/**"],
+    rules: {
+      "react-refresh/only-export-components": "off",
     },
   },
   globalIgnores([
@@ -60,5 +61,7 @@ export default defineConfig([
     "**/.eslintrc.cjs",
     "**/node_modules",
     "**/drizzle",
+    "**/worker-configuration.d.ts",
+    "**/routeTree.gen.ts",
   ]),
 ]);

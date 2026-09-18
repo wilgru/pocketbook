@@ -23,6 +23,6 @@
     "baseUrl": "./",
     "types": ["@cloudflare/workers-types"]
   },
-  "include": ["src", "electron"],
+  "include": ["src", "electron", "worker-configuration.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

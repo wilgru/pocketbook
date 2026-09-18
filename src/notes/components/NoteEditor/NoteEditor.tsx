@@ -336,16 +336,15 @@ const NoteEditor = ({
       {(comments.length > 0 || showNewComment) && (
         <div className="w-full flex flex-col border-t border-slate-200 pb-24">
           {showNewComment && (
-            <div ref={newCommentRef}>
-              <CommentEditor
-                comment={{ notes: [editedNote], colour: null }}
-                colour={colour}
-                thisNoteId={editedNote.id}
-                autoFocus={true}
-                onCancel={() => setShowNewComment(false)}
-                onCreated={() => setShowNewComment(false)}
-              />
-            </div>
+            <CommentEditor
+              ref={newCommentRef}
+              comment={{ notes: [editedNote], colour: null }}
+              colour={colour}
+              thisNoteId={editedNote.id}
+              autoFocus={true}
+              onCancel={() => setShowNewComment(false)}
+              onCreated={() => setShowNewComment(false)}
+            />
           )}
 
           {comments.length > 0 &&

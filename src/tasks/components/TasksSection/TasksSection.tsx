@@ -51,6 +51,7 @@ export const TasksSection = ({
       const createdTask = await createTask({
         createTaskData: {
           noteId: note?.id ?? null,
+          note: note ?? null,
           pocketbookId,
           title: "",
           isImportant: false,
@@ -69,7 +70,7 @@ export const TasksSection = ({
         setNewTaskFocusId(createdTask.id);
       }
     },
-    [createTask, note],
+    [createTask, note, pocketbookId],
   );
 
   // Create a new no-note task whenever the toolbar plus button fires.

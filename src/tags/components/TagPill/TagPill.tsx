@@ -117,7 +117,7 @@ export const TagPill = ({
   collapsed = false,
   iconClassName,
   onClick,
-}: TagPillProps): JSX.Element => {
+}: TagPillProps): React.JSX.Element => {
   const [closeButtonVisible, setCloseButtonVisible] = useState<boolean>(false);
   const iconName = closable && closeButtonVisible ? "x" : tag.icon;
   const isClickable = Boolean(onClick);

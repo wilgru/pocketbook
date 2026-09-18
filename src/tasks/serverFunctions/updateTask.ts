@@ -2,9 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
 import { tasks } from "src/tasks/tasks.schema";
 import type { Dayjs } from "dayjs";
 import type { Link } from "src/common/types/Link.type";
+import type { Note } from "src/notes/notes.schema";
 import type { Task } from "src/tasks/tasks.schema";
 
 export type UpdateTaskInput = {
@@ -28,7 +30,7 @@ export const updateTaskServerFn = createServerFn({
   strict: false,
 })
   .validator((input: UpdateTaskInput) => input)
-  .handler<Promise<Task>>(async ({ data }) => {
+  .handler(async ({ data }): Promise<Task> => {
     const db = getDb();
     const now = dayjs();
 
@@ -53,5 +55,10 @@ export const updateTaskServerFn = createServerFn({
       .returning()
       .all();
 
-    return updated;
+    let note: Note | null = null;
+    if (updated.noteId) {
+      note = await getNoteServerFn({ data: { noteId: updated.noteId } });
+    }
+
+    return { ...updated, note };
   });

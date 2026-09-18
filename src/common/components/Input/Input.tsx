@@ -25,7 +25,7 @@ export const Input = ({
   value,
   onChange,
   placeholder,
-}: InputType): JSX.Element => {
+}: InputType): React.JSX.Element => {
   return (
     <input
       required={required}

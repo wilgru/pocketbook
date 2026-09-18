@@ -18,6 +18,7 @@ import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormattin
 import type { Note } from "src/notes/notes.schema";
 
 type CommentEditorProps = {
+  ref?: React.Ref<HTMLDivElement>;
   comment: Partial<Comment>;
   colour?: Colour;
   thisNoteId?: string;
@@ -39,6 +40,7 @@ const getInitialComment = (comment: Partial<Comment>): Partial<Comment> => ({
 });
 
 export const CommentEditor = ({
+  ref,
   comment,
   colour,
   thisNoteId,
@@ -148,6 +150,7 @@ export const CommentEditor = ({
 
   return (
     <UpdateTimelineItem
+      ref={ref}
       iconName={iconName}
       iconColour={iconColour}
       strongIcon={editedComment.isWaypoint}

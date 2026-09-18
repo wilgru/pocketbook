@@ -46,7 +46,7 @@ export const Calendar = ({
   onSelectDate,
   isDateDisabled,
   dayDotIndicators,
-}: CalendarProps): JSX.Element => {
+}: CalendarProps): React.JSX.Element => {
   const today = dayjs();
   const [displayYear, setDisplayYear] = useState(today.year());
   const [displayMonth, setDisplayMonth] = useState(today.month());

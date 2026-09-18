@@ -6,7 +6,10 @@ type LabelProps = {
   tooltipContent?: string;
 };
 
-export const Label = ({ title, tooltipContent }: LabelProps): JSX.Element => {
+export const Label = ({
+  title,
+  tooltipContent,
+}: LabelProps): React.JSX.Element => {
   return (
     <h3 className="flex items-center gap-0.5 mb-1 text-sm text-slate-500">
       {title}

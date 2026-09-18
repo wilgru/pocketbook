@@ -102,6 +102,7 @@ export const DropdownSeparator = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DropdownSub = DropdownMenuPrimitive.Sub;
 
 type DropdownSubTriggerProps = React.ComponentPropsWithoutRef<

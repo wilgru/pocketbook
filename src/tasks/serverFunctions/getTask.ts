@@ -13,7 +13,7 @@ export const getTaskServerFn = createServerFn({
   strict: { output: false },
 })
   .validator((input: GetTaskInput) => input)
-  .handler<Promise<Task>>(async ({ data }) => {
+  .handler(async ({ data }): Promise<Task> => {
     const db = getDb();
 
     const taskRow = await db
@@ -26,7 +26,7 @@ export const getTaskServerFn = createServerFn({
       throw new Error(`Task not found: ${data.taskId}`);
     }
 
-    let note: Note | undefined;
+    let note: Note | null = null;
     if (taskRow.noteId) {
       note = await getNoteServerFn({ data: { noteId: taskRow.noteId } });
     }

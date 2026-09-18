@@ -10,10 +10,7 @@ export const deleteTagGroupServerFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const db = getDb();
 
-    await db
-      .delete(tagGroups)
-      .where(eq(tagGroups.id, data.tagGroupId))
-      .run();
+    await db.delete(tagGroups).where(eq(tagGroups.id, data.tagGroupId)).run();
 
     return data.tagGroupId;
   });

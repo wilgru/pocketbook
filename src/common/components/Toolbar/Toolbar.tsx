@@ -14,7 +14,7 @@ type ToolbarProps = {
   title: string;
   colour?: Colour;
   pocketbookColour?: Colour;
-  children?: JSX.Element;
+  children?: React.ReactNode;
 };
 
 export const Toolbar = ({

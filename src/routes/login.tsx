@@ -18,7 +18,7 @@ export const Route = createFileRoute("/login")({
   component: LoginIndexComponent,
 });
 
-function LoginIndexComponent(): JSX.Element {
+function LoginIndexComponent(): React.JSX.Element {
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({

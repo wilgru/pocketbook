@@ -9,7 +9,7 @@ import type { IconName } from "src/icons/Icon.type";
 
 type ToggleProps = {
   className?: string;
-  children?: string | JSX.Element;
+  children?: string | React.JSX.Element;
   size?: "xs" | "sm" | "md" | "lg";
   colour?: Colour;
   isToggled: boolean;

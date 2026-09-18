@@ -13,7 +13,7 @@ export const Route = createFileRoute("/signup")({
   component: SignUpIndexComponent,
 });
 
-function SignUpIndexComponent(): JSX.Element {
+function SignUpIndexComponent(): React.JSX.Element {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     name: "",

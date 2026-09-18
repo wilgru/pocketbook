@@ -6,6 +6,7 @@ import type { Colour } from "src/colours/Colour.type";
 import type { IconName } from "src/icons/Icon.type";
 
 type UpdateTimelineItemProps = {
+  ref?: React.Ref<HTMLDivElement>;
   iconName: IconName;
   iconColour?: Colour;
   strongIcon?: boolean;
@@ -16,6 +17,7 @@ type UpdateTimelineItemProps = {
 };
 
 export const UpdateTimelineItem = ({
+  ref,
   iconName,
   iconColour = colours.orange,
   strongIcon = false,
@@ -25,7 +27,7 @@ export const UpdateTimelineItem = ({
   children,
 }: UpdateTimelineItemProps) => {
   return (
-    <div className="w-full flex gap-2 items-start">
+    <div ref={ref} className="w-full flex gap-2 items-start">
       <div className="flex flex-col items-center self-stretch">
         <div className="w-px h-2.5 bg-slate-200" />
 
