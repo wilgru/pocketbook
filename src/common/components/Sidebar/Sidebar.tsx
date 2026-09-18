@@ -6,7 +6,7 @@ import { Button } from "src/common/components/Button/Button";
 import { NavItem } from "src/common/components/NavItem/NavItem";
 import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";

@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import type { ReactNode } from "react";
 
 type TwoPaneLayoutProps = {

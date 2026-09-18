@@ -32,7 +32,7 @@ import {
 } from "lexical";
 import { useEffect, useRef } from "react";
 import { getColourHex } from "src/colours/utils/getColourHex";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import {
   createEmptyLexicalContent,
   normalizeLexicalContent,

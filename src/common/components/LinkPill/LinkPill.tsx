@@ -1,5 +1,5 @@
 import { colours } from "src/colours/colours.constant";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { getDisplayUrl } from "src/common/utils/getDisplayUrl";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";

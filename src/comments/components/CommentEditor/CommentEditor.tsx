@@ -6,7 +6,7 @@ import { useCreateComment } from "src/comments/hooks/useCreateComment";
 import { useDeleteComment } from "src/comments/hooks/useDeleteComment";
 import { useUpdateComment } from "src/comments/hooks/useUpdateComment";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";

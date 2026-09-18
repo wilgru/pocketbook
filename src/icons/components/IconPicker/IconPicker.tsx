@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { customisationIcons } from "src/icons/customisationIcons.constant";
 import type { Colour } from "src/colours/Colour.type";

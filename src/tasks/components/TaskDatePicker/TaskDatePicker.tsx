@@ -4,7 +4,7 @@ import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { Calendar } from "src/common/components/Calendar/Calendar";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import type { Dayjs } from "dayjs";
 import type { Colour } from "src/colours/Colour.type";
 

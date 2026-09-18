@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { NoteTableItem } from "src/notes/components/NoteTableSection/NoteTableItem";
 import type { ReactNode } from "react";
 import type { Colour } from "src/colours/Colour.type";

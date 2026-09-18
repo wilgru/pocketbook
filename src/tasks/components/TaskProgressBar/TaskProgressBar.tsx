@@ -1,6 +1,6 @@
 import { colours } from "src/colours/colours.constant";
 import { Tooltip } from "src/common/components/Tooltip/Tooltip";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import type { Colour } from "src/colours/Colour.type";
 
 export type TaskProgressBarProps = {

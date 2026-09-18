@@ -3,7 +3,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";

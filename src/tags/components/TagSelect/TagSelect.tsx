@@ -4,7 +4,7 @@ import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { TagPill } from "src/tags/components/TagPill/TagPill";

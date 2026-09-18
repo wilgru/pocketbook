@@ -2,7 +2,7 @@ import { Close } from "@radix-ui/react-dialog";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { Dialog } from "src/common/components/Dialog/Dialog";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
 import type { Task } from "src/tasks/tasks.schema";

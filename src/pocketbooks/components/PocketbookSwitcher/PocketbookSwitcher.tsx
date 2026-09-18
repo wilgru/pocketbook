@@ -9,7 +9,7 @@ import {
   DropdownLabel,
   DropdownSeparator,
 } from "src/common/components/Dropdown/Dropdown";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 

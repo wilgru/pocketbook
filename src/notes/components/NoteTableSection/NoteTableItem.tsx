@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { TaskProgressBar } from "src/tasks/components/TaskProgressBar/TaskProgressBar";

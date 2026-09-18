@@ -3,7 +3,7 @@ import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import type { Colour } from "src/colours/Colour.type";

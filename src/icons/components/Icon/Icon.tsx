@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { controlIcons } from "src/icons/controlIcons.constant";
 import { customisationIcons } from "src/icons/customisationIcons.constant";
 import type { IconName, IconType } from "src/icons/Icon.type";

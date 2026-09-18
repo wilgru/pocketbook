@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import type { ReactNode } from "react";
 import type { Colour } from "src/colours/Colour.type";
 

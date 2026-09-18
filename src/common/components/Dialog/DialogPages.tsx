@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 
 export type DialogPage<TPage extends string> = {
   page: TPage;

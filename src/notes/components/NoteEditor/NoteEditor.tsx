@@ -16,7 +16,7 @@ import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEdi
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";

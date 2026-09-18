@@ -16,7 +16,7 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarCommands";
 import { FormattingToolbarButton } from "./NoteToolbarButton";
 import type { BaseSelection, LexicalEditor } from "lexical";

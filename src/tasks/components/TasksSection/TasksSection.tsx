@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
