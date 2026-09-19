@@ -1,12 +1,9 @@
 {
   "name": "pocketbook",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "main": ".vite/build/main.cjs",
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -17,10 +14,11 @@
     "db:migrate:cloud": "wrangler d1 migrations apply DB --remote --config dist/server/wrangler.json",
     "cf-typegen": "wrangler types",
     "test": "echo 'No test runner specified'",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
-    "prettier": "prettier . --check",
-    "prettier:fix": "prettier . --check --write"
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt"
   },
   "dependencies": {
     "@lexical/code": "^0.48.0",
@@ -55,7 +53,6 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.0.0",
     "@cloudflare/workers-types": "^5.0.0",
-    "@eslint/js": "^9.39.5",
     "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/devtools-vite": "^0.8.5",
     "@tanstack/react-devtools": "^0.10.12",
@@ -66,15 +63,15 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.2.0",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^9.39.5",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "typescript-eslint": "^8.70.0",
     "vite": "^8.1.5",
     "wrangler": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

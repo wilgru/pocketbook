@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    ".vite/",
+    ".pnp.cjs",
+    ".DS_Store",
+    "dev-db/",
+    "drizzle/",
+    "src/routeTree.gen.ts",
+    "resources/"
+  ],
+  "sortImports": {
+    "ignoreCase": false,
+    "newlinesBetween": false,
+    "order": "asc",
+    "groups": [
+      "value-builtin",
+      "value-external",
+      "value-parent",
+      "value-sibling",
+      "value-index",
+      "type",
+      "unknown"
+    ]
+  }
+}
