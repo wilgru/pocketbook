@@ -2,8 +2,7 @@
   "recommendations": [
     "streetsidesoftware.code-spell-checker",
     "aaron-bond.better-comments",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
+    "oxc.oxc-vscode",
     "bradlc.vscode-tailwindcss",
     "qwtel.sqlite-viewer"
   ]
