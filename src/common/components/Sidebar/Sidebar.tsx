@@ -10,7 +10,7 @@ import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";
-import { CreateTagGroupModal } from "src/tags/components/CreateTagGroupModal/CreateTagGroupModal";
+import { EditTagGroupModal } from "src/tags/components/EditTagGroupModal/EditTagGroupModal";
 import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 import { SidebarBookmarkSection } from "./SidebarBookmarkSection";
 import { SidebarTagSection } from "./SidebarTagSection";
@@ -193,7 +193,7 @@ export const Sidebar = () => {
             </Button>
           </Dialog.Trigger>
 
-          <CreateTagGroupModal />
+          <EditTagGroupModal />
         </Dialog.Root>
       </div>
     </aside>

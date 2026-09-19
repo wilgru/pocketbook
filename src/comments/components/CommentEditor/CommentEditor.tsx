@@ -1,3 +1,4 @@
+import { useForm, useSelector } from "@tanstack/react-form-start";
 import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
 import { useState, Fragment } from "react";
@@ -15,7 +16,6 @@ import type { LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
 import type { Comment } from "src/comments/comments.schema";
 import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
-import type { Note } from "src/notes/notes.schema";
 
 type CommentEditorProps = {
   ref?: React.Ref<HTMLDivElement>;
@@ -29,15 +29,10 @@ type CommentEditorProps = {
   onCreated?: () => void;
 };
 
-const getInitialComment = (comment: Partial<Comment>): Partial<Comment> => ({
-  id: comment.id ?? "",
-  content: comment.content ?? createEmptyLexicalContent(),
-  colour: comment.colour ?? null,
-  isWaypoint: comment.isWaypoint ?? false,
-  notes: comment.notes ?? [],
-  created: comment.created,
-  updated: comment.updated,
-});
+type CommentFormValues = Omit<
+  Comment,
+  "id" | "pocketbookId" | "created" | "updated" | "notes"
+>;
 
 export const CommentEditor = ({
   ref,
@@ -55,59 +50,45 @@ export const CommentEditor = ({
   const { createComment } = useCreateComment();
   const { updateComment } = useUpdateComment();
   const { deleteComment } = useDeleteComment();
+  const [selectedNotes, setSelectedNotes] = useState(comment.notes ?? []);
 
-  const [draftComment, setDraftComment] = useState<Partial<Comment> | null>(
-    () => (comment.id ? null : getInitialComment(comment)),
-  );
+  const defaultValues: CommentFormValues = {
+    content: comment.content ?? createEmptyLexicalContent(),
+    colour: comment.colour ?? null,
+    isWaypoint: comment.isWaypoint ?? false,
+  };
+  const form = useForm({
+    defaultValues,
+    onSubmit: async ({ value }) => {
+      if (comment.id) {
+        const updated = await updateComment({
+          commentId: comment.id,
+          commentData: { ...value, notes: selectedNotes },
+        });
+        if (updated) {
+          setIsEditing(false);
+        }
+      } else {
+        const created = await createComment({
+          createCommentData: { ...value, notes: selectedNotes },
+        });
+        if (created) {
+          onCreated?.();
+        }
+      }
+    },
+  });
+  const formValues = useSelector(form.store, (state) => state.values);
+  const [isEditing, setIsEditing] = useState(!comment.id);
   const [editorContext, setEditorContext] = useState<LexicalEditor | null>(
     null,
   );
   const [toolbarFormatting, setToolbarFormatting] =
     useState<LexicalToolbarFormatting>();
 
-  const editedComment = draftComment ?? comment;
-  const isEditing = draftComment !== null;
-
-  const onUpdateField = (fields: Partial<Comment>) => {
-    setDraftComment((current) => ({
-      ...(current ?? getInitialComment(comment)),
-      ...fields,
-    }));
-  };
-
-  const onDone = async () => {
-    if (editedComment.id) {
-      const updated = await updateComment({
-        commentId: editedComment.id,
-        commentData: {
-          content: editedComment.content,
-          colour: editedComment.colour,
-          isWaypoint: editedComment.isWaypoint,
-          notes: editedComment.notes as Note[],
-        },
-      });
-      if (updated) {
-        setDraftComment(null);
-      }
-    } else {
-      // New comment — create explicitly now
-      const created = await createComment({
-        createCommentData: {
-          content: editedComment.content!,
-          colour: editedComment.colour ?? null,
-          notes: (editedComment.notes ?? []) as Note[],
-          isWaypoint: editedComment.isWaypoint ?? false,
-        },
-      });
-      if (created) {
-        onCreated?.();
-      }
-    }
-  };
-
   const onDelete = async () => {
-    if (editedComment.id) {
-      await deleteComment({ commentId: editedComment.id });
+    if (comment.id) {
+      await deleteComment({ commentId: comment.id });
     } else {
       onCancel?.();
     }
@@ -118,15 +99,15 @@ export const CommentEditor = ({
   }
 
   const resolvedColour = colour ?? currentPocketbook.colour ?? colours.orange;
-  const commentColour = editedComment.colour ?? null;
+  const commentColour = formValues.colour;
 
-  const dateStr = editedComment.created
+  const dateStr = comment.created
     ? showTimeOnly
-      ? editedComment.created.format("h:mm a")
-      : getRelativeDateTitle(editedComment.created)
+      ? comment.created.format("h:mm a")
+      : getRelativeDateTitle(comment.created)
     : null;
 
-  const notes = editedComment.notes ?? [];
+  const notes = selectedNotes;
   const hasThisNote = notes.some((n) => n.id === thisNoteId);
   const sortedNotes = hasThisNote
     ? [...notes].sort((a, b) =>
@@ -137,11 +118,11 @@ export const CommentEditor = ({
   const headlinePrefix =
     notes.length === 0 ? "Left a general comment " : "Commented on ";
 
-  const iconName = editedComment.isWaypoint
+  const iconName = formValues.isWaypoint
     ? "flagBannerFold"
     : "chatCenteredText";
   const iconColour =
-    editedComment.isWaypoint && commentColour ? commentColour : colours.grey;
+    formValues.isWaypoint && commentColour ? commentColour : colours.grey;
 
   const editorBackground =
     !isEditing && commentColour
@@ -153,7 +134,7 @@ export const CommentEditor = ({
       ref={ref}
       iconName={iconName}
       iconColour={iconColour}
-      strongIcon={editedComment.isWaypoint}
+      strongIcon={formValues.isWaypoint}
       dateText={dateStr}
       hideBottomLine={hideBottomLine}
       headline={
@@ -185,31 +166,45 @@ export const CommentEditor = ({
       <div
         className={cn("flex flex-col gap-2 rounded-xl pl-1", editorBackground)}
       >
-        <RichTextEditor
-          size="md"
-          value={editedComment.content}
-          colour={resolvedColour}
-          readOnly={!isEditing}
-          onClick={() => {
-            if (!isEditing) {
-              setDraftComment(getInitialComment(comment));
-            }
-          }}
-          autoFocus={autoFocus || isEditing}
-          onChange={(content) => onUpdateField({ content })}
-          onSelectedFormattingChange={setToolbarFormatting}
-          onEditorContextReady={setEditorContext}
-        />
+        <form.Field name="content">
+          {(field) => (
+            <RichTextEditor
+              size="md"
+              value={field.state.value}
+              colour={resolvedColour}
+              readOnly={!isEditing}
+              onClick={() => {
+                if (!isEditing) {
+                  setIsEditing(true);
+                }
+              }}
+              autoFocus={autoFocus || isEditing}
+              onChange={(content) => field.handleChange(content)}
+              onSelectedFormattingChange={setToolbarFormatting}
+              onEditorContextReady={setEditorContext}
+            />
+          )}
+        </form.Field>
 
         {isEditing && (
           <CommentToolbar
             editorContext={editorContext}
             toolbarFormatting={toolbarFormatting}
             colour={resolvedColour}
-            comment={editedComment}
-            onCommentChange={onUpdateField}
+            comment={{ ...formValues, notes: selectedNotes }}
+            onCommentChange={(fields) => {
+              if (fields.notes !== undefined) {
+                setSelectedNotes(fields.notes);
+              }
+              if (fields.isWaypoint !== undefined) {
+                form.setFieldValue("isWaypoint", fields.isWaypoint);
+              }
+              if (fields.colour !== undefined) {
+                form.setFieldValue("colour", fields.colour);
+              }
+            }}
             onDelete={() => void onDelete()}
-            onSave={() => void onDone()}
+            onSave={() => void form.handleSubmit()}
           />
         )}
       </div>

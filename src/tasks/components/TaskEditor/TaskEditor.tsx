@@ -1,3 +1,4 @@
+import { useForm, useSelector } from "@tanstack/react-form-start";
 import { cn } from "cn";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -30,27 +31,7 @@ type TaskEditorProps = {
   colour?: Colour;
 };
 
-const getInitialTask = (task: Partial<Task> | undefined): Task => {
-  return {
-    pocketbookId: task?.pocketbookId || "",
-    id: task?.id || "",
-    title: task?.title || "",
-    description: task?.description || "",
-    noteId: task?.noteId || null,
-    note: task?.note || null,
-    link: task?.link || null,
-    links: task?.links || [],
-    dueDate: task?.dueDate || null,
-    completedDate: task?.completedDate || null,
-    cancelledDate: task?.cancelledDate || null,
-    blockedComment: task?.blockedComment || null,
-    blockedDate: task?.blockedDate || null,
-    isImportant: task?.isImportant || false,
-    sortOrder: task?.sortOrder ?? 0,
-    created: task?.created || dayjs(),
-    updated: task?.updated || dayjs(),
-  };
-};
+type TaskFormValues = Omit<Task, "note">;
 
 export const TaskEditor = ({
   task,
@@ -66,66 +47,70 @@ export const TaskEditor = ({
   const { updateTask } = useUpdateTask();
   const { deleteTask } = useDeleteTask();
 
-  const [editedTask, setEditedTask] = useState<Task>(getInitialTask(task));
+  const defaultValues: TaskFormValues = {
+    pocketbookId: task?.pocketbookId || "",
+    id: task?.id || "",
+    title: task?.title || "",
+    description: task?.description || "",
+    noteId: task?.noteId || null,
+    link: task?.link || null,
+    links: task?.links || [],
+    dueDate: task?.dueDate || null,
+    completedDate: task?.completedDate || null,
+    cancelledDate: task?.cancelledDate || null,
+    blockedComment: task?.blockedComment || null,
+    blockedDate: task?.blockedDate || null,
+    isImportant: task?.isImportant || false,
+    sortOrder: task?.sortOrder ?? 0,
+    created: task?.created || dayjs(),
+    updated: task?.updated || dayjs(),
+  };
+
+  const form = useForm({
+    defaultValues,
+    onSubmit: async ({ value }) => {
+      if (!value.title && !value.description && !value.id) {
+        return;
+      }
+
+      if (value.id) {
+        await updateTask({
+          taskId: value.id,
+          updateTaskData: {
+            ...value,
+            note: task?.note ?? null,
+          },
+          includeSortOrder: false,
+        });
+        onSave?.();
+      } else {
+        const newTask = await createTask({
+          createTaskData: {
+            ...value,
+            note: task?.note ?? null,
+          },
+        });
+
+        if (newTask) {
+          form.setFieldValue("id", newTask.id);
+          onCreate?.(newTask);
+        }
+      }
+    },
+  });
+
+  const formValues = useSelector(form.store, (state) => state.values);
   const [sortOrderOverrides, setSortOrderOverrides] = useState<
     Record<string, number>
   >({});
   const [isFocused, setIsFocused] = useState(false);
   const [isControlsBusy, setIsControlsBusy] = useState(false);
-  const titleRef = useAutoResize(editedTask.title);
-  const descriptionRef = useAutoResize(editedTask.description);
+  const titleRef = useAutoResize(formValues.title);
+  const descriptionRef = useAutoResize(formValues.description);
 
-  const debouncedSave = useDebouncedCallback(async () => {
-    if (!editedTask.title && !editedTask.description && !editedTask.id) {
-      return;
-    }
-
-    if (editedTask.id) {
-      updateTask({
-        taskId: editedTask.id,
-        updateTaskData: editedTask,
-        includeSortOrder: false,
-      });
-      onSave?.();
-    } else {
-      const newTask = await createTask({ createTaskData: editedTask });
-
-      if (newTask) {
-        setEditedTask((prev) => ({ ...prev, id: newTask.id }));
-        onCreate?.(newTask);
-      }
-    }
+  const debouncedSave = useDebouncedCallback(() => {
+    void form.handleSubmit();
   }, 500);
-
-  const onUpdateTask = useCallback(
-    (updateTaskData?: Partial<Task>) => {
-      setEditedTask((currentEditedTask) => ({
-        ...currentEditedTask,
-        ...updateTaskData,
-      }));
-
-      debouncedSave();
-    },
-    [debouncedSave],
-  );
-
-  const onCheckCircleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const wasCompleted = !!editedTask.completedDate;
-    const wasCancelled = !!editedTask.cancelledDate;
-
-    const wasDoubleClick = e.detail === 2;
-
-    if (wasDoubleClick) {
-      onUpdateTask({ completedDate: null, cancelledDate: dayjs() });
-      return;
-    }
-
-    if (wasCancelled || wasCompleted) {
-      onUpdateTask({ completedDate: null, cancelledDate: null });
-    } else {
-      onUpdateTask({ completedDate: dayjs(), cancelledDate: null });
-    }
-  };
 
   const sortingTasks = useMemo(
     () =>
@@ -172,7 +157,7 @@ export const TaskEditor = ({
 
   const moveTask = (direction: -1 | 1) => {
     const taskIndex = sortingTasks.findIndex(
-      (currentTask) => currentTask.id === editedTask.id,
+      (currentTask) => currentTask.id === formValues.id,
     );
     const adjacentTask = sortingTasks[taskIndex + direction];
 
@@ -181,6 +166,20 @@ export const TaskEditor = ({
     }
 
     swapTaskOrder(sortingTasks[taskIndex], adjacentTask);
+  };
+
+  const onStatusClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (e.detail === 2) {
+      form.setFieldValue("completedDate", null);
+      form.setFieldValue("cancelledDate", dayjs());
+    } else if (isCompleted || isCancelled) {
+      form.setFieldValue("completedDate", null);
+      form.setFieldValue("cancelledDate", null);
+    } else {
+      form.setFieldValue("completedDate", dayjs());
+      form.setFieldValue("cancelledDate", null);
+    }
+    debouncedSave();
   };
 
   // Auto-focus title once for newly created tasks.
@@ -193,18 +192,17 @@ export const TaskEditor = ({
     onAutoFocusComplete?.();
   }, [autoFocusTitle, onAutoFocusComplete, titleRef]);
 
-  const isCompleted = !!editedTask.completedDate;
-  const isCancelled = !!editedTask.cancelledDate;
-  const isBlocked = !!editedTask.blockedComment;
+  const isCompleted = !!formValues.completedDate;
+  const isCancelled = !!formValues.cancelledDate;
 
   const isDueDateOverdue =
-    !!editedTask.dueDate &&
-    editedTask.dueDate.isBefore(dayjs(), "day") &&
+    !!formValues.dueDate &&
+    formValues.dueDate.isBefore(dayjs(), "day") &&
     !isCompleted &&
     !isCancelled;
 
-  const showDescription = isFocused || !!editedTask.description;
-  const showTaskControls = isFocused && !!editedTask.id;
+  const showDescription = isFocused || !!formValues.description;
+  const showTaskControls = isFocused && !!formValues.id;
 
   return (
     <div
@@ -228,11 +226,11 @@ export const TaskEditor = ({
         }, 0);
       }}
     >
-      {isBlocked ? (
+      {formValues.blockedComment ? (
         <Tooltip
           content={
             <div className="flex flex-col gap-1">
-              <p className="text-slate-200">{editedTask.blockedComment}</p>
+              <p className="text-slate-200">{formValues.blockedComment}</p>
               <p className="mt-1 flex justify-between gap-4 border-t border-slate-600 pt-1 text-xs text-slate-400 italic">
                 Click to unblock
               </p>
@@ -245,9 +243,11 @@ export const TaskEditor = ({
             onMouseDown={(e) => {
               e.preventDefault();
             }}
-            onClick={() =>
-              onUpdateTask({ blockedComment: null, blockedDate: null })
-            }
+            onClick={() => {
+              form.setFieldValue("blockedComment", null);
+              form.setFieldValue("blockedDate", null);
+              debouncedSave();
+            }}
           >
             <Icon
               iconName="handPalm"
@@ -263,7 +263,7 @@ export const TaskEditor = ({
           onMouseDown={(e) => {
             e.preventDefault();
           }}
-          onClick={onCheckCircleClick}
+          onClick={onStatusClick}
         >
           <Icon
             iconName={
@@ -283,44 +283,47 @@ export const TaskEditor = ({
 
       <div className="w-full flex-col items-start">
         <div className="flex items-start justify-between">
-          <textarea
-            ref={titleRef}
-            rows={1}
-            name="title"
-            value={editedTask.title ?? ""}
-            placeholder="No Title"
-            onKeyDown={async (e) => {
-              if (e.key !== "Enter" || e.shiftKey) {
-                return;
-              }
+          <form.Field name="title">
+            {(field) => (
+              <textarea
+                ref={titleRef}
+                rows={1}
+                name="title"
+                value={field.state.value ?? ""}
+                placeholder="No Title"
+                onKeyDown={async (e) => {
+                  if (e.key !== "Enter" || e.shiftKey) {
+                    return;
+                  }
 
-              e.preventDefault();
-              debouncedSave.flush();
-              await onCreateNextTask?.();
-            }}
-            onChange={(e) =>
-              onUpdateTask({
-                title: e.target.value,
-              })
-            }
-            className={cn(
-              "flex-1 resize-none bg-transparent pt-0.5 text-sm tracking-tight placeholder-slate-400 outline-hidden select-none",
-              isCompleted || isCancelled
-                ? "text-slate-500"
-                : editedTask.isImportant
-                  ? "text-red-500"
-                  : "text-slate-700",
-              isCancelled && "line-through",
+                  e.preventDefault();
+                  debouncedSave.flush();
+                  await onCreateNextTask?.();
+                }}
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                  debouncedSave();
+                }}
+                className={cn(
+                  "flex-1 resize-none bg-transparent pt-0.5 text-sm tracking-tight placeholder-slate-400 outline-hidden select-none",
+                  isCompleted || isCancelled
+                    ? "text-slate-500"
+                    : formValues.isImportant
+                      ? "text-red-500"
+                      : "text-slate-700",
+                  isCancelled && "line-through",
+                )}
+              />
             )}
-          />
+          </form.Field>
 
           {!showTaskControls && (
             <div className="flex flex-row flex-wrap items-center gap-1 pl-1">
-              {editedTask.links.map((link) => (
+              {formValues.links.map((link) => (
                 <LinkPill key={link.id} link={link} colour={colour} />
               ))}
 
-              {editedTask.isImportant && (
+              {formValues.isImportant && (
                 <Icon
                   iconName="warningCircle"
                   size="sm"
@@ -331,7 +334,7 @@ export const TaskEditor = ({
                 />
               )}
 
-              {!!editedTask.dueDate && (
+              {!!formValues.dueDate && (
                 <span
                   className={cn(
                     "rounded-full px-2 py-1 text-xs",
@@ -340,7 +343,7 @@ export const TaskEditor = ({
                       : "bg-gray-100 text-gray-500",
                   )}
                 >
-                  {editedTask.dueDate.format("MMM D, YYYY")}
+                  {formValues.dueDate.format("MMM D, YYYY")}
                 </span>
               )}
             </div>
@@ -348,22 +351,27 @@ export const TaskEditor = ({
         </div>
 
         {showDescription && (
-          <textarea
-            ref={descriptionRef}
-            rows={1}
-            name="description"
-            value={editedTask.description ?? ""}
-            placeholder="No description"
-            onChange={(e) =>
-              onUpdateTask({
-                description: e.target.value,
-              })
-            }
-            className={cn(
-              "-mb-0.5 w-full resize-none bg-transparent text-[13px] font-normal placeholder-slate-400 outline-hidden select-none",
-              isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
+          <form.Field name="description">
+            {(field) => (
+              <textarea
+                ref={descriptionRef}
+                rows={1}
+                name="description"
+                value={field.state.value ?? ""}
+                placeholder="No description"
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                  debouncedSave();
+                }}
+                className={cn(
+                  "-mb-0.5 w-full resize-none bg-transparent text-[13px] font-normal placeholder-slate-400 outline-hidden select-none",
+                  isCompleted || isCancelled
+                    ? "text-slate-400"
+                    : "text-slate-500",
+                )}
+              />
             )}
-          />
+          </form.Field>
         )}
         {showTaskControls && (
           <div className="flex items-center gap-1">
@@ -375,7 +383,7 @@ export const TaskEditor = ({
               onClick={() => moveTask(-1)}
               disabled={
                 sortingTasks.findIndex(
-                  (currentTask) => currentTask.id === editedTask.id,
+                  (currentTask) => currentTask.id === formValues.id,
                 ) <= 0
               }
             />
@@ -388,73 +396,90 @@ export const TaskEditor = ({
               onClick={() => moveTask(1)}
               disabled={
                 sortingTasks.findIndex(
-                  (currentTask) => currentTask.id === editedTask.id,
+                  (currentTask) => currentTask.id === formValues.id,
                 ) ===
                 sortingTasks.length - 1
               }
             />
 
-            <Toggle
-              isToggled={editedTask.isImportant}
-              size="xs"
-              colour={colours.red}
-              onClick={() =>
-                onUpdateTask({
-                  isImportant: !editedTask.isImportant,
-                })
-              }
-              iconName="warningCircle"
-            />
+            <form.Field name="isImportant">
+              {(field) => (
+                <Toggle
+                  isToggled={field.state.value}
+                  size="xs"
+                  colour={colours.red}
+                  onClick={() => {
+                    field.handleChange(!field.state.value);
+                    debouncedSave();
+                  }}
+                  iconName="warningCircle"
+                />
+              )}
+            </form.Field>
 
-            <TaskBlockerPopover
-              blockedComment={editedTask.blockedComment}
-              onChange={(blockedComment) => {
-                onUpdateTask({
-                  blockedComment,
-                  blockedDate: blockedComment ? dayjs() : null,
-                });
-              }}
-              onOpenChange={handlePopoverOpenChange}
-            />
+            <form.Field name="blockedComment">
+              {(field) => (
+                <TaskBlockerPopover
+                  blockedComment={field.state.value}
+                  onChange={(blockedComment) => {
+                    field.handleChange(blockedComment);
+                    form.setFieldValue(
+                      "blockedDate",
+                      blockedComment ? dayjs() : null,
+                    );
+                    debouncedSave();
+                  }}
+                  onOpenChange={handlePopoverOpenChange}
+                />
+              )}
+            </form.Field>
 
-            <LinksPopover
-              links={editedTask.links}
-              colour={colour}
-              onChange={(links) =>
-                onUpdateTask({
-                  links,
-                })
-              }
-              onOpenChange={handlePopoverOpenChange}
-            />
+            <form.Field name="links">
+              {(field) => (
+                <LinksPopover
+                  links={field.state.value}
+                  colour={colour}
+                  onChange={(links) => {
+                    field.handleChange(links);
+                    debouncedSave();
+                  }}
+                  onOpenChange={handlePopoverOpenChange}
+                />
+              )}
+            </form.Field>
 
-            <NoteSelect
-              mode="single"
-              selectedNotes={editedTask.note ? [editedTask.note] : []}
-              colour={colour}
-              onChange={(notes) => {
-                onUpdateTask({
-                  note: notes[0] ?? null,
-                  noteId: notes[0]?.id ?? null,
-                });
-                handlePopoverOpenChange(false);
-              }}
-              onOpenChange={handlePopoverOpenChange}
-            />
+            <form.Field name="noteId">
+              {(field) => (
+                <NoteSelect
+                  mode="single"
+                  selectedNotes={task?.note ? [task.note] : []}
+                  colour={colour}
+                  onChange={(notes) => {
+                    field.handleChange(notes[0]?.id ?? null);
+                    debouncedSave();
+                    handlePopoverOpenChange(false);
+                  }}
+                  onOpenChange={handlePopoverOpenChange}
+                />
+              )}
+            </form.Field>
 
-            <TaskDatePicker
-              dueDate={editedTask.dueDate}
-              colour={colour}
-              isCompleted={isCompleted}
-              isCancelled={isCancelled}
-              onChange={(date) => {
-                onUpdateTask({
-                  dueDate: date,
-                });
-                handlePopoverOpenChange(false);
-              }}
-              onOpenChange={handlePopoverOpenChange}
-            />
+            <form.Field name="dueDate">
+              {(field) => (
+                <TaskDatePicker
+                  dueDate={field.state.value}
+                  colour={colour}
+                  isCompleted={isCompleted}
+                  isCancelled={isCancelled}
+                  onChange={(date) => {
+                    field.handleChange(date);
+                    debouncedSave();
+                    handlePopoverOpenChange(false);
+                  }}
+                  onOpenChange={handlePopoverOpenChange}
+                />
+              )}
+            </form.Field>
 
             <Button
               variant="ghost"
@@ -463,7 +488,7 @@ export const TaskEditor = ({
               colour={colours.red}
               onClick={() => {
                 debouncedSave.cancel();
-                deleteTask({ taskId: editedTask.id });
+                deleteTask({ taskId: formValues.id });
                 setIsFocused(false);
               }}
             />

@@ -1,5 +1,5 @@
 import { Close } from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useForm } from "@tanstack/react-form-start";
 import { colours } from "src/colours/colours.constant";
 import { ColourPicker } from "src/colours/components/ColourPicker/ColourPicker";
 import { Button } from "src/common/components/Button/Button";
@@ -21,24 +21,32 @@ type PocketbookSettingsModalProps = {
   currentPage: PocketbookSettingsModalPage;
 };
 
+type PocketbookSettingsFormValues = Pick<
+  Pocketbook,
+  "title" | "icon" | "colour"
+>;
+
 export const PocketbookSettingsModal = ({
   pocketbook,
   currentPage,
 }: PocketbookSettingsModalProps) => {
-  const [editedPocketbook, setEditedPocketbook] = useState(pocketbook);
   const { updatePocketbook, isUpdatingPocketbook } = useUpdatePocketbook();
 
-  const onSaveEdit = async () => {
-    await updatePocketbook({
-      pocketbookId: pocketbook.id,
-      updatePocketbookData: {
-        ...pocketbook,
-        title: editedPocketbook.title,
-        icon: editedPocketbook.icon,
-        colour: editedPocketbook.colour,
-      },
-    });
+  const defaultValues: PocketbookSettingsFormValues = {
+    title: pocketbook.title,
+    icon: pocketbook.icon,
+    colour: pocketbook.colour,
   };
+
+  const form = useForm({
+    defaultValues,
+    onSubmit: async ({ value }) => {
+      await updatePocketbook({
+        pocketbookId: pocketbook.id,
+        updatePocketbookData: { ...pocketbook, ...value },
+      });
+    },
+  });
 
   const pages: DialogPage<PocketbookSettingsModalPage>[] = [
     { page: "general", label: "General" },
@@ -64,7 +72,7 @@ export const PocketbookSettingsModal = ({
               colour={colours.green}
               size="sm"
               disabled={isUpdatingPocketbook}
-              onClick={onSaveEdit}
+              onClick={() => void form.handleSubmit()}
             >
               Save
             </Button>
@@ -88,50 +96,53 @@ export const PocketbookSettingsModal = ({
       >
         <div className="flex flex-col gap-3">
           {currentPage === "general" && (
-            <div>
-              <Label title="Title" />
-              <Input
-                size="md"
-                id={pocketbook.id}
-                value={editedPocketbook.title}
-                onChange={(e) =>
-                  setEditedPocketbook((current) => ({
-                    ...current,
-                    title: e.target.value,
-                  }))
-                }
-              />
-            </div>
+            <form.Field name="title">
+              {(field) => (
+                <div>
+                  <Label title="Title" />
+                  <Input
+                    size="md"
+                    id={pocketbook.id}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </div>
+              )}
+            </form.Field>
           )}
 
           {currentPage === "appearance" && (
             <>
-              <div>
-                <Label title="Colour" />
-                <ColourPicker
-                  selectedColourName={editedPocketbook.colour.name}
-                  onSelectColour={(colour) =>
-                    setEditedPocketbook((current) => ({
-                      ...current,
-                      colour,
-                    }))
-                  }
-                />
-              </div>
+              <form.Field name="colour">
+                {(field) => (
+                  <div>
+                    <Label title="Colour" />
+                    <ColourPicker
+                      selectedColourName={field.state.value.name}
+                      onSelectColour={(colour) => field.handleChange(colour)}
+                    />
+                  </div>
+                )}
+              </form.Field>
 
-              <div>
-                <Label title="Icon" />
-                <IconPicker
-                  selectedIconName={editedPocketbook.icon}
-                  colour={editedPocketbook.colour}
-                  onSelectIcon={(iconName) =>
-                    setEditedPocketbook((current) => ({
-                      ...current,
-                      icon: iconName,
-                    }))
-                  }
-                />
-              </div>
+              <form.Field name="icon">
+                {(iconField) => (
+                  <form.Field name="colour">
+                    {(colourField) => (
+                      <div>
+                        <Label title="Icon" />
+                        <IconPicker
+                          selectedIconName={iconField.state.value}
+                          colour={colourField.state.value}
+                          onSelectIcon={(iconName) =>
+                            iconField.handleChange(iconName)
+                          }
+                        />
+                      </div>
+                    )}
+                  </form.Field>
+                )}
+              </form.Field>
 
               <div>
                 <Label title="Font" />

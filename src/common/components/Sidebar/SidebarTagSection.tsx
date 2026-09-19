@@ -2,8 +2,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { CreateTagModal } from "src/tags/components/CreateTagModal/CreateTagModal";
 import { EditTagGroupModal } from "src/tags/components/EditTagGroupModal/EditTagGroupModal";
+import { EditTagModal } from "src/tags/components/EditTagModal/EditTagModal";
 import type { Colour } from "src/colours/Colour.type";
 import type { TagGroup } from "src/tags/tags.schema";
 
@@ -63,7 +63,7 @@ export const SidebarTagSection = ({
             </Dialog.Trigger>
           )}
 
-          <CreateTagModal tagGroupId={tagGroup?.id} />
+          <EditTagModal tagGroupId={tagGroup?.id} />
         </Dialog.Root>
       </div>
 

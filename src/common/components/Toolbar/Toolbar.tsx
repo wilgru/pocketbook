@@ -65,12 +65,6 @@ export const Toolbar = ({
           isWindows && "mr-35",
         )}
       >
-        {process.env.NODE_ENV === "development" && (
-          <div className="family-mono rounded-lg border border-purple-300 bg-purple-100 px-2 pt-px text-sm font-medium text-purple-500">
-            DEV
-          </div>
-        )}
-
         <NoteSearchBar />
       </div>
     </div>

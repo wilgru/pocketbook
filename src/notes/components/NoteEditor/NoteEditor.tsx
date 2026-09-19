@@ -1,4 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useForm, useSelector } from "@tanstack/react-form-start";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { cn } from "cn";
 import dayjs from "dayjs";
@@ -39,6 +40,11 @@ type NoteEditorProps = {
   onSave?: () => void;
 };
 
+type NoteFormValues = Pick<
+  Note,
+  "title" | "content" | "isBookmarked" | "links" | "tags"
+>;
+
 const NoteEditor = ({
   note,
   colour = colours.orange,
@@ -59,7 +65,28 @@ const NoteEditor = ({
   );
   const comments = commentsData?.comments ?? [];
 
-  const [editedNote, setEditedNote] = useState<Note>(note); // TODO: maybe use key prop when using NoteEditor to force reset instead of having to manage this state and useEffects to reset when the note prop changes.
+  const form = useForm({
+    defaultValues: {
+      title: note.title,
+      content: note.content,
+      isBookmarked: note.isBookmarked,
+      links: note.links,
+      tags: note.tags,
+    } satisfies NoteFormValues,
+    onSubmit: async ({ value }) => {
+      const editedNote = { ...note, ...value, updated: dayjs() };
+
+      if (editedNote.id) {
+        await updateNote({
+          noteId: editedNote.id,
+          updateNoteData: editedNote,
+        });
+      } else {
+        await createNote({ createNoteData: editedNote });
+      }
+    },
+  });
+  const formValues = useSelector(form.store, (state) => state.values);
   const [showNewComment, setShowNewComment] = useState(false);
   const [newTaskFocusId, setNewTaskFocusId] = useState<string | null>(null);
   const [showCompletedTasks, setShowCompletedTasks] = useState(false);
@@ -72,7 +99,7 @@ const NoteEditor = ({
   const [isToolbarBusy, setIsToolbarBusy] = useState(false);
 
   const newCommentRef = useRef<HTMLDivElement>(null);
-  const titleRef = useAutoResize(editedNote.title);
+  const titleRef = useAutoResize(formValues.title);
 
   const tasks = note.tasks ?? [];
   const completedTaskCount = tasks.filter((task) => task.completedDate).length;
@@ -85,18 +112,14 @@ const NoteEditor = ({
   );
 
   const debouncedSave = useDebouncedCallback(() => {
-    if (editedNote.id) {
-      updateNote({ noteId: editedNote.id, updateNoteData: editedNote });
-    } else {
-      createNote({ createNoteData: editedNote });
-    }
+    void form.handleSubmit();
     onSave?.();
   }, 500);
 
   const onCreateTask = async (insertAfterSortOrder?: number) => {
     const createdTask = await createTask({
       createTaskData: {
-        note: editedNote,
+        note,
         title: "",
         isImportant: false,
         link: null,
@@ -117,18 +140,9 @@ const NoteEditor = ({
     }
   };
 
-  const onUpdateNote = (updateNoteData: Partial<Note>) => {
-    setEditedNote((currentEditedNote) => ({
-      ...currentEditedNote,
-      ...updateNoteData,
-      updated: dayjs(),
-    }));
-    debouncedSave();
-  };
-
   const onDeleteNote = async () => {
     debouncedSave.cancel();
-    await deleteNote({ noteId: editedNote.id });
+    await deleteNote({ noteId: note.id });
 
     navigate({
       to: location.pathname,
@@ -159,29 +173,50 @@ const NoteEditor = ({
     <div className="min-h-full w-full max-w-250">
       <div className="flex min-h-full flex-col gap-4">
         <div className="flex w-full flex-col justify-between gap-1 border-b border-slate-200 pb-3">
-          <textarea
-            ref={titleRef}
-            rows={1}
-            name="title"
-            value={editedNote.title ?? ""}
-            placeholder="No Title"
-            onChange={(e) => onUpdateNote({ title: e.target.value })}
-            className="resize-none overflow-y-hidden bg-white font-title text-4xl tracking-tight placeholder-slate-400 outline-hidden select-none"
-          />
+          <form.Field name="title">
+            {(field) => (
+              <textarea
+                ref={titleRef}
+                rows={1}
+                name="title"
+                value={field.state.value ?? ""}
+                placeholder="No Title"
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                  debouncedSave();
+                }}
+                className="resize-none overflow-y-hidden bg-white font-title text-4xl tracking-tight placeholder-slate-400 outline-hidden select-none"
+              />
+            )}
+          </form.Field>
 
           <div className="flex flex-row flex-wrap items-center gap-1.5">
-            <TagSelect
-              key={editedNote.id}
-              initialTags={editedNote.tags}
-              colour={colour}
-              onChange={(tags) => onUpdateNote({ tags })}
-            />
+            <form.Field name="tags">
+              {(field) => (
+                <TagSelect
+                  key={note.id}
+                  initialTags={field.state.value}
+                  colour={colour}
+                  onChange={(tags) => {
+                    field.handleChange(tags);
+                    debouncedSave();
+                  }}
+                />
+              )}
+            </form.Field>
 
-            <LinksPopover
-              links={editedNote.links}
-              colour={colour}
-              onChange={(links) => onUpdateNote({ links })}
-            />
+            <form.Field name="links">
+              {(field) => (
+                <LinksPopover
+                  links={field.state.value}
+                  colour={colour}
+                  onChange={(links) => {
+                    field.handleChange(links);
+                    debouncedSave();
+                  }}
+                />
+              )}
+            </form.Field>
 
             <Button
               size="sm"
@@ -199,18 +234,23 @@ const NoteEditor = ({
               iconName="chatCenteredText"
             />
 
-            <Toggle
-              isToggled={editedNote.isBookmarked}
-              size="sm"
-              colour={colours.red}
-              onClick={() =>
-                onUpdateNote({ isBookmarked: !editedNote.isBookmarked })
-              }
-              iconName="bookmark"
-            />
+            <form.Field name="isBookmarked">
+              {(field) => (
+                <Toggle
+                  isToggled={field.state.value}
+                  size="sm"
+                  colour={colours.red}
+                  onClick={() => {
+                    field.handleChange(!field.state.value);
+                    debouncedSave();
+                  }}
+                  iconName="bookmark"
+                />
+              )}
+            </form.Field>
 
             <p className="text-xs text-slate-500">
-              {editedNote.created.format("D MMMM YYYY, hh:mm a")}
+              {note.created.format("D MMMM YYYY, hh:mm a")}
             </p>
 
             <DropdownMenu.Root onOpenChange={setIsActionsDropdownOpen}>
@@ -249,9 +289,9 @@ const NoteEditor = ({
             </DropdownMenu.Root>
           </div>
 
-          {editedNote.links.length > 0 && (
+          {formValues.links.length > 0 && (
             <div className="flex flex-row flex-wrap items-center gap-3 pt-1 pl-1">
-              {editedNote.links.map((link) => (
+              {formValues.links.map((link) => (
                 <LinkPill key={link.id} link={link} colour={colour} />
               ))}
             </div>
@@ -312,16 +352,23 @@ const NoteEditor = ({
         )}
 
         <div className="min-h-0 w-full flex-1">
-          <RichTextEditor
-            className="h-full w-full px-1"
-            size="lg"
-            value={editedNote.content}
-            colour={colour}
-            fillHeight
-            onChange={(content) => onUpdateNote({ content: content })}
-            onSelectedFormattingChange={setToolbarFormatting}
-            onEditorContextReady={setEditorContext}
-          />
+          <form.Field name="content">
+            {(field) => (
+              <RichTextEditor
+                className="h-full w-full px-1"
+                size="lg"
+                value={field.state.value}
+                colour={colour}
+                fillHeight
+                onChange={(content) => {
+                  field.handleChange(content);
+                  debouncedSave();
+                }}
+                onSelectedFormattingChange={setToolbarFormatting}
+                onEditorContextReady={setEditorContext}
+              />
+            )}
+          </form.Field>
         </div>
 
         <NoteToolbar
@@ -338,9 +385,9 @@ const NoteEditor = ({
           {showNewComment && (
             <CommentEditor
               ref={newCommentRef}
-              comment={{ notes: [editedNote], colour: null }}
+              comment={{ notes: [note], colour: null }}
               colour={colour}
-              thisNoteId={editedNote.id}
+              thisNoteId={note.id}
               autoFocus={true}
               onCancel={() => setShowNewComment(false)}
               onCreated={() => setShowNewComment(false)}
@@ -355,7 +402,7 @@ const NoteEditor = ({
                   key={comment.id}
                   comment={comment}
                   colour={colour}
-                  thisNoteId={editedNote.id}
+                  thisNoteId={note.id}
                   hideBottomLine={comment === comments[0]}
                 />
               ))}

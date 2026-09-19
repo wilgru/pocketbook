@@ -32,8 +32,10 @@ type CommentToolbarProps = {
   editorContext: LexicalEditor | null;
   toolbarFormatting: LexicalToolbarFormatting | undefined;
   colour: Colour;
-  comment: Partial<Comment>;
-  onCommentChange: (fields: Partial<Comment>) => void;
+  comment: Pick<Comment, "notes" | "isWaypoint" | "colour">;
+  onCommentChange: (
+    fields: Partial<Pick<Comment, "notes" | "isWaypoint" | "colour">>,
+  ) => void;
   onDelete: () => void;
   onSave: () => void;
 };

@@ -1,4 +1,5 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
@@ -49,14 +50,25 @@ function RootComponent() {
         <QueryClientProvider client={queryClient}>
           <Outlet />
           <TanStackDevtools
+            config={{
+              customTrigger: (
+                <span className="family-mono rounded-lg border border-purple-300 bg-purple-100 p-2 text-sm font-medium text-purple-500 shadow-xl">
+                  Devtools
+                </span>
+              ),
+            }}
             plugins={[
               {
-                name: "TanStack Query",
+                name: "Query",
                 render: <ReactQueryDevtoolsPanel />,
               },
               {
-                name: "TanStack Router",
+                name: "Router",
                 render: <TanStackRouterDevtoolsPanel />,
+              },
+              {
+                name: "Form",
+                render: <FormDevtoolsPanel />,
               },
             ]}
           />
