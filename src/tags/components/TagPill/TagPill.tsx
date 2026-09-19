@@ -125,7 +125,7 @@ export const TagPill = ({
 
   return (
     <div
-      className="h-fit min-w-0 max-w-full"
+      className="h-fit max-w-full min-w-0"
       onMouseOver={() => setCloseButtonVisible(true)}
       onMouseOut={() => setCloseButtonVisible(false)}
     >
@@ -136,12 +136,12 @@ export const TagPill = ({
           size={size}
           onClick={handleClick}
           iconName={iconName}
-          className="min-w-0 max-w-full"
+          className="max-w-full min-w-0"
         >
           {!collapsed && (
             <span
               className={cn(
-                "min-w-0 flex-1 truncate transition-all duration-300 ease-in-out max-w-40 opacity-100",
+                "max-w-40 min-w-0 flex-1 truncate opacity-100 transition-all duration-300 ease-in-out",
               )}
             >
               {tag.name}
@@ -171,7 +171,7 @@ export const TagPill = ({
           {!collapsed && (
             <span
               className={cn(
-                "min-w-0 flex-1 truncate transition-all duration-300 ease-in-out max-w-40 opacity-100",
+                "max-w-40 min-w-0 flex-1 truncate opacity-100 transition-all duration-300 ease-in-out",
               )}
             >
               {tag.name}

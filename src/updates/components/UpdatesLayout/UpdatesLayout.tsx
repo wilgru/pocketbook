@@ -178,7 +178,7 @@ export const UpdatesLayout = ({
             >
               {tableOfContentsItem.icons.length > 0 && (
                 <span
-                  className="flex items-center gap-1 shrink-0"
+                  className="flex shrink-0 items-center gap-1"
                   aria-hidden="true"
                 >
                   {tableOfContentsItem.icons.map((icon, index) => (
@@ -196,7 +196,7 @@ export const UpdatesLayout = ({
         </ListSection>
       ))}
       content={
-        <div className="h-full w-full max-w-200 flex flex-col gap-6">
+        <div className="flex h-full w-full max-w-200 flex-col gap-6">
           {pendingNew && (
             <CommentEditor
               comment={{ notes: [], colour: null }}

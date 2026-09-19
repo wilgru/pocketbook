@@ -30,7 +30,7 @@ export const SidebarTagSection = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-row items-center gap-1">
-        <h1 className="font-title text-slate-400 text-sm py-0.5">{title}</h1>
+        <h1 className="py-0.5 font-title text-sm text-slate-400">{title}</h1>
 
         {tagGroup && (
           <Dialog.Root>
@@ -69,7 +69,7 @@ export const SidebarTagSection = ({
 
       {children}
 
-      {isEmpty && <p className="italic pt-0.5 text-xs text-slate-400">Empty</p>}
+      {isEmpty && <p className="pt-0.5 text-xs text-slate-400 italic">Empty</p>}
     </section>
   );
 };

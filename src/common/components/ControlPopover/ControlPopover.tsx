@@ -24,14 +24,14 @@ export const ControlPopover = ({
   onCloseAutoFocus,
 }: ControlPopoverProps) => {
   const content = (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-lg focus:outline-hidden">
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-lg focus:outline-hidden">
       <div className={className}>{children}</div>
 
       {clearActionLabel && onClearAction && (
-        <div className="flex flex-col items-center py-3 mx-3 gap-1 border-t border-slate-100">
+        <div className="mx-3 flex flex-col items-center gap-1 border-t border-slate-100 py-3">
           <button
             type="button"
-            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-xs text-slate-400 transition-colors hover:text-slate-600"
             onClick={onClearAction}
           >
             {clearActionLabel}

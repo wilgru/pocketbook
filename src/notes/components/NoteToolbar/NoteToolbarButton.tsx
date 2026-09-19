@@ -21,7 +21,7 @@ export const FormattingToolbarButton = ({
       onClick={onClick}
       onMouseDown={(event) => event.preventDefault()}
       className={cn(
-        "rounded-md text-slate-400 px-2 py-1",
+        "rounded-md px-2 py-1 text-slate-400",
         `data-[state=on]:${colour.primary.background}`,
         `data-[state=on]:${colour.primary.text}`,
         colour.secondary.backgroundHovered,

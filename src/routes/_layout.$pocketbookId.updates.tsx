@@ -34,7 +34,7 @@ function UpdatesComponent() {
   const [pendingNew, setPendingNew] = useState(false);
 
   return (
-    <div className="h-full w-full flex flex-col items-center">
+    <div className="flex h-full w-full flex-col items-center">
       <Toolbar
         iconName="calendarDots"
         title="History"

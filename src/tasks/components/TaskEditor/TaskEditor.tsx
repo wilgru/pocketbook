@@ -208,7 +208,7 @@ export const TaskEditor = ({
 
   return (
     <div
-      className="w-full flex gap-2 items-start"
+      className="flex w-full items-start gap-2"
       onFocus={() => {
         setIsFocused(true);
       }}
@@ -233,7 +233,7 @@ export const TaskEditor = ({
           content={
             <div className="flex flex-col gap-1">
               <p className="text-slate-200">{editedTask.blockedComment}</p>
-              <p className="mt-1 pt-1 border-t border-slate-600 flex justify-between gap-4 text-slate-400 italic text-xs">
+              <p className="mt-1 flex justify-between gap-4 border-t border-slate-600 pt-1 text-xs text-slate-400 italic">
                 Click to unblock
               </p>
             </div>
@@ -253,7 +253,7 @@ export const TaskEditor = ({
               iconName="handPalm"
               weight="regular"
               size="sm"
-              className="text-orange-400 hover:text-orange-600 transition-colors"
+              className="text-orange-400 transition-colors hover:text-orange-600"
             />
           </button>
         </Tooltip>
@@ -282,7 +282,7 @@ export const TaskEditor = ({
       )}
 
       <div className="w-full flex-col items-start">
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <textarea
             ref={titleRef}
             rows={1}
@@ -304,7 +304,7 @@ export const TaskEditor = ({
               })
             }
             className={cn(
-              "flex-1 tracking-tight text-sm pt-0.5 bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
+              "flex-1 resize-none bg-transparent pt-0.5 text-sm tracking-tight placeholder-slate-400 outline-hidden select-none",
               isCompleted || isCancelled
                 ? "text-slate-500"
                 : editedTask.isImportant
@@ -334,7 +334,7 @@ export const TaskEditor = ({
               {!!editedTask.dueDate && (
                 <span
                   className={cn(
-                    "text-xs px-2 py-1 rounded-full",
+                    "rounded-full px-2 py-1 text-xs",
                     isDueDateOverdue
                       ? "bg-red-100 text-red-500"
                       : "bg-gray-100 text-gray-500",
@@ -360,7 +360,7 @@ export const TaskEditor = ({
               })
             }
             className={cn(
-              "-mb-0.5 w-full text-[13px] font-normal bg-transparent placeholder-slate-400 select-none resize-none outline-hidden",
+              "-mb-0.5 w-full resize-none bg-transparent text-[13px] font-normal placeholder-slate-400 outline-hidden select-none",
               isCompleted || isCancelled ? "text-slate-400" : "text-slate-500",
             )}
           />

@@ -103,11 +103,11 @@ export const NoteSearchBar = () => {
     <div ref={containerRef} className="relative">
       <div
         className={cn(
-          "flex items-center gap-1.5 px-2 py-1.5 rounded-xl border border-slate-200 bg-slate-100 text-sm transition-colors",
+          "flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100 px-2 py-1.5 text-sm transition-colors",
           isOpen && "border-slate-300",
         )}
       >
-        <MagnifyingGlass size={14} className="text-slate-500 shrink-0" />
+        <MagnifyingGlass size={14} className="shrink-0 text-slate-500" />
         <input
           ref={inputRef}
           type="text"
@@ -116,13 +116,13 @@ export const NoteSearchBar = () => {
           onFocus={() => inputValue.length > 0 && setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Search notes..."
-          className="w-56 outline-hidden text-sm placeholder:text-slate-500 bg-transparent"
+          className="w-56 bg-transparent text-sm outline-hidden placeholder:text-slate-500"
         />
         {inputValue && (
           <button
             type="button"
             onClick={handleClear}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-slate-400 transition-colors hover:text-slate-600"
           >
             <X size={14} />
           </button>
@@ -130,7 +130,7 @@ export const NoteSearchBar = () => {
       </div>
 
       {isOpen && searchQuery.length > 0 && (
-        <div className="absolute right-0 top-full mt-1 w-72 bg-white border border-slate-200 rounded-2xl p-2 shadow-lg z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-full right-0 z-50 mt-1 max-h-80 w-72 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">
           {searchResults.length > 0 ? (
             searchResults.map((note) => (
               <div key={note.id} onClick={handleNoteSelect}>
@@ -138,7 +138,7 @@ export const NoteSearchBar = () => {
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-400 p-2 text-center">
+            <p className="p-2 text-center text-sm text-slate-400">
               No notes found
             </p>
           )}

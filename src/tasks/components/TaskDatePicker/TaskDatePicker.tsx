@@ -40,7 +40,7 @@ export const TaskDatePicker = ({
     <button
       type="button"
       className={cn(
-        "text-[11px] px-2 py-0.5 rounded-full transition-colors",
+        "rounded-full px-2 py-0.5 text-[11px] transition-colors",
         isOverdue ? "bg-red-100 text-red-500" : "bg-gray-100 text-gray-500",
       )}
     >
@@ -56,7 +56,7 @@ export const TaskDatePicker = ({
       onOpenChange={handleOpenChange}
       onOpenAutoFocus={(event) => event.preventDefault()}
       trigger={trigger}
-      className="p-3 w-52"
+      className="w-52 p-3"
       clearActionLabel={dueDate ? "Clear date" : undefined}
       onClearAction={dueDate ? () => onChange(null) : undefined}
     >

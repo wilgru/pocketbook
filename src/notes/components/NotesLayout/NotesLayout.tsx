@@ -37,7 +37,7 @@ const StickyNotesGrid = ({ notes, colour }: StickyNotesGridProps) => {
   }
 
   return (
-    <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-3">
+    <div className="grid w-full grid-cols-1 gap-4 pb-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {stickyNotes.map((note) => (
         <StickyNoteListItem key={note.id} note={note} colour={colour} />
       ))}
@@ -158,7 +158,7 @@ export const NotesLayout = ({
         <TwoPaneLayout
           sidebarTopContent={
             (description || (links && links.length > 0)) && (
-              <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
+              <div className="flex flex-col gap-2 rounded-xl bg-slate-50 p-4">
                 {description && (
                   <p className="text-sm text-slate-500">{description}</p>
                 )}
@@ -204,8 +204,8 @@ export const NotesLayout = ({
             </>
           }
           content={
-            <div className="relative flex-1 min-h-0">
-              <section className="h-full min-h-0 overflow-y-scroll flex justify-center px-8 pt-8">
+            <div className="relative min-h-0 flex-1">
+              <section className="flex h-full min-h-0 justify-center overflow-y-scroll px-8 pt-8">
                 {selectedNote ? (
                   <NoteEditor
                     key={selectedNote.id}
@@ -213,8 +213,8 @@ export const NotesLayout = ({
                     colour={colour}
                   />
                 ) : (
-                  <div className="h-full w-full flex flex-col justify-center items-center text-center">
-                    <h1 className="text-gray-400 text-lg">No note selected</h1>
+                  <div className="flex h-full w-full flex-col items-center justify-center text-center">
+                    <h1 className="text-lg text-gray-400">No note selected</h1>
                   </div>
                 )}
               </section>
@@ -232,7 +232,7 @@ export const NotesLayout = ({
                   <p className="text-sm text-slate-500">{description}</p>
                 )}
 
-                <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
+                <div className="flex flex-col gap-2 rounded-xl bg-slate-50 p-4">
                   {links &&
                     links.map((link, index) => (
                       <LinkPill key={index} link={link} colour={colour} />

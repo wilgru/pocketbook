@@ -49,7 +49,7 @@ export const PocketbookSettingsModal = ({
   return (
     <Dialog
       title="Pocketbook Settings"
-      className="w-200 h-150"
+      className="h-150 w-200"
       footer={
         <div className="flex justify-end gap-2">
           <Close asChild>

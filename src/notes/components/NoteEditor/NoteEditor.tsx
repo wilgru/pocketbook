@@ -157,8 +157,8 @@ const NoteEditor = ({
 
   return (
     <div className="min-h-full w-full max-w-250">
-      <div className="flex flex-col gap-4 min-h-full">
-        <div className="w-full flex flex-col gap-1 justify-between border-b border-slate-200 pb-3">
+      <div className="flex min-h-full flex-col gap-4">
+        <div className="flex w-full flex-col justify-between gap-1 border-b border-slate-200 pb-3">
           <textarea
             ref={titleRef}
             rows={1}
@@ -166,10 +166,10 @@ const NoteEditor = ({
             value={editedNote.title ?? ""}
             placeholder="No Title"
             onChange={(e) => onUpdateNote({ title: e.target.value })}
-            className="text-4xl font-title tracking-tight overflow-y-hidden bg-white placeholder-slate-400 select-none resize-none outline-hidden"
+            className="resize-none overflow-y-hidden bg-white font-title text-4xl tracking-tight placeholder-slate-400 outline-hidden select-none"
           />
 
-          <div className="flex flex-row flex-wrap gap-1.5 items-center">
+          <div className="flex flex-row flex-wrap items-center gap-1.5">
             <TagSelect
               key={editedNote.id}
               initialTags={editedNote.tags}
@@ -209,14 +209,14 @@ const NoteEditor = ({
               iconName="bookmark"
             />
 
-            <p className="text-slate-500 text-xs">
+            <p className="text-xs text-slate-500">
               {editedNote.created.format("D MMMM YYYY, hh:mm a")}
             </p>
 
             <DropdownMenu.Root onOpenChange={setIsActionsDropdownOpen}>
               <DropdownMenu.Trigger
                 className={cn(
-                  "ml-0.5 h-fit w-fit flex items-center gap-2 rounded-full transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 text-slate-500 p-0.5",
+                  "ml-0.5 flex h-fit w-fit items-center gap-2 rounded-full p-0.5 text-slate-500 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 focus-visible:outline-solid",
                   colour.secondary.textHovered,
                   colour.secondary.backgroundHovered,
                   isActionsDropdownOpen &&
@@ -250,7 +250,7 @@ const NoteEditor = ({
           </div>
 
           {editedNote.links.length > 0 && (
-            <div className="flex flex-row flex-wrap gap-3 items-center pl-1 pt-1">
+            <div className="flex flex-row flex-wrap items-center gap-3 pt-1 pl-1">
               {editedNote.links.map((link) => (
                 <LinkPill key={link.id} link={link} colour={colour} />
               ))}
@@ -259,9 +259,9 @@ const NoteEditor = ({
         </div>
 
         {tasks.length > 0 && (
-          <div className="w-full flex flex-col gap-1 justify-between border-dashed border-b border-slate-300 pb-3">
+          <div className="flex w-full flex-col justify-between gap-1 border-b border-dashed border-slate-300 pb-3">
             <div className="flex flex-row items-center justify-between gap-2">
-              <h3 className="text-slate-400 text-sm">Tasks</h3>
+              <h3 className="text-sm text-slate-400">Tasks</h3>
 
               <TaskProgressBar
                 cancelled={cancelledTaskCount}
@@ -311,7 +311,7 @@ const NoteEditor = ({
           </div>
         )}
 
-        <div className="flex-1 min-h-0 w-full">
+        <div className="min-h-0 w-full flex-1">
           <RichTextEditor
             className="h-full w-full px-1"
             size="lg"
@@ -334,7 +334,7 @@ const NoteEditor = ({
       </div>
 
       {(comments.length > 0 || showNewComment) && (
-        <div className="w-full flex flex-col border-t border-slate-200 pb-24">
+        <div className="flex w-full flex-col border-t border-slate-200 pb-24">
           {showNewComment && (
             <CommentEditor
               ref={newCommentRef}

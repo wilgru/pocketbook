@@ -27,12 +27,12 @@ const TaskProgressBarInner = ({
 
   return (
     <div className={cn("flex items-center gap-2", fullWidth && "w-full")}>
-      <span className="text-xs text-slate-400 w-8 text-right tabular-nums">
+      <span className="w-8 text-right text-xs text-slate-400 tabular-nums">
         {activePercent}%
       </span>
       <div
         className={cn(
-          "relative h-1 rounded-full bg-slate-200 overflow-hidden",
+          "relative h-1 overflow-hidden rounded-full bg-slate-200",
           fullWidth ? "w-full" : "w-40",
         )}
       >
@@ -77,7 +77,7 @@ export const TaskProgressBar = ({
 
   if (showInfoPopover) {
     const tooltipContent = (
-      <div className="flex flex-col gap-1 min-w-28">
+      <div className="flex min-w-28 flex-col gap-1">
         <div className="flex justify-between gap-4">
           <span className="text-slate-200">Completed</span>
           <span className="text-slate-100">{completed}</span>
@@ -90,7 +90,7 @@ export const TaskProgressBar = ({
           <span className="text-slate-200">To do</span>
           <span className="text-slate-100">{todo}</span>
         </div>
-        <div className="mt-1 pt-1 border-t border-slate-600 flex justify-between gap-4">
+        <div className="mt-1 flex justify-between gap-4 border-t border-slate-600 pt-1">
           <span className="text-xs text-slate-400 italic">Total</span>
           <span className="text-xs text-slate-400 italic">{total}</span>
         </div>

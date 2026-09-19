@@ -53,14 +53,14 @@ export const PocketbookSwitcher = ({
   };
 
   return (
-    <div className="flex gap-2 pl-1.5 pr-1 justify-between items-center relative">
+    <div className="relative flex items-center justify-between gap-2 pr-1 pl-1.5">
       <DropdownMenu.Root open={isOpen}>
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <DropdownMenu.Trigger onClick={() => setIsOpen(true)}>
             <Icon
               iconName={currentPocketbook.icon}
               className={cn(
-                "w-8 h-8 p-1.5 rounded-md",
+                "h-8 w-8 rounded-md p-1.5",
                 currentPocketbook.colour.primary.text,
                 currentPocketbook.colour.primary.textHovered,
                 currentPocketbook.colour.primary.background,
@@ -70,7 +70,7 @@ export const PocketbookSwitcher = ({
           </DropdownMenu.Trigger>
 
           <div className="flex flex-col items-start">
-            <h2 className="text-sm font-title font-medium">
+            <h2 className="font-title text-sm font-medium">
               {currentPocketbook.title}
             </h2>
 
@@ -104,7 +104,7 @@ export const PocketbookSwitcher = ({
                   setIsOpen(false);
                 }}
                 className={cn(
-                  "flex items-center gap-2 leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer transition-colors",
+                  "flex cursor-pointer items-center gap-2 rounded-xl p-2 text-sm leading-none outline-hidden transition-colors",
                   currentPocketbook.id === pocketbook.id
                     ? pocketbook.colour.primary.background
                     : pocketbook.colour.secondary.backgroundHovered,
@@ -113,7 +113,7 @@ export const PocketbookSwitcher = ({
                 <Icon
                   iconName={pocketbook.icon}
                   className={cn(
-                    "w-8 h-8 p-1.5 rounded-md",
+                    "h-8 w-8 rounded-md p-1.5",
                     pocketbook.colour.primary.text,
                     pocketbook.colour.primary.background,
                   )}

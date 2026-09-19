@@ -73,7 +73,7 @@ export const CreateTagModal = ({ tagGroupId }: CreateTagModalProps) => {
       bodyScrollable
       footer={
         <div className="flex justify-end">
-          <div className="flex gap-2 justify-end">
+          <div className="flex justify-end gap-2">
             <Close asChild>
               <Button aria-label="Close" size="sm" variant="ghost">
                 Discard
@@ -119,7 +119,7 @@ export const CreateTagModal = ({ tagGroupId }: CreateTagModalProps) => {
                 return { ...currentTagToEdit, description: e.target.value };
               })
             }
-            className="block p-1 text-sm w-full bg-white rounded-md border border-slate-300 placeholder:text-slate-500"
+            className="block w-full rounded-md border border-slate-300 bg-white p-1 text-sm placeholder:text-slate-500"
           />
         </div>
 

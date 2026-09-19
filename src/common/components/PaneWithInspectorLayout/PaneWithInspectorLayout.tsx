@@ -16,14 +16,14 @@ export const PaneWithInspectorLayout = ({
   showSidebarTopContentDivider = false,
 }: PaneWithInspectorLayoutProps) => {
   return (
-    <div className="flex-1 flex min-h-0 w-full min-w-0 pb-2 pl-2 box-border">
-      <div className="bg-white border border-slate-300 rounded-xl drop-shadow-sm h-full w-full min-w-0 flex overflow-hidden">
-        <section className="h-full w-full min-h-0 overflow-y-scroll flex justify-center px-5 pt-5">
+    <div className="box-border flex min-h-0 w-full min-w-0 flex-1 pb-2 pl-2">
+      <div className="flex h-full w-full min-w-0 overflow-hidden rounded-xl border border-slate-300 bg-white drop-shadow-sm">
+        <section className="flex h-full min-h-0 w-full justify-center overflow-y-scroll px-5 pt-5">
           {content}
         </section>
       </div>
 
-      <aside className="w-64 min-h-0 mr-1 -mb-2 flex flex-col">
+      <aside className="mr-1 -mb-2 flex min-h-0 w-64 flex-col">
         {sidebarTopContent && (
           <div
             className={cn(
@@ -37,7 +37,7 @@ export const PaneWithInspectorLayout = ({
 
         <div
           className={cn(
-            "min-h-0 flex-1 flex flex-col gap-3 px-3 pb-6 overflow-y-scroll",
+            "flex min-h-0 flex-1 flex-col gap-3 overflow-y-scroll px-3 pb-6",
             (!sidebarTopContent || showSidebarTopContentDivider) && "pt-3",
           )}
         >

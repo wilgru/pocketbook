@@ -122,7 +122,7 @@ export const CommentToolbar = ({
       }}
     >
       <ToggleGroup.Root
-        className="flex flex-row flex-wrap gap-1.5 pr-1 border-r-2 border-slate-100"
+        className="flex flex-row flex-wrap gap-1.5 border-r-2 border-slate-100 pr-1"
         type="multiple"
         value={[
           ...(toolbarFormatting?.bold ? ["bold"] : []),
@@ -138,7 +138,7 @@ export const CommentToolbar = ({
         ]}
         aria-label="Text formatting"
       >
-        <div className="flex flex-row gap-1 pr-1 border-r-2 border-slate-100">
+        <div className="flex flex-row gap-1 border-r-2 border-slate-100 pr-1">
           <FormattingToolbarButton
             value="bold"
             colour={colour}
@@ -177,7 +177,7 @@ export const CommentToolbar = ({
             <Code size={16} weight="bold" />
           </FormattingToolbarButton>
         </div>
-        <div className="flex flex-row gap-1 pr-1 border-r-2 border-slate-100">
+        <div className="flex flex-row gap-1 border-r-2 border-slate-100 pr-1">
           <FormattingToolbarButton
             value="ordered"
             colour={colour}
@@ -206,7 +206,7 @@ export const CommentToolbar = ({
                 </FormattingToolbarButton>
               </span>
             }
-            className="p-3 w-90"
+            className="w-90 p-3"
           >
             <div
               className="flex items-center gap-1"
@@ -223,11 +223,11 @@ export const CommentToolbar = ({
                     handleLinkPopoverOpenChange(false);
                 }}
                 placeholder="https://example.com"
-                className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
+                className="min-w-0 flex-1 rounded-md border border-slate-300 px-2 py-1 text-sm placeholder:text-slate-400 focus:border-slate-400 focus:outline-hidden"
               />
               <button
                 type="button"
-                className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                className="rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
                 onClick={handleLinkSave}
                 aria-label="Save link"
               >
@@ -236,7 +236,7 @@ export const CommentToolbar = ({
               {toolbarFormatting?.link && (
                 <button
                   type="button"
-                  className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                  className="rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
                   onClick={handleLinkRemove}
                   aria-label="Remove link"
                 >
@@ -266,7 +266,7 @@ export const CommentToolbar = ({
         </div>
       </ToggleGroup.Root>
 
-      <div className="flex flex-row flex-wrap items-center gap-1.5 pr-1 border-r-2 border-slate-100">
+      <div className="flex flex-row flex-wrap items-center gap-1.5 border-r-2 border-slate-100 pr-1">
         <NoteSelect
           selectedNotes={selectedNotes}
           colour={colour}

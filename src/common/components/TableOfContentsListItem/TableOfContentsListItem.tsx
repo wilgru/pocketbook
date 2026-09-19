@@ -26,7 +26,7 @@ export const TableOfContentsListItem = ({
   return (
     <div
       className={cn(
-        "w-full flex items-center justify-between gap-1 px-2 py-1 rounded-lg text-sm transition-colors cursor-pointer",
+        "flex w-full cursor-pointer items-center justify-between gap-1 rounded-lg px-2 py-1 text-sm transition-colors",
         isHovered && colour.primary.background,
       )}
       key={title}
@@ -42,7 +42,7 @@ export const TableOfContentsListItem = ({
     >
       <p
         className={cn(
-          "min-w-0 overflow-x-hidden whitespace-nowrap text-ellipsis",
+          "min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap",
           isHovered && colour.primary.text,
         )}
       >

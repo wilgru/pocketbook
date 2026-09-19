@@ -40,7 +40,7 @@ export const EditTagGroupModal = ({ tagGroup }: EditTagGroupModalProps) => {
 
             <DeleteTagGroupModal tagGroup={tagGroup} />
           </Root>
-          <div className="flex gap-2 justify-end">
+          <div className="flex justify-end gap-2">
             <Close asChild>
               <Button aria-label="Close" size="sm" variant="ghost">
                 Discard

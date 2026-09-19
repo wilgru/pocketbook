@@ -16,7 +16,7 @@ export const LinkPill = ({ link, colour = colours.orange }: LinkPillProps) => {
       href={link.link}
       target="_blank"
       className={cn(
-        "h-fit flex flex-row items-center text-sm rounded-full hover:underline min-w-0",
+        "flex h-fit min-w-0 flex-row items-center rounded-full text-sm hover:underline",
         colour.text,
       )}
     >

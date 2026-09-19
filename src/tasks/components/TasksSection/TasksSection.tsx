@@ -92,10 +92,10 @@ export const TasksSection = ({
       id={note?.id ?? "no-note"}
       className={cn("px-4 pt-4 pb-2", !note && "rounded-md bg-gray-50")}
     >
-      <div className="flex flex-col mb-1 border-b border-slate-200">
+      <div className="mb-1 flex flex-col border-b border-slate-200">
         <h2
           className={cn(
-            "font-title text-3xl pl-0.5",
+            "pl-0.5 font-title text-3xl",
             !note && "text-slate-500",
           )}
         >

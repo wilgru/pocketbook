@@ -24,7 +24,7 @@ export default function IconPicker({
           key={customisationIcon.name}
           onClick={() => onSelectIcon(customisationIcon.name)}
           className={cn(
-            "flex justify-center items-center h-8 w-8 p-1 rounded-full",
+            "flex h-8 w-8 items-center justify-center rounded-full p-1",
             selectedIconName === customisationIcon.name &&
               colour.primary.background,
           )}
@@ -43,7 +43,7 @@ export default function IconPicker({
         <button
           onClick={() => onSelectIcon(null)}
           className={cn(
-            "flex justify-center items-center h-8 w-8 p-1 rounded-full",
+            "flex h-8 w-8 items-center justify-center rounded-full p-1",
             selectedIconName === null && "bg-gray-100",
           )}
         >

@@ -37,7 +37,7 @@ function RouteComponent() {
   ); // TODO: add status groupby to getTasks, and just use that insteasd of this
 
   return (
-    <div className="h-full w-full flex flex-col items-center">
+    <div className="flex h-full w-full flex-col items-center">
       <Toolbar
         iconName="checkCircle"
         title="Tasks"

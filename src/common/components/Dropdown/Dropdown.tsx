@@ -20,7 +20,7 @@ export const Dropdown = ({
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         className={cn(
-          "flex flex-col gap-1 bg-white border border-slate-200 rounded-xl p-1.5 drop-shadow-sm",
+          "flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-1.5 drop-shadow-sm",
           className,
         )}
         {...contentProps}
@@ -48,7 +48,7 @@ export const DropdownItem = ({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "leading-none text-sm px-2 py-1 outline-hidden rounded-md cursor-pointer transition-colors",
+        "cursor-pointer rounded-md px-2 py-1 text-sm leading-none outline-hidden transition-colors",
         colour && `data-[highlighted]:${colour.primary.background}`,
         colour && `data-[highlighted]:${colour.primary.text}`,
         className,
@@ -58,7 +58,7 @@ export const DropdownItem = ({
       {subText ? (
         <div className="flex flex-col gap-0.5">
           {children}
-          <span className="text-xs text-slate-400 font-normal">{subText}</span>
+          <span className="text-xs font-normal text-slate-400">{subText}</span>
         </div>
       ) : (
         children
@@ -78,7 +78,7 @@ export const DropdownLabel = ({
 }: DropdownLabelProps) => {
   return (
     <DropdownMenuPrimitive.Label
-      className={cn("pl-2 pt-2 text-xs text-slate-400", className)}
+      className={cn("pt-2 pl-2 text-xs text-slate-400", className)}
       {...props}
     >
       {children}
@@ -122,7 +122,7 @@ export const DropdownSubTrigger = ({
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
-        "leading-none text-sm px-2 py-1 flex justify-between items-center outline-hidden rounded-md cursor-pointer transition-colors select-none",
+        "flex cursor-pointer items-center justify-between rounded-md px-2 py-1 text-sm leading-none outline-hidden transition-colors select-none",
         colour && `data-[highlighted]:${colour.primary.background}`,
         colour && `data-[highlighted]:${colour.primary.text}`,
         colour && `data-[state=open]:${colour.primary.background}`,
@@ -134,7 +134,7 @@ export const DropdownSubTrigger = ({
       {subText ? (
         <div className="flex flex-col gap-0.5">
           {children}
-          <span className="text-xs text-slate-400 font-normal">{subText}</span>
+          <span className="text-xs font-normal text-slate-400">{subText}</span>
         </div>
       ) : (
         children
@@ -163,7 +163,7 @@ export const DropdownSubContent = ({
       <DropdownMenuPrimitive.SubContent
         sideOffset={sideOffset}
         className={cn(
-          "flex flex-col gap-1 bg-white border border-slate-200 rounded-xl p-1.5 drop-shadow-sm",
+          "flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-1.5 drop-shadow-sm",
           className,
         )}
         {...contentProps}
@@ -204,7 +204,7 @@ export const DropdownRadioItem = ({
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
-        "leading-none text-sm px-2 py-1 flex justify-between items-center outline-hidden rounded-lg cursor-pointer transition-colors",
+        "flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-sm leading-none outline-hidden transition-colors",
         colour && `data-[highlighted]:${colour.primary.background}`,
         colour && `data-[highlighted]:${colour.primary.text}`,
         className,

@@ -32,17 +32,17 @@ export const NoteTableSection = ({
   colour,
 }: NoteTableSectionProps) => {
   return (
-    <section className="w-full flex flex-col gap-0.5 items-start">
+    <section className="flex w-full flex-col items-start gap-0.5">
       {title && (
-        <h3 className="text-slate-500 font-title text-xl w-full px-2 pt-2">
+        <h3 className="w-full px-2 pt-2 font-title text-xl text-slate-500">
           {title}
         </h3>
       )}
 
       {topSection}
 
-      <div className="w-full border border-slate-300 rounded-xl drop-shadow-sm bg-white overflow-hidden">
-        <table className="w-full border-collapse table-fixed">
+      <div className="w-full overflow-hidden rounded-xl border border-slate-300 bg-white drop-shadow-sm">
+        <table className="w-full table-fixed border-collapse">
           <colgroup>
             {columns.map((column) => (
               <col
@@ -95,7 +95,7 @@ export const NoteTableSection = ({
         </table>
       </div>
 
-      <div className="pl-2 pt-1 text-sm text-slate-400">
+      <div className="pt-1 pl-2 text-sm text-slate-400">
         Total notes: {notes.length}
       </div>
     </section>

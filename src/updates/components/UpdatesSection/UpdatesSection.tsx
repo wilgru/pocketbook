@@ -22,10 +22,10 @@ export const UpdatesSection = ({
   const { pocketbookId } = useCurrentPocketbook();
 
   return (
-    <section id={title} className="w-full flex flex-col pb-10">
-      <h2 className="font-title text-3xl pl-0.5">{title}</h2>
+    <section id={title} className="flex w-full flex-col pb-10">
+      <h2 className="pl-0.5 font-title text-3xl">{title}</h2>
 
-      <div className="w-full flex flex-col relative border-t border-slate-200">
+      <div className="relative flex w-full flex-col border-t border-slate-200">
         {updateGroup.updates.map((update, index) => {
           const isLastUpdate = index === updateGroup.updates.length - 1;
 
@@ -49,7 +49,7 @@ export const UpdatesSection = ({
                         to="/$pocketbookId/tasks"
                         params={{ pocketbookId: pocketbookId ?? "" }}
                         className={cn(
-                          "text-slate-700 font-medium hover:text-slate-800 hover:underline",
+                          "font-medium text-slate-700 hover:text-slate-800 hover:underline",
                           update.action === "cancelled" && "line-through",
                         )}
                       >
@@ -61,7 +61,7 @@ export const UpdatesSection = ({
                   hideBottomLine={isLastUpdate}
                 >
                   {update.data.note && (
-                    <p className="text-slate-500 text-xs pl-1">
+                    <p className="pl-1 text-xs text-slate-500">
                       From note{" "}
                       <Link
                         key={update.data.id}
@@ -93,7 +93,7 @@ export const UpdatesSection = ({
                         to="/$pocketbookId/notes"
                         params={{ pocketbookId: pocketbookId ?? "" }}
                         search={{ noteId: update.data.id }}
-                        className="text-slate-700 font-medium hover:text-slate-800 hover:underline"
+                        className="font-medium text-slate-700 hover:text-slate-800 hover:underline"
                       >
                         {update.data.title ?? "Untitled Note"}
                       </Link>

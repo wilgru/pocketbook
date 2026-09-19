@@ -26,5 +26,10 @@
       "type",
       "unknown"
     ]
+  },
+  "sortTailwindcss": {
+    "stylesheet": "./src/index.css",
+    "functions": ["cn"],
+    "preserveWhitespace": true
   }
 }

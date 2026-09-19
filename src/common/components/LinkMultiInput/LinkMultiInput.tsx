@@ -17,7 +17,7 @@ export const LinkMultiInput = ({
       className={
         compact
           ? "flex flex-col gap-2"
-          : "flex flex-col gap-3 p-2 bg-slate-100 rounded-md"
+          : "flex flex-col gap-3 rounded-md bg-slate-100 p-2"
       }
     >
       {links.map((link) => (

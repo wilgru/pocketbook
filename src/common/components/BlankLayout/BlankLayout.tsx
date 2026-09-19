@@ -7,9 +7,9 @@ type BlankLayoutProps = {
 
 export const BlankLayout = ({ description, content }: BlankLayoutProps) => {
   return (
-    <div className="flex-1 min-h-0 w-full min-w-0 box-border">
-      <section className="h-full w-full relative flex-1 min-h-0 overflow-y-scroll px-3 pb-3">
-        {description && <div className="min-h-0 flex">{description}</div>}
+    <div className="box-border min-h-0 w-full min-w-0 flex-1">
+      <section className="relative h-full min-h-0 w-full flex-1 overflow-y-scroll px-3 pb-3">
+        {description && <div className="flex min-h-0">{description}</div>}
 
         {content}
       </section>

@@ -11,7 +11,7 @@ export const Label = ({
   tooltipContent,
 }: LabelProps): React.JSX.Element => {
   return (
-    <h3 className="flex items-center gap-0.5 mb-1 text-sm text-slate-500">
+    <h3 className="mb-1 flex items-center gap-0.5 text-sm text-slate-500">
       {title}
 
       {tooltipContent && (

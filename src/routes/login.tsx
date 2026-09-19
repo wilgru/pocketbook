@@ -58,19 +58,19 @@ function LoginIndexComponent(): React.JSX.Element {
   // }, [navigateAfterAuth, user]);
 
   return (
-    <div className="flex flex-col gap-6 justify-center items-center h-screen w-screen bg-slate-100">
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-6 bg-slate-100">
       {/* {!!loginError && (
         <div className="p-6 border border-red-500 rounded-lg bg-red-100 text-red-500 max-w-sm w-full">
           Incorrect email or password.
         </div>
       )} */}
-      <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow-sm">
-        <h1 className="text-4xl font-normal font-title tracking-tight ">
+      <div className="flex w-full max-w-sm flex-col gap-6 rounded-lg border border-slate-300 bg-white p-6 drop-shadow-sm">
+        <h1 className="font-title text-4xl font-normal tracking-tight ">
           Pocketbook
         </h1>
         <form className="space-y-6" onSubmit={onSubmit}>
           <div>
-            <label className="text-sm font-medium leading-6 ">Email</label>
+            <label className="text-sm leading-6 font-medium ">Email</label>
             <div>
               <Input
                 onChange={onChange}
@@ -84,7 +84,7 @@ function LoginIndexComponent(): React.JSX.Element {
 
           <div>
             <div className="flex items-baseline justify-between">
-              <label className="text-sm font-medium leading-6 ">Password</label>
+              <label className="text-sm leading-6 font-medium ">Password</label>
               {/*<Button styleType="link">Forgot password?</Button>*/}
             </div>
             <div>

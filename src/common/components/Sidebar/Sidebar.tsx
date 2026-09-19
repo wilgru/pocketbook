@@ -34,15 +34,15 @@ export const Sidebar = () => {
   }
 
   return (
-    <aside className="min-w-56 max-w-56 flex flex-col h-full">
+    <aside className="flex h-full max-w-56 min-w-56 flex-col">
       <div
         className={cn(
-          "flex flex-row items-center gap-2 electron-drag-region shrink-0 h-12.5 pl-2",
+          "electron-drag-region flex h-12.5 shrink-0 flex-row items-center gap-2 pl-2",
           isWindows ? "justify-between" : "justify-end",
         )}
       >
         {isWindows && (
-          <h1 className="pl-2 font-title text-slate-500 text-xl">Pocketbook</h1>
+          <h1 className="pl-2 font-title text-xl text-slate-500">Pocketbook</h1>
         )}
 
         <Button
@@ -57,7 +57,7 @@ export const Sidebar = () => {
 
       <div
         className={cn(
-          "flex flex-col gap-3 overflow-y-auto overflow-x-hidden pl-3 pr-1 pb-3 flex-1",
+          "flex flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto pr-1 pb-3 pl-3",
           isWindows && "scrollbar-hide",
         )}
       >
@@ -96,7 +96,7 @@ export const Sidebar = () => {
 
         {process.env.NODE_ENV === "development" && (
           <section className="flex flex-col gap-px">
-            <h1 className="font-title text-slate-400 text-sm">Media</h1>
+            <h1 className="font-title text-sm text-slate-400">Media</h1>
 
             <NavItem
               size="sm"
@@ -179,7 +179,7 @@ export const Sidebar = () => {
         ))}
       </div>
 
-      <div className="py-3 ml-3 mr-1 border-t border-slate-200 bg-slate-50">
+      <div className="mr-1 ml-3 border-t border-slate-200 bg-slate-50 py-3">
         <Dialog.Root>
           <Dialog.Trigger asChild>
             <Button

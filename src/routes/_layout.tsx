@@ -60,7 +60,7 @@ function RouteComponent() {
     <div className="fixed flex h-screen w-screen bg-slate-50">
       {isSideBarVisible && <Sidebar />}
       {/* all the other elements */}
-      <div id="detail" className="flex-1 min-w-0">
+      <div id="detail" className="min-w-0 flex-1">
         <Outlet />
       </div>
 

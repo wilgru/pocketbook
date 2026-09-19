@@ -169,7 +169,7 @@ export const CommentEditor = ({
                   to="/$pocketbookId/notes"
                   params={{ pocketbookId: pocketbookId ?? "" }}
                   search={{ noteId: note.id }}
-                  className="text-slate-700 font-medium hover:text-slate-800 hover:underline"
+                  className="font-medium text-slate-700 hover:text-slate-800 hover:underline"
                 >
                   {note.title ?? "Untitled Note"}
                 </Link>
@@ -183,7 +183,7 @@ export const CommentEditor = ({
       }
     >
       <div
-        className={cn("rounded-xl flex flex-col gap-2 pl-1", editorBackground)}
+        className={cn("flex flex-col gap-2 rounded-xl pl-1", editorBackground)}
       >
         <RichTextEditor
           size="md"

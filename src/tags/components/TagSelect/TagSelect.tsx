@@ -80,7 +80,7 @@ export const TagSelect = ({
   };
 
   return (
-    <div className="flex flex-row gap-2 relative">
+    <div className="relative flex flex-row gap-2">
       {selectedTags.map((tag) => (
         <TagPill
           key={tag.id}
@@ -91,7 +91,7 @@ export const TagSelect = ({
       ))}
 
       <ControlPopover
-        className="flex flex-col text-sm pt-3 px-3 w-48"
+        className="flex w-48 flex-col px-3 pt-3 text-sm"
         trigger={
           <div>
             <Button variant="ghost" size="sm" colour={colour} iconName="tag" />
@@ -100,7 +100,7 @@ export const TagSelect = ({
       >
         <input
           type="text"
-          className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-hidden focus:border-orange-400"
+          className="rounded-lg border border-slate-300 px-2 py-1 text-xs focus:border-orange-400 focus:outline-hidden"
           placeholder="search for a tag"
           value={search}
           onChange={(e) => {
@@ -108,12 +108,12 @@ export const TagSelect = ({
           }}
         />
 
-        <div className="flex flex-col gap-1 max-h-48 overflow-y-auto py-3">
+        <div className="flex max-h-48 flex-col gap-1 overflow-y-auto py-3">
           {filteredTags.map((tag) => (
             <div
               key={tag.id}
               className={cn(
-                "rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer text-sm",
+                "flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm",
                 tag.colour.secondary.backgroundHovered,
                 tag.colour.secondary.textHovered,
               )}
@@ -133,7 +133,7 @@ export const TagSelect = ({
             !tagsData?.tags.some((tag) => tag.name === search) && (
               <div
                 className={cn(
-                  "rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer text-sm",
+                  "flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm",
                   colour.secondary.backgroundHovered,
                   colour.secondary.textHovered,
                 )}

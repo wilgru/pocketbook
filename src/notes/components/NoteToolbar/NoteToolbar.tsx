@@ -116,13 +116,13 @@ export const NoteToolbar = ({
   return (
     <div
       className={cn(
-        "sticky bottom-0 z-10 mt-auto h-fit bg-white border-t border-slate-200 py-3",
+        "sticky bottom-0 z-10 mt-auto h-fit border-t border-slate-200 bg-white py-3",
         fullWidth && "w-full",
       )}
       onMouseDown={handleMouseDown}
     >
       <ToggleGroup.Root
-        className="font-medium text-sm flex"
+        className="flex text-sm font-medium"
         type="multiple"
         defaultValue={[]}
         value={[
@@ -139,7 +139,7 @@ export const NoteToolbar = ({
         ]}
         aria-label="Text formatting"
       >
-        <div className="flex flex-row gap-1 pr-1 border-r-2 border-slate-100">
+        <div className="flex flex-row gap-1 border-r-2 border-slate-100 pr-1">
           <FormattingToolbarButton
             value="bold"
             colour={colour}
@@ -179,7 +179,7 @@ export const NoteToolbar = ({
           </FormattingToolbarButton>
         </div>
 
-        <div className="flex flex-row gap-1 px-1 pr-1 border-r-2 border-slate-100">
+        <div className="flex flex-row gap-1 border-r-2 border-slate-100 px-1 pr-1">
           <FormattingToolbarButton
             value="ordered"
             colour={colour}
@@ -209,7 +209,7 @@ export const NoteToolbar = ({
                 </FormattingToolbarButton>
               </span>
             }
-            className="p-3 w-90"
+            className="w-90 p-3"
           >
             <div
               className="flex items-center gap-1"
@@ -229,12 +229,12 @@ export const NoteToolbar = ({
                   }
                 }}
                 placeholder="https://example.com"
-                className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
+                className="min-w-0 flex-1 rounded-md border border-slate-300 px-2 py-1 text-sm placeholder:text-slate-400 focus:border-slate-400 focus:outline-hidden"
               />
 
               <button
                 type="button"
-                className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                className="rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
                 onClick={handleLinkSave}
                 aria-label="Save link"
               >
@@ -244,7 +244,7 @@ export const NoteToolbar = ({
               {toolbarFormatting?.link && (
                 <button
                   type="button"
-                  className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
+                  className="rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
                   onClick={handleLinkRemove}
                   aria-label="Remove link"
                 >

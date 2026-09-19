@@ -58,14 +58,14 @@ export const NoteSelect = ({
   };
 
   return (
-    <div className="flex flex-row flex-wrap gap-2 items-center">
+    <div className="flex flex-row flex-wrap items-center gap-2">
       {mode === "multi" &&
         selectedNotes.map((note) => (
           <button
             key={note.id}
             onClick={() => handleRemoveNote(note.id)}
             className={cn(
-              "flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors",
+              "flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors",
               colour.primary.background,
               colour.primary.text,
               colour.primary.backgroundHovered,
@@ -87,7 +87,7 @@ export const NoteSelect = ({
             <button
               type="button"
               className={cn(
-                "flex items-center gap-1 px-2 py-0.5 text-[11px] rounded-full transition-colors",
+                "flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] transition-colors",
                 colour.primary.background,
                 colour.primary.text,
                 colour.primary.backgroundHovered,
@@ -108,7 +108,7 @@ export const NoteSelect = ({
             </div>
           )
         }
-        className="flex flex-col text-sm pt-3 px-3 w-48"
+        className="flex w-48 flex-col px-3 pt-3 text-sm"
         clearActionLabel={
           mode === "single" && selectedSingleNote ? "Clear note" : undefined
         }
@@ -120,23 +120,23 @@ export const NoteSelect = ({
       >
         <input
           type="text"
-          className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-hidden focus:border-orange-400"
+          className="rounded-lg border border-slate-300 px-2 py-1 text-xs focus:border-orange-400 focus:outline-hidden"
           placeholder="search for a note"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           onKeyDown={(event) => event.stopPropagation()}
         />
 
-        <div className="flex flex-col gap-1 py-2 max-h-48 overflow-y-auto">
+        <div className="flex max-h-48 flex-col gap-1 overflow-y-auto py-2">
           {filteredNotes.length === 0 && (
-            <p className="text-xs text-slate-400 px-2 py-1">No notes found</p>
+            <p className="px-2 py-1 text-xs text-slate-400">No notes found</p>
           )}
 
           {filteredNotes.map((note) => (
             <button
               key={note.id}
               className={cn(
-                "rounded-lg flex items-center px-2 py-1 cursor-pointer text-sm",
+                "flex cursor-pointer items-center rounded-lg px-2 py-1 text-sm",
                 colour.secondary.backgroundHovered,
                 colour.secondary.textHovered,
               )}

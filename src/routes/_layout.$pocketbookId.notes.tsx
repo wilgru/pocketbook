@@ -100,7 +100,7 @@ function NotesComponent() {
   };
 
   return (
-    <div className="h-full w-full min-h-0 flex flex-col items-center overflow-hidden">
+    <div className="flex h-full min-h-0 w-full flex-col items-center overflow-hidden">
       <Toolbar
         iconName="pencil"
         title={"Notes"}
@@ -194,7 +194,7 @@ function NotesComponent() {
                       </DropdownRadioItem>
                     ))}
                     {tagGroupsData?.tagGroups.length === 0 && (
-                      <span className="text-xs text-slate-400 px-2 py-1">
+                      <span className="px-2 py-1 text-xs text-slate-400">
                         No tag groups
                       </span>
                     )}
