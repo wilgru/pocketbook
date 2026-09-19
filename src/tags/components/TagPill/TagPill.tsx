@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
+import { cn } from "cn";
 import { useState } from "react";
 import { Button } from "src/common/components/Button/Button";
-import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Tag } from "src/tags/tags.schema";
 

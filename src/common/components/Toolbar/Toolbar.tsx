@@ -1,9 +1,9 @@
+import { cn } from "cn";
 import { useAtom } from "jotai";
 import { colours } from "src/colours/colours.constant";
 import { isSideBarVisibleAtom } from "src/common/atoms/isSidebarVisibleAtom";
 import { Button } from "src/common/components/Button/Button";
 import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
-import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteSearchBar } from "src/notes/components/NoteSearchBar/NoteSearchBar";
 import type { Colour } from "src/colours/Colour.type";

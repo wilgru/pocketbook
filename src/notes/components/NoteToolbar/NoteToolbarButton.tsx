@@ -1,6 +1,6 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { colours } from "src/colours/colours.constant";
 import { cn } from "cn";
+import { colours } from "src/colours/colours.constant";
 import type { Colour } from "src/colours/Colour.type";
 
 type FormattingToolbarButtonProps = {

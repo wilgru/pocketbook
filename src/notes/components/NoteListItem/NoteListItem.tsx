@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { cn } from "cn";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { cn } from "cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { TaskProgressCircle } from "src/tasks/components/TaskProgressCircle/TaskProgressCircle";

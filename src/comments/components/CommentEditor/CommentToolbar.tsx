@@ -13,13 +13,13 @@ import {
   TextUnderline,
 } from "@phosphor-icons/react";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import { cn } from "cn";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
 import { Toggle } from "src/common/components/Toggle/Toggle";
-import { cn } from "cn";
 import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarCommands";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { FormattingToolbarButton } from "src/notes/components/NoteToolbar/NoteToolbarButton";

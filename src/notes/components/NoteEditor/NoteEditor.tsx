@@ -1,5 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useLocation, useNavigate } from "@tanstack/react-router";
+import { cn } from "cn";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
@@ -16,7 +17,6 @@ import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEdi
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
-import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteToolbar } from "src/notes/components/NoteToolbar/NoteToolbar";
 import { useCreateNote } from "src/notes/hooks/useCreateNote";

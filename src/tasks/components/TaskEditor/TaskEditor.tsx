@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { colours } from "src/colours/colours.constant";
@@ -7,7 +8,6 @@ import { LinksPopover } from "src/common/components/LinksPopover/LinksPopover";
 import { Toggle } from "src/common/components/Toggle/Toggle";
 import { Tooltip } from "src/common/components/Tooltip/Tooltip";
 import { useAutoResize } from "src/common/hooks/useAutoResize";
-import { cn } from "cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
 import { TaskBlockerPopover } from "src/tasks/components/TaskBlockerPopover/TaskBlockerPopover";

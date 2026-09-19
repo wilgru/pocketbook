@@ -1,9 +1,9 @@
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
-import { cn } from "cn";
 import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
 import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { cn } from "cn";
 import { colours } from "src/colours/colours.constant";
 import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
-import { cn } from "cn";
 import { StickyNoteListItem } from "src/notes/components/NoteListItem/StickyNoteListItem";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { UpdateTimelineItem } from "../UpdateTimelineItem/UpdateTimelineItem";

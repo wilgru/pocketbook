@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { cn } from "cn";
 import { useSetAtom } from "jotai";
 import { colours } from "src/colours/colours.constant";
 import { isSideBarVisibleAtom } from "src/common/atoms/isSidebarVisibleAtom";
@@ -6,7 +7,6 @@ import { Button } from "src/common/components/Button/Button";
 import { NavItem } from "src/common/components/NavItem/NavItem";
 import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
-import { cn } from "cn";
 import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";

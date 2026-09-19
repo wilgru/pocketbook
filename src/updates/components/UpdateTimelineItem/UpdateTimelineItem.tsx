@@ -1,5 +1,5 @@
-import { colours } from "src/colours/colours.constant";
 import { cn } from "cn";
+import { colours } from "src/colours/colours.constant";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { ReactNode } from "react";
 import type { Colour } from "src/colours/Colour.type";
