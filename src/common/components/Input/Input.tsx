@@ -9,6 +9,7 @@ type InputType = {
   placeholder?: string;
   size?: "xs" | "md" | "lg";
   onChange: (e: { target: { name: string; value: string } }) => void;
+  ref?: React.Ref<HTMLInputElement>;
 };
 
 enum InputSize {
@@ -18,6 +19,7 @@ enum InputSize {
 }
 
 export const Input = ({
+  ref,
   id,
   size = "md",
   type = "text",
@@ -31,6 +33,7 @@ export const Input = ({
       required={required}
       id={id}
       name={type}
+      ref={ref}
       type={type}
       autoComplete={type}
       value={value}

@@ -164,7 +164,11 @@ export const CommentEditor = ({
       }
     >
       <div
-        className={cn("flex flex-col gap-2 rounded-xl pl-1", editorBackground)}
+        className={cn(
+          "flex flex-col gap-2 rounded-xl pl-1",
+          isEditing && "border border-slate-200 p-2",
+          editorBackground,
+        )}
       >
         <form.Field name="content">
           {(field) => (

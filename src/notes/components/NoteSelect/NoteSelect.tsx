@@ -13,6 +13,7 @@ type NoteSelectProps = {
   selectedNotes: Note[];
   colour?: Colour;
   mode?: "single" | "multi";
+  size?: "xs" | "sm" | "md" | "lg";
   onChange: (notes: Note[]) => void;
   onOpenChange?: (open: boolean) => void;
 };
@@ -21,6 +22,7 @@ export const NoteSelect = ({
   selectedNotes,
   colour = colours.orange,
   mode = "multi",
+  size = "xs",
   onChange,
   onOpenChange,
 }: NoteSelectProps) => {
@@ -52,32 +54,8 @@ export const NoteSelect = ({
     onChange(newNotes);
   };
 
-  const handleRemoveNote = (noteId: string) => {
-    const newNotes = selectedNotes.filter((note) => note.id !== noteId);
-    onChange(newNotes);
-  };
-
   return (
     <div className="flex flex-row flex-wrap items-center gap-2">
-      {mode === "multi" &&
-        selectedNotes.map((note) => (
-          <button
-            key={note.id}
-            onClick={() => handleRemoveNote(note.id)}
-            className={cn(
-              "flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors",
-              colour.primary.background,
-              colour.primary.text,
-              colour.primary.backgroundHovered,
-            )}
-          >
-            <span className="max-w-30 truncate">
-              {note.title ?? "Untitled Note"}
-            </span>
-            <span className="text-xs leading-none">×</span>
-          </button>
-        ))}
-
       <ControlPopover
         open={isOpen}
         onOpenChange={handleOpenChange}
@@ -101,7 +79,8 @@ export const NoteSelect = ({
             <div>
               <Button
                 variant="ghost"
-                size="xs"
+                size={size}
+                shape="square"
                 colour={colour}
                 iconName="pencil"
               />

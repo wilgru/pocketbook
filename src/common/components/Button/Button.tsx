@@ -9,6 +9,7 @@ import type { IconName } from "src/icons/Icon.type";
 type ButtonProps = {
   children?: React.ReactNode;
   variant?: "block" | "ghost" | "ghost-strong" | "link";
+  shape?: "circle" | "square";
   colour?: Colour;
   size?: "xs" | "sm" | "md" | "lg";
   type?: "button" | "submit";
@@ -27,7 +28,6 @@ const buttonVariants = cva(
     "w-fit",
     "flex",
     "items-center",
-    "rounded-full",
     "transition-colors",
     "focus-visible:outline-solid",
     "focus-visible:outline-2",
@@ -41,6 +41,10 @@ const buttonVariants = cva(
         ghost: "text-slate-500",
         "ghost-strong": "text-slate-400",
         link: "underline-offset-4 hover:underline",
+      },
+      shape: {
+        circle: "rounded-full",
+        square: "rounded-md",
       },
       size: {
         xs: "text-[0.625rem] font-normal gap-1",
@@ -133,6 +137,7 @@ const buttonVariants = cva(
     ],
     defaultVariants: {
       variant: "block",
+      shape: "circle",
       size: "md",
     },
   },
@@ -142,6 +147,7 @@ export const Button = ({
   children,
   type = "button",
   variant = "block",
+  shape = "circle",
   size = "md",
   colour = colours.orange,
   className,
@@ -171,6 +177,7 @@ export const Button = ({
         buttonVariants({
           size,
           variant,
+          shape,
           content,
         }),
         variant === "block" && colour.primary.text,

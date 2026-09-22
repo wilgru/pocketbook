@@ -77,7 +77,7 @@ export const controlIcons = [
   { name: "link", component: LinkIcon, fixedWeight: "regular" },
   { name: "paperclip", component: PaperclipIcon, fixedWeight: "regular" },
   { name: "checkCircle", component: CheckCircleIcon },
-  { name: "check", component: CheckIcon },
+  { name: "check", component: CheckIcon, fixedWeight: "regular" },
   { name: "minusCircle", component: MinusCircleIcon },
   { name: "xCircle", component: XCircleIcon },
   { name: "listChecks", component: ListChecksIcon },

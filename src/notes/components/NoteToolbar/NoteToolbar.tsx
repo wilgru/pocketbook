@@ -12,13 +12,13 @@ import {
   TextStrikethrough,
   TextUnderline,
 } from "@phosphor-icons/react";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { cn } from "cn";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
+import { Input } from "src/common/components/Input/Input";
 import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarCommands";
-import { FormattingToolbarButton } from "./NoteToolbarButton";
 import type { BaseSelection, LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
 import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
@@ -32,6 +32,7 @@ type NoteToolbarProps = {
   onToolbarBusyChange: (isBusy: boolean) => void;
 };
 
+// TODO: merge the shared part of this with the comment editor toolbar and move that part into a general toolbar component
 export const NoteToolbar = ({
   editorContext,
   toolbarFormatting,
@@ -121,81 +122,92 @@ export const NoteToolbar = ({
       )}
       onMouseDown={handleMouseDown}
     >
-      <ToggleGroup.Root
-        className="flex text-sm font-medium"
-        type="multiple"
-        defaultValue={[]}
-        value={[
-          ...(toolbarFormatting?.bold ? ["bold"] : []),
-          ...(toolbarFormatting?.italic ? ["italic"] : []),
-          ...(toolbarFormatting?.underline ? ["underline"] : []),
-          ...(toolbarFormatting?.strike ? ["strike"] : []),
-          ...(toolbarFormatting?.code ? ["code"] : []),
-          ...(toolbarFormatting?.ordered ? ["ordered"] : []),
-          ...(toolbarFormatting?.bullet ? ["bullet"] : []),
-          ...(toolbarFormatting?.blockquote ? ["blockquote"] : []),
-          ...(toolbarFormatting?.codeBlock ? ["code-block"] : []),
-          ...(toolbarFormatting?.link ? ["link"] : []),
-        ]}
-        aria-label="Text formatting"
-      >
+      <div className="flex text-sm font-medium">
         <div className="flex flex-row gap-1 border-r-2 border-slate-100 pr-1">
-          <FormattingToolbarButton
+          <Button
             value="bold"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.bold}
             onClick={() => executeLexicalToolbarAction(editorContext, "bold")}
           >
             <TextB size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
+          </Button>
+          <Button
             value="italic"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.italic}
             onClick={() => executeLexicalToolbarAction(editorContext, "italic")}
           >
             <TextItalic size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
+          </Button>
+          <Button
             value="underline"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.underline}
             onClick={() =>
               executeLexicalToolbarAction(editorContext, "underline")
             }
           >
             <TextUnderline size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
+          </Button>
+          <Button
             value="strike"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.strike}
             onClick={() => executeLexicalToolbarAction(editorContext, "strike")}
           >
             <TextStrikethrough size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
+          </Button>
+          <Button
             value="code"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.code}
             onClick={() => executeLexicalToolbarAction(editorContext, "code")}
           >
             <Code size={16} weight="bold" />
-          </FormattingToolbarButton>
+          </Button>
         </div>
 
         <div className="flex flex-row gap-1 border-r-2 border-slate-100 px-1 pr-1">
-          <FormattingToolbarButton
+          <Button
             value="ordered"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.ordered}
             onClick={() =>
               executeLexicalToolbarAction(editorContext, "ordered")
             }
           >
             <ListNumbers size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
+          </Button>
+          <Button
             value="bullet"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.bullet}
             onClick={() => executeLexicalToolbarAction(editorContext, "bullet")}
           >
             <ListBullets size={16} weight="bold" />
-          </FormattingToolbarButton>
+          </Button>
         </div>
 
         <div className="flex flex-row gap-1 px-1 pr-1">
@@ -204,9 +216,16 @@ export const NoteToolbar = ({
             onOpenAutoFocus={(event) => event.preventDefault()}
             trigger={
               <span onMouseDownCapture={handleLinkTriggerMouseDown}>
-                <FormattingToolbarButton value="link" colour={colour}>
+                <Button
+                  value="link"
+                  colour={colour}
+                  variant="ghost"
+                  shape="square"
+                  size="sm"
+                  active={toolbarFormatting?.link}
+                >
                   <LinkSimple size={16} weight="bold" />
-                </FormattingToolbarButton>
+                </Button>
               </span>
             }
             className="w-90 p-3"
@@ -215,65 +234,68 @@ export const NoteToolbar = ({
               className="flex items-center gap-1"
               onMouseDown={(event) => event.stopPropagation()}
             >
-              <input
+              <Input
                 ref={linkInputRef}
                 type="url"
                 value={linkUrl}
                 onChange={(event) => setLinkUrl(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    handleLinkSave();
-                  }
-                  if (event.key === "Escape") {
-                    handleLinkPopoverOpenChange(false);
-                  }
-                }}
                 placeholder="https://example.com"
-                className="min-w-0 flex-1 rounded-md border border-slate-300 px-2 py-1 text-sm placeholder:text-slate-400 focus:border-slate-400 focus:outline-hidden"
               />
 
-              <button
-                type="button"
-                className="rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              <Button
+                colour={colour}
+                variant="ghost"
+                shape="square"
+                size="sm"
                 onClick={handleLinkSave}
                 aria-label="Save link"
               >
                 <Check size={16} weight="bold" />
-              </button>
+              </Button>
 
               {toolbarFormatting?.link && (
-                <button
-                  type="button"
-                  className="rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+                <Button
+                  colour={colour}
+                  variant="ghost"
+                  shape="square"
+                  size="sm"
                   onClick={handleLinkRemove}
                   aria-label="Remove link"
                 >
                   <LinkBreak size={16} weight="bold" />
-                </button>
+                </Button>
               )}
             </div>
           </ControlPopover>
 
-          <FormattingToolbarButton
+          <Button
             value="blockquote"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.blockquote}
             onClick={() =>
               executeLexicalToolbarAction(editorContext, "blockquote")
             }
           >
             <Quotes size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
+          </Button>
+          <Button
             value="code-block"
             colour={colour}
+            variant="ghost"
+            shape="square"
+            size="sm"
+            active={toolbarFormatting?.codeBlock}
             onClick={() =>
               executeLexicalToolbarAction(editorContext, "code-block")
             }
           >
             <CodeBlock size={16} weight="bold" />
-          </FormattingToolbarButton>
+          </Button>
         </div>
-      </ToggleGroup.Root>
+      </div>
     </div>
   );
 };

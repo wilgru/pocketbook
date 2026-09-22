@@ -47,9 +47,9 @@ export const TasksLayout = ({
         ? [
             {
               title: "No Note",
-              tasks: [] as Task[],
+              tasks: [],
               navigationId: "no-note",
-              relevantTaskData: { noteId: null as null },
+              relevantTaskData: { noteId: null },
             },
             ...groupedTasks,
           ]
