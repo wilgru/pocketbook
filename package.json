@@ -7,18 +7,20 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "deploy": "npm run build && npm run db:migrate:cloud && wrangler deploy --config dist/server/wrangler.json",
+    "deploy": "npm run build && npm run deploy:migrate && wrangler deploy --config dist/server/wrangler.json",
+    "deploy:migrate": "wrangler d1 migrations apply DB --remote --config dist/server/wrangler.json",
     "db:seed": "npx tsx scripts/seedDevDb.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply DB --local",
-    "db:migrate:cloud": "wrangler d1 migrations apply DB --remote --config dist/server/wrangler.json",
-    "cf-typegen": "wrangler types",
+    "wrangler-types": "wrangler types",
     "test": "echo 'No test runner specified'",
-    "typecheck": "tsc --noEmit",
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "format": "oxfmt --check",
-    "format:fix": "oxfmt"
+    "check": "npm run check:types && npm run check:lint && npm run check:format",
+    "check:types": "tsc --noEmit",
+    "check:lint": "oxlint",
+    "check:format": "oxfmt --check",
+    "fix": "npm run fix:lint && npm run fix:format",
+    "fix:lint": "oxlint --fix",
+    "fix:format": "oxfmt --fix"
   },
   "dependencies": {
     "@lexical/code": "^0.48.0",
