@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { EditTagGroupModal } from "src/tags/components/EditTagGroupModal/EditTagGroupModal";
@@ -22,6 +22,26 @@ export const SidebarTagSection = ({
   children: React.ReactNode;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const storageKey = `sidebarTagGroupExpanded:${tagGroup?.id ?? "default"}`;
+
+  useEffect(() => {
+    try {
+      setIsExpanded(localStorage.getItem(storageKey) !== "false");
+    } catch {
+      // localStorage unavailable
+    }
+  }, [storageKey]);
+
+  const toggleExpanded = () => {
+    const next = !isExpanded;
+    setIsExpanded(next);
+    try {
+      localStorage.setItem(storageKey, String(next));
+    } catch {
+      // localStorage unavailable
+    }
+  };
 
   return (
     <section
@@ -30,6 +50,14 @@ export const SidebarTagSection = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-row items-center gap-1">
+        <Button
+          className="mb-1"
+          variant="ghost-strong"
+          size="xs"
+          iconName={isExpanded ? "caretDown" : "caretRight"}
+          colour={colour}
+          onClick={toggleExpanded}
+        />
         <h1 className="py-0.5 font-title text-sm text-slate-400">{title}</h1>
 
         {tagGroup && (
@@ -67,9 +95,9 @@ export const SidebarTagSection = ({
         </Dialog.Root>
       </div>
 
-      {children}
+      {isExpanded && children}
 
-      {isEmpty && <p className="pt-0.5 text-xs text-slate-400 italic">Empty</p>}
+      {isExpanded && isEmpty && <p className="pt-0.5 text-xs text-slate-400 italic">Empty</p>}
     </section>
   );
 };
