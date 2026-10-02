@@ -78,10 +78,61 @@ button {
 
 .rich-text .editor-code {
   margin-top: 0.7em;
-  padding: 6px;
+  padding: 2.25rem 6px 6px;
   display: block;
   color: #f7f9fb;
   background-color: #222222;
+}
+
+.code-block-controls {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  transform: translateX(-100%);
+  border-radius: 6px;
+  background-color: #222222;
+  color: #cbd5e1;
+}
+
+.code-block-control-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #cbd5e1;
+}
+
+.code-block-language {
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+.editor-token-attr,
+.editor-token-keyword {
+  color: #c792ea;
+}
+
+.editor-token-property,
+.editor-token-variable {
+  color: #f78c6c;
+}
+
+.editor-token-comment {
+  color: #7f848e;
+}
+
+.editor-token-function {
+  color: #82aaff;
+}
+
+.editor-token-operator,
+.editor-token-punctuation {
+  color: #89ddff;
+}
+
+.editor-token-selector {
+  color: #c3e88d;
 }
 
 .rich-text p {

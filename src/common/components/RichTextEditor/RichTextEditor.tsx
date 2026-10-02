@@ -1,4 +1,4 @@
-import { CodeNode } from "@lexical/code";
+import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
 import {
@@ -25,6 +25,7 @@ import {
   type HeadingTagType,
 } from "@lexical/rich-text";
 import { cn } from "cn";
+import { CodeBlockPlugin } from "src/common/components/RichTextEditor/CodeBlockPlugin";
 import {
   SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_LOW,
@@ -104,6 +105,38 @@ const theme = {
   },
   link: "editor-link",
   code: "editor-code",
+  codeHighlight: {
+    atrule: "editor-token-attr",
+    attr: "editor-token-attr",
+    boolean: "editor-token-property",
+    builtin: "editor-token-selector",
+    cdata: "editor-token-comment",
+    char: "editor-token-selector",
+    class: "editor-token-function",
+    "class-name": "editor-token-function",
+    comment: "editor-token-comment",
+    constant: "editor-token-property",
+    deleted: "editor-token-property",
+    doctype: "editor-token-comment",
+    entity: "editor-token-operator",
+    function: "editor-token-function",
+    important: "editor-token-variable",
+    inserted: "editor-token-selector",
+    keyword: "editor-token-attr",
+    namespace: "editor-token-variable",
+    number: "editor-token-property",
+    operator: "editor-token-operator",
+    prolog: "editor-token-comment",
+    property: "editor-token-property",
+    punctuation: "editor-token-punctuation",
+    regex: "editor-token-variable",
+    selector: "editor-token-selector",
+    string: "editor-token-selector",
+    symbol: "editor-token-property",
+    tag: "editor-token-selector",
+    url: "editor-token-operator",
+    variable: "editor-token-variable",
+  },
   list: {
     listitem: "editor-list-item",
     ol: "editor-list-ol",
@@ -116,6 +149,7 @@ const theme = {
 
 const nodes = [
   CodeNode,
+  CodeHighlightNode,
   HeadingNode,
   HorizontalRuleNode,
   LinkNode,
@@ -292,6 +326,7 @@ export const RichTextEditor = ({
         <TabIndentationPlugin
           $canIndent={(node) => node instanceof ListItemNode}
         />
+        <CodeBlockPlugin readOnly={readOnly} />
         <LexicalEditorBridge
           value={value}
           fillHeight={fillHeight}
