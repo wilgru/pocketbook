@@ -47,6 +47,7 @@ import {
   ImageIcon,
   CassetteTapeIcon,
   QuotesIcon,
+  RowsPlusBottomIcon,
 } from "@phosphor-icons/react";
 import type { IconType } from "./Icon.type";
 
@@ -112,6 +113,7 @@ export const controlIcons = [
   { name: "image", component: ImageIcon },
   { name: "cassette", component: CassetteTapeIcon },
   { name: "quotes", component: QuotesIcon },
+  { name: "rowsPlusBottom", component: RowsPlusBottomIcon },
 ] as const satisfies IconType[];
 
 export type ControlIconName = (typeof controlIcons)[number]["name"];

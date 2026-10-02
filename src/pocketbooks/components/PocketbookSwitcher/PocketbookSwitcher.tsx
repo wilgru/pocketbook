@@ -53,7 +53,7 @@ export const PocketbookSwitcher = ({
   };
 
   return (
-    <div className="relative flex items-center justify-between gap-2 pr-1 pl-1.5">
+    <div className="relative flex items-center gap-2">
       <DropdownMenu.Root open={isOpen}>
         <div className="flex items-center justify-center gap-2">
           <DropdownMenu.Trigger onClick={() => setIsOpen(true)}>
@@ -68,16 +68,6 @@ export const PocketbookSwitcher = ({
               )}
             />
           </DropdownMenu.Trigger>
-
-          <div className="flex flex-col items-start">
-            <h2 className="font-title text-sm font-medium">
-              {currentPocketbook.title}
-            </h2>
-
-            <p className="text-xs text-slate-400">
-              {getPocketbookSummary(currentPocketbook)}
-            </p>
-          </div>
         </div>
 
         <Dropdown
@@ -92,7 +82,14 @@ export const PocketbookSwitcher = ({
           <DropdownLabel>Pocketbooks</DropdownLabel>
 
           {pocketbooks.map((pocketbook) => (
-            <DropdownItem key={pocketbook.id}>
+            <DropdownItem
+              key={pocketbook.id}
+              className={cn(
+                currentPocketbook.id === pocketbook.id
+                  ? pocketbook.colour.primary.background
+                  : pocketbook.colour.secondary.backgroundHovered,
+              )}
+            >
               <Link
                 to="/$pocketbookId/notes"
                 params={{
@@ -103,12 +100,9 @@ export const PocketbookSwitcher = ({
                   localStorage.setItem("lastUsedPocketbookId", pocketbook.id);
                   setIsOpen(false);
                 }}
-                className={cn(
-                  "flex cursor-pointer items-center gap-2 rounded-xl p-2 text-sm leading-none outline-hidden transition-colors",
-                  currentPocketbook.id === pocketbook.id
-                    ? pocketbook.colour.primary.background
-                    : pocketbook.colour.secondary.backgroundHovered,
-                )}
+                className={
+                  "flex cursor-pointer items-center gap-2 text-sm leading-none outline-hidden transition-colors"
+                }
               >
                 <Icon
                   iconName={pocketbook.icon}
@@ -135,8 +129,11 @@ export const PocketbookSwitcher = ({
             colour={colours.orange}
             className="flex items-center gap-2"
           >
-            <Link to={"/create-pocketbook"} className="flex items-center gap-2">
-              <Icon iconName="plus" size="sm" />
+            <Link
+              to={"/create-pocketbook"}
+              className="flex items-center gap-2 text-xs"
+            >
+              <Icon iconName="plus" size="xs" />
               Create new pocketbook
             </Link>
           </DropdownItem>
@@ -146,7 +143,7 @@ export const PocketbookSwitcher = ({
       <Button
         variant="ghost"
         size="sm"
-        iconName="dotsThreeVertical"
+        iconName="gear"
         colour={currentPocketbook.colour}
         onClick={onOpenSettingsModal}
       />

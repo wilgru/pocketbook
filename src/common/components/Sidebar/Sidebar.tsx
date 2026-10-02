@@ -5,7 +5,7 @@ import { colours } from "src/colours/colours.constant";
 import { isSideBarVisibleAtom } from "src/common/atoms/isSidebarVisibleAtom";
 import { Button } from "src/common/components/Button/Button";
 import { NavItem } from "src/common/components/NavItem/NavItem";
-import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
+import { usePlatform } from "src/common/hooks/usePlatform";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
@@ -16,7 +16,7 @@ import { SidebarBookmarkSection } from "./SidebarBookmarkSection";
 import { SidebarTagSection } from "./SidebarTagSection";
 
 export const Sidebar = () => {
-  const { isWindows } = useElectronEnvironment();
+  const { isWindows, isBrowser } = usePlatform();
 
   const { pocketbookId, currentPocketbook, pocketbooks } =
     useCurrentPocketbook();
@@ -37,13 +37,13 @@ export const Sidebar = () => {
     <aside className="flex h-full max-w-56 min-w-56 flex-col">
       <div
         className={cn(
-          "electron-drag-region flex h-12.5 shrink-0 flex-row items-center gap-2 pl-2",
-          isWindows ? "justify-between" : "justify-end",
+          "electron-drag-region flex h-12.5 shrink-0 flex-row items-center gap-2 pl-4",
+          isWindows || isBrowser ? "justify-between" : "justify-end",
         )}
       >
-        {isWindows && (
-          <h1 className="pl-2 font-title text-xl text-slate-500">Pocketbook</h1>
-        )}
+        {isWindows || isBrowser ? (
+          <h1 className="pt-1 font-title text-xl text-slate-500">Pocketbook</h1>
+        ) : null}
 
         <Button
           className="electron-no-drag"
@@ -61,18 +61,13 @@ export const Sidebar = () => {
           isWindows && "scrollbar-hide",
         )}
       >
-        <PocketbookSwitcher
-          currentPocketbook={currentPocketbook}
-          pocketbooks={pocketbooks}
-        />
-
         <section className="flex flex-col gap-px">
           <NavItem
             ghost
-            title="Notes"
-            to={`/${pocketbookId}/notes/`}
+            title="Planner"
+            to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
-            preview={counts?.noteCount}
+            preview={counts?.updateDayCount}
           />
 
           <NavItem
@@ -85,10 +80,10 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            title="History"
-            to={`/${pocketbookId}/updates`}
+            title="Notes"
+            to={`/${pocketbookId}/notes/`}
             colour={currentPocketbook.colour}
-            preview={counts?.updateDayCount}
+            preview={counts?.noteCount}
           />
         </section>
 
@@ -179,18 +174,20 @@ export const Sidebar = () => {
         ))}
       </div>
 
-      <div className="mr-1 ml-3 border-t border-slate-200 bg-slate-50 py-3">
+      <div className="mr-1 ml-3 flex items-center justify-between border-t border-slate-200 bg-slate-50 py-3">
+        <PocketbookSwitcher
+          currentPocketbook={currentPocketbook}
+          pocketbooks={pocketbooks}
+        />
+
         <Dialog.Root>
           <Dialog.Trigger asChild>
             <Button
-              iconName="plus"
+              iconName="rowsPlusBottom"
               variant="ghost"
               size="sm"
-              className="w-full"
               colour={currentPocketbook.colour}
-            >
-              Add Tag Group
-            </Button>
+            />
           </Dialog.Trigger>
 
           <EditTagGroupModal />
