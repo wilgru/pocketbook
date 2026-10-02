@@ -25,7 +25,6 @@ import {
   type HeadingTagType,
 } from "@lexical/rich-text";
 import { cn } from "cn";
-import { CodeBlockPlugin } from "src/common/components/RichTextEditor/CodeBlockPlugin";
 import {
   SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_LOW,
@@ -34,6 +33,7 @@ import {
 } from "lexical";
 import { useEffect, useRef } from "react";
 import { getColourHex } from "src/colours/utils/getColourHex";
+import { CodeBlockPlugin } from "src/common/components/RichTextEditor/CodeBlockPlugin";
 import {
   createEmptyLexicalContent,
   normalizeLexicalContent,
@@ -108,6 +108,8 @@ const theme = {
   codeHighlight: {
     atrule: "editor-token-attr",
     attr: "editor-token-attr",
+    "attr-name": "editor-token-attr",
+    "attr-value": "editor-token-selector",
     boolean: "editor-token-property",
     builtin: "editor-token-selector",
     cdata: "editor-token-comment",
@@ -134,6 +136,7 @@ const theme = {
     string: "editor-token-selector",
     symbol: "editor-token-property",
     tag: "editor-token-selector",
+    "template-string": "editor-token-selector",
     url: "editor-token-operator",
     variable: "editor-token-variable",
   },

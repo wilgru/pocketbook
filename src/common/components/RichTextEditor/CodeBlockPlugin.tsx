@@ -5,18 +5,23 @@ import {
   getLanguageFriendlyName,
   registerCodeHighlighting,
 } from "@lexical/code";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { CaretDown, Check, Copy } from "@phosphor-icons/react";
-import { $getNodeByKey, $getRoot, type LexicalEditor, type NodeKey } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { CaretDown, Check, Copy } from "@phosphor-icons/react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import {
+  $getNodeByKey,
+  $getRoot,
+  type LexicalEditor,
+  type NodeKey,
+} from "lexical";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { Button } from "src/common/components/Button/Button";
 import {
   Dropdown,
   DropdownRadioGroup,
   DropdownRadioItem,
 } from "src/common/components/Dropdown/Dropdown";
-import { Button } from "src/common/components/Button/Button";
 
 type CodeBlockInfo = {
   key: NodeKey;
@@ -82,7 +87,12 @@ const CodeBlockControls = ({
               <CaretDown size={12} />
             </Button>
           </DropdownMenu.Trigger>
-          <Dropdown align="end" side="bottom" sideOffset={4} className="max-h-64 min-w-36 overflow-y-auto">
+          <Dropdown
+            align="end"
+            side="bottom"
+            sideOffset={4}
+            className="max-h-64 min-w-36 overflow-y-auto"
+          >
             <DropdownRadioGroup value={language} onValueChange={setLanguage}>
               {getCodeLanguageOptions().map(([value, label]) => (
                 <DropdownRadioItem key={value} value={value}>
@@ -108,11 +118,7 @@ const CodeBlockControls = ({
   );
 };
 
-export const CodeBlockPlugin = ({
-  readOnly,
-}: {
-  readOnly: boolean;
-}) => {
+export const CodeBlockPlugin = ({ readOnly }: { readOnly: boolean }) => {
   const [editor] = useLexicalComposerContext();
   const [blocks, setBlocks] = useState<CodeBlockInfo[]>([]);
 
@@ -153,7 +159,7 @@ export const CodeBlockPlugin = ({
   useEffect(() => registerCodeHighlighting(editor), [editor]);
 
   useEffect(() => {
-    updateCodeBlocks();
+    const animationFrame = window.requestAnimationFrame(updateCodeBlocks);
     const unregisterUpdateListener =
       editor.registerUpdateListener(updateCodeBlocks);
 
@@ -161,6 +167,7 @@ export const CodeBlockPlugin = ({
     window.addEventListener("scroll", updateCodeBlocks, true);
 
     return () => {
+      window.cancelAnimationFrame(animationFrame);
       unregisterUpdateListener();
       window.removeEventListener("resize", updateCodeBlocks);
       window.removeEventListener("scroll", updateCodeBlocks, true);

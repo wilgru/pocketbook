@@ -84,6 +84,10 @@ button {
   background-color: #222222;
 }
 
+.rich-text .editor-code:first-child {
+  padding-top: 2.25rem;
+}
+
 .code-block-controls {
   position: fixed;
   z-index: 20;
