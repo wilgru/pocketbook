@@ -16,7 +16,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LayoutPocketbookIdBookmarkedRouteImport } from './routes/_layout.$pocketbookId.bookmarked'
 import { Route as LayoutPocketbookIdNotesRouteImport } from './routes/_layout.$pocketbookId.notes'
 import { Route as LayoutPocketbookIdTasksRouteImport } from './routes/_layout.$pocketbookId.tasks'
-import { Route as LayoutPocketbookIdUpdatesRouteImport } from './routes/_layout.$pocketbookId.updates'
+import { Route as LayoutPocketbookIdPlannerRouteImport } from './routes/_layout.$pocketbookId.planner'
 import { Route as LayoutPocketbookIdTagsTagIdRouteImport } from './routes/_layout.$pocketbookId.tags.$tagId'
 
 const LayoutRoute = LayoutRouteImport.update({
@@ -54,10 +54,10 @@ const LayoutPocketbookIdTasksRoute = LayoutPocketbookIdTasksRouteImport.update({
   path: '/$pocketbookId/tasks',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutPocketbookIdUpdatesRoute =
-  LayoutPocketbookIdUpdatesRouteImport.update({
-    id: '/$pocketbookId/updates',
-    path: '/$pocketbookId/updates',
+const LayoutPocketbookIdPlannerRoute =
+  LayoutPocketbookIdPlannerRouteImport.update({
+    id: '/$pocketbookId/planner',
+    path: '/$pocketbookId/planner',
     getParentRoute: () => LayoutRoute,
   } as any)
 const LayoutPocketbookIdTagsTagIdRoute =
@@ -75,7 +75,7 @@ export interface FileRoutesByFullPath {
   '/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
-  '/$pocketbookId/updates': typeof LayoutPocketbookIdUpdatesRoute
+  '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
   '/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRoutesByTo {
@@ -86,7 +86,7 @@ export interface FileRoutesByTo {
   '/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
-  '/$pocketbookId/updates': typeof LayoutPocketbookIdUpdatesRoute
+  '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
   '/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRoutesById {
@@ -98,7 +98,7 @@ export interface FileRoutesById {
   '/_layout/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/_layout/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/_layout/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
-  '/_layout/$pocketbookId/updates': typeof LayoutPocketbookIdUpdatesRoute
+  '/_layout/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
   '/_layout/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRouteTypes {
@@ -111,7 +111,7 @@ export interface FileRouteTypes {
     | '/$pocketbookId/bookmarked'
     | '/$pocketbookId/notes'
     | '/$pocketbookId/tasks'
-    | '/$pocketbookId/updates'
+    | '/$pocketbookId/planner'
     | '/$pocketbookId/tags/$tagId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -122,7 +122,7 @@ export interface FileRouteTypes {
     | '/$pocketbookId/bookmarked'
     | '/$pocketbookId/notes'
     | '/$pocketbookId/tasks'
-    | '/$pocketbookId/updates'
+    | '/$pocketbookId/planner'
     | '/$pocketbookId/tags/$tagId'
   id:
     | '__root__'
@@ -133,7 +133,7 @@ export interface FileRouteTypes {
     | '/_layout/$pocketbookId/bookmarked'
     | '/_layout/$pocketbookId/notes'
     | '/_layout/$pocketbookId/tasks'
-    | '/_layout/$pocketbookId/updates'
+    | '/_layout/$pocketbookId/planner'
     | '/_layout/$pocketbookId/tags/$tagId'
   fileRoutesById: FileRoutesById
 }
@@ -195,11 +195,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutPocketbookIdTasksRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/$pocketbookId/updates': {
-      id: '/_layout/$pocketbookId/updates'
-      path: '/$pocketbookId/updates'
-      fullPath: '/$pocketbookId/updates'
-      preLoaderRoute: typeof LayoutPocketbookIdUpdatesRouteImport
+    '/_layout/$pocketbookId/planner': {
+      id: '/_layout/$pocketbookId/planner'
+      path: '/$pocketbookId/planner'
+      fullPath: '/$pocketbookId/planner'
+      preLoaderRoute: typeof LayoutPocketbookIdPlannerRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/$pocketbookId/tags/$tagId': {
@@ -216,7 +216,7 @@ interface LayoutRouteChildren {
   LayoutPocketbookIdBookmarkedRoute: typeof LayoutPocketbookIdBookmarkedRoute
   LayoutPocketbookIdNotesRoute: typeof LayoutPocketbookIdNotesRoute
   LayoutPocketbookIdTasksRoute: typeof LayoutPocketbookIdTasksRoute
-  LayoutPocketbookIdUpdatesRoute: typeof LayoutPocketbookIdUpdatesRoute
+  LayoutPocketbookIdPlannerRoute: typeof LayoutPocketbookIdPlannerRoute
   LayoutPocketbookIdTagsTagIdRoute: typeof LayoutPocketbookIdTagsTagIdRoute
 }
 
@@ -224,7 +224,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutPocketbookIdBookmarkedRoute: LayoutPocketbookIdBookmarkedRoute,
   LayoutPocketbookIdNotesRoute: LayoutPocketbookIdNotesRoute,
   LayoutPocketbookIdTasksRoute: LayoutPocketbookIdTasksRoute,
-  LayoutPocketbookIdUpdatesRoute: LayoutPocketbookIdUpdatesRoute,
+  LayoutPocketbookIdPlannerRoute: LayoutPocketbookIdPlannerRoute,
   LayoutPocketbookIdTagsTagIdRoute: LayoutPocketbookIdTagsTagIdRoute,
 }
 

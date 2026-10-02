@@ -65,7 +65,7 @@ export const Sidebar = () => {
           <NavItem
             ghost
             title="Planner"
-            to={`/${pocketbookId}/updates`}
+            to={`/${pocketbookId}/planner`}
             colour={currentPocketbook.colour}
             preview={counts?.updateDayCount}
           />
