@@ -46,14 +46,14 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex flex-col gap-6 justify-center items-center h-screen w-screen bg-slate-100">
-      <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow-sm">
-        <h1 className="text-4xl font-normal font-title tracking-tight ">
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-6 bg-slate-100">
+      <div className="flex w-full max-w-sm flex-col gap-6 rounded-lg border border-slate-300 bg-white p-6 drop-shadow-sm">
+        <h1 className="font-title text-4xl font-normal tracking-tight ">
           New Pocketbook
         </h1>
         <div className="space-y-6">
           <div>
-            <label className="text-sm font-medium leading-6">Title</label>
+            <label className="text-sm leading-6 font-medium">Title</label>
             <div>
               <Input
                 onChange={(e) =>
@@ -71,7 +71,7 @@ function RouteComponent() {
             </div>
           </div>
           <div>
-            <label className="text-sm font-medium leading-6 ">Icon</label>
+            <label className="text-sm leading-6 font-medium ">Icon</label>
             <div>
               <IconPicker
                 onSelectIcon={(iconName: CustomisationIconName | null) => {
@@ -85,7 +85,7 @@ function RouteComponent() {
             </div>
           </div>
           <div>
-            <label className="text-sm font-medium leading-6 ">Colour</label>
+            <label className="text-sm leading-6 font-medium ">Colour</label>
             <div>
               <ColourPicker
                 onSelectColour={(colour: Colour) => {

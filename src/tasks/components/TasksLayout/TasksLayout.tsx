@@ -7,7 +7,7 @@ import { TableOfContentsListItem } from "src/common/components/TableOfContentsLi
 import { groupTasks } from "src/tasks/utils/groupTasks";
 import { TasksSection } from "../TasksSection/TasksSection";
 import type { Colour } from "src/colours/Colour.type";
-import type { Task } from "src/tasks/Task.type";
+import type { Task } from "src/tasks/tasks.schema";
 
 export type TasksLayoutSection<T> = {
   title: string;
@@ -47,9 +47,9 @@ export const TasksLayout = ({
         ? [
             {
               title: "No Note",
-              tasks: [] as Task[],
+              tasks: [],
               navigationId: "no-note",
-              relevantTaskData: { note: null as null },
+              relevantTaskData: { noteId: null },
             },
             ...groupedTasks,
           ]
@@ -57,7 +57,7 @@ export const TasksLayout = ({
 
     return groups.map((group) => ({
       ...group,
-      navigationId: group.relevantTaskData.note?.id ?? "no-note",
+      navigationId: group.relevantTaskData.noteId ?? "no-note",
     }));
   }, [groupedTasks, noNoteEditorTrigger]);
 
@@ -85,7 +85,7 @@ export const TasksLayout = ({
         </ListSection>
       }
       content={
-        <div className="h-full w-full max-w-200 flex flex-col gap-6">
+        <div className="flex h-full w-full max-w-200 flex-col gap-6">
           {effectiveTaskGroups.length === 0 && (
             <EmptyState text="No tasks yet" />
           )}
@@ -96,7 +96,7 @@ export const TasksLayout = ({
               taskGroup={group}
               colour={colour}
               noNoteEditorTrigger={
-                group.relevantTaskData.note === null
+                group.relevantTaskData.noteId === null
                   ? noNoteEditorTrigger
                   : undefined
               }

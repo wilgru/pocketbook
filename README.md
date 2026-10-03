@@ -63,3 +63,5 @@ npm run seed:dev
 ```
 
 The script requires typing `WIPE DEV DB` at the warning prompt before making changes.
+
+waiting on this bug to be fixed: https://github.com/TanStack/router/pull/7708

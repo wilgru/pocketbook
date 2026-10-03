@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import type { HTMLInputTypeAttribute } from "react";
 
 type InputType = {
@@ -9,6 +9,7 @@ type InputType = {
   placeholder?: string;
   size?: "xs" | "md" | "lg";
   onChange: (e: { target: { name: string; value: string } }) => void;
+  ref?: React.Ref<HTMLInputElement>;
 };
 
 enum InputSize {
@@ -18,6 +19,7 @@ enum InputSize {
 }
 
 export const Input = ({
+  ref,
   id,
   size = "md",
   type = "text",
@@ -25,19 +27,20 @@ export const Input = ({
   value,
   onChange,
   placeholder,
-}: InputType): JSX.Element => {
+}: InputType): React.JSX.Element => {
   return (
     <input
       required={required}
       id={id}
       name={type}
+      ref={ref}
       type={type}
       autoComplete={type}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
       className={cn(
-        "block w-full bg-white rounded-md border border-slate-300 placeholder:text-slate-400",
+        "block w-full rounded-md border border-slate-300 bg-white placeholder:text-slate-400",
         InputSize[size],
       )}
     />

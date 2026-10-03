@@ -1,15 +1,17 @@
 import { PlusIcon } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
-import { cn } from "src/common/utils/cn";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { Icon } from "src/icons/components/Icon/Icon";
+import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { TagPill } from "src/tags/components/TagPill/TagPill";
 import { useCreateTag } from "src/tags/hooks/useCreateTag";
-import { useGetTags } from "src/tags/hooks/useGetTags";
+import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
 import type { Colour } from "src/colours/Colour.type";
-import type { Tag } from "src/tags/Tag.type";
+import type { Tag } from "src/tags/tags.schema";
 
 type TagSelectProps = {
   initialTags: Tag[];
@@ -22,17 +24,19 @@ export const TagSelect = ({
   colour = colours.orange,
   onChange,
 }: TagSelectProps) => {
-  const { tags } = useGetTags();
+  const { pocketbookId } = useCurrentPocketbook();
+  const { data: tagsData } = useServerQuery(getTagsServerFn, { pocketbookId });
   const { createTag } = useCreateTag();
 
   const [selectedTags, setSelectedTags] = useState<Tag[]>(initialTags);
   const [search, setSearch] = useState("");
 
-  const filteredTags = tags.filter(
-    (tag) =>
-      tag.name.toLowerCase().includes(search.toLowerCase()) &&
-      !selectedTags.some((selectedTag) => selectedTag.id === tag.id),
-  );
+  const filteredTags =
+    tagsData?.tags.filter(
+      (tag) =>
+        tag.name.toLowerCase().includes(search.toLowerCase()) &&
+        !selectedTags.some((selectedTag) => selectedTag.id === tag.id),
+    ) ?? [];
 
   const handleSelectTag = (tag: Tag) => {
     const newTags = [...selectedTags, tag];
@@ -76,7 +80,7 @@ export const TagSelect = ({
   };
 
   return (
-    <div className="flex flex-row gap-2 relative">
+    <div className="relative flex flex-row gap-2">
       {selectedTags.map((tag) => (
         <TagPill
           key={tag.id}
@@ -87,7 +91,7 @@ export const TagSelect = ({
       ))}
 
       <ControlPopover
-        className="flex flex-col text-sm pt-3 px-3 w-48"
+        className="flex w-48 flex-col px-3 pt-3 text-sm"
         trigger={
           <div>
             <Button variant="ghost" size="sm" colour={colour} iconName="tag" />
@@ -96,7 +100,7 @@ export const TagSelect = ({
       >
         <input
           type="text"
-          className="rounded-lg px-2 py-1 text-xs border border-slate-300 focus:outline-hidden focus:border-orange-400"
+          className="rounded-lg border border-slate-300 px-2 py-1 text-xs focus:border-orange-400 focus:outline-hidden"
           placeholder="search for a tag"
           value={search}
           onChange={(e) => {
@@ -104,12 +108,12 @@ export const TagSelect = ({
           }}
         />
 
-        <div className="flex flex-col gap-1 max-h-48 overflow-y-auto py-3">
+        <div className="flex max-h-48 flex-col gap-1 overflow-y-auto py-3">
           {filteredTags.map((tag) => (
             <div
               key={tag.id}
               className={cn(
-                "rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer text-sm",
+                "flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm",
                 tag.colour.secondary.backgroundHovered,
                 tag.colour.secondary.textHovered,
               )}
@@ -126,10 +130,10 @@ export const TagSelect = ({
           ))}
 
           {search.trim().length > 0 &&
-            !tags.some((tag) => tag.name === search) && (
+            !tagsData?.tags.some((tag) => tag.name === search) && (
               <div
                 className={cn(
-                  "rounded-lg flex items-center gap-2 px-2 py-1 cursor-pointer text-sm",
+                  "flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm",
                   colour.secondary.backgroundHovered,
                   colour.secondary.textHovered,
                 )}

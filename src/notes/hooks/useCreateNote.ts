@@ -1,14 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "src/Users/hooks/useUser";
-import { useCurrentPocketbookId } from "../../pocketbooks/hooks/useCurrentPocketbookId";
-import { mapNote } from "../utils/mapNote";
+import { createNoteServerFn } from "src/notes/serverFunctions/createNote";
+import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
+import { getNotesServerFn } from "../serverFunctions/getNotes";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type CreateNoteProps = {
   createNoteData: Omit<
     Note,
-    "id" | "created" | "updated" | "deleted" | "tasks" | "commentCount"
+    | "id"
+    | "created"
+    | "updated"
+    | "deleted"
+    | "tasks"
+    | "commentCount"
+    | "pocketbookId"
   >;
 };
 
@@ -24,31 +31,33 @@ type UseCreateNoteResponse = {
 export const useCreateNote = (): UseCreateNoteResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
   const queryClient = useQueryClient();
-  const { user } = useUser();
+
+  if (!pocketbookId) {
+    throw Error("Need a pocketbook id!"); //TODO make pocketbook not null, grab from params somehow?
+  }
 
   const mutationFn = async ({
     createNoteData,
   }: CreateNoteProps): Promise<Note | undefined> => {
-    const response = await window.api.createNote({
-      title: createNoteData.title,
-      content: createNoteData.content,
-      isBookmarked: createNoteData.isBookmarked,
-      tagIds: createNoteData.tags.map((tag) => tag.id),
-      links: JSON.stringify(createNoteData.links),
-      pocketbookId: pocketbookId ?? null,
-      userId: user?.id ?? null,
+    const note = await createNoteServerFn({
+      data: {
+        title: createNoteData.title,
+        content: createNoteData.content,
+        isBookmarked: createNoteData.isBookmarked,
+        tagIds: createNoteData.tags.map((tag) => tag.id),
+        links: createNoteData.links,
+        pocketbookId: pocketbookId,
+      },
     });
 
-    if (!response.success) throw new Error(response.error);
-
-    return mapNote(response.data, { tags: createNoteData.tags });
+    return { ...note, tags: createNoteData.tags };
   };
 
   const onSuccess = (data: Note | undefined) => {
     if (!data) return;
 
-    queryClient.refetchQueries({ queryKey: ["notes.list"] });
-    queryClient.refetchQueries({ queryKey: ["tags.get"] });
+    queryClient.refetchQueries({ queryKey: [getNotesServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getTagServerFn.url] });
     queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
@@ -57,8 +66,6 @@ export const useCreateNote = (): UseCreateNoteResponse => {
     mutationKey: ["notes.create"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { createNote: mutateAsync };

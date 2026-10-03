@@ -1,8 +1,8 @@
+import { cn } from "cn";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { cn } from "src/common/utils/cn";
 import type { Dayjs } from "dayjs";
 import type { Colour } from "src/colours/Colour.type";
 
@@ -46,7 +46,7 @@ export const Calendar = ({
   onSelectDate,
   isDateDisabled,
   dayDotIndicators,
-}: CalendarProps): JSX.Element => {
+}: CalendarProps): React.JSX.Element => {
   const today = dayjs();
   const [displayYear, setDisplayYear] = useState(today.year());
   const [displayMonth, setDisplayMonth] = useState(today.month());
@@ -113,8 +113,8 @@ export const Calendar = ({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-1">
-        <h3 className="text-slate-400 ml-1.5 text-xs">
+      <div className="mb-1 flex items-center justify-between">
+        <h3 className="ml-1.5 text-xs text-slate-400">
           {MONTH_NAMES[displayMonth]} {displayYear}
         </h3>
 
@@ -140,7 +140,7 @@ export const Calendar = ({
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
           <span
             key={d}
-            className="font-medium text-slate-500 text-center text-[10px] py-0"
+            className="py-0 text-center text-[10px] font-medium text-slate-500"
           >
             {d}
           </span>
@@ -177,8 +177,8 @@ export const Calendar = ({
               aria-label={ariaLabel}
               onClick={() => onSelectDate?.(calendarDay.day)}
               className={cn(
-                "w-full cursor-pointer select-none transition-colors flex flex-col items-center justify-start",
-                "text-[10px] rounded-md py-0.5",
+                "flex w-full cursor-pointer flex-col items-center justify-start transition-colors select-none",
+                "rounded-md py-0.5 text-[10px]",
                 !calendarDay.isCurrentMonth && !isDisabled && "text-slate-300",
                 calendarDay.isCurrentMonth &&
                   !isSelected &&
@@ -191,7 +191,7 @@ export const Calendar = ({
                 !isSelected && colour.secondary.backgroundHovered,
                 !isSelected && colour.secondary.textHovered,
                 isDisabled &&
-                  "hover:bg-transparent hover:text-slate-300 pointer-events-none",
+                  "pointer-events-none hover:bg-transparent hover:text-slate-300",
               )}
             >
               <span>{calendarDay.day.date()}</span>
@@ -207,7 +207,7 @@ export const Calendar = ({
                       <span
                         key={`${dayKey}-${dotClassName}-${dotIndex}`}
                         role="presentation"
-                        className={cn("w-1 h-1 rounded-full", dotClassName)}
+                        className={cn("h-1 w-1 rounded-full", dotClassName)}
                       />
                     ))}
                 </span>

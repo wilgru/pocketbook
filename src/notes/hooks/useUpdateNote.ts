@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { mapNote } from "src/notes/utils/mapNote";
+import { updateNoteServerFn } from "src/notes/serverFunctions/updateNote";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
+import { getNoteServerFn } from "../serverFunctions/getNote";
+import { getNotesServerFn } from "../serverFunctions/getNotes";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type UpdateNoteProps = {
   noteId: string;
@@ -24,40 +27,26 @@ export const useUpdateNote = (): UseUpdateNoteResponse => {
     noteId,
     updateNoteData,
   }: UpdateNoteProps): Promise<Note | undefined> => {
-    const tagIds = updateNoteData.tags.map((tag) => tag.id);
-    const response = await window.api.updateNote({
-      noteId,
-      title: updateNoteData.title,
-      content: updateNoteData.content,
-      isBookmarked: updateNoteData.isBookmarked,
-      tagIds,
-      links: JSON.stringify(updateNoteData.links),
+    const data = await updateNoteServerFn({
+      data: {
+        noteId,
+        title: updateNoteData.title,
+        content: updateNoteData.content,
+        isBookmarked: updateNoteData.isBookmarked,
+        tagIds: updateNoteData.tags.map((tag) => tag.id),
+        links: updateNoteData.links,
+      },
     });
 
-    if (!response.success) throw new Error(response.error);
-
-    return mapNote(response.data, {
-      tags: updateNoteData.tags,
-      tasks: updateNoteData.tasks,
-    });
+    return data;
   };
 
   const onSuccess = (data: Note | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
-    queryClient.refetchQueries({
-      queryKey: ["notes.list"],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["notes.get", data.id],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["tags.get"],
-    });
+    queryClient.refetchQueries({ queryKey: [getNotesServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getNoteServerFn.url, data.id] });
+    queryClient.refetchQueries({ queryKey: [getTagServerFn.url] });
   };
 
   // TODO: consider time caching for better performance
@@ -65,8 +54,6 @@ export const useUpdateNote = (): UseUpdateNoteResponse => {
     mutationKey: ["notes.update"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { updateNote: mutateAsync };

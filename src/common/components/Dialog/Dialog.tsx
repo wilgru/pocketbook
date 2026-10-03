@@ -1,5 +1,5 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 
 type DialogProps = {
   title?: React.ReactNode;
@@ -30,7 +30,7 @@ export const Dialog = ({
       <DialogPrimitive.Overlay className="fixed inset-0 bg-black opacity-25 data-[state=open]:animate-overlayShow" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed left-[50%] top-[50%] flex max-h-[85vh] translate-x-[-50%] translate-y-[-50%] flex-col overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-2xl focus:outline-hidden",
+          "fixed top-[50%] left-[50%] flex max-h-[85vh] translate-x-[-50%] translate-y-[-50%] flex-col overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-2xl focus:outline-hidden",
           className,
         )}
       >

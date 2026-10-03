@@ -1,7 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent, useEffect } from "react";
-import { useSignUp } from "src/Users/hooks/useSignUp";
-import { useUser } from "src/Users/hooks/useUser";
+import { useState, type FormEvent } from "react";
 import { Button } from "src/common/components/Button/Button";
 
 type FormData = {
@@ -15,9 +13,7 @@ export const Route = createFileRoute("/signup")({
   component: SignUpIndexComponent,
 });
 
-function SignUpIndexComponent(): JSX.Element {
-  const { signUp, signUpLoading, signUpError } = useSignUp();
-  const { user } = useUser();
+function SignUpIndexComponent(): React.JSX.Element {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -36,34 +32,35 @@ function SignUpIndexComponent(): JSX.Element {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await signUp(formData);
+    console.log(formData);
+    // await signUp(formData);
 
     // redirect on successful sign up
     navigate({ to: ".." });
   };
 
-  useEffect(() => {
-    if (user) {
-      navigate({ to: ".." });
-    }
-  }, [navigate, user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate({ to: ".." });
+  //   }
+  // }, [navigate, user]);
 
   return (
-    <div className="flex flex-col gap-6 justify-center items-center h-screen w-screen bg-slate-100">
-      {!!signUpError && (
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-6 bg-slate-100">
+      {/* {!!signUpError && (
         // TODO: show actual error message
         <div className="p-6 border border-red-500 rounded-lg bg-red-100 text-red-500 max-w-sm w-full">
           Something went wrong. Please try again
         </div>
-      )}
-      <div className="flex flex-col gap-6 p-6 border bg-white border-slate-300 rounded-lg max-w-sm w-full drop-shadow-sm">
-        <h1 className="text-4xl font-normal font-title tracking-tight ">
+      )} */}
+      <div className="flex w-full max-w-sm flex-col gap-6 rounded-lg border border-slate-300 bg-white p-6 drop-shadow-sm">
+        <h1 className="font-title text-4xl font-normal tracking-tight ">
           Sign Up
         </h1>
         <form className="space-y-6" onSubmit={onSubmit}>
           <div>
             <div className="flex items-baseline justify-between">
-              <label className="text-sm font-medium leading-6 ">Name</label>
+              <label className="text-sm leading-6 font-medium ">Name</label>
             </div>
             <div>
               <input
@@ -73,13 +70,13 @@ function SignUpIndexComponent(): JSX.Element {
                 autoComplete="given-name"
                 onChange={onChange}
                 required
-                className="block w-full p-2 bg-white border border-slate-300 rounded-full placeholder:text-slate-500 focus:border-orange-500 text-sm"
+                className="block w-full rounded-full border border-slate-300 bg-white p-2 text-sm placeholder:text-slate-500 focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium leading-6 ">Email</label>
+            <label className="text-sm leading-6 font-medium ">Email</label>
             <div>
               <input
                 id="email"
@@ -88,14 +85,14 @@ function SignUpIndexComponent(): JSX.Element {
                 autoComplete="email"
                 onChange={onChange}
                 required
-                className="block w-full p-2 bg-white border border-slate-300 rounded-full placeholder:text-slate-500 focus:border-orange-500 text-sm"
+                className="block w-full rounded-full border border-slate-300 bg-white p-2 text-sm placeholder:text-slate-500 focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
             <div className="flex items-baseline justify-between">
-              <label className="text-sm font-medium leading-6 ">Password</label>
+              <label className="text-sm leading-6 font-medium ">Password</label>
             </div>
             <div>
               <input
@@ -105,14 +102,14 @@ function SignUpIndexComponent(): JSX.Element {
                 autoComplete="new-password"
                 onChange={onChange}
                 required
-                className="block w-full p-2 bg-white border border-slate-300 rounded-full placeholder:text-slate-500 focus:border-orange-500 text-sm"
+                className="block w-full rounded-full border border-slate-300 bg-white p-2 text-sm placeholder:text-slate-500 focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
             <div className="flex items-baseline justify-between">
-              <label className="text-sm font-medium leading-6 ">
+              <label className="text-sm leading-6 font-medium ">
                 Confirm Password
               </label>
             </div>
@@ -124,15 +121,15 @@ function SignUpIndexComponent(): JSX.Element {
                 autoComplete="new-password"
                 onChange={onChange}
                 required
-                className="block w-full p-2 bg-white border border-slate-300 rounded-full placeholder:text-slate-500 focus:border-orange-500 text-sm"
+                className="block w-full rounded-full border border-slate-300 bg-white p-2 text-sm placeholder:text-slate-500 focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
-            <Button disabled={signUpLoading} type="submit">
+            {/* <Button disabled={signUpLoading} type="submit">
               {signUpLoading ? "Loading..." : "Sign up"}
-            </Button>
+            </Button> */}
           </div>
         </form>
 

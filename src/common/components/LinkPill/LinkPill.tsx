@@ -1,5 +1,5 @@
+import { cn } from "cn";
 import { colours } from "src/colours/colours.constant";
-import { cn } from "src/common/utils/cn";
 import { getDisplayUrl } from "src/common/utils/getDisplayUrl";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
@@ -16,7 +16,7 @@ export const LinkPill = ({ link, colour = colours.orange }: LinkPillProps) => {
       href={link.link}
       target="_blank"
       className={cn(
-        "h-fit flex flex-row items-center text-sm rounded-full hover:underline min-w-0",
+        "flex h-fit min-w-0 flex-row items-center rounded-full text-sm hover:underline",
         colour.text,
       )}
     >

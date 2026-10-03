@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "src/Users/hooks/useUser";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
-import { mapTask } from "src/tasks/utils/mapTask";
+import { createTaskServerFn } from "src/tasks/serverFunctions/createTask";
+import { getTasksServerFn } from "../serverFunctions/getTasks";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Task } from "src/tasks/Task.type";
+import type { Task } from "src/tasks/tasks.schema";
 
 type CreateTaskProps = {
   createTaskData: Omit<Task, "id" | "created" | "updated" | "sortOrder">;
@@ -22,45 +23,37 @@ type UseCreateTaskResponse = {
 export const useCreateTask = (): UseCreateTaskResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
   const queryClient = useQueryClient();
-  const { user } = useUser();
 
   const mutationFn = async ({
     createTaskData,
     insertAfterSortOrder,
   }: CreateTaskProps): Promise<Task | undefined> => {
-    const response = await window.api.createTask({
-      title: createTaskData.title,
-      description: createTaskData.description,
-      link: createTaskData.link,
-      links: JSON.stringify(createTaskData.links),
-      isImportant: createTaskData.isImportant,
-      noteId: createTaskData.note?.id ?? null,
-      dueDate: createTaskData.dueDate?.toISOString() ?? null,
-      pocketbookId: pocketbookId ?? null,
-      userId: user?.id ?? null,
-      insertAfterSortOrder: insertAfterSortOrder ?? null,
+    const data = await createTaskServerFn({
+      data: {
+        title: createTaskData.title,
+        description: createTaskData.description,
+        link: "",
+        links: createTaskData.links,
+        isImportant: createTaskData.isImportant,
+        noteId: createTaskData.noteId ?? null,
+        dueDate: createTaskData.dueDate ?? null,
+        pocketbookId: pocketbookId,
+        insertAfterSortOrder: insertAfterSortOrder ?? null,
+      },
     });
-    if (!response.success) throw new Error(response.error);
 
-    return mapTask(response.data, { note: createTaskData.note ?? null });
+    return data;
   };
 
   const onSuccess = (data: Task | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
+    console.log(getNoteServerFn.url, data.noteId);
+    queryClient.refetchQueries({ queryKey: [getTasksServerFn.url] });
     queryClient.refetchQueries({
-      queryKey: ["tasks.list"],
+      queryKey: [getNoteServerFn.url, data.noteId],
     });
-
-    queryClient.refetchQueries({
-      queryKey: ["notes.get", data.note?.id],
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: ["pocketbookContentCounts"],
-    });
+    queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
   // TODO: consider time caching for better performance
@@ -68,8 +61,6 @@ export const useCreateTask = (): UseCreateTaskResponse => {
     mutationKey: ["tasks.create"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { createTask: mutateAsync };

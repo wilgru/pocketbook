@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteCommentServerFn } from "src/comments/serverFunctions/deleteComment";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
 type DeleteCommentProps = {
@@ -20,21 +22,17 @@ export const useDeleteComment = (): UseDeleteCommentResponse => {
   const mutationFn = async ({
     commentId,
   }: DeleteCommentProps): Promise<string | undefined> => {
-    const response = await window.api.deleteComment({ commentId });
-    if (!response.success) throw new Error(response.error);
+    await deleteCommentServerFn({ data: { commentId } });
+
     return commentId;
   };
 
   const onSuccess = () => {
-    queryClient.refetchQueries({
-      queryKey: ["comments.list"],
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: ["pocketbookContentCounts"],
-    });
+    queryClient.refetchQueries({ queryKey: [getCommentsServerFn.url] });
+    queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
+  // TODO: consider time caching for better performance
   const { mutateAsync } = useMutation({
     mutationKey: ["comments.delete"],
     mutationFn,

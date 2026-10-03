@@ -1,4 +1,4 @@
-const EMPTY_LEXICAL_CONTENT = JSON.stringify({
+export const EMPTY_LEXICAL_CONTENT = JSON.stringify({
   root: {
     children: [
       {

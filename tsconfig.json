@@ -9,6 +9,7 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "paths": { "*": ["./*"] },
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -20,9 +21,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": "./"
+    "types": ["@cloudflare/workers-types"]
   },
-  "include": ["src", "electron"],
-  "exclude": ["src/server.ts"],
+  "include": ["src", "electron", "worker-configuration.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

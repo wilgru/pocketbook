@@ -1,5 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link } from "@tanstack/react-router";
+import { cn } from "cn";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
@@ -9,9 +10,8 @@ import {
   DropdownLabel,
   DropdownSeparator,
 } from "src/common/components/Dropdown/Dropdown";
-import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
-import type { Pocketbook } from "src/pocketbooks/Pocketbook.type";
+import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
 type PocketbookSwitcherProps = {
   currentPocketbook: Pocketbook;
@@ -53,14 +53,14 @@ export const PocketbookSwitcher = ({
   };
 
   return (
-    <div className="flex gap-2 pl-1.5 pr-1 justify-between items-center relative">
+    <div className="relative flex items-center gap-2">
       <DropdownMenu.Root open={isOpen}>
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <DropdownMenu.Trigger onClick={() => setIsOpen(true)}>
             <Icon
               iconName={currentPocketbook.icon}
               className={cn(
-                "w-8 h-8 p-1.5 rounded-md",
+                "h-8 w-8 rounded-md p-1.5",
                 currentPocketbook.colour.primary.text,
                 currentPocketbook.colour.primary.textHovered,
                 currentPocketbook.colour.primary.background,
@@ -68,16 +68,6 @@ export const PocketbookSwitcher = ({
               )}
             />
           </DropdownMenu.Trigger>
-
-          <div className="flex flex-col items-start">
-            <h2 className="text-sm font-title font-medium">
-              {currentPocketbook.title}
-            </h2>
-
-            <p className="text-xs text-slate-400">
-              {getPocketbookSummary(currentPocketbook)}
-            </p>
-          </div>
         </div>
 
         <Dropdown
@@ -92,7 +82,14 @@ export const PocketbookSwitcher = ({
           <DropdownLabel>Pocketbooks</DropdownLabel>
 
           {pocketbooks.map((pocketbook) => (
-            <DropdownItem key={pocketbook.id}>
+            <DropdownItem
+              key={pocketbook.id}
+              className={cn(
+                currentPocketbook.id === pocketbook.id
+                  ? pocketbook.colour.primary.background
+                  : pocketbook.colour.secondary.backgroundHovered,
+              )}
+            >
               <Link
                 to="/$pocketbookId/notes"
                 params={{
@@ -103,17 +100,14 @@ export const PocketbookSwitcher = ({
                   localStorage.setItem("lastUsedPocketbookId", pocketbook.id);
                   setIsOpen(false);
                 }}
-                className={cn(
-                  "flex items-center gap-2 leading-none text-sm p-2 outline-hidden rounded-xl cursor-pointer transition-colors",
-                  currentPocketbook.id === pocketbook.id
-                    ? pocketbook.colour.primary.background
-                    : pocketbook.colour.secondary.backgroundHovered,
-                )}
+                className={
+                  "flex cursor-pointer items-center gap-2 text-sm leading-none outline-hidden transition-colors"
+                }
               >
                 <Icon
                   iconName={pocketbook.icon}
                   className={cn(
-                    "w-8 h-8 p-1.5 rounded-md",
+                    "h-8 w-8 rounded-md p-1.5",
                     pocketbook.colour.primary.text,
                     pocketbook.colour.primary.background,
                   )}
@@ -131,12 +125,15 @@ export const PocketbookSwitcher = ({
 
           <DropdownSeparator />
 
-          <DropdownItem colour={colours.orange} className="flex items-center gap-2">
+          <DropdownItem
+            colour={colours.orange}
+            className="flex items-center gap-2"
+          >
             <Link
               to={"/create-pocketbook"}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-xs"
             >
-              <Icon iconName="plus" size="sm" />
+              <Icon iconName="plus" size="xs" />
               Create new pocketbook
             </Link>
           </DropdownItem>
@@ -146,7 +143,7 @@ export const PocketbookSwitcher = ({
       <Button
         variant="ghost"
         size="sm"
-        iconName="dotsThreeVertical"
+        iconName="gear"
         colour={currentPocketbook.colour}
         onClick={onOpenSettingsModal}
       />

@@ -2,10 +2,10 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { CreateTagModal } from "src/tags/components/CreateTagModal/CreateTagModal";
 import { EditTagGroupModal } from "src/tags/components/EditTagGroupModal/EditTagGroupModal";
+import { EditTagModal } from "src/tags/components/EditTagModal/EditTagModal";
 import type { Colour } from "src/colours/Colour.type";
-import type { TagGroup } from "src/tags/Tag.type";
+import type { TagGroup } from "src/tags/tags.schema";
 
 export const SidebarTagSection = ({
   title,
@@ -30,7 +30,7 @@ export const SidebarTagSection = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-row items-center gap-1">
-        <h1 className="font-title text-slate-400 text-sm py-0.5">{title}</h1>
+        <h1 className="py-0.5 font-title text-sm text-slate-400">{title}</h1>
 
         {tagGroup && (
           <Dialog.Root>
@@ -63,13 +63,13 @@ export const SidebarTagSection = ({
             </Dialog.Trigger>
           )}
 
-          <CreateTagModal tagGroupId={tagGroup?.id} />
+          <EditTagModal tagGroupId={tagGroup?.id} />
         </Dialog.Root>
       </div>
 
       {children}
 
-      {isEmpty && <p className="italic pt-0.5 text-xs text-slate-400">Empty</p>}
+      {isEmpty && <p className="pt-0.5 text-xs text-slate-400 italic">Empty</p>}
     </section>
   );
 };

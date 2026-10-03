@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 
 type TimePeriod = "AM" | "PM";
 
@@ -72,7 +72,7 @@ export const TimeInput = ({
   className,
   ariaLabel = "Time",
   onChange,
-}: TimeInputProps): JSX.Element => {
+}: TimeInputProps): React.JSX.Element => {
   return (
     <div
       role="group"

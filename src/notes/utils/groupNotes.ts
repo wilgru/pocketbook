@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import type { Note, NotesGroup } from "src/notes/Note.type";
-import type { Tag } from "src/tags/Tag.type";
+import type { Note, NotesGroup } from "src/notes/notes.schema";
+import type { Tag } from "src/tags/tags.schema";
 
 const getGroup = (
   note: Note,
@@ -68,7 +68,7 @@ const getGroup = (
 
       if (
         relevantTags.length === 1 &&
-        relevantTags.at(0)?.name === defaultGroupTitle
+        relevantTags[0]?.name === defaultGroupTitle
       ) {
         const defaultTag = relevantTags.find(
           (tag) => tag.name === defaultGroupTitle,

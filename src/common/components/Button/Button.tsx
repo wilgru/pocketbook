@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
-import { forwardRef, useState } from "react";
+import { cn } from "cn";
+import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
 import type { IconName } from "src/icons/Icon.type";
@@ -9,6 +9,7 @@ import type { IconName } from "src/icons/Icon.type";
 type ButtonProps = {
   children?: React.ReactNode;
   variant?: "block" | "ghost" | "ghost-strong" | "link";
+  shape?: "circle" | "square";
   colour?: Colour;
   size?: "xs" | "sm" | "md" | "lg";
   type?: "button" | "submit";
@@ -18,6 +19,7 @@ type ButtonProps = {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   iconName?: IconName | null;
   ariaLabel?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 } & Omit<React.ComponentPropsWithoutRef<"button">, "color">;
 
 const buttonVariants = cva(
@@ -26,7 +28,6 @@ const buttonVariants = cva(
     "w-fit",
     "flex",
     "items-center",
-    "rounded-full",
     "transition-colors",
     "focus-visible:outline-solid",
     "focus-visible:outline-2",
@@ -40,6 +41,10 @@ const buttonVariants = cva(
         ghost: "text-slate-500",
         "ghost-strong": "text-slate-400",
         link: "underline-offset-4 hover:underline",
+      },
+      shape: {
+        circle: "rounded-full",
+        square: "rounded-md",
       },
       size: {
         xs: "text-[0.625rem] font-normal gap-1",
@@ -132,97 +137,92 @@ const buttonVariants = cva(
     ],
     defaultVariants: {
       variant: "block",
+      shape: "circle",
       size: "md",
     },
   },
 );
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      children,
-      type = "button",
-      variant = "block",
-      size = "md",
-      colour = colours.orange,
-      className,
-      disabled = false,
-      active = false,
-      onClick,
-      iconName,
-      ariaLabel,
-      ...rest
-    },
-    ref,
-  ) => {
-    const [isButtonHovered, setIsButtonHovered] = useState(false);
-    const isActive = isButtonHovered || active;
+export const Button = ({
+  children,
+  type = "button",
+  variant = "block",
+  shape = "circle",
+  size = "md",
+  colour = colours.orange,
+  className,
+  disabled = false,
+  active = false,
+  onClick,
+  iconName,
+  ariaLabel,
+  ref,
+  ...rest
+}: ButtonProps) => {
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const isActive = isButtonHovered || active;
 
-    const content =
-      iconName && children
-        ? "iconAndText"
-        : iconName && !children
-          ? "icon"
-          : "text";
+  const content =
+    iconName && children
+      ? "iconAndText"
+      : iconName && !children
+        ? "icon"
+        : "text";
 
-    return (
-      <button
-        ref={ref}
-        type={type}
-        className={cn(
-          buttonVariants({
-            size,
-            variant,
-            content,
-          }),
-          variant === "block" && colour.primary.text,
-          variant === "block" && colour.primary.background,
-          variant === "block" && colour.primary.textHovered,
-          variant === "block" && colour.primary.backgroundHovered,
-          variant === "ghost" && !disabled && colour.secondary.textHovered,
-          variant === "ghost" &&
-            !disabled &&
-            colour.secondary.backgroundHovered,
-          variant === "ghost" &&
-            !disabled &&
-            active &&
-            colour.secondary.backgroundHovered.replace("hover:", ""),
-          variant === "ghost" &&
-            !disabled &&
-            active &&
-            colour.secondary.textHovered.replace("hover:", ""),
-          variant === "ghost-strong" &&
-            !disabled &&
-            colour.secondary.textHovered,
-          variant === "ghost-strong" &&
-            !disabled &&
-            colour.secondary.backgroundHovered,
-          variant === "ghost-strong" &&
-            !disabled &&
-            active &&
-            colour.secondary.backgroundHovered.replace("hover:", ""),
-          variant === "ghost-strong" &&
-            !disabled &&
-            active &&
-            colour.secondary.textHovered.replace("hover:", ""),
-          className,
-        )}
-        disabled={disabled}
-        aria-label={ariaLabel}
-        onMouseEnter={() => setIsButtonHovered(true)}
-        onMouseLeave={() => setIsButtonHovered(false)}
-        onClick={onClick}
-        {...rest}
-      >
-        <Icon
-          iconName={iconName ?? null}
-          size={size}
-          className={cn(isActive && colour.primary.text)}
-          weight={isActive ? "fill" : "regular"}
-        />
+  return (
+    <button
+      ref={ref}
+      type={type}
+      className={cn(
+        buttonVariants({
+          size,
+          variant,
+          shape,
+          content,
+        }),
+        variant === "block" && colour.primary.text,
+        variant === "block" && colour.primary.background,
+        variant === "block" && colour.primary.textHovered,
+        variant === "block" && colour.primary.backgroundHovered,
+        variant === "ghost" && !disabled && colour.secondary.textHovered,
+        variant === "ghost" && !disabled && colour.secondary.backgroundHovered,
+        variant === "ghost" &&
+          !disabled &&
+          active &&
+          colour.secondary.backgroundHovered.replace("hover:", ""),
+        variant === "ghost" &&
+          !disabled &&
+          active &&
+          colour.secondary.textHovered.replace("hover:", ""),
+        variant === "ghost-strong" && !disabled && colour.secondary.textHovered,
+        variant === "ghost-strong" &&
+          !disabled &&
+          colour.secondary.backgroundHovered,
+        variant === "ghost-strong" &&
+          !disabled &&
+          active &&
+          colour.secondary.backgroundHovered.replace("hover:", ""),
+        variant === "ghost-strong" &&
+          !disabled &&
+          active &&
+          colour.secondary.textHovered.replace("hover:", ""),
+        className,
+      )}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      onMouseEnter={() => setIsButtonHovered(true)}
+      onMouseLeave={() => setIsButtonHovered(false)}
+      onClick={onClick}
+      {...rest}
+    >
+      <Icon
+        iconName={iconName ?? null}
+        size={size}
+        className={cn(isActive && colour.primary.text)}
+        weight={isActive ? "fill" : "regular"}
+      />
 
-        {children}
-      </button>
-    );
-  },
-);
+      {children}
+    </button>
+  );
+};

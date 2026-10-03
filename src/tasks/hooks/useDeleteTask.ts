@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetTasks } from "./useGetTasks";
+import { getNoteServerFn } from "src/notes/serverFunctions/getNote";
+import { getTagServerFn } from "src/tags/serverFunctions/getTag";
+import { deleteTaskServerFn } from "src/tasks/serverFunctions/deleteTask";
+import { getTasksServerFn } from "../serverFunctions/getTasks";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
-type deleteTaskProps = {
+type DeleteTaskProps = {
   taskId: string;
 };
 
@@ -10,42 +13,27 @@ type UseDeleteTaskResponse = {
   deleteTask: UseMutateAsyncFunction<
     string | undefined,
     Error,
-    deleteTaskProps,
+    DeleteTaskProps,
     unknown
   >;
 };
 
 export const useDeleteTask = (): UseDeleteTaskResponse => {
   const queryClient = useQueryClient();
-  const { tasks } = useGetTasks({});
 
   const mutationFn = async ({
     taskId,
-  }: deleteTaskProps): Promise<string | undefined> => {
-    const taskToDelete = tasks.find((task) => task.id === taskId);
-
-    if (!taskToDelete) {
-      return;
-    }
-
-    const response = await window.api.deleteTask({ taskId });
-    if (!response.success) throw new Error(response.error);
+  }: DeleteTaskProps): Promise<string | undefined> => {
+    await deleteTaskServerFn({ data: { taskId } });
 
     return taskId;
   };
 
   const onSuccess = () => {
-    queryClient.refetchQueries({
-      queryKey: ["tasks.list"],
-    });
-
-    queryClient.refetchQueries({
-      queryKey: ["tags.get"],
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: ["pocketbookContentCounts"],
-    });
+    queryClient.refetchQueries({ queryKey: [getTasksServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getTagServerFn.url] });
+    queryClient.refetchQueries({ queryKey: [getNoteServerFn.url] });
+    queryClient.invalidateQueries({ queryKey: ["pocketbookContentCounts"] });
   };
 
   // TODO: consider time caching for better performance
@@ -53,8 +41,6 @@ export const useDeleteTask = (): UseDeleteTaskResponse => {
     mutationKey: ["tasks.delete"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { deleteTask: mutateAsync };

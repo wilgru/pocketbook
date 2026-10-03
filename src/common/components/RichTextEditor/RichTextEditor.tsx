@@ -24,6 +24,7 @@ import {
   QuoteNode,
   type HeadingTagType,
 } from "@lexical/rich-text";
+import { cn } from "cn";
 import {
   SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_LOW,
@@ -32,7 +33,6 @@ import {
 } from "lexical";
 import { useEffect, useRef } from "react";
 import { getColourHex } from "src/colours/utils/getColourHex";
-import { cn } from "src/common/utils/cn";
 import {
   createEmptyLexicalContent,
   normalizeLexicalContent,

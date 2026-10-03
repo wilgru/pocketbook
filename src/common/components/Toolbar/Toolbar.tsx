@@ -1,9 +1,9 @@
+import { cn } from "cn";
 import { useAtom } from "jotai";
 import { colours } from "src/colours/colours.constant";
 import { isSideBarVisibleAtom } from "src/common/atoms/isSidebarVisibleAtom";
 import { Button } from "src/common/components/Button/Button";
-import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
-import { cn } from "src/common/utils/cn";
+import { usePlatform } from "src/common/hooks/usePlatform";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { NoteSearchBar } from "src/notes/components/NoteSearchBar/NoteSearchBar";
 import type { Colour } from "src/colours/Colour.type";
@@ -14,7 +14,7 @@ type ToolbarProps = {
   title: string;
   colour?: Colour;
   pocketbookColour?: Colour;
-  children?: JSX.Element;
+  children?: React.ReactNode;
 };
 
 export const Toolbar = ({
@@ -24,17 +24,17 @@ export const Toolbar = ({
   pocketbookColour,
   children,
 }: ToolbarProps) => {
-  const { isMac, isWindows } = useElectronEnvironment();
+  const { isMac, isWindows } = usePlatform();
 
   const [isSideBarVisible, setValue] = useAtom(isSideBarVisibleAtom);
   const shouldReserveWindowButtonSpace = isMac && !isSideBarVisible;
 
   return (
-    <div className=" w-full flex items-center justify-between p-2 electron-drag-region">
+    <div className=" electron-drag-region flex w-full items-center justify-between p-2">
       <div className="flex items-center gap-2">
         {shouldReserveWindowButtonSpace && <div className="h-8 w-18" />}
 
-        <div className="flex items-center gap-2 electron-no-drag">
+        <div className="electron-no-drag flex items-center gap-2">
           {!isSideBarVisible && (
             <Button
               variant="ghost"
@@ -53,7 +53,7 @@ export const Toolbar = ({
             />
           )}
 
-          <h1 className="font-title text-xl pt-0.5">{title}</h1>
+          <h1 className="pt-0.5 font-title text-xl">{title}</h1>
 
           {children}
         </div>
@@ -61,16 +61,10 @@ export const Toolbar = ({
 
       <div
         className={cn(
-          "flex items-center gap-2 electron-no-drag",
+          "electron-no-drag flex items-center gap-2",
           isWindows && "mr-35",
         )}
       >
-        {process.env.NODE_ENV === "development" && (
-          <div className="bg-purple-100 text-purple-500 px-2 pt-px border border-purple-300 rounded-lg family-mono text-sm font-medium">
-            DEV
-          </div>
-        )}
-
         <NoteSearchBar />
       </div>
     </div>

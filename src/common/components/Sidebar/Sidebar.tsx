@@ -1,52 +1,49 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { cn } from "cn";
 import { useSetAtom } from "jotai";
+import { colours } from "src/colours/colours.constant";
 import { isSideBarVisibleAtom } from "src/common/atoms/isSidebarVisibleAtom";
 import { Button } from "src/common/components/Button/Button";
 import { NavItem } from "src/common/components/NavItem/NavItem";
-import { useElectronEnvironment } from "src/common/hooks/useElectronEnvironment";
-import { cn } from "src/common/utils/cn";
+import { usePlatform } from "src/common/hooks/usePlatform";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { PocketbookSwitcher } from "src/pocketbooks/components/PocketbookSwitcher/PocketbookSwitcher";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
 import { useGetPocketbookContentCounts } from "src/pocketbooks/hooks/useGetPocketbookContentCounts";
-import { CreateTagGroupModal } from "src/tags/components/CreateTagGroupModal/CreateTagGroupModal";
-import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
+import { EditTagGroupModal } from "src/tags/components/EditTagGroupModal/EditTagGroupModal";
+import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 import { SidebarBookmarkSection } from "./SidebarBookmarkSection";
 import { SidebarTagSection } from "./SidebarTagSection";
-import { colours } from "src/colours/colours.constant";
 
 export const Sidebar = () => {
-  const { isWindows } = useElectronEnvironment();
+  const { isWindows, isBrowser } = usePlatform();
 
-  const {
+  const { pocketbookId, currentPocketbook, pocketbooks } =
+    useCurrentPocketbook();
+
+  const { data: tagGroupsData } = useServerQuery(getTagGroupsServerFn, {
     pocketbookId,
-    currentPocketbook,
-    pocketbooks,
-    isFetchingPocketbooks,
-  } = useCurrentPocketbook();
-  const { ungroupedTags, tagGroups } = useGetTagGroups();
+  });
+
   const { counts } = useGetPocketbookContentCounts();
 
   const setIsSidebarVisible = useSetAtom(isSideBarVisibleAtom);
-
-  if (isFetchingPocketbooks) {
-    return null;
-  }
 
   if (!pocketbookId || !currentPocketbook) {
     return null;
   }
 
   return (
-    <aside className="min-w-56 max-w-56 flex flex-col h-full">
+    <aside className="flex h-full max-w-56 min-w-56 flex-col">
       <div
         className={cn(
-          "flex flex-row items-center gap-2 electron-drag-region shrink-0 h-12.5 pl-2",
-          isWindows ? "justify-between" : "justify-end",
+          "electron-drag-region flex h-12.5 shrink-0 flex-row items-center gap-2 pl-4",
+          isWindows || isBrowser ? "justify-between" : "justify-end",
         )}
       >
-        {isWindows && (
-          <h1 className="pl-2 font-title text-slate-500 text-xl">Pocketbook</h1>
-        )}
+        {isWindows || isBrowser ? (
+          <h1 className="pt-1 font-title text-xl text-slate-500">Pocketbook</h1>
+        ) : null}
 
         <Button
           className="electron-no-drag"
@@ -60,22 +57,17 @@ export const Sidebar = () => {
 
       <div
         className={cn(
-          "flex flex-col gap-3 overflow-y-auto overflow-x-hidden pl-3 pr-1 pb-3 flex-1",
+          "flex flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto pr-1 pb-3 pl-3",
           isWindows && "scrollbar-hide",
         )}
       >
-        <PocketbookSwitcher
-          currentPocketbook={currentPocketbook}
-          pocketbooks={pocketbooks}
-        />
-
         <section className="flex flex-col gap-px">
           <NavItem
             ghost
-            title="Notes"
-            to={`/${pocketbookId}/notes/`}
+            title="Planner"
+            to={`/${pocketbookId}/updates`}
             colour={currentPocketbook.colour}
-            preview={counts?.noteCount}
+            preview={counts?.updateDayCount}
           />
 
           <NavItem
@@ -88,10 +80,10 @@ export const Sidebar = () => {
 
           <NavItem
             ghost
-            title="History"
-            to={`/${pocketbookId}/updates`}
+            title="Notes"
+            to={`/${pocketbookId}/notes/`}
             colour={currentPocketbook.colour}
-            preview={counts?.updateDayCount}
+            preview={counts?.noteCount}
           />
         </section>
 
@@ -99,7 +91,7 @@ export const Sidebar = () => {
 
         {process.env.NODE_ENV === "development" && (
           <section className="flex flex-col gap-px">
-            <h1 className="font-title text-slate-400 text-sm">Media</h1>
+            <h1 className="font-title text-sm text-slate-400">Media</h1>
 
             <NavItem
               size="sm"
@@ -146,9 +138,9 @@ export const Sidebar = () => {
         <SidebarTagSection
           title={"Tags"}
           colour={currentPocketbook.colour}
-          isEmpty={ungroupedTags.length === 0}
+          isEmpty={tagGroupsData?.ungroupedTags.length === 0}
         >
-          {ungroupedTags.map((tag) => (
+          {tagGroupsData?.ungroupedTags.map((tag) => (
             <NavItem
               colour={tag.colour}
               title={tag.name}
@@ -160,7 +152,7 @@ export const Sidebar = () => {
           ))}
         </SidebarTagSection>
 
-        {tagGroups.map((tagGroup) => (
+        {tagGroupsData?.tagGroups.map((tagGroup) => (
           <SidebarTagSection
             title={tagGroup.title}
             tagGroup={tagGroup}
@@ -182,21 +174,23 @@ export const Sidebar = () => {
         ))}
       </div>
 
-      <div className="py-3 ml-3 mr-1 border-t border-slate-200 bg-slate-50">
+      <div className="mr-1 ml-3 flex items-center justify-between border-t border-slate-200 bg-slate-50 py-3">
+        <PocketbookSwitcher
+          currentPocketbook={currentPocketbook}
+          pocketbooks={pocketbooks}
+        />
+
         <Dialog.Root>
           <Dialog.Trigger asChild>
             <Button
-              iconName="plus"
+              iconName="rowsPlusBottom"
               variant="ghost"
               size="sm"
-              className="w-full"
               colour={currentPocketbook.colour}
-            >
-              Add Tag Group
-            </Button>
+            />
           </Dialog.Trigger>
 
-          <CreateTagGroupModal />
+          <EditTagGroupModal />
         </Dialog.Root>
       </div>
     </aside>

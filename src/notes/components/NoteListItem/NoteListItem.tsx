@@ -1,13 +1,13 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { cn } from "cn";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { TaskProgressCircle } from "src/tasks/components/TaskProgressCircle/TaskProgressCircle";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type NoteListItemProps = {
   note: Note;
@@ -33,13 +33,13 @@ export const NoteListItem = ({
         className: cn(colour.primary.text, colour.primary.background),
       }}
       className={cn(
-        "w-full flex justify-between items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-colors",
+        "flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors",
         isHovered && colour.primary.text,
         isHovered && colour.primary.background,
       )}
     >
       {({ isActive }: { isActive: boolean }) => (
-        <div key={note.id} className="w-full flex flex-col p-0.5">
+        <div key={note.id} className="flex w-full flex-col p-0.5">
           <p className="truncate font-normal">
             {note.title === "" ? "Untitled Note" : note.title}
           </p>
@@ -47,7 +47,7 @@ export const NoteListItem = ({
           <div className="flex items-center">
             <p
               className={cn(
-                "text-xs text-slate-400 pt-0.5 pr-1",
+                "pt-0.5 pr-1 text-xs text-slate-400",
                 (isHovered || isActive) && colour.primary.text,
               )}
             >
@@ -86,7 +86,7 @@ export const NoteListItem = ({
             {note.isBookmarked && (
               <Icon
                 iconName="bookmark"
-                className="fill-red-400 ml-1"
+                className="ml-1 fill-red-400"
                 weight="fill"
                 size="xs"
               />

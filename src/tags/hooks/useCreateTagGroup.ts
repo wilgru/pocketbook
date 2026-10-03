@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "src/Users/hooks/useUser";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
-import { mapTagGroup } from "src/tags/utils/mapTagGroup";
+import { createTagGroupServerFn } from "src/tags/serverFunctions/createTagGroup";
+import { getTagGroupsServerFn } from "../serverFunctions/getTagGroups";
+import type { TagGroup } from "../tags.schema";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { TagGroup } from "src/tags/Tag.type";
 
 type CreateTagGroupProps = {
   createTagGroupData: Omit<
@@ -31,25 +31,22 @@ type UseCreateTagGroupResponse = {
 export const useCreateTagGroup = (): UseCreateTagGroupResponse => {
   const { pocketbookId } = useCurrentPocketbookId();
   const queryClient = useQueryClient();
-  const { user } = useUser();
 
   const mutationFn = async ({
     createTagGroupData,
   }: CreateTagGroupProps): Promise<TagGroup> => {
-    const response = await window.api.createTagGroup({
-      title: createTagGroupData.title,
-      pocketbookId: pocketbookId ?? null,
-      userId: user?.id ?? null,
+    const data = await createTagGroupServerFn({
+      data: {
+        title: createTagGroupData.title,
+        pocketbookId: pocketbookId ?? null,
+      },
     });
-    if (!response.success) throw new Error(response.error);
 
-    return mapTagGroup(response.data);
+    return data;
   };
 
   const onSuccess = () => {
-    queryClient.refetchQueries({
-      queryKey: ["tagGroups.list"],
-    });
+    queryClient.refetchQueries({ queryKey: [getTagGroupsServerFn.url] });
   };
 
   // TODO: consider time caching for better performance
@@ -57,8 +54,6 @@ export const useCreateTagGroup = (): UseCreateTagGroupResponse => {
     mutationKey: ["tags.create"],
     mutationFn,
     onSuccess,
-    // staleTime: 2 * 60 * 1000,
-    // gcTime: 2 * 60 * 1000,
   });
 
   return { createTagGroup: mutateAsync };

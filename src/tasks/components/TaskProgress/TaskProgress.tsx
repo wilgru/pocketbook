@@ -39,7 +39,6 @@ export const TaskProgress = ({
       cancelled={cancelled}
       total={total}
       colour={colour}
-      showInfoPopover={showInfoPopover}
     />
   );
 };

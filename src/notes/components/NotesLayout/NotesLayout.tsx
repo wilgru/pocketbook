@@ -5,17 +5,20 @@ import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { LinkPill } from "src/common/components/LinkPill/LinkPill";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { TwoPaneLayout } from "src/common/components/TwoPaneLayout/TwoPaneLayout";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import NoteEditor from "src/notes/components/NoteEditor/NoteEditor";
 import { NoteEditorModal } from "src/notes/components/NoteEditorModal/NoteEditorModal";
 import { NoteTableSection } from "src/notes/components/NoteTableSection/NoteTableSection";
 import { groupNotes } from "src/notes/utils/groupNotes";
 import { isNoteContentEmpty } from "src/notes/utils/isNoteContentEmpty";
-import { useGetTagGroups } from "src/tags/hooks/useGetTagGroups";
+import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
+import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 import { NoteListItem } from "../NoteListItem/NoteListItem";
 import { StickyNoteListItem } from "../NoteListItem/StickyNoteListItem";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note, NotesGroup } from "src/notes/Note.type";
-import type { TagGroup, TagLink } from "src/tags/Tag.type";
+import type { Link } from "src/common/types/Link.type";
+import type { Note, NotesGroup } from "src/notes/notes.schema";
+import type { TagGroup } from "src/tags/tags.schema";
 
 type StickyNotesGridProps = {
   notes: Note[];
@@ -34,7 +37,7 @@ const StickyNotesGrid = ({ notes, colour }: StickyNotesGridProps) => {
   }
 
   return (
-    <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-3">
+    <div className="grid w-full grid-cols-1 gap-4 pb-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {stickyNotes.map((note) => (
         <StickyNoteListItem key={note.id} note={note} colour={colour} />
       ))}
@@ -49,7 +52,7 @@ type NotesLayoutProps = {
   notes: Note[];
   selectedNote: Note | null;
   description: string | null;
-  links?: TagLink[];
+  links?: Link[];
   prefillNewNoteData?: Partial<Note>;
   groupNotesBy?: "created" | "tag" | "tagGroup";
   groupByTagGroupId?: string | null;
@@ -71,7 +74,11 @@ export const NotesLayout = ({
   groupSortDirection = "desc",
   onCreateNote,
 }: NotesLayoutProps) => {
-  const { tagGroups } = useGetTagGroups();
+  const { pocketbookId } = useCurrentPocketbookId();
+
+  const { data: tagGroupsData } = useServerQuery(getTagGroupsServerFn, {
+    pocketbookId,
+  });
 
   const effectiveNoteGroups = useMemo<NotesGroup[]>(() => {
     if (!notes || notes.length === 0) {
@@ -89,7 +96,9 @@ export const NotesLayout = ({
     }
 
     if (groupNotesBy === "tagGroup") {
-      const tagGroup = tagGroups.find((tg) => tg.id === groupByTagGroupId);
+      const tagGroup = tagGroupsData?.tagGroups.find(
+        (tagGroup) => tagGroup.id === groupByTagGroupId,
+      );
 
       return groupNotes(
         notes,
@@ -111,11 +120,11 @@ export const NotesLayout = ({
   }, [
     notes,
     groupNotesBy,
-    groupByTagGroupId,
     title,
     prefillNewNoteData,
     groupSortDirection,
-    tagGroups,
+    tagGroupsData,
+    groupByTagGroupId,
   ]);
 
   // TODO: move the different layouts into their own components to reduce complexity and handle layout specific logic like this in their own components
@@ -128,8 +137,12 @@ export const NotesLayout = ({
       ),
     );
 
-    return tagGroups.filter((tagGroup) => tagGroupIds.has(tagGroup.id));
-  }, [notes, tagGroups]);
+    return tagGroupsData
+      ? tagGroupsData?.tagGroups.filter((tagGroup) =>
+          tagGroupIds.has(tagGroup.id),
+        )
+      : [];
+  }, [notes, tagGroupsData]);
   const showTaskColumn = useMemo(
     () => notes.some((note) => note.tasks.length > 0),
     [notes],
@@ -145,7 +158,7 @@ export const NotesLayout = ({
         <TwoPaneLayout
           sidebarTopContent={
             (description || (links && links.length > 0)) && (
-              <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
+              <div className="flex flex-col gap-2 rounded-xl bg-slate-50 p-4">
                 {description && (
                   <p className="text-sm text-slate-500">{description}</p>
                 )}
@@ -191,8 +204,8 @@ export const NotesLayout = ({
             </>
           }
           content={
-            <div className="relative flex-1 min-h-0">
-              <section className="h-full min-h-0 overflow-y-scroll flex justify-center px-8 pt-8">
+            <div className="relative min-h-0 flex-1">
+              <section className="flex h-full min-h-0 justify-center overflow-y-scroll px-8 pt-8">
                 {selectedNote ? (
                   <NoteEditor
                     key={selectedNote.id}
@@ -200,8 +213,8 @@ export const NotesLayout = ({
                     colour={colour}
                   />
                 ) : (
-                  <div className="h-full w-full flex flex-col justify-center items-center text-center">
-                    <h1 className="text-gray-400 text-lg">No note selected</h1>
+                  <div className="flex h-full w-full flex-col items-center justify-center text-center">
+                    <h1 className="text-lg text-gray-400">No note selected</h1>
                   </div>
                 )}
               </section>
@@ -219,7 +232,7 @@ export const NotesLayout = ({
                   <p className="text-sm text-slate-500">{description}</p>
                 )}
 
-                <div className="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
+                <div className="flex flex-col gap-2 rounded-xl bg-slate-50 p-4">
                   {links &&
                     links.map((link, index) => (
                       <LinkPill key={index} link={link} colour={colour} />

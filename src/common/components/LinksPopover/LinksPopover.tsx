@@ -66,7 +66,7 @@ export const LinksPopover = ({
       trigger={
         <Button colour={colour} variant="ghost" size="xs" iconName="link" />
       }
-      className="p-3 w-90"
+      className="w-90 p-3"
     >
       <LinkMultiInput compact links={draftLinks} onChange={onChangeLink} />
     </ControlPopover>

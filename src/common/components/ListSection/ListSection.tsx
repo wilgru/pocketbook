@@ -7,9 +7,9 @@ type ListSectionProps = {
 
 export const ListSection = ({ title, children }: ListSectionProps) => {
   return (
-    <section className="flex flex-col gap-0.5 items-start">
+    <section className="flex flex-col items-start gap-0.5">
       {title && (
-        <h3 className="text-slate-500 text-xs w-full tracking-wider font-medium px-2 pb-1 pt-2 border-b border-slate-200">
+        <h3 className="w-full border-b border-slate-200 px-2 pt-2 pb-1 text-xs font-medium tracking-wider text-slate-500">
           {title}
         </h3>
       )}

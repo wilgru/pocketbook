@@ -1,6 +1,6 @@
-import type { Comment } from "src/comments/Comment.type";
-import type { Note } from "src/notes/Note.type";
-import type { Task } from "src/tasks/Task.type";
+import type { Comment } from "src/comments/comments.schema";
+import type { Note } from "src/notes/notes.schema";
+import type { Task } from "src/tasks/tasks.schema";
 import type { UpdateGroup, Update } from "src/updates/Update.type";
 
 export const groupUpdates = (

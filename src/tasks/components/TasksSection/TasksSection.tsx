@@ -1,14 +1,14 @@
 import { Link } from "@tanstack/react-router";
+import { cn } from "cn";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
-import { cn } from "src/common/utils/cn";
 import { useCurrentPocketbookId } from "src/pocketbooks/hooks/useCurrentPocketbookId";
 import { TaskEditor } from "src/tasks/components/TaskEditor/TaskEditor";
 import { useCreateTask } from "src/tasks/hooks/useCreateTask";
 import { TaskProgressBar } from "../TaskProgressBar/TaskProgressBar";
 import type { Colour } from "src/colours/Colour.type";
-import type { TasksGroup } from "src/tasks/Task.type";
+import type { TasksGroup } from "src/tasks/tasks.schema";
 
 type TasksSectionProps = {
   taskGroup: TasksGroup;
@@ -50,7 +50,9 @@ export const TasksSection = ({
     async (insertAfterSortOrder?: number) => {
       const createdTask = await createTask({
         createTaskData: {
+          noteId: note?.id ?? null,
           note: note ?? null,
+          pocketbookId,
           title: "",
           isImportant: false,
           link: null,
@@ -68,7 +70,7 @@ export const TasksSection = ({
         setNewTaskFocusId(createdTask.id);
       }
     },
-    [createTask, note],
+    [createTask, note, pocketbookId],
   );
 
   // Create a new no-note task whenever the toolbar plus button fires.
@@ -90,10 +92,10 @@ export const TasksSection = ({
       id={note?.id ?? "no-note"}
       className={cn("px-4 pt-4 pb-2", !note && "rounded-md bg-gray-50")}
     >
-      <div className="flex flex-col mb-1 border-b border-slate-200">
+      <div className="mb-1 flex flex-col border-b border-slate-200">
         <h2
           className={cn(
-            "font-title text-3xl pl-0.5",
+            "pl-0.5 font-title text-3xl",
             !note && "text-slate-500",
           )}
         >

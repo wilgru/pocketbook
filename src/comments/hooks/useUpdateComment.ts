@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { mapComment } from "src/comments/utils/mapComment";
-import { syncCommentLists } from "src/comments/utils/syncCommentLists";
+import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
+import { updateCommentServerFn } from "src/comments/serverFunctions/updateComment";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
-import type { Comment } from "src/comments/Comment.type";
+import type { Comment } from "src/comments/comments.schema";
 
 type UpdateCommentProps = {
   commentId: string;
-  commentData: Partial<Omit<Comment, "id" | "created" | "updated">>;
+  commentData: Partial<
+    Omit<Comment, "id" | "created" | "updated" | "pocketbookId">
+  >;
 };
 
 type UseUpdateCommentResponse = {
@@ -25,32 +27,26 @@ export const useUpdateComment = (): UseUpdateCommentResponse => {
     commentId,
     commentData,
   }: UpdateCommentProps): Promise<Comment | undefined> => {
-    const response = await window.api.updateComment({
-      commentId,
-      content: commentData.content ?? null,
-      tint: commentData.tint ?? null,
-      isWaypoint: commentData.isWaypoint ?? false,
-      noteIds: commentData.notes?.map((n) => n.id) ?? [],
-    });
-    if (!response.success) throw new Error(response.error);
-
-    const updatedComment = mapComment(response.data, {
-      notes: commentData.notes ?? [],
+    const data = await updateCommentServerFn({
+      data: {
+        commentId,
+        content: commentData.content ?? null,
+        colour: commentData.colour ?? null,
+        isWaypoint: commentData.isWaypoint ?? false,
+        noteIds: commentData.notes?.map((n) => n.id) ?? [],
+      },
     });
 
-    syncCommentLists(queryClient, updatedComment, {
-      notes: commentData.notes ?? [],
-    });
-
-    return updatedComment;
+    return data;
   };
 
-  const onSuccess = () => {
-    void queryClient.invalidateQueries({
-      queryKey: ["comments.list"],
-    });
+  const onSuccess = (data: Comment | undefined) => {
+    if (!data) return;
+
+    queryClient.refetchQueries({ queryKey: [getCommentsServerFn.url] });
   };
 
+  // TODO: consider time caching for better performance
   const { mutateAsync } = useMutation({
     mutationKey: ["comments.update"],
     mutationFn,

@@ -1,4 +1,4 @@
-import { cn } from "src/common/utils/cn";
+import { cn } from "cn";
 import type { Colour } from "src/colours/Colour.type";
 
 type ColourButtonProps = {
@@ -16,7 +16,7 @@ export const ColourPickerColourButton = ({
     <button
       onClick={() => onClick(colour)}
       className={cn(
-        "flex justify-center items-center h-6 w-6 rounded-full",
+        "flex h-6 w-6 items-center justify-center rounded-full",
         colour.background,
       )}
     >

@@ -1,13 +1,13 @@
 import { Bookmark, ChatCenteredText } from "@phosphor-icons/react";
 import { Link, useLocation } from "@tanstack/react-router";
+import { cn } from "cn";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
-import { cn } from "src/common/utils/cn";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { TagPill } from "../../../tags/components/TagPill/TagPill";
 import type { Colour } from "src/colours/Colour.type";
-import type { Note } from "src/notes/Note.type";
+import type { Note } from "src/notes/notes.schema";
 
 type StickyNoteListItemProps = {
   note: Note;
@@ -41,7 +41,7 @@ export const StickyNoteListItem = ({
       onMouseOver={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ "--sticky-rotate": `${rotation}deg` } as React.CSSProperties}
-      className="w-full my-1 text-sm transition-colors transform-[rotate(var(--sticky-rotate,0deg))] motion-reduce:transform-none"
+      className="my-1 w-full transform-[rotate(var(--sticky-rotate,0deg))] text-sm transition-colors motion-reduce:transform-none"
     >
       {({ isActive }: { isActive: boolean }) => {
         const stickyMetaColourClass =
@@ -50,19 +50,19 @@ export const StickyNoteListItem = ({
         return (
           <div
             className={cn(
-              "flex flex-col gap-2 px-3 py-2 rounded-xs shadow-sm",
+              "flex flex-col gap-2 rounded-xs px-3 py-2 shadow-sm",
               isActive || isHovered
                 ? cn(colour.primary.text, colour.primary.background)
                 : "bg-yellow-200",
             )}
           >
-            <div className="max-h-28 overflow-hidden pointer-events-none">
+            <div className="pointer-events-none max-h-28 overflow-hidden">
               <RichTextEditor readOnly size="sm" value={note.content} />
             </div>
 
             <div className="flex items-center">
               {!hideDate && (
-                <p className={cn("text-xs pt-0.5 pr-1", stickyMetaColourClass)}>
+                <p className={cn("pt-0.5 pr-1 text-xs", stickyMetaColourClass)}>
                   {getRelativeDateTitle(note.created, false)}
                 </p>
               )}
@@ -86,7 +86,7 @@ export const StickyNoteListItem = ({
 
               {note.isBookmarked && (
                 <Bookmark
-                  className="fill-red-400 my-1"
+                  className="my-1 fill-red-400"
                   weight="fill"
                   size={14}
                 />
@@ -94,7 +94,7 @@ export const StickyNoteListItem = ({
 
               {note.commentCount > 0 && (
                 <div
-                  className="flex items-center gap-1 text-xs my-1"
+                  className="my-1 flex items-center gap-1 text-xs"
                   style={{ color: "inherit" }}
                 >
                   <ChatCenteredText size={14} />

@@ -1,11 +1,11 @@
 import { Close } from "@radix-ui/react-dialog";
+import { cn } from "cn";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { Dialog } from "src/common/components/Dialog/Dialog";
-import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
-import type { Task } from "src/tasks/Task.type";
+import type { Task } from "src/tasks/tasks.schema";
 
 type CompletedTasksModalProps = {
   tasks: Task[];
@@ -19,7 +19,7 @@ export const CompletedTasksModal = ({
   return (
     <Dialog
       title="Done"
-      className="w-200 h-150"
+      className="h-150 w-200"
       bodyScrollable
       footer={
         <div className="flex justify-end">
@@ -33,7 +33,7 @@ export const CompletedTasksModal = ({
     >
       <div className="flex flex-col gap-2 p-3">
         {tasks.length === 0 && (
-          <p className="text-slate-400 text-sm py-2">
+          <p className="py-2 text-sm text-slate-400">
             No tasks completed or cancelled.
           </p>
         )}
@@ -60,8 +60,8 @@ export const CompletedTasksModal = ({
               <div className="flex flex-col">
                 <span
                   className={cn(
-                    "text-md text-slate-600 leading-snug",
-                    isCancelled && "line-through text-slate-400",
+                    "text-md leading-snug text-slate-600",
+                    isCancelled && "text-slate-400 line-through",
                   )}
                 >
                   {task.title || "No Title"}

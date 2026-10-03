@@ -12,31 +12,29 @@ import {
   TextStrikethrough,
   TextUnderline,
 } from "@phosphor-icons/react";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import { cn } from "cn";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { getColour } from "src/colours/utils/getColour";
 import { Button } from "src/common/components/Button/Button";
 import { ControlPopover } from "src/common/components/ControlPopover/ControlPopover";
+import { Input } from "src/common/components/Input/Input";
 import { Toggle } from "src/common/components/Toggle/Toggle";
-import { cn } from "src/common/utils/cn";
 import { executeLexicalToolbarAction } from "src/common/utils/lexicalToolbarCommands";
 import { NoteSelect } from "src/notes/components/NoteSelect/NoteSelect";
-import { FormattingToolbarButton } from "src/notes/components/NoteToolbar/NoteToolbarButton";
 import type { BaseSelection, LexicalEditor } from "lexical";
 import type { Colour } from "src/colours/Colour.type";
-import type { Comment } from "src/comments/Comment.type";
+import type { Comment } from "src/comments/comments.schema";
 import type { LexicalToolbarFormatting } from "src/common/utils/lexicalFormatting";
 
 type CommentToolbarProps = {
   editorContext: LexicalEditor | null;
   toolbarFormatting: LexicalToolbarFormatting | undefined;
   colour: Colour;
-  comment: Partial<Comment>;
-  onCommentChange: (fields: Partial<Comment>) => void;
-  onDelete: () => void;
-  onSave: () => void;
+  comment: Pick<Comment, "notes" | "isWaypoint" | "colour">;
+  onCommentChange: (
+    fields: Partial<Pick<Comment, "notes" | "isWaypoint" | "colour">>,
+  ) => void;
 };
 
 const TINT_OPTIONS = [
@@ -46,22 +44,22 @@ const TINT_OPTIONS = [
   colours.blue,
 ] as const;
 
+// TODO: merge the shared part of this with the note editor toolbar and move that part into a general toolbar component
 export const CommentToolbar = ({
   editorContext,
   toolbarFormatting,
   colour,
   comment,
   onCommentChange,
-  onDelete,
-  onSave,
 }: CommentToolbarProps) => {
   const [linkUrl, setLinkUrl] = useState("");
   const linkInputRef = useRef<HTMLInputElement | null>(null);
   const savedSelectionRef = useRef<BaseSelection | null>(null);
+
   const selectedNotes = comment.notes ?? [];
   const isWaypoint = comment.isWaypoint ?? false;
-  const tint = comment.tint ?? null;
-  const waypointColour = tint ? getColour(tint) : colours.grey;
+  const tint = comment.colour ?? null;
+  const waypointColour = tint ?? colours.grey;
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -69,6 +67,16 @@ export const CommentToolbar = ({
       linkInputRef.current?.select();
     });
   }, []);
+
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement | null;
+
+    if (target?.closest("input, textarea, select, [contenteditable='true']")) {
+      return;
+    }
+
+    event.preventDefault();
+  };
 
   const saveSelectionSnapshot = () => {
     editorContext?.getEditorState().read(() => {
@@ -109,219 +117,255 @@ export const CommentToolbar = ({
     handleLinkPopoverOpenChange(false);
   };
 
+  const handleRemoveNote = (noteId: string) => {
+    const newNotes = selectedNotes.filter((note) => note.id !== noteId);
+    onCommentChange({
+      ...comment,
+      notes: newNotes,
+    });
+  };
+
   return (
     <div
       className="flex flex-row flex-wrap items-center gap-1.5 border-t border-slate-200 pt-2"
-      onMouseDown={(event) => {
-        const target = event.target as HTMLElement | null;
-
-        if (
-          !target?.closest("input, textarea, select, [contenteditable='true']")
-        ) {
-          event.preventDefault();
-        }
-      }}
+      onMouseDown={handleMouseDown}
     >
-      <ToggleGroup.Root
-        className="flex flex-row flex-wrap gap-1.5 pr-1 border-r-2 border-slate-100"
-        type="multiple"
-        value={[
-          ...(toolbarFormatting?.bold ? ["bold"] : []),
-          ...(toolbarFormatting?.italic ? ["italic"] : []),
-          ...(toolbarFormatting?.underline ? ["underline"] : []),
-          ...(toolbarFormatting?.strike ? ["strike"] : []),
-          ...(toolbarFormatting?.code ? ["code"] : []),
-          ...(toolbarFormatting?.ordered ? ["ordered"] : []),
-          ...(toolbarFormatting?.bullet ? ["bullet"] : []),
-          ...(toolbarFormatting?.blockquote ? ["blockquote"] : []),
-          ...(toolbarFormatting?.codeBlock ? ["code-block"] : []),
-          ...(toolbarFormatting?.link ? ["link"] : []),
-        ]}
-        aria-label="Text formatting"
-      >
-        <div className="flex flex-row gap-1 pr-1 border-r-2 border-slate-100">
-          <FormattingToolbarButton
-            value="bold"
-            colour={colour}
-            onClick={() => executeLexicalToolbarAction(editorContext, "bold")}
-          >
-            <TextB size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
-            value="italic"
-            colour={colour}
-            onClick={() => executeLexicalToolbarAction(editorContext, "italic")}
-          >
-            <TextItalic size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
-            value="underline"
-            colour={colour}
-            onClick={() =>
-              executeLexicalToolbarAction(editorContext, "underline")
-            }
-          >
-            <TextUnderline size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
-            value="strike"
-            colour={colour}
-            onClick={() => executeLexicalToolbarAction(editorContext, "strike")}
-          >
-            <TextStrikethrough size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
-            value="code"
-            colour={colour}
-            onClick={() => executeLexicalToolbarAction(editorContext, "code")}
-          >
-            <Code size={16} weight="bold" />
-          </FormattingToolbarButton>
-        </div>
-        <div className="flex flex-row gap-1 pr-1 border-r-2 border-slate-100">
-          <FormattingToolbarButton
-            value="ordered"
-            colour={colour}
-            onClick={() =>
-              executeLexicalToolbarAction(editorContext, "ordered")
-            }
-          >
-            <ListNumbers size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
-            value="bullet"
-            colour={colour}
-            onClick={() => executeLexicalToolbarAction(editorContext, "bullet")}
-          >
-            <ListBullets size={16} weight="bold" />
-          </FormattingToolbarButton>
-        </div>
-        <div className="flex flex-row gap-1">
-          <ControlPopover
-            onOpenChange={handleLinkPopoverOpenChange}
-            onOpenAutoFocus={(event) => event.preventDefault()}
-            trigger={
-              <span onMouseDownCapture={saveSelectionSnapshot}>
-                <FormattingToolbarButton value="link" colour={colour}>
-                  <LinkSimple size={16} weight="bold" />
-                </FormattingToolbarButton>
-              </span>
-            }
-            className="p-3 w-90"
-          >
-            <div
-              className="flex items-center gap-1"
-              onMouseDown={(event) => event.stopPropagation()}
-            >
-              <input
-                ref={linkInputRef}
-                type="url"
-                value={linkUrl}
-                onChange={(event) => setLinkUrl(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") handleLinkSave();
-                  if (event.key === "Escape")
-                    handleLinkPopoverOpenChange(false);
-                }}
-                placeholder="https://example.com"
-                className="flex-1 min-w-0 text-sm px-2 py-1 rounded-md border border-slate-300 placeholder:text-slate-400 focus:outline-hidden focus:border-slate-400"
-              />
-              <button
-                type="button"
-                className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
-                onClick={handleLinkSave}
-                aria-label="Save link"
-              >
-                <Check size={16} weight="bold" />
-              </button>
-              {toolbarFormatting?.link && (
-                <button
-                  type="button"
-                  className="rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 transition-colors"
-                  onClick={handleLinkRemove}
-                  aria-label="Remove link"
-                >
-                  <LinkBreak size={16} weight="bold" />
-                </button>
-              )}
-            </div>
-          </ControlPopover>
-          <FormattingToolbarButton
-            value="blockquote"
-            colour={colour}
-            onClick={() =>
-              executeLexicalToolbarAction(editorContext, "blockquote")
-            }
-          >
-            <Quotes size={16} weight="bold" />
-          </FormattingToolbarButton>
-          <FormattingToolbarButton
-            value="code-block"
-            colour={colour}
-            onClick={() =>
-              executeLexicalToolbarAction(editorContext, "code-block")
-            }
-          >
-            <CodeBlock size={16} weight="bold" />
-          </FormattingToolbarButton>
-        </div>
-      </ToggleGroup.Root>
-
-      <div className="flex flex-row flex-wrap items-center gap-1.5 pr-1 border-r-2 border-slate-100">
-        <NoteSelect
-          selectedNotes={selectedNotes}
+      <div className="flex flex-row gap-1 border-r-2 border-slate-100 pr-1">
+        <Button
+          value="bold"
           colour={colour}
-          onChange={(notes) => onCommentChange({ notes })}
-        />
-        <Toggle
-          isToggled={isWaypoint}
-          onClick={() => onCommentChange({ isWaypoint: !isWaypoint })}
+          variant="ghost"
+          shape="square"
           size="sm"
-          colour={waypointColour}
-          iconName="flagBannerFold"
-        />
+          active={toolbarFormatting?.bold}
+          onClick={() => executeLexicalToolbarAction(editorContext, "bold")}
+        >
+          <TextB size={16} weight="bold" />
+        </Button>
+
+        <Button
+          value="italic"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.italic}
+          onClick={() => executeLexicalToolbarAction(editorContext, "italic")}
+        >
+          <TextItalic size={16} weight="bold" />
+        </Button>
+
+        <Button
+          value="underline"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.underline}
+          onClick={() =>
+            executeLexicalToolbarAction(editorContext, "underline")
+          }
+        >
+          <TextUnderline size={16} weight="bold" />
+        </Button>
+
+        <Button
+          value="strike"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.strike}
+          onClick={() => executeLexicalToolbarAction(editorContext, "strike")}
+        >
+          <TextStrikethrough size={16} weight="bold" />
+        </Button>
+
+        <Button
+          value="code"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.code}
+          onClick={() => executeLexicalToolbarAction(editorContext, "code")}
+        >
+          <Code size={16} weight="bold" />
+        </Button>
+      </div>
+
+      <div className="flex flex-row gap-1 border-r-2 border-slate-100 pr-1">
+        <Button
+          value="ordered"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.ordered}
+          onClick={() => executeLexicalToolbarAction(editorContext, "ordered")}
+        >
+          <ListNumbers size={16} weight="bold" />
+        </Button>
+        <Button
+          value="bullet"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.bullet}
+          onClick={() => executeLexicalToolbarAction(editorContext, "bullet")}
+        >
+          <ListBullets size={16} weight="bold" />
+        </Button>
+      </div>
+
+      <div className="flex flex-row gap-1 border-r-2 border-slate-100 pr-1">
+        <ControlPopover
+          onOpenChange={handleLinkPopoverOpenChange}
+          onOpenAutoFocus={(event) => event.preventDefault()}
+          trigger={
+            <span onMouseDownCapture={saveSelectionSnapshot}>
+              <Button
+                value="link"
+                colour={colour}
+                variant="ghost"
+                shape="square"
+                size="sm"
+                active={toolbarFormatting?.link}
+              >
+                <LinkSimple size={16} weight="bold" />
+              </Button>
+            </span>
+          }
+          className="w-90 p-3"
+        >
+          <div
+            className="flex items-center gap-1"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <Input
+              ref={linkInputRef}
+              type="url"
+              value={linkUrl}
+              onChange={(event) => setLinkUrl(event.target.value)}
+              placeholder="https://example.com"
+            />
+
+            <Button
+              colour={colour}
+              variant="ghost"
+              shape="square"
+              size="sm"
+              onClick={handleLinkSave}
+              aria-label="Save link"
+            >
+              <Check size={16} weight="bold" />
+            </Button>
+
+            {toolbarFormatting?.link && (
+              <Button
+                colour={colour}
+                variant="ghost"
+                shape="square"
+                size="sm"
+                onClick={handleLinkRemove}
+                aria-label="Remove link"
+              >
+                <LinkBreak size={16} weight="bold" />
+              </Button>
+            )}
+          </div>
+        </ControlPopover>
+
+        <Button
+          value="blockquote"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.blockquote}
+          onClick={() =>
+            executeLexicalToolbarAction(editorContext, "blockquote")
+          }
+        >
+          <Quotes size={16} weight="bold" />
+        </Button>
+
+        <Button
+          value="code-block"
+          colour={colour}
+          variant="ghost"
+          shape="square"
+          size="sm"
+          active={toolbarFormatting?.codeBlock}
+          onClick={() =>
+            executeLexicalToolbarAction(editorContext, "code-block")
+          }
+        >
+          <CodeBlock size={16} weight="bold" />
+        </Button>
+      </div>
+
+      {selectedNotes.map((note) => (
+        <button
+          key={note.id}
+          onClick={() => handleRemoveNote(note.id)}
+          className={cn(
+            "flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors",
+            colour.primary.background,
+            colour.primary.text,
+            colour.primary.backgroundHovered,
+          )}
+        >
+          <span className="max-w-30 truncate">
+            {note.title ?? "Untitled Note"}
+          </span>
+          <span className="text-xs leading-none">×</span>
+        </button>
+      ))}
+
+      <NoteSelect
+        selectedNotes={selectedNotes}
+        colour={colour}
+        size="sm"
+        onChange={(notes) => onCommentChange({ notes })}
+      />
+
+      <Toggle
+        isToggled={isWaypoint}
+        onClick={() => onCommentChange({ isWaypoint: !isWaypoint })}
+        size="sm"
+        shape="square"
+        colour={waypointColour}
+        iconName="flagBannerFold"
+      />
+
+      <div className="flex flex-row gap-1 pr-1">
         <button
           type="button"
-          onClick={() => onCommentChange({ tint: null })}
+          onClick={() => onCommentChange({ colour: null })}
           className={cn(
             "h-5 w-5 rounded-full border-2 bg-slate-200",
             tint === null ? "border-slate-500" : "border-transparent",
           )}
           title="No colour"
         />
+
         {TINT_OPTIONS.map((tintOption) => (
           <button
             key={tintOption.name}
             type="button"
-            onClick={() => onCommentChange({ tint: tintOption.name })}
+            onClick={() => onCommentChange({ colour: tintOption })}
             className={cn(
               "h-5 w-5 rounded-full border-2",
               tintOption.background,
-              tint === tintOption.name
+              tint?.name === tintOption.name
                 ? "border-slate-600"
                 : "border-transparent",
             )}
             title={tintOption.name}
           />
         ))}
-      </div>
-
-      <div className="flex flex-row items-center gap-1.5">
-        <Button
-          iconName="trash"
-          size="sm"
-          variant="ghost"
-          colour={colours.red}
-          onClick={onDelete}
-        />
-
-        <Button
-          iconName="check"
-          size="sm"
-          variant="ghost"
-          colour={colour}
-          onClick={onSave}
-        />
       </div>
     </div>
   );

@@ -4,7 +4,4 @@ export default defineConfig({
   dialect: "sqlite",
   schema: "./src/**/*.schema.ts", // Schema files are spread across different feature directories
   out: "./drizzle",
-  dbCredentials: {
-    url: "dev-db/pocketbook.db",
-  },
 });

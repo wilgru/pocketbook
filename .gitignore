@@ -26,6 +26,10 @@ lerna-debug.log*
 # dev DB
 /dev-db
 
+# wrangler — copy wrangler.example.jsonc to wrangler.jsonc and fill in your database_id
+wrangler.jsonc
+.wrangler
+
 # builds
 .vite
 /dist

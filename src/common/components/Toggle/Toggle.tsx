@@ -1,16 +1,17 @@
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 import { cva } from "class-variance-authority";
+import { cn } from "cn";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
-import { cn } from "src/common/utils/cn";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Colour } from "src/colours/Colour.type";
 import type { IconName } from "src/icons/Icon.type";
 
 type ToggleProps = {
   className?: string;
-  children?: string | JSX.Element;
-  size?: "sm" | "md" | "lg";
+  children?: string | React.JSX.Element;
+  size?: "xs" | "sm" | "md" | "lg";
+  shape?: "circle" | "square";
   colour?: Colour;
   isToggled: boolean;
   disabled?: boolean;
@@ -23,7 +24,6 @@ const toggleVariants = cva(
     "flex",
     "items-center",
     "gap-2",
-    "rounded-full",
     "text-sm",
     "transition-colors",
     "data-[state=off]:text-slate-500",
@@ -34,13 +34,19 @@ const toggleVariants = cva(
   ],
   {
     variants: {
+      shape: {
+        circle: "rounded-full",
+        square: "rounded-md",
+      },
       size: {
+        xs: "p-0.5 text-xs font-normal",
         sm: "p-1 text-xs font-normal",
         md: "p-2 text-sm font-medium",
-        lg: "p-6 text-sm",
+        lg: "p-3 text-sm",
       },
     },
     defaultVariants: {
+      shape: "circle",
       size: "md",
     },
   },
@@ -50,6 +56,7 @@ export const Toggle = ({
   children,
   className,
   size = "md",
+  shape = "circle",
   colour = colours.orange,
   disabled = false,
   onClick,
@@ -61,7 +68,7 @@ export const Toggle = ({
   return (
     <TogglePrimitive.Root
       className={cn(
-        toggleVariants({ size }),
+        toggleVariants({ shape, size }),
         `data-[state=on]:${colour.text}`,
         colour.secondary.backgroundHovered,
         className,

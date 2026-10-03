@@ -1,7 +1,7 @@
 import type { Dayjs } from "dayjs";
-import type { Comment } from "src/comments/Comment.type";
-import type { Note } from "src/notes/Note.type";
-import type { Task } from "src/tasks/Task.type";
+import type { Comment } from "src/comments/comments.schema";
+import type { Note } from "src/notes/notes.schema";
+import type { Task } from "src/tasks/tasks.schema";
 
 interface CommentUpdate {
   id: string;
