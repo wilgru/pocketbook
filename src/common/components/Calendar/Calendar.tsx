@@ -207,7 +207,10 @@ export const Calendar = ({
                       <span
                         key={`${dayKey}-${dotClassName}-${dotIndex}`}
                         role="presentation"
-                        className={cn("h-1 w-1 rounded-full", dotClassName)}
+                        className={cn(
+                          "h-1 w-1 rounded-full",
+                          isSelected ? "bg-white" : dotClassName,
+                        )}
                       />
                     ))}
                 </span>

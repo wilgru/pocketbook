@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
 import { Calendar } from "src/common/components/Calendar/Calendar";
@@ -24,6 +24,9 @@ type UpdatesLayoutProps = {
   tasks: Task[];
   comments: Comment[];
   colour?: Colour;
+  view?: "daily" | "history";
+  selectedDate: Dayjs;
+  onSelectDate: (date: Dayjs) => void;
   pendingNew?: boolean;
   onCancelNew?: () => void;
   onCreateNew?: () => void;
@@ -39,6 +42,9 @@ export const UpdatesLayout = ({
   tasks,
   comments,
   colour = colours.orange,
+  view = "daily",
+  selectedDate,
+  onSelectDate,
   pendingNew = false,
   onCancelNew,
   onCreateNew,
@@ -49,6 +55,33 @@ export const UpdatesLayout = ({
     () => groupUpdates(comments, tasks, notes),
     [comments, tasks, notes],
   );
+
+  const visibleUpdateGroups = useMemo(
+    () =>
+      view === "daily"
+        ? updateGroups.filter((updateGroup) =>
+            updateGroup.date.isSame(selectedDate, "day"),
+          )
+        : updateGroups,
+    [view, updateGroups, selectedDate],
+  );
+
+  const selectedDateKey = selectedDate.format("YYYY-MM-DD");
+  const hasSelectedDateGroup = updateGroups.length > 0;
+
+  useEffect(() => {
+    if (view !== "history") return;
+
+    const targetGroup = updateGroups.find((updateGroup) =>
+      updateGroup.date.isSame(selectedDate, "day"),
+    );
+    if (!targetGroup) return;
+
+    document
+      .getElementById(getRelativeDateTitle(targetGroup.date, false, false))
+      ?.scrollIntoView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, selectedDateKey, hasSelectedDateGroup]);
 
   const tableOfContentsGroups: {
     title: string;
@@ -152,15 +185,17 @@ export const UpdatesLayout = ({
       sidebarTopContent={
         <Calendar
           colour={colour}
-          showSelectedDate={false}
+          selectedDate={selectedDate}
           dayDotIndicators={dayDotIndicators}
-          isDateDisabled={(date) =>
-            !availableDateKeys.has(date.startOf("day").format("YYYY-MM-DD"))
+          isDateDisabled={
+            view === "history"
+              ? (date) =>
+                  !availableDateKeys.has(
+                    date.startOf("day").format("YYYY-MM-DD"),
+                  )
+              : undefined
           }
-          onSelectDate={(date) => {
-            const targetNavigationId = getRelativeDateTitle(date, false, false);
-            navigate({ to: `#${targetNavigationId}` });
-          }}
+          onSelectDate={onSelectDate}
         />
       }
       sidebar={tableOfContentsGroups.map((tableOfContentsGroup) => (
@@ -206,7 +241,7 @@ export const UpdatesLayout = ({
             />
           )}
 
-          {updateGroups.map((updateGroup) => (
+          {visibleUpdateGroups.map((updateGroup) => (
             <UpdatesSection
               key={updateGroup.date.valueOf()}
               colour={colour}
@@ -215,7 +250,7 @@ export const UpdatesLayout = ({
             />
           ))}
 
-          {updateGroups.length === 0 && !pendingNew && (
+          {visibleUpdateGroups.length === 0 && !pendingNew && (
             <EmptyState text="No updates yet" onAdd={onCreateNew} />
           )}
 
