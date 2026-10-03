@@ -1,4 +1,3 @@
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { colours } from "src/colours/colours.constant";
 import { CommentEditor } from "src/comments/components/CommentEditor/CommentEditor";
@@ -8,6 +7,7 @@ import { ListSection } from "src/common/components/ListSection/ListSection";
 import { PaneWithInspectorLayout } from "src/common/components/PaneWithInspectorLayout/PaneWithInspectorLayout";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
+import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
 import { groupUpdates } from "src/updates/utils/groupUpdates";
@@ -49,8 +49,6 @@ export const UpdatesLayout = ({
   onCancelNew,
   onCreateNew,
 }: UpdatesLayoutProps) => {
-  const navigate = useNavigate();
-
   const updateGroups = useMemo(
     () => groupUpdates(comments, tasks, notes),
     [comments, tasks, notes],
@@ -69,26 +67,37 @@ export const UpdatesLayout = ({
   const selectedDateKey = selectedDate.format("YYYY-MM-DD");
   const hasSelectedDateGroup = updateGroups.length > 0;
 
-  useEffect(() => {
-    if (view !== "history") return;
-
+  const scrollToDate = (date: Dayjs) => {
     const targetGroup = updateGroups.find((updateGroup) =>
-      updateGroup.date.isSame(selectedDate, "day"),
+      updateGroup.date.isSame(date, "day"),
     );
     if (!targetGroup) return;
 
     document
       .getElementById(getRelativeDateTitle(targetGroup.date, false, false))
       ?.scrollIntoView();
+  };
+
+  // Handles URL-driven date changes (and initial load) in history view.
+  useEffect(() => {
+    if (view !== "history") return;
+    scrollToDate(selectedDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, selectedDateKey, hasSelectedDateGroup]);
+
+  // Also scroll directly so re-selecting the already-selected date still jumps.
+  const handleSelectDate = (date: Dayjs) => {
+    onSelectDate(date);
+    if (view === "history") scrollToDate(date);
+  };
 
   const tableOfContentsGroups: {
     title: string;
     items: {
       title: string;
-      navigationId: string;
+      date: Dayjs;
       icons: { iconName: IconName; colour: Colour }[];
+      waypointContents: string[];
     }[];
   }[] = useMemo(() => {
     return updateGroups.reduce<
@@ -96,8 +105,9 @@ export const UpdatesLayout = ({
         title: string;
         items: {
           title: string;
-          navigationId: string;
+          date: Dayjs;
           icons: { iconName: IconName; colour: Colour }[];
+          waypointContents: string[];
         }[];
       }[]
     >((acc, updateGroup) => {
@@ -105,7 +115,7 @@ export const UpdatesLayout = ({
 
       const item = {
         title: updateGroup.date.format("D dddd"),
-        navigationId: getRelativeDateTitle(updateGroup.date, false, false),
+        date: updateGroup.date,
         icons: updateGroup.updates.reduce<
           { iconName: IconName; colour: Colour }[]
         >((icons, update) => {
@@ -120,6 +130,11 @@ export const UpdatesLayout = ({
 
           return icons;
         }, []),
+        waypointContents: updateGroup.updates.flatMap((update) =>
+          update.type === "comment" && update.data?.isWaypoint
+            ? [getPlainTextFromLexicalContent(update.data.content)]
+            : [],
+        ),
       };
 
       if (item.icons.length === 0) {
@@ -195,7 +210,7 @@ export const UpdatesLayout = ({
                   )
               : undefined
           }
-          onSelectDate={onSelectDate}
+          onSelectDate={handleSelectDate}
         />
       }
       sidebar={tableOfContentsGroups.map((tableOfContentsGroup) => (
@@ -205,10 +220,24 @@ export const UpdatesLayout = ({
         >
           {tableOfContentsGroup.items.map((tableOfContentsItem) => (
             <TableOfContentsListItem
-              key={tableOfContentsItem.navigationId}
+              key={tableOfContentsItem.date.format("YYYY-MM-DD")}
+              tooltipSide="left"
+              tooltipContent={
+                <div className="flex flex-col divide-y divide-slate-600">
+                  {tableOfContentsItem.waypointContents.map(
+                    (content, index) => (
+                      <p
+                        key={index}
+                        className="py-1 wrap-break-word whitespace-pre-wrap text-white first:pt-0 last:pb-0"
+                      >
+                        {content || "(empty comment)"}
+                      </p>
+                    ),
+                  )}
+                </div>
+              }
               title={tableOfContentsItem.title}
-              navigationId={tableOfContentsItem.navigationId}
-              onJumpTo={(id) => navigate({ to: `#${id}` })}
+              onClick={() => handleSelectDate(tableOfContentsItem.date)}
               colour={colour}
             >
               {tableOfContentsItem.icons.length > 0 && (

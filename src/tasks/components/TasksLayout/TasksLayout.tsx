@@ -70,7 +70,6 @@ export const TasksLayout = ({
               key={effectiveGroup.navigationId}
               title={effectiveGroup.title}
               navigationId={effectiveGroup.navigationId}
-              onJumpTo={() => undefined}
               colour={colour}
             >
               <p className="shrink-0 text-xs text-slate-300 tabular-nums">
