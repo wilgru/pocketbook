@@ -5,7 +5,7 @@ import {
   registerCodeHighlighting,
 } from "@lexical/code-prism";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { CaretDown, Check, Copy } from "@phosphor-icons/react";
+import { CaretDownIcon, CheckIcon, CopyIcon } from "@phosphor-icons/react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {
   $getNodeByKey,
@@ -15,12 +15,14 @@ import {
 } from "lexical";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import {
   Dropdown,
   DropdownRadioGroup,
   DropdownRadioItem,
 } from "src/common/components/Dropdown/Dropdown";
+import type { Colour } from "src/colours/Colour.type";
 
 type CodeBlockInfo = {
   key: NodeKey;
@@ -32,10 +34,12 @@ type CodeBlockInfo = {
 
 const CodeBlockControls = ({
   editor,
+  colour = colours.orange,
   block,
   readOnly,
 }: {
   editor: LexicalEditor;
+  colour?: Colour;
   block: CodeBlockInfo;
   readOnly: boolean;
 }) => {
@@ -76,14 +80,13 @@ const CodeBlockControls = ({
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <Button
-              variant="ghost-strong"
+              variant="ghost"
               shape="square"
               size="xs"
-              className="code-block-control-button"
               ariaLabel="Select code language"
             >
               {getLanguageFriendlyName(language)}
-              <CaretDown size={12} />
+              <CaretDownIcon size={12} />
             </Button>
           </DropdownMenu.Trigger>
           <Dropdown
@@ -96,7 +99,7 @@ const CodeBlockControls = ({
               {getCodeLanguageOptions()
                 .filter(([value]) => value !== "clike")
                 .map(([value, label]) => (
-                  <DropdownRadioItem key={value} value={value}>
+                  <DropdownRadioItem colour={colour} key={value} value={value}>
                     {label}
                   </DropdownRadioItem>
                 ))}
@@ -105,14 +108,13 @@ const CodeBlockControls = ({
         </DropdownMenu.Root>
       )}
       <Button
-        variant="ghost-strong"
+        variant="ghost"
         shape="square"
         size="xs"
-        className="code-block-control-button"
         ariaLabel={copied ? "Code copied" : "Copy code"}
         onClick={copyCode}
       >
-        {copied ? <Check size={14} /> : <Copy size={14} />}
+        {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
       </Button>
     </div>,
     document.body,
