@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import { EditTagGroupModal } from "src/tags/components/EditTagGroupModal/EditTagGroupModal";
@@ -22,16 +22,14 @@ export const SidebarTagSection = ({
   children: React.ReactNode;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
   const storageKey = `sidebarTagGroupExpanded:${tagGroup?.id ?? "default"}`;
-
-  useEffect(() => {
+  const [isExpanded, setIsExpanded] = useState(() => {
     try {
-      setIsExpanded(localStorage.getItem(storageKey) !== "false");
+      return localStorage.getItem(storageKey) !== "false";
     } catch {
-      // localStorage unavailable
+      return true;
     }
-  }, [storageKey]);
+  });
 
   const toggleExpanded = () => {
     const next = !isExpanded;
