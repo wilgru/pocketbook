@@ -15,8 +15,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LayoutPocketbookIdBookmarkedRouteImport } from './routes/_layout.$pocketbookId.bookmarked'
 import { Route as LayoutPocketbookIdNotesRouteImport } from './routes/_layout.$pocketbookId.notes'
-import { Route as LayoutPocketbookIdTasksRouteImport } from './routes/_layout.$pocketbookId.tasks'
 import { Route as LayoutPocketbookIdPlannerRouteImport } from './routes/_layout.$pocketbookId.planner'
+import { Route as LayoutPocketbookIdTasksRouteImport } from './routes/_layout.$pocketbookId.tasks'
 import { Route as LayoutPocketbookIdTagsTagIdRouteImport } from './routes/_layout.$pocketbookId.tags.$tagId'
 
 const LayoutRoute = LayoutRouteImport.update({
@@ -49,17 +49,17 @@ const LayoutPocketbookIdNotesRoute = LayoutPocketbookIdNotesRouteImport.update({
   path: '/$pocketbookId/notes',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutPocketbookIdTasksRoute = LayoutPocketbookIdTasksRouteImport.update({
-  id: '/$pocketbookId/tasks',
-  path: '/$pocketbookId/tasks',
-  getParentRoute: () => LayoutRoute,
-} as any)
 const LayoutPocketbookIdPlannerRoute =
   LayoutPocketbookIdPlannerRouteImport.update({
     id: '/$pocketbookId/planner',
     path: '/$pocketbookId/planner',
     getParentRoute: () => LayoutRoute,
   } as any)
+const LayoutPocketbookIdTasksRoute = LayoutPocketbookIdTasksRouteImport.update({
+  id: '/$pocketbookId/tasks',
+  path: '/$pocketbookId/tasks',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutPocketbookIdTagsTagIdRoute =
   LayoutPocketbookIdTagsTagIdRouteImport.update({
     id: '/$pocketbookId/tags/$tagId',
@@ -74,8 +74,8 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
-  '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
   '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
+  '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
   '/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRoutesByTo {
@@ -85,8 +85,8 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
-  '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
   '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
+  '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
   '/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRoutesById {
@@ -97,8 +97,8 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_layout/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/_layout/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
-  '/_layout/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
   '/_layout/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
+  '/_layout/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
   '/_layout/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRouteTypes {
@@ -110,8 +110,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/$pocketbookId/bookmarked'
     | '/$pocketbookId/notes'
-    | '/$pocketbookId/tasks'
     | '/$pocketbookId/planner'
+    | '/$pocketbookId/tasks'
     | '/$pocketbookId/tags/$tagId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,8 +121,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/$pocketbookId/bookmarked'
     | '/$pocketbookId/notes'
-    | '/$pocketbookId/tasks'
     | '/$pocketbookId/planner'
+    | '/$pocketbookId/tasks'
     | '/$pocketbookId/tags/$tagId'
   id:
     | '__root__'
@@ -132,8 +132,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_layout/$pocketbookId/bookmarked'
     | '/_layout/$pocketbookId/notes'
-    | '/_layout/$pocketbookId/tasks'
     | '/_layout/$pocketbookId/planner'
+    | '/_layout/$pocketbookId/tasks'
     | '/_layout/$pocketbookId/tags/$tagId'
   fileRoutesById: FileRoutesById
 }
@@ -188,18 +188,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutPocketbookIdNotesRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/$pocketbookId/tasks': {
-      id: '/_layout/$pocketbookId/tasks'
-      path: '/$pocketbookId/tasks'
-      fullPath: '/$pocketbookId/tasks'
-      preLoaderRoute: typeof LayoutPocketbookIdTasksRouteImport
-      parentRoute: typeof LayoutRoute
-    }
     '/_layout/$pocketbookId/planner': {
       id: '/_layout/$pocketbookId/planner'
       path: '/$pocketbookId/planner'
       fullPath: '/$pocketbookId/planner'
       preLoaderRoute: typeof LayoutPocketbookIdPlannerRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$pocketbookId/tasks': {
+      id: '/_layout/$pocketbookId/tasks'
+      path: '/$pocketbookId/tasks'
+      fullPath: '/$pocketbookId/tasks'
+      preLoaderRoute: typeof LayoutPocketbookIdTasksRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/$pocketbookId/tags/$tagId': {
@@ -215,16 +215,16 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutPocketbookIdBookmarkedRoute: typeof LayoutPocketbookIdBookmarkedRoute
   LayoutPocketbookIdNotesRoute: typeof LayoutPocketbookIdNotesRoute
-  LayoutPocketbookIdTasksRoute: typeof LayoutPocketbookIdTasksRoute
   LayoutPocketbookIdPlannerRoute: typeof LayoutPocketbookIdPlannerRoute
+  LayoutPocketbookIdTasksRoute: typeof LayoutPocketbookIdTasksRoute
   LayoutPocketbookIdTagsTagIdRoute: typeof LayoutPocketbookIdTagsTagIdRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutPocketbookIdBookmarkedRoute: LayoutPocketbookIdBookmarkedRoute,
   LayoutPocketbookIdNotesRoute: LayoutPocketbookIdNotesRoute,
-  LayoutPocketbookIdTasksRoute: LayoutPocketbookIdTasksRoute,
   LayoutPocketbookIdPlannerRoute: LayoutPocketbookIdPlannerRoute,
+  LayoutPocketbookIdTasksRoute: LayoutPocketbookIdTasksRoute,
   LayoutPocketbookIdTagsTagIdRoute: LayoutPocketbookIdTagsTagIdRoute,
 }
 
