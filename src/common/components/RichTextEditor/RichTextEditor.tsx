@@ -329,7 +329,7 @@ export const RichTextEditor = ({
         <TabIndentationPlugin
           $canIndent={(node) => node instanceof ListItemNode}
         />
-        <CodeBlockPlugin readOnly={readOnly} />
+        <CodeBlockPlugin colour={colour} readOnly={readOnly} />
         <LexicalEditorBridge
           value={value}
           fillHeight={fillHeight}

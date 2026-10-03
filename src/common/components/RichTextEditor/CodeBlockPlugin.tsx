@@ -83,6 +83,7 @@ const CodeBlockControls = ({
               variant="ghost"
               shape="square"
               size="xs"
+              colour={colour}
               ariaLabel="Select code language"
             >
               {getLanguageFriendlyName(language)}
@@ -111,6 +112,7 @@ const CodeBlockControls = ({
         variant="ghost"
         shape="square"
         size="xs"
+        colour={colour}
         ariaLabel={copied ? "Code copied" : "Copy code"}
         onClick={copyCode}
       >
@@ -121,7 +123,13 @@ const CodeBlockControls = ({
   );
 };
 
-export const CodeBlockPlugin = ({ readOnly }: { readOnly: boolean }) => {
+export const CodeBlockPlugin = ({
+  colour,
+  readOnly,
+}: {
+  colour?: Colour;
+  readOnly: boolean;
+}) => {
   const [editor] = useLexicalComposerContext();
   const [blocks, setBlocks] = useState<CodeBlockInfo[]>([]);
 
@@ -181,6 +189,7 @@ export const CodeBlockPlugin = ({ readOnly }: { readOnly: boolean }) => {
     <CodeBlockControls
       key={block.key}
       editor={editor}
+      colour={colour}
       block={block}
       readOnly={readOnly}
     />
