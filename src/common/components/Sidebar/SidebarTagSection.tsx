@@ -22,6 +22,24 @@ export const SidebarTagSection = ({
   children: React.ReactNode;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const storageKey = `sidebarTagGroupExpanded:${tagGroup?.id ?? "default"}`;
+  const [isExpanded, setIsExpanded] = useState(() => {
+    try {
+      return localStorage.getItem(storageKey) !== "false";
+    } catch {
+      return true;
+    }
+  });
+
+  const toggleExpanded = () => {
+    const next = !isExpanded;
+    setIsExpanded(next);
+    try {
+      localStorage.setItem(storageKey, String(next));
+    } catch {
+      // localStorage unavailable
+    }
+  };
 
   return (
     <section
@@ -65,11 +83,24 @@ export const SidebarTagSection = ({
 
           <EditTagModal tagGroupId={tagGroup?.id} />
         </Dialog.Root>
+
+        {isHovered && (
+          <Button
+            className="mb-1 ml-auto"
+            variant="ghost-strong"
+            size="xs"
+            iconName={isExpanded ? "caretDown" : "caretRight"}
+            colour={colour}
+            onClick={toggleExpanded}
+          />
+        )}
       </div>
 
-      {children}
+      {isExpanded && children}
 
-      {isEmpty && <p className="pt-0.5 text-xs text-slate-400 italic">Empty</p>}
+      {isExpanded && isEmpty && (
+        <p className="pt-0.5 text-xs text-slate-400 italic">Empty</p>
+      )}
     </section>
   );
 };
