@@ -1,10 +1,9 @@
+import { $isCodeNode, getDefaultCodeLanguage } from "@lexical/code";
 import {
-  $isCodeNode,
   getCodeLanguageOptions,
-  getDefaultCodeLanguage,
   getLanguageFriendlyName,
   registerCodeHighlighting,
-} from "@lexical/code";
+} from "@lexical/code-prism";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { CaretDown, Check, Copy } from "@phosphor-icons/react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";

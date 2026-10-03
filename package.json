@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@lexical/code": "^0.48.0",
+    "@lexical/code-prism": "^0.48.0",
     "@lexical/link": "^0.48.0",
     "@lexical/list": "^0.48.0",
     "@lexical/markdown": "^0.48.0",
