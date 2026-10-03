@@ -78,14 +78,10 @@ button {
 
 .rich-text .editor-code {
   margin-top: 0.7em;
-  padding: 2.25rem 6px 6px;
+  padding: 6px;
   display: block;
   color: #f7f9fb;
   background-color: #222222;
-}
-
-.rich-text .editor-code:first-child {
-  padding-top: 2.25rem;
 }
 
 .code-block-controls {
@@ -105,11 +101,13 @@ button {
   align-items: center;
   gap: 4px;
   color: #cbd5e1;
+  white-space: nowrap;
 }
 
 .code-block-language {
   padding: 0 6px;
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .editor-token-attr,

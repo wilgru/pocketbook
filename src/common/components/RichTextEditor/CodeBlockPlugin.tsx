@@ -94,11 +94,13 @@ const CodeBlockControls = ({
             className="max-h-64 min-w-36 overflow-y-auto"
           >
             <DropdownRadioGroup value={language} onValueChange={setLanguage}>
-              {getCodeLanguageOptions().map(([value, label]) => (
-                <DropdownRadioItem key={value} value={value}>
-                  {label}
-                </DropdownRadioItem>
-              ))}
+              {getCodeLanguageOptions()
+                .filter(([value]) => value !== "clike")
+                .map(([value, label]) => (
+                  <DropdownRadioItem key={value} value={value}>
+                    {label}
+                  </DropdownRadioItem>
+                ))}
             </DropdownRadioGroup>
           </Dropdown>
         </DropdownMenu.Root>
