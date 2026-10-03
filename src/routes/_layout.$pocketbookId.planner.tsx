@@ -85,6 +85,8 @@ function UpdatesComponent() {
                 navigate({
                   to: ".",
                   search: (prev) => ({ ...prev, view: value as PlannerView }),
+                  // Lets history view scroll to the selected date without the router restoring the old position.
+                  resetScroll: false,
                 })
               }
             >
@@ -124,6 +126,8 @@ function UpdatesComponent() {
           navigate({
             to: ".",
             search: (prev) => ({ ...prev, date: newDate.format("YYYY-MM-DD") }),
+            // Otherwise the router restores the old scroll position after render, undoing our jump to the section.
+            resetScroll: false,
           })
         }
         pendingNew={pendingNew}
