@@ -35,8 +35,6 @@ type CommentToolbarProps = {
   onCommentChange: (
     fields: Partial<Pick<Comment, "notes" | "isWaypoint" | "colour">>,
   ) => void;
-  onDelete: () => void;
-  onSave: () => void;
 };
 
 const TINT_OPTIONS = [
@@ -53,8 +51,6 @@ export const CommentToolbar = ({
   colour,
   comment,
   onCommentChange,
-  onDelete,
-  onSave,
 }: CommentToolbarProps) => {
   const [linkUrl, setLinkUrl] = useState("");
   const linkInputRef = useRef<HTMLInputElement | null>(null);
@@ -371,24 +367,6 @@ export const CommentToolbar = ({
           />
         ))}
       </div>
-
-      <Button
-        iconName="trash"
-        size="sm"
-        shape="square"
-        variant="ghost"
-        colour={colours.red}
-        onClick={onDelete}
-      />
-
-      <Button
-        iconName="check"
-        size="sm"
-        shape="square"
-        variant="ghost"
-        colour={colour}
-        onClick={onSave}
-      />
     </div>
   );
 };

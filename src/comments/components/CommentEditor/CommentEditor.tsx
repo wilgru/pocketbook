@@ -7,6 +7,7 @@ import { CommentToolbar } from "src/comments/components/CommentEditor/CommentToo
 import { useCreateComment } from "src/comments/hooks/useCreateComment";
 import { useDeleteComment } from "src/comments/hooks/useDeleteComment";
 import { useUpdateComment } from "src/comments/hooks/useUpdateComment";
+import { Button } from "src/common/components/Button/Button";
 import { RichTextEditor } from "src/common/components/RichTextEditor/RichTextEditor";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { createEmptyLexicalContent } from "src/common/utils/lexicalContent";
@@ -92,6 +93,17 @@ export const CommentEditor = ({
     } else {
       onCancel?.();
     }
+  };
+
+  const onDiscard = () => {
+    if (!comment.id) {
+      onCancel?.();
+      return;
+    }
+
+    form.reset();
+    setSelectedNotes(comment.notes ?? []);
+    setIsEditing(false);
   };
 
   if (!currentPocketbook) {
@@ -207,11 +219,41 @@ export const CommentEditor = ({
                 form.setFieldValue("colour", fields.colour);
               }
             }}
-            onDelete={() => void onDelete()}
-            onSave={() => void form.handleSubmit()}
           />
         )}
       </div>
+
+      {isEditing && (
+        <div className="flex items-center justify-between pt-1">
+          <Button
+            size="sm"
+            colour={colours.red}
+            ariaLabel="Delete comment"
+            onClick={() => void onDelete()}
+          >
+            Delete
+          </Button>
+
+          <div className="flex items-center gap-1">
+            <Button
+              size="sm"
+              variant="ghost"
+              colour={colours.grey}
+              onClick={onDiscard}
+            >
+              Discard
+            </Button>
+            <Button
+              size="sm"
+              colour={colours.green}
+              ariaLabel="Save comment"
+              onClick={() => void form.handleSubmit()}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      )}
     </UpdateTimelineItem>
   );
 };
