@@ -7,6 +7,8 @@ import { EmptyState } from "src/common/components/EmptyState/EmptyState";
 import { ListSection } from "src/common/components/ListSection/ListSection";
 import { PaneWithInspectorLayout } from "src/common/components/PaneWithInspectorLayout/PaneWithInspectorLayout";
 import { TableOfContentsListItem } from "src/common/components/TableOfContentsListItem/TableOfContentsListItem";
+import { Tooltip } from "src/common/components/Tooltip/Tooltip";
+import { getPlainTextFromLexicalContent } from "src/common/utils/lexicalContent";
 import { getRelativeDateTitle } from "src/common/utils/getRelativeDateString";
 import { Icon } from "src/icons/components/Icon/Icon";
 import { UpdatesSection } from "src/updates/components/UpdatesSection/UpdatesSection";
@@ -89,6 +91,7 @@ export const UpdatesLayout = ({
       title: string;
       navigationId: string;
       icons: { iconName: IconName; colour: Colour }[];
+      waypointContents: string[];
     }[];
   }[] = useMemo(() => {
     return updateGroups.reduce<
@@ -98,6 +101,7 @@ export const UpdatesLayout = ({
           title: string;
           navigationId: string;
           icons: { iconName: IconName; colour: Colour }[];
+          waypointContents: string[];
         }[];
       }[]
     >((acc, updateGroup) => {
@@ -120,6 +124,11 @@ export const UpdatesLayout = ({
 
           return icons;
         }, []),
+        waypointContents: updateGroup.updates.flatMap((update) =>
+          update.type === "comment" && update.data?.isWaypoint
+            ? [getPlainTextFromLexicalContent(update.data.content)]
+            : [],
+        ),
       };
 
       if (item.icons.length === 0) {
@@ -204,29 +213,48 @@ export const UpdatesLayout = ({
           key={tableOfContentsGroup.title}
         >
           {tableOfContentsGroup.items.map((tableOfContentsItem) => (
-            <TableOfContentsListItem
+            <Tooltip
               key={tableOfContentsItem.navigationId}
-              title={tableOfContentsItem.title}
-              navigationId={tableOfContentsItem.navigationId}
-              onJumpTo={(id) => navigate({ to: `#${id}` })}
-              colour={colour}
+              content={
+                <div className="flex flex-col divide-y divide-slate-600">
+                  {tableOfContentsItem.waypointContents.map(
+                    (content, index) => (
+                      <p
+                        key={index}
+                        className="py-1 break-words whitespace-pre-wrap first:pt-0 last:pb-0"
+                      >
+                        {content || "(empty comment)"}
+                      </p>
+                    ),
+                  )}
+                </div>
+              }
             >
-              {tableOfContentsItem.icons.length > 0 && (
-                <span
-                  className="flex shrink-0 items-center gap-1"
-                  aria-hidden="true"
+              <div>
+                <TableOfContentsListItem
+                  title={tableOfContentsItem.title}
+                  navigationId={tableOfContentsItem.navigationId}
+                  onJumpTo={(id) => navigate({ to: `#${id}` })}
+                  colour={colour}
                 >
-                  {tableOfContentsItem.icons.map((icon, index) => (
-                    <Icon
-                      key={`${tableOfContentsItem.title}-${icon.iconName}-${index}`}
-                      iconName={icon.iconName}
-                      size="sm"
-                      className={icon.colour.text}
-                    />
-                  ))}
-                </span>
-              )}
-            </TableOfContentsListItem>
+                  {tableOfContentsItem.icons.length > 0 && (
+                    <span
+                      className="flex shrink-0 items-center gap-1"
+                      aria-hidden="true"
+                    >
+                      {tableOfContentsItem.icons.map((icon, index) => (
+                        <Icon
+                          key={`${tableOfContentsItem.title}-${icon.iconName}-${index}`}
+                          iconName={icon.iconName}
+                          size="sm"
+                          className={icon.colour.text}
+                        />
+                      ))}
+                    </span>
+                  )}
+                </TableOfContentsListItem>
+              </div>
+            </Tooltip>
           ))}
         </ListSection>
       ))}
