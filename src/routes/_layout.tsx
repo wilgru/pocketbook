@@ -9,12 +9,17 @@ import { useAtomValue } from "jotai";
 import { isSideBarVisibleAtom } from "src/common/atoms/isSidebarVisibleAtom.ts";
 import { PocketbookSettingsModal } from "src/pocketbooks/components/PocketbookSettingsModal/PocketbookSettingsModal";
 import { useCurrentPocketbook } from "src/pocketbooks/hooks/useCurrentPocketbook";
+import requireClientAuth from "src/credentials/utils/requireClientAuth";
 import { Sidebar } from "../common/components/Sidebar/Sidebar.tsx";
 
-export type PocketbookSettingsModalPage = "general" | "appearance" | "danger";
+export type PocketbookSettingsModalPage =
+  "general" | "appearance" | "credentials" | "danger";
 
 export const Route = createFileRoute("/_layout")({
   component: RouteComponent,
+  beforeLoad: async ({ location }) => {
+    await requireClientAuth(location);
+  },
 });
 
 function RouteComponent() {
@@ -28,6 +33,7 @@ function RouteComponent() {
         search.modalPage === "general" ||
         search.modalPage === "appearance" ||
         search.modalPage === "metrics" ||
+        search.modalPage === "credentials" ||
         search.modalPage === "danger"
           ? (search.modalPage as PocketbookSettingsModalPage)
           : undefined;

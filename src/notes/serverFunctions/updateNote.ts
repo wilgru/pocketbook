@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { EMPTY_LEXICAL_CONTENT } from "src/common/utils/lexicalContent";
@@ -22,6 +23,7 @@ export const updateNoteServerFn = createServerFn({
   method: "POST",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: UpdateNoteInput) => input)
   .handler<Promise<Note>>(async ({ data }) => {
     const db = getDb();

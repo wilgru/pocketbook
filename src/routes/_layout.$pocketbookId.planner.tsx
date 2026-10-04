@@ -2,7 +2,6 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { useState } from "react";
-import requireClientAuth from "src/Users/utils/requireClientAuth";
 import { getCommentsServerFn } from "src/comments/serverFunctions/getComments";
 import { Button } from "src/common/components/Button/Button";
 import {
@@ -21,9 +20,6 @@ type PlannerView = "daily" | "history";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/planner")({
   component: UpdatesComponent,
-  beforeLoad: async ({ location }) => {
-    requireClientAuth(location);
-  },
   validateSearch: (
     search: Record<string, unknown>,
   ): { view: PlannerView; date: string } => {

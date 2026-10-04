@@ -1,7 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import requireClientAuth from "src/Users/utils/requireClientAuth";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
 import {
@@ -27,9 +26,6 @@ import { getTagGroupsServerFn } from "src/tags/serverFunctions/getTagGroups";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/bookmarked")({
   component: RouteComponent,
-  beforeLoad: async ({ location }) => {
-    requireClientAuth(location);
-  },
   validateSearch: (
     search: Record<string, unknown>,
   ): { noteId: string | null } => {

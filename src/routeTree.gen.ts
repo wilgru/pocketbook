@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as CreatePocketbookRouteImport } from './routes/create-pocketbook'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LayoutPocketbookIdBookmarkedRouteImport } from './routes/_layout.$pocketbookId.bookmarked'
 import { Route as LayoutPocketbookIdNotesRouteImport } from './routes/_layout.$pocketbookId.notes'
 import { Route as LayoutPocketbookIdPlannerRouteImport } from './routes/_layout.$pocketbookId.planner'
@@ -31,11 +30,6 @@ const CreatePocketbookRoute = CreatePocketbookRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LayoutPocketbookIdBookmarkedRoute =
@@ -71,7 +65,6 @@ export interface FileRoutesByFullPath {
   '/': typeof LayoutRouteWithChildren
   '/create-pocketbook': typeof CreatePocketbookRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
@@ -82,7 +75,6 @@ export interface FileRoutesByTo {
   '/': typeof LayoutRouteWithChildren
   '/create-pocketbook': typeof CreatePocketbookRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
@@ -94,7 +86,6 @@ export interface FileRoutesById {
   '/_layout': typeof LayoutRouteWithChildren
   '/create-pocketbook': typeof CreatePocketbookRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/_layout/$pocketbookId/bookmarked': typeof LayoutPocketbookIdBookmarkedRoute
   '/_layout/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/_layout/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
@@ -107,7 +98,6 @@ export interface FileRouteTypes {
     | '/'
     | '/create-pocketbook'
     | '/login'
-    | '/signup'
     | '/$pocketbookId/bookmarked'
     | '/$pocketbookId/notes'
     | '/$pocketbookId/planner'
@@ -118,7 +108,6 @@ export interface FileRouteTypes {
     | '/'
     | '/create-pocketbook'
     | '/login'
-    | '/signup'
     | '/$pocketbookId/bookmarked'
     | '/$pocketbookId/notes'
     | '/$pocketbookId/planner'
@@ -129,7 +118,6 @@ export interface FileRouteTypes {
     | '/_layout'
     | '/create-pocketbook'
     | '/login'
-    | '/signup'
     | '/_layout/$pocketbookId/bookmarked'
     | '/_layout/$pocketbookId/notes'
     | '/_layout/$pocketbookId/planner'
@@ -141,7 +129,6 @@ export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   CreatePocketbookRoute: typeof CreatePocketbookRoute
   LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,13 +152,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_layout/$pocketbookId/bookmarked': {
@@ -235,7 +215,6 @@ const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   CreatePocketbookRoute: CreatePocketbookRoute,
   LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

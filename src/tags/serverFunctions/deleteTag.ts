@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { noteTags } from "src/notes/notes.schema";
@@ -7,6 +8,7 @@ import { tags } from "src/tags/tags.schema";
 export type DeleteTagInput = { tagId: string };
 
 export const deleteTagServerFn = createServerFn({ method: "POST" })
+  .middleware([credentialsMiddleware])
   .validator((input: DeleteTagInput) => input)
   .handler(async ({ data }) => {
     const db = getDb();

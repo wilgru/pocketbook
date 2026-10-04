@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { tags } from "src/tags/tags.schema";
@@ -10,6 +11,7 @@ export const getTagServerFn = createServerFn({
   method: "GET",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: GetTagInput) => input)
   .handler<Promise<Tag>>(async ({ data }) => {
     const db = getDb();

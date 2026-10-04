@@ -1,6 +1,11 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
   createRootRoute,
@@ -11,6 +16,11 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useState } from "react";
+import requireClientAuth from "src/credentials/utils/requireClientAuth";
+import {
+  isUnauthorizedError,
+  redirectToLogin,
+} from "src/credentials/utils/unauthorized";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
 import { useNavigateToLastUsedPocketbook } from "src/pocketbooks/hooks/useGetLastUsedPocketbook";
 import { getPocketbooksServerFn } from "src/pocketbooks/serverFunctions/getPocketbooks";
@@ -39,7 +49,13 @@ const NotFoundComponent = () => {
 };
 
 function RootComponent() {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        queryCache: new QueryCache({ onError: handleUnauthorized }),
+        mutationCache: new MutationCache({ onError: handleUnauthorized }),
+      }),
+  );
 
   return (
     <html lang="en">
@@ -79,6 +95,13 @@ function RootComponent() {
   );
 }
 
+// An expired session surfaces as an Unauthorized error from any server function.
+function handleUnauthorized(error: unknown) {
+  if (isUnauthorizedError(error)) {
+    redirectToLogin();
+  }
+}
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -92,6 +115,11 @@ export const Route = createRootRoute({
       { rel: "icon", type: "image/png", href: "/icon.png" },
     ],
   }),
+  beforeLoad: async ({ location }) => {
+    if (location.pathname !== "/login") {
+      await requireClientAuth(location);
+    }
+  },
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });

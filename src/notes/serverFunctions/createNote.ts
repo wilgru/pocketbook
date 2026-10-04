@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import dayjs from "dayjs";
 import { EMPTY_LEXICAL_CONTENT } from "src/common/utils/lexicalContent";
 import { getDb } from "src/db/connection";
@@ -21,6 +22,7 @@ export const createNoteServerFn = createServerFn({
   method: "POST",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: CreateNoteInput) => input)
   .handler<Promise<Note>>(async ({ data }) => {
     const db = getDb();

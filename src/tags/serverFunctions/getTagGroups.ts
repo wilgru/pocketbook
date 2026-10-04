@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { tagGroups } from "src/tags/tags.schema";
@@ -13,6 +14,7 @@ export const getTagGroupsServerFn = createServerFn({
   method: "GET",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: GetTagGroupsInput) => input)
   .handler<Promise<{ tagGroups: TagGroup[]; ungroupedTags: Tag[] }>>(
     async ({ data }) => {

@@ -5,12 +5,16 @@ import { ColourPicker } from "src/colours/components/ColourPicker/ColourPicker";
 import { Button } from "src/common/components/Button/Button";
 import { Input } from "src/common/components/Input/Input";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
+import requireClientAuth from "src/credentials/utils/requireClientAuth";
 import { useCreatePocketbook } from "src/pocketbooks/hooks/useCreatePocketbook";
 import type { Colour } from "src/colours/Colour.type";
 import type { CustomisationIconName } from "src/icons/customisationIcons.constant";
 
 export const Route = createFileRoute("/create-pocketbook")({
   component: RouteComponent,
+  beforeLoad: async ({ location }) => {
+    await requireClientAuth(location);
+  },
 });
 
 type PocketbookToCreate = {

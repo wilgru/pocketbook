@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import dayjs from "dayjs";
 import { eq, inArray } from "drizzle-orm";
 import { commentNotes, comments } from "src/comments/comments.schema";
@@ -21,6 +22,7 @@ export const updateCommentServerFn = createServerFn({
   method: "POST",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: UpdateCommentInput) => input)
   .handler<Promise<Comment>>(async ({ data }) => {
     const db = getDb();

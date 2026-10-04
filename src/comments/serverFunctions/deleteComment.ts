@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import { eq } from "drizzle-orm";
 import { commentNotes, comments } from "src/comments/comments.schema";
 import { getDb } from "src/db/connection";
@@ -9,6 +10,7 @@ export const deleteCommentServerFn = createServerFn({
   method: "POST",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: DeleteCommentInput) => input)
   .handler<Promise<string>>(async ({ data }) => {
     const db = getDb();

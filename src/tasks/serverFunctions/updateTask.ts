@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { getDb } from "src/db/connection";
@@ -29,6 +30,7 @@ export const updateTaskServerFn = createServerFn({
   method: "POST",
   strict: false,
 })
+  .middleware([credentialsMiddleware])
   .validator((input: UpdateTaskInput) => input)
   .handler(async ({ data }): Promise<Task> => {
     const db = getDb();

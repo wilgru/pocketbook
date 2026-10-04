@@ -12,7 +12,6 @@ type CreateTagGroupProps = {
     | "tags"
     | "pocketbookId"
     | "groupBy"
-    | "user"
     | "noteCount"
     | "created"
     | "updated"

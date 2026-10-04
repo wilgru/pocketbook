@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import dayjs from "dayjs";
 import { eq, isNull, count, and } from "drizzle-orm";
 import { getDb } from "src/db/connection";
@@ -30,6 +31,7 @@ export const updatePocketbookServerFn = createServerFn({
   method: "POST",
   strict: false,
 })
+  .middleware([credentialsMiddleware])
   .validator((input: UpdatePocketbookInput) => input)
   .handler<Promise<Pocketbook>>(async ({ data }) => {
     const db = getDb();

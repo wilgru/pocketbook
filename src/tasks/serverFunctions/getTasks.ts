@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import { and, asc, eq, inArray, isNotNull, isNull } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { getNotesServerFn } from "src/notes/serverFunctions/getNotes";
@@ -16,6 +17,7 @@ export const getTasksServerFn = createServerFn({
   method: "GET",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: GetTasksInput) => input)
   .handler<Promise<{ tasks: Task[] }>>(async ({ data }) => {
     const db = getDb();

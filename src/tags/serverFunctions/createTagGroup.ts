@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import dayjs from "dayjs";
 import { getDb } from "src/db/connection";
 import { getTagsServerFn } from "src/tags/serverFunctions/getTags";
@@ -14,6 +15,7 @@ export const createTagGroupServerFn = createServerFn({
   method: "POST",
   strict: false,
 })
+  .middleware([credentialsMiddleware])
   .validator((input: CreateTagGroupInput) => input)
   .handler<Promise<TagGroup>>(async ({ data }) => {
     const db = getDb();

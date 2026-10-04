@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import { isNull, sql } from "drizzle-orm";
 import { getDb } from "src/db/connection";
 import { notes } from "src/notes/notes.schema";
@@ -10,6 +11,7 @@ export const getPocketbooksServerFn = createServerFn({
   method: "GET",
   strict: false,
 })
+  .middleware([credentialsMiddleware])
   .validator((input) => input)
   .handler<Promise<{ pocketbooks: Pocketbook[] }>>(async () => {
     const db = getDb();

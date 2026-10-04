@@ -11,6 +11,9 @@ import {
 import { Input } from "src/common/components/Input/Input";
 import { Label } from "src/common/components/Label/Label";
 import { NavItem } from "src/common/components/NavItem/NavItem";
+import { getOwnerEmailServerFn } from "src/credentials/serverFunctions/getOwnerEmail";
+import { logoutServerFn } from "src/credentials/serverFunctions/logout";
+import { useServerQuery } from "src/common/hooks/useServerQuery";
 import IconPicker from "src/icons/components/IconPicker/IconPicker";
 import { useUpdatePocketbook } from "src/pocketbooks/hooks/useUpdatePocketbook";
 import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
@@ -32,6 +35,13 @@ export const PocketbookSettingsModal = ({
 }: PocketbookSettingsModalProps) => {
   const { updatePocketbook, isUpdatingPocketbook } = useUpdatePocketbook();
 
+  const { data: ownerEmailData } = useServerQuery(getOwnerEmailServerFn, {});
+
+  const onLogout = async () => {
+    await logoutServerFn();
+    window.location.replace("/login");
+  };
+
   const defaultValues: PocketbookSettingsFormValues = {
     title: pocketbook.title,
     icon: pocketbook.icon,
@@ -51,6 +61,7 @@ export const PocketbookSettingsModal = ({
   const pages: DialogPage<PocketbookSettingsModalPage>[] = [
     { page: "general", label: "General" },
     { page: "appearance", label: "Appearance" },
+    { page: "credentials", label: "Credentials" },
     { page: "danger", label: "Danger zone" },
   ];
 
@@ -152,6 +163,37 @@ export const PocketbookSettingsModal = ({
                 <Label title="Paper" />
               </div>
             </>
+          )}
+
+          {currentPage === "credentials" && (
+            <div className="flex flex-col gap-6">
+              <section className="flex flex-col gap-3">
+                <h3 className="text-sm font-semibold">User</h3>
+                <div>
+                  <Label title="Email" />
+                  <p className="text-sm">{ownerEmailData?.email ?? "—"}</p>
+                </div>
+                <div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    colour={colours.red}
+                    iconName="signOut"
+                    onClick={() => void onLogout()}
+                  >
+                    Log out
+                  </Button>
+                </div>
+              </section>
+
+              <section className="flex flex-col gap-3">
+                <h3 className="text-sm font-semibold">API</h3>
+              </section>
+
+              <section className="flex flex-col gap-3">
+                <h3 className="text-sm font-semibold">MCP</h3>
+              </section>
+            </div>
           )}
 
           {currentPage === "danger" && (

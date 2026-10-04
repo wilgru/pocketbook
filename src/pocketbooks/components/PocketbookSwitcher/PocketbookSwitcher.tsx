@@ -10,6 +10,7 @@ import {
   DropdownLabel,
   DropdownSeparator,
 } from "src/common/components/Dropdown/Dropdown";
+import { logoutServerFn } from "src/credentials/serverFunctions/logout";
 import { Icon } from "src/icons/components/Icon/Icon";
 import type { Pocketbook } from "src/pocketbooks/pocketbooks.schema";
 
@@ -50,6 +51,11 @@ export const PocketbookSwitcher = ({
 
     window.history.replaceState({}, "", url.toString());
     window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+
+  const onLogout = async () => {
+    await logoutServerFn();
+    window.location.replace("/login");
   };
 
   return (
@@ -140,13 +146,38 @@ export const PocketbookSwitcher = ({
         </Dropdown>
       </DropdownMenu.Root>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        iconName="gear"
-        colour={currentPocketbook.colour}
-        onClick={onOpenSettingsModal}
-      />
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            iconName="gear"
+            colour={currentPocketbook.colour}
+          />
+        </DropdownMenu.Trigger>
+
+        <Dropdown className="w-48" sideOffset={4} align="start">
+          <DropdownItem
+            colour={currentPocketbook.colour}
+            className="flex items-center gap-2 text-sm"
+            onSelect={onOpenSettingsModal}
+          >
+            <Icon iconName="gear" size="xs" />
+            Pocketbook settings
+          </DropdownItem>
+
+          <DropdownSeparator />
+
+          <DropdownItem
+            colour={colours.red}
+            className="flex items-center gap-2 text-sm text-red-500"
+            onSelect={() => void onLogout()}
+          >
+            <Icon iconName="signOut" size="xs" />
+            Log out
+          </DropdownItem>
+        </Dropdown>
+      </DropdownMenu.Root>
     </div>
   );
 };

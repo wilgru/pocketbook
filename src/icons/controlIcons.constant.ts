@@ -1,5 +1,6 @@
 import {
   GearIcon,
+  SignOutIcon,
   PencilIcon,
   PlusIcon,
   PlusSquareIcon,
@@ -59,6 +60,7 @@ export const controlIcons = [
   { name: "chatCenteredText", component: ChatCenteredTextIcon },
   { name: "x", component: XIcon, fixedWeight: "bold" },
   { name: "gear", component: GearIcon },
+  { name: "signOut", component: SignOutIcon },
   { name: "plus", component: PlusIcon, fixedWeight: "regular" },
   { name: "plusSquare", component: PlusSquareIcon },
   { name: "dotsThree", component: DotsThreeIcon, fixedWeight: "bold" },

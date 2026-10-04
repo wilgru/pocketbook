@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import { and, eq, inArray } from "drizzle-orm";
 import { commentNotes, comments } from "src/comments/comments.schema";
 import { getDb } from "src/db/connection";
@@ -15,6 +16,7 @@ export const getCommentsServerFn = createServerFn({
   method: "GET",
   strict: { output: false },
 })
+  .middleware([credentialsMiddleware])
   .validator((input: GetCommentsInput) => input)
   .handler<Promise<{ comments: Comment[] }>>(async ({ data }) => {
     const db = getDb();

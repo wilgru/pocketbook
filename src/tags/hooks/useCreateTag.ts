@@ -10,13 +10,7 @@ import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 type CreateTagProps = {
   createTagData: Omit<
     Tag,
-    | "id"
-    | "pocketbookId"
-    | "groupBy"
-    | "user"
-    | "noteCount"
-    | "created"
-    | "updated"
+    "id" | "pocketbookId" | "groupBy" | "noteCount" | "created" | "updated"
   >;
 };
 

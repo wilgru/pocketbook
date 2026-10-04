@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { credentialsMiddleware } from "src/credentials/credentialsMiddleware";
 import dayjs from "dayjs";
 import { getDb } from "src/db/connection";
 import { pocketbooks } from "src/pocketbooks/pocketbooks.schema";
@@ -16,6 +17,7 @@ export const createPocketbookServerFn = createServerFn({
   method: "POST",
   strict: false,
 })
+  .middleware([credentialsMiddleware])
   .validator((input: CreatePocketbookInput) => input)
   .handler<Promise<Pocketbook>>(async ({ data }) => {
     const db = getDb();

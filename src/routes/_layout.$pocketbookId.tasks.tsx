@@ -1,7 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import requireClientAuth from "src/Users/utils/requireClientAuth";
 import { Button } from "src/common/components/Button/Button";
 import { Toolbar } from "src/common/components/Toolbar/Toolbar";
 import { useServerQuery } from "src/common/hooks/useServerQuery";
@@ -12,9 +11,6 @@ import { getTasksServerFn } from "src/tasks/serverFunctions/getTasks";
 
 export const Route = createFileRoute("/_layout/$pocketbookId/tasks")({
   component: RouteComponent,
-  beforeLoad: async ({ location }) => {
-    requireClientAuth(location);
-  },
 });
 
 function RouteComponent() {
