@@ -8,6 +8,7 @@ import type { TagGroup } from "src/tags/tags.schema";
 
 export type CreateTagGroupInput = {
   title: string;
+  layout?: TagGroup["layout"];
   pocketbookId: string | null;
 };
 
@@ -27,6 +28,8 @@ export const createTagGroupServerFn = createServerFn({
       .values({
         id,
         title: data.title,
+        layout: data.layout,
+        groupBy: "tag",
         pocketbookId: data.pocketbookId,
         created: now,
         updated: now,

@@ -16,6 +16,7 @@ import { Route as LayoutPocketbookIdBookmarkedRouteImport } from './routes/_layo
 import { Route as LayoutPocketbookIdNotesRouteImport } from './routes/_layout.$pocketbookId.notes'
 import { Route as LayoutPocketbookIdPlannerRouteImport } from './routes/_layout.$pocketbookId.planner'
 import { Route as LayoutPocketbookIdTasksRouteImport } from './routes/_layout.$pocketbookId.tasks'
+import { Route as LayoutPocketbookIdTagGroupsTagGroupIdRouteImport } from './routes/_layout.$pocketbookId.tagGroups.$tagGroupId'
 import { Route as LayoutPocketbookIdTagsTagIdRouteImport } from './routes/_layout.$pocketbookId.tags.$tagId'
 
 const LayoutRoute = LayoutRouteImport.update({
@@ -54,6 +55,12 @@ const LayoutPocketbookIdTasksRoute = LayoutPocketbookIdTasksRouteImport.update({
   path: '/$pocketbookId/tasks',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutPocketbookIdTagGroupsTagGroupIdRoute =
+  LayoutPocketbookIdTagGroupsTagGroupIdRouteImport.update({
+    id: '/$pocketbookId/tagGroups/$tagGroupId',
+    path: '/$pocketbookId/tagGroups/$tagGroupId',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 const LayoutPocketbookIdTagsTagIdRoute =
   LayoutPocketbookIdTagsTagIdRouteImport.update({
     id: '/$pocketbookId/tags/$tagId',
@@ -69,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
   '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
+  '/$pocketbookId/tagGroups/$tagGroupId': typeof LayoutPocketbookIdTagGroupsTagGroupIdRoute
   '/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRoutesByTo {
@@ -79,6 +87,7 @@ export interface FileRoutesByTo {
   '/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
   '/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
+  '/$pocketbookId/tagGroups/$tagGroupId': typeof LayoutPocketbookIdTagGroupsTagGroupIdRoute
   '/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRoutesById {
@@ -90,6 +99,7 @@ export interface FileRoutesById {
   '/_layout/$pocketbookId/notes': typeof LayoutPocketbookIdNotesRoute
   '/_layout/$pocketbookId/planner': typeof LayoutPocketbookIdPlannerRoute
   '/_layout/$pocketbookId/tasks': typeof LayoutPocketbookIdTasksRoute
+  '/_layout/$pocketbookId/tagGroups/$tagGroupId': typeof LayoutPocketbookIdTagGroupsTagGroupIdRoute
   '/_layout/$pocketbookId/tags/$tagId': typeof LayoutPocketbookIdTagsTagIdRoute
 }
 export interface FileRouteTypes {
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/$pocketbookId/notes'
     | '/$pocketbookId/planner'
     | '/$pocketbookId/tasks'
+    | '/$pocketbookId/tagGroups/$tagGroupId'
     | '/$pocketbookId/tags/$tagId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/$pocketbookId/notes'
     | '/$pocketbookId/planner'
     | '/$pocketbookId/tasks'
+    | '/$pocketbookId/tagGroups/$tagGroupId'
     | '/$pocketbookId/tags/$tagId'
   id:
     | '__root__'
@@ -122,6 +134,7 @@ export interface FileRouteTypes {
     | '/_layout/$pocketbookId/notes'
     | '/_layout/$pocketbookId/planner'
     | '/_layout/$pocketbookId/tasks'
+    | '/_layout/$pocketbookId/tagGroups/$tagGroupId'
     | '/_layout/$pocketbookId/tags/$tagId'
   fileRoutesById: FileRoutesById
 }
@@ -182,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutPocketbookIdTasksRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/$pocketbookId/tagGroups/$tagGroupId': {
+      id: '/_layout/$pocketbookId/tagGroups/$tagGroupId'
+      path: '/$pocketbookId/tagGroups/$tagGroupId'
+      fullPath: '/$pocketbookId/tagGroups/$tagGroupId'
+      preLoaderRoute: typeof LayoutPocketbookIdTagGroupsTagGroupIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/$pocketbookId/tags/$tagId': {
       id: '/_layout/$pocketbookId/tags/$tagId'
       path: '/$pocketbookId/tags/$tagId'
@@ -197,6 +217,7 @@ interface LayoutRouteChildren {
   LayoutPocketbookIdNotesRoute: typeof LayoutPocketbookIdNotesRoute
   LayoutPocketbookIdPlannerRoute: typeof LayoutPocketbookIdPlannerRoute
   LayoutPocketbookIdTasksRoute: typeof LayoutPocketbookIdTasksRoute
+  LayoutPocketbookIdTagGroupsTagGroupIdRoute: typeof LayoutPocketbookIdTagGroupsTagGroupIdRoute
   LayoutPocketbookIdTagsTagIdRoute: typeof LayoutPocketbookIdTagsTagIdRoute
 }
 
@@ -205,6 +226,8 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutPocketbookIdNotesRoute: LayoutPocketbookIdNotesRoute,
   LayoutPocketbookIdPlannerRoute: LayoutPocketbookIdPlannerRoute,
   LayoutPocketbookIdTasksRoute: LayoutPocketbookIdTasksRoute,
+  LayoutPocketbookIdTagGroupsTagGroupIdRoute:
+    LayoutPocketbookIdTagGroupsTagGroupIdRoute,
   LayoutPocketbookIdTagsTagIdRoute: LayoutPocketbookIdTagsTagIdRoute,
 }
 

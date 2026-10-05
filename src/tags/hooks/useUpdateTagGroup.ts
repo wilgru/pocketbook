@@ -6,7 +6,9 @@ import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
 type UpdateTagGroupProps = {
   tagGroupId: string;
-  updateTagGroupData: Pick<TagGroup, "title">;
+  updateTagGroupData: Partial<
+    Pick<TagGroup, "title" | "layout" | "groupBy" | "sortBy" | "sortDirection">
+  >;
 };
 
 type UseUpdateTagGroupResponse = {
@@ -26,7 +28,7 @@ export const useUpdateTagGroup = (): UseUpdateTagGroupResponse => {
     updateTagGroupData,
   }: UpdateTagGroupProps): Promise<TagGroup | undefined> => {
     const data = await updateTagGroupServerFn({
-      data: { tagGroupId, title: updateTagGroupData.title },
+      data: { tagGroupId, ...updateTagGroupData },
     });
 
     return data;

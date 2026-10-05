@@ -106,7 +106,7 @@ export const Sidebar = () => {
               title="Audio"
               to={"/"}
               colour={colours.grey}
-              iconName="cassette"
+              iconName="waveform"
             />
 
             <NavItem
@@ -114,7 +114,7 @@ export const Sidebar = () => {
               title="Locations"
               to={"/"}
               colour={colours.grey}
-              iconName="mapPinArea"
+              iconName="mapPin"
             />
 
             <NavItem

@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { colours } from "src/colours/colours.constant";
 import { Button } from "src/common/components/Button/Button";
@@ -48,7 +49,21 @@ export const SidebarTagSection = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-row items-center gap-1">
-        <h1 className="py-0.5 font-title text-sm text-slate-400">{title}</h1>
+        {tagGroup ? (
+          <Link
+            to="/$pocketbookId/tagGroups/$tagGroupId"
+            params={{
+              pocketbookId: tagGroup.pocketbookId ?? "",
+              tagGroupId: tagGroup.id,
+            }}
+            search={{ noteId: null }}
+            className="py-0.5 font-title text-sm text-slate-400 hover:text-slate-600"
+          >
+            {title}
+          </Link>
+        ) : (
+          <h1 className="py-0.5 font-title text-sm text-slate-400">{title}</h1>
+        )}
 
         {tagGroup && (
           <Dialog.Root>
@@ -58,7 +73,7 @@ export const SidebarTagSection = ({
                   className="mb-1"
                   variant="ghost-strong"
                   size="xs"
-                  iconName="gear"
+                  iconName="slidersHorizontal"
                   colour={colour}
                 />
               </Dialog.Trigger>

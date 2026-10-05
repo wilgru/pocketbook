@@ -51,7 +51,7 @@ export const EditTagModal = ({
     icon: tag?.icon ?? "tag",
     layout: tag?.layout ?? "list",
     links: toDraftTagLinks(tag?.links ?? []),
-    tagGroupId: tag?.groupByTagGroupId ?? tagGroupId ?? null,
+    tagGroupId: tag?.tagGroupId ?? tagGroupId ?? null,
     groupBy: tag?.groupBy ?? null,
     groupByTagGroupId: tag?.groupByTagGroupId ?? null,
     sortBy: tag?.sortBy ?? "created",

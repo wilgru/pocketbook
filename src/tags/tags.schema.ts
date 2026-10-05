@@ -10,6 +10,16 @@ import type { CustomisationIconName } from "src/icons/customisationIcons.constan
 export const tagGroups = sqliteTable("tag_groups", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
+  layout: text("layout").notNull().default("list").$type<"list" | "table">(),
+  groupBy: text("group_by").$type<"created" | "tag" | null>(),
+  sortBy: text("sort_by")
+    .notNull()
+    .default("created")
+    .$type<"alphabetical" | "created">(),
+  sortDirection: text("sort_direction")
+    .notNull()
+    .default("desc")
+    .$type<"asc" | "desc">(),
   pocketbookId: text("pocketbook").references(() => pocketbooks.id),
   created: dayjsColumn("created").notNull(),
   updated: dayjsColumn("updated").notNull(),

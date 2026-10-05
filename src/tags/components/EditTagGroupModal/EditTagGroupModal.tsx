@@ -21,18 +21,20 @@ export const EditTagGroupModal = ({ tagGroup }: EditTagGroupModalProps) => {
   const form = useForm({
     defaultValues: {
       title: tagGroup?.title ?? "",
+      layout: tagGroup?.layout ?? ("list" as TagGroup["layout"]),
     },
     onSubmit: async ({ value }) => {
       const title = value.title.trim();
+      const { layout } = value;
 
       if (tagGroup) {
         await updateTagGroup({
           tagGroupId: tagGroup.id,
-          updateTagGroupData: { title },
+          updateTagGroupData: { title, layout },
         });
       } else {
         await createTagGroup({
-          createTagGroupData: { title },
+          createTagGroupData: { title, layout },
         });
       }
     },
@@ -42,7 +44,6 @@ export const EditTagGroupModal = ({ tagGroup }: EditTagGroupModalProps) => {
     <Dialog
       title={tagGroup ? "Edit Tag Section" : "Create Tag Group"}
       className="w-100"
-      hideDividers
       footer={
         <div className="flex justify-between">
           {tagGroup ? (
@@ -88,6 +89,28 @@ export const EditTagGroupModal = ({ tagGroup }: EditTagGroupModalProps) => {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
+          )}
+        </form.Field>
+
+        <form.Field name="layout">
+          {(field) => (
+            <div>
+              <Label title="Layout" />
+              <div className="mt-1 flex items-center gap-4 text-sm">
+                {(["list", "table"] as const).map((layout) => (
+                  <label key={layout} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="layout"
+                      value={layout}
+                      checked={field.state.value === layout}
+                      onChange={() => field.handleChange(layout)}
+                    />
+                    {layout === "list" ? "List" : "Table"}
+                  </label>
+                ))}
+              </div>
+            </div>
           )}
         </form.Field>
       </div>

@@ -6,16 +6,8 @@ import type { TagGroup } from "../tags.schema";
 import type { UseMutateAsyncFunction } from "@tanstack/react-query";
 
 type CreateTagGroupProps = {
-  createTagGroupData: Omit<
-    TagGroup,
-    | "id"
-    | "tags"
-    | "pocketbookId"
-    | "groupBy"
-    | "noteCount"
-    | "created"
-    | "updated"
-  >;
+  createTagGroupData: Pick<TagGroup, "title"> &
+    Partial<Pick<TagGroup, "layout">>;
 };
 
 type UseCreateTagGroupResponse = {
@@ -37,6 +29,7 @@ export const useCreateTagGroup = (): UseCreateTagGroupResponse => {
     const data = await createTagGroupServerFn({
       data: {
         title: createTagGroupData.title,
+        layout: createTagGroupData.layout,
         pocketbookId: pocketbookId ?? null,
       },
     });

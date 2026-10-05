@@ -9,7 +9,11 @@ import type { TagGroup } from "src/tags/tags.schema";
 
 export type UpdateTagGroupInput = {
   tagGroupId: string;
-  title: string;
+  title?: string;
+  layout?: TagGroup["layout"];
+  groupBy?: TagGroup["groupBy"];
+  sortBy?: TagGroup["sortBy"];
+  sortDirection?: TagGroup["sortDirection"];
 };
 
 export const updateTagGroupServerFn = createServerFn({
@@ -21,11 +25,15 @@ export const updateTagGroupServerFn = createServerFn({
   .handler<Promise<TagGroup>>(async ({ data }) => {
     const db = getDb();
     const now = dayjs();
+    const { tagGroupId, ...changes } = data;
+    const definedChanges = Object.fromEntries(
+      Object.entries(changes).filter(([, value]) => value !== undefined),
+    );
 
     const [updated] = await db
       .update(tagGroups)
-      .set({ title: data.title, updated: now })
-      .where(eq(tagGroups.id, data.tagGroupId))
+      .set({ ...definedChanges, updated: now })
+      .where(eq(tagGroups.id, tagGroupId))
       .returning()
       .all();
 
