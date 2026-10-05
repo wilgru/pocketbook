@@ -34,6 +34,20 @@
    npm run dev
    ```
 
+## Migrating a pre-TanStack SQLite database
+
+To migrate an SQLite database created before commit
+`1d648b081da1ae8feeca0180a558a00aa4eac126` in place, run:
+
+```bash
+npm run db:migrate-legacy-sqlite -- --db-path=/absolute/path/to/pocketbook.db --apply
+```
+
+The command retains SQLite as the storage format. It applies the current Drizzle
+schema migrations, replaces legacy nullable rich-text values with empty Lexical
+content, and updates note and comment code blocks to the current Lexical
+code-node structure. Back up the database file before running the command.
+
 ## One-off note content migration (Quill Delta -> Lexical JSON)
 
 For production note content migration, run:
